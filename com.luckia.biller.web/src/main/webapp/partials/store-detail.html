@@ -1,0 +1,345 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF8">
+</head>
+<body>
+<div class="row">
+	<div class="col-sm-9">
+		
+		<div id="alertContainer"></div>
+		
+		<h4>Establecimiento</h4>
+		<div class="m-top-15">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Nombre</label>
+					<div class="col-sm-9">
+						<input type='text' class="form-control input-sm" ng-model="entity.name" ng-readonly="isReadOnly" required />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Empresa</label>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<input type="text" class="form-control input-sm" ng-model="entity.parent"  ng-readonly="isReadOnly" typeahead="company as company.name for company in companies($viewValue)" typeahead-editable="false" placeholder="Empresa" />
+							<span  class="input-group-addon input-sm">
+								<a ng-if="entity.parent != null" href="#/companies/id/{{entity.parent.id}}"><span class="glyphicon glyphicon-search"></span></a>
+								<span ng-if="entity.parent == null" class="glyphicon glyphicon-search"></span>
+							</span>
+						</div>
+					</div>
+					<label class="col-sm-1 control-label input-sm">Centro de coste</label>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<input type="text" class="form-control input-sm" ng-model="entity.costCenter" ng-readonly="isReadOnly" typeahead="costCenter as costCenter.name for costCenter in costcenters($viewValue)" typeahead-editable="false" placeholder="Centro de coste" />
+							<span  class="input-group-addon input-sm">
+								<a ng-if="entity.costCenter != null" href="#/costcenters/id/{{entity.costCenter.id}}"><span class="glyphicon glyphicon-search"></span></a>
+								<span ng-if="entity.costCenter == null" class="glyphicon glyphicon-search"></span>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">CIF</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.idCard.number" ng-readonly="isReadOnly"  />
+					</div>
+					<label class="col-sm-1 control-label input-sm">Tipo</label>
+					<div class="col-sm-4">
+						<select class="form-control input-sm" ng-model="entity.type" ng-readonly="isReadOnly">
+							<option value="Bar">Bar</option>
+							<option value="BingoCorner">Córner en Bingo</option>
+							<option value="CasinoCorner">Córner en Casino</option>
+							<option value="SpecificStore">Tienda específica</option>
+							<option value="CasaDeApuestas">Casa de apuestas</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Provincia</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control input-sm" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly"  />
+					</div>
+					<label class="col-sm-1 control-label input-sm">Region</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue)" ng-readonly="isReadOnly"  />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Dirección</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control input-sm" ng-model="entity.address.road" ng-readonly="isReadOnly"  />
+					</div>
+					<label class="col-sm-1 control-label input-sm">Número</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.address.number" ng-readonly="isReadOnly"  />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Email</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control input-sm" ng-model="entity.email" ng-readonly="isReadOnly" />
+					</div>
+					<label class="col-sm-1 control-label input-sm">Serie</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control input-sm" ng-model="entity.billSequencePrefix" ng-readonly="isReadOnly" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-4 col-sm-offset-2">
+						<div class="checkbox">
+							<label><input type="checkbox" ng-model="entity.autoConfirm" ng-readonly=isReadOnly> Facturación automática</label>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		
+		<div class="m-top-40">
+			<ul class="nav nav-tabs">
+				<li class="active"><a data-target="#ownerTab" data-toggle="tab">Titular</a></li>
+				<li><a data-target="#terminalTab" data-toggle="tab">Terminales</a></li>
+				<li><a data-target="#billingModelTab" data-toggle="tab">Modelo de facturación</a></li>
+				<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
+				<li><a data-target="#profileTab" data-toggle="tab">Datos de contacto</a></li>
+				<li><a data-target="#ispInfoTab" data-toggle="tab">ADSL</a></li>
+			</ul>
+	
+			<div class="tab-content">
+					
+				<!-- Pestaña del titular del local -->
+				<div class="tab-pane active" id="ownerTab">
+					<div class="m-top-15">
+						<form class="form-horizontal" role="form">
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Titular</label>
+								<div class="col-sm-4">
+									<div class="input-group">
+										<input type='text' class="form-control input-sm" ng-model="entity.owner" ng-readonly="isReadOnly" typeahead="owner as owner.completeName for owner in owners($viewValue)" />
+										<span  class="input-group-addon input-sm">
+											<a ng-if="entity.owner != null" href="#/owners/id/{{entity.owner.id}}"><span class="glyphicon glyphicon-search"></span></a>
+											<span ng-if="entity.owner == null" class="glyphicon glyphicon-search"></span>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">NIF</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="entity.owner.idCard.number" ng-readonly="true"  />
+								</div>
+								<label class="col-sm-1 control-label input-sm">Email</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="entity.owner.email" ng-readonly="true"  />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Provincia</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="entity.owner.address.province.name" ng-readonly="true"  />
+								</div>
+								<label class="col-sm-1 control-label input-sm">Localidad</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="entity.owner.address.region.name" ng-readonly="true"  />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Dirección</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="entity.owner.address.road" ng-readonly="true"  />
+								</div>
+								<label class="col-sm-1 control-label input-sm">Número</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="entity.owner.address.number" ng-readonly="true"  />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Código postal</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="entity.owner.address.zipCode" ng-readonly="true"  />
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				
+				<!-- Pestaña del modelo de facturación -->
+				<div class="tab-pane" id="billingModelTab">
+					<div class="m-top-15">
+						<form class="form-horizontal" role="form">
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Nombre</label>
+								<div class="col-sm-9">
+									<div class="input-group">
+										<input type='text' class="form-control input-sm" ng-model="entity.billingModel" placeholder="Modelo de facturación" typeahead="model as model.name for model in models($viewValue)" ng-readonly="isReadOnly" />
+										<span  class="input-group-addon input-sm">
+											<a ng-if="entity.billingModel != null" href="#/models/id/{{entity.billingModel.id}}"><span class="glyphicon glyphicon-search"></span></a>
+											<span ng-if="entity.billingModel == null" class="glyphicon glyphicon-search"></span>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Ventas</label>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.stakesPercent" ng-readonly="true" popover="Porcentaje mensual sobre las ventas" popover-trigger="mouseenter" />
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-3 control-label input-sm">Attención comercial</label>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.commercialMonthlyFees" ng-readonly="true" popover="Honorarios mensuales de atención al cliente" popover-trigger="mouseenter" />
+										<span class="input-group-addon">€</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">GGR</label>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.ggrPercent" ng-readonly="true" popover="Porcentaje sobre ingresos brutos del luego (ventas - premios)" popover-trigger="mouseenter"/>
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-3 control-label input-sm">Servicio de atención al cliente</label>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.satMonthlyFees" ng-readonly="true" popover="Importe mensual del servicio de atención al cliente" popover-trigger="mouseenter" />
+										<span class="input-group-addon">€</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+			 					<label class="col-sm-2 control-label input-sm">NGR</label>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.ngrPercent" ng-readonly="true" popover="Porcentaje mensual sobre los ingresos netos de juego: GGR - tasa de juego" popover-trigger="mouseenter"/>
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-3 control-label input-sm">Gastos de co-explotación</label>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.coOperatingMonthlyFees" ng-readonly="true" popover="Gastos mensuales de co-explotación" popover-trigger="mouseenter"/>
+										<span class="input-group-addon">€</span>
+									</div>
+									<span style="display:none" class="help-block">Importe mensual</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">NR</label>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.nrPercent" ng-readonly="true" popover="Porcentaje mensual sobre el resultado neto: NGR - gastos operativos" popover-trigger="mouseenter" />
+										<span class="input-group-addon">%</span>
+									</div>
+								</div> 
+							</div>
+						</form>
+					</div>
+				</div>
+				
+				<!-- Pestaña de observaciones -->
+				<div class="tab-pane" id="commentsTab">
+					<div class="m-top-15">
+						<textarea class="form-control" rows="3" ng-model="entity.comments" ng-readonly="isReadOnly"></textarea>
+					</div>
+				</div>
+				
+				<!-- Pestaña de terminales asociados -->
+				<div class="tab-pane" id="terminalTab">
+					<div class="m-top-15">
+						<div ng-if="entity.terminalRelations.length < 1">No se han encontrado terminales asociados a este establecimiento.</div>
+						<ul class="list-group">
+							<li class="list-group-item" ng-repeat="i in entity.terminalRelations"><a href="#/terminals/{{i.code}}">{{i.code}}</a></li>
+						</ul>
+					</div>
+				</div>
+				
+				<!-- Pestaña de informacion de conexion -->
+				<div class="tab-pane" id="ispInfoTab">
+					<div class="m-top-15">
+						<form class="form-horizontal" role="form">
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Tipo</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="dummy" ng-readonly="isReadOnly"  />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Teléfono</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="dummy" ng-readonly="isReadOnly"  />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Velocidad</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="dummy" ng-readonly="isReadOnly"  />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Teléfono de averias</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="dummy" ng-readonly="isReadOnly"  />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Estado</label>
+								<div class="col-sm-4">
+									<input type='text' class="form-control input-sm" ng-model="dummy" ng-readonly="isReadOnly"  />
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col-sm-3">
+		<div class="btn-toolbar" role="toolbar">
+			<div class="btn-group">
+				<button ng-click="edit()" ng-class='isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>Editar</button>
+				<button ng-click="load()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
+					<span class="glyphicon glyphicon-arrow-left"></span>
+				</button>
+				<button ng-click="update()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
+					<span class="glyphicon glyphicon-save"></span>
+				</button>
+				<button ng-click="todo()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
+					<span class="glyphicon glyphicon-trash"></span>
+				</button>
+			</div>
+		</div>
+		<div class="m-top-40">
+			<h4>Facturación</h4>
+			<ul class="list-unstyled">
+				<li><a href="#/bills?store={{entity.id}}">Ver facturas de este establecimiento</a></li>
+				<li><a href="#/bills?store={{entity.id}}&state=BillDraft">Ver facturas pendientes</a></li>
+			</ul>
+		</div>
+		<div class="m-top-40">
+			<h4>Entidades</h4>
+			<ul class="list-unstyled">
+				<li><a href="#stores?parent={{entity.parent.id}}">Ver establecimientos de la empresa</a></li>
+				<li><a href="#stores">Ver establecimientos</a></li>
+			</ul>
+		</div>
+		<!-- popup con el json de debug -->
+		<div class="m-top-40">
+			<button class="btn btn-default btn-sm m-top-40" data-toggle="modal" data-target="#debugJson">Ver JSON</button>
+			<div class="modal fade" id="debugJson" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<pre>entity = {{entity | json}}</pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>	
+
+</html>

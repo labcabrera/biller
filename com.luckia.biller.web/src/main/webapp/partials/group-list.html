@@ -1,0 +1,36 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<div class="row">
+	<div class="col-sm-9">
+		<div>
+			<h4>Grupos de Empresas  <small>({{results.totalItems}} resultados)</small></h4>
+			<div ng-if="results.results.length == 0">No se han encontrado resultados</div>
+			<ul class="list-group">
+				<li class="list-group-item" ng-repeat="group in results.results">
+					<a href="#/groups/id/{{group.id}}">{{group.name}}</a>
+				</li>
+			</ul>
+			<div class="pull-right">
+				<a href="#/groups/new">Nuevo grupo</a>
+			</div>
+			<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)"></pagination>
+		</div>
+	</div>
+	<div class="col-sm-3">
+		<div>
+			<h4>Filtrar resultados</h4>
+			<form role="form">
+				<div class="form-group">
+					<label>Nombre</label>
+					<input type="text" class="form-control input-sm" ng-model="searchName" placeholder="Nombre">
+				</div>
+				<button class="btn btn-primary btn-sm" ng-click="search()">Buscar</button>
+			</form>
+		</div>
+	</div>
+</div>	
+</body>
+</html>

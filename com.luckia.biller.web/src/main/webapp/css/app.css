@@ -1,0 +1,51 @@
+textarea {
+	resize: none;
+}
+
+.form-control[readonly] {
+	background-color: #F9F9F9;
+	cursor: default;
+}
+
+.numeric-field {
+	text-align: right;
+}
+
+.m-top-15 {
+	margin-top: 15px;
+}
+
+.m-top-40 {
+	margin-top: 40px;
+}
+
+.data-amount {
+	text-align: right;
+}
+
+.data-date {
+	text-align: right;
+}
+
+.data-code {
+	text-align: right;
+}
+
+.bill-detail {
+	/*
+	height: 30px;
+	vertical-align: bottom;
+	*/
+}
+
+.pagination {
+	margin: 0;
+}
+
+.form-control::-webkit-input-placeholder {
+	color: #CCCCCC;
+}
+
+.form-control::-moz-placeholder {
+	color: #CCCCCC;
+}

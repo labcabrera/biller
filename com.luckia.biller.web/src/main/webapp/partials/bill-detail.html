@@ -1,0 +1,306 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+	<div class="row">
+		<div class="col-sm-9">
+			<div id="alertContainer"></div>
+			<h4>Factura</h4>
+			<div>
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">Emisor</label>
+						<div class="col-sm-4">
+							<div class=" input-group">
+								<input type='text' class="form-control input-sm" ng-model="entity.sender.name" ng-readonly="true" /> <span class="input-group-addon input-sm"> <a
+									href="#/stores/id/{{entity.sender.id}}"> <span class="glyphicon glyphicon-search"></span>
+								</a>
+								</span>
+							</div>
+						</div>
+						<label class="col-sm-1 control-label input-sm">Destinatario</label>
+						<div class="col-sm-4">
+							<div class=" input-group">
+								<input type='text' class="form-control input-sm" ng-model="entity.receiver.name" ng-readonly="true" /> <span class="input-group-addon input-sm"> <a
+									href="#/companies/id/{{entity.receiver.id}}"> <span class="glyphicon glyphicon-search"></span>
+								</a>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">Código</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control input-sm data-code" ng-model="entity.code" ng-readonly="true" />
+						</div>
+						<label class="col-sm-1 control-label input-sm">Fecha</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control input-sm data-date" datepicker-popup="{{dateFormat}}" ng-model="entity.billDate" ng-readonly="isReadOnly" show-button-bar="false" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">Modelo</label>
+						<div class="col-sm-4">
+							<div class="input-group">
+								<input type='text' class="form-control input-sm" ng-model="entity.model.name" ng-readonly="true" /> <span class="input-group-addon input-sm"> <a
+									href="#/models/id/{{entity.model.id}}"><span class="glyphicon glyphicon-search"></span></a>
+								</span>
+							</div>
+						</div>
+						<label class="col-sm-1 control-label input-sm">Estado</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control input-sm" ng-model="entity.currentState.stateDefinition.desc" ng-readonly="true" />
+						</div>
+					</div>
+				</form>
+			</div>
+			
+			<div class="m-top-40">
+				<ul class="nav nav-tabs">
+					<li class="active"><a data-target="#detailTab" data-toggle="tab">Detalles</a></li>
+					<li><a data-target="#ownerTab" data-toggle="tab">Titular</a></li>
+					<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
+				</ul> 				
+				<div class="tab-content">
+				
+					<!-- Pestaña de detalles de la factura -->
+					<div class="tab-pane active" id="detailTab">
+						<div class="m-top-15">
+							<div class="col-sm-12">
+								<table class="table">
+									<tr>
+										<th>Concepto</th>
+										<th class="data-amount">Unidades</th>
+										<th class="data-amount">Importe</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="detail in entity.details">
+										<td>{{detail.name}}</td>
+										<td class="data-amount">{{detail.units}}</td>
+										<td class="data-amount">{{detail.value}}</td>
+										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+									</tr>
+									<tr>
+										<td><b>Base</b></td>
+										<td></td>
+										<td class="data-amount"><b>{{entity.netAmount}}</b></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td><b>IVA ({{entity.vatPercent}} %)</b></td>
+										<td></td>
+										<td class="data-amount"><b>{{entity.vatAmount}}</b></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td><b>Total</b></td>
+										<td></td>
+										<td class="data-amount"><b>{{entity.amount}}</b></td>
+										<td></td>
+									</tr>
+								</table>
+								<div class="btn-toolbar m-top-40" role="toolbar">
+									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-primary'>Añadir concepto</button>
+									<button ng-click="cancel()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-primary'>Anular</button>
+									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" href="/rest/bills/draft/{{entity.id}}" role="button">Consultar borrador</a> <a
+										class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'BillDraft' && entity.currentState.stateDefinition.id != 'BillCancelled'"
+										href="/rest/binary/download/{{entity.pdfFile.id}}" role="button">Descargar</a>
+									<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-success pull-right'>Aceptar borrador</button>
+									<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'BillConfirmed'" class='btn btn-sm btn-success pull-right'>Enviar</button>
+									<button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'BillCancelled'" class="btn btn-sm btn-success pull-right">Rectificar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Pestaña de titular del establecimiento -->
+					<div class="tab-pane" id="ownerTab">
+						<div class="m-top-15">
+							<form class="form-horizontal" role="form">
+								<div class="form-group">
+									<label class="col-sm-2 control-label input-sm">Titular</label>
+									<div class="col-sm-4">
+										<div class="input-group">
+											<input type='text' class="form-control input-sm" ng-model="entity.sender.owner" ng-readonly="true" typeahead="owner as owner.completeName for owner in owners($viewValue)" />
+											<span  class="input-group-addon input-sm">
+												<a ng-if="entity.owner != null" href="#/owners/id/{{entity.owner.id}}"><span class="glyphicon glyphicon-search"></span></a>
+												<span ng-if="entity.owner == null" class="glyphicon glyphicon-search"></span>
+											</span>
+										</div>
+									</div>
+									<label class="col-sm-1 control-label input-sm">NIF</label>
+									<div class="col-sm-4">
+										<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.idCard.number" ng-readonly="true"  />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label input-sm">Email</label>
+									<div class="col-sm-4">
+										<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.email" ng-readonly="true"  />
+									</div>
+									<label class="col-sm-1 control-label input-sm">Teléfono</label>
+									<div class="col-sm-4">
+										<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.phoneNumber" ng-readonly="true"  />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label input-sm">Provincia</label>
+									<div class="col-sm-4">
+										<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.address.province.name" ng-readonly="true"  />
+									</div>
+									<label class="col-sm-1 control-label input-sm">Localidad</label>
+									<div class="col-sm-4">
+										<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.address.region.name" ng-readonly="true"  />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label input-sm">Dirección</label>
+									<div class="col-sm-4">
+										<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.address.road" ng-readonly="true"  />
+									</div>
+									<label class="col-sm-1 control-label input-sm">Número</label>
+									<div class="col-sm-4">
+										<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.address.number" ng-readonly="true"  />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label input-sm">Código postal</label>
+									<div class="col-sm-4">
+										<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.address.zipCode" ng-readonly="true"  />
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					
+					<!-- Pestaña de observaciones -->
+					<div class="tab-pane" id="commentsTab">
+						<div class="m-top-15">
+							<textarea class="form-control" rows="5" ng-model="entity.comments" ng-readonly="isReadOnly"></textarea>
+						</div>
+					</div>
+				</div><!-- tab-content -->
+			</div>
+			<!--
+			<pre>{{billDetail | json}}</pre>
+			-->
+		</div><!-- sm-9 -->
+
+		<!-- Menu lateral -->
+		<div class="col-sm-3">
+			<div class="btn-toolbar" role="toolbar">
+				<div class="btn-group">
+					<button ng-click="edit()" ng-class='isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>Editar</button>
+					<button ng-click="load()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
+						<span class="glyphicon glyphicon-arrow-left"></span>
+					</button>
+					<button ng-click="update()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
+						<span class="glyphicon glyphicon-save"></span>
+					</button>
+					<button ng-click="todo()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
+						<span class="glyphicon glyphicon-trash"></span>
+					</button>
+				</div>
+			</div>
+			<div class="m-top-40">
+				<h4>Facturación</h4>
+				<ul class="list-unstyled">
+					<li><a href="#/bills">Ver facturas</a></li>
+					<li><a href="#/bills?store={{entity.receiver.id}}">Ver facturas de este establecimiento</a></li>
+					<li><a href="#/bills?state=BillDraft">Ver facturas pendientes</a></li>
+					<li><a href="#/bills?state=BillConfirmed">Ver facturas aceptadas</a></li>
+					<li><a href="#/bills?state=BillSent">Ver facturas enviadas</a></li>
+					<li><a href="#/bills?state=BillCancelled">Ver facturas anuladas</a></li>
+				</ul>
+				<div ng-if="entity.liquidation != null">
+					<h4>Liquidación</h4>
+					<ul class="list-unstyled">
+						<li><a href="#/liquidations/id/{{entity.liquidation.id}}">Ver liquidación de esta factura</a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- popup con el json de debug -->
+			<div class="m-top-40">
+				<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#debugJson">Ver JSON</button>
+				<div class="modal fade" id="debugJson" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<pre>entity = {{entity | json}}</pre>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ventana modal para insertar nuevos conceptos -->
+	<div class="modal fade" id="editBillConceptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Editar detalle</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Nombre</label>
+							<div class="col-sm-8">
+								<input type='text' class="form-control input-sm" ng-model="billDetail.name" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Unidades</label>
+							<div class="col-sm-4">
+								<number-only-input input-value="billDetail.units" input-name="billDetail.dummyUnits"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Importe</label>
+							<div class="col-sm-4">
+								<number-only-input input-value="billDetail.value" input-name="billDetail.dummyValue"/>
+							</div>
+						</div>
+					</form>
+					<!--
+					<pre>{{billDetail | json}}</pre>
+					-->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>
+					<button type="button" class="btn btn-default btn-sm" ng-click="removeDetail(billDetail.id)" ng-if="billDetail.id != null">Eliminar</button>
+					<button type="button" class="btn btn-success btn-sm" ng-click="mergeDetail()">Guardar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ventana modal para el envio de correos -->
+	<div class="modal fade" id="sendMailModal" tabindex="-1" role="dialog" aria-labelledby="sendMailLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Enviar factura por correo</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Direcciones</label>
+							<div class="col-sm-8">
+								<input type='text' class="form-control input-sm" ng-model="sendMail.value" /> <span class="help-block">Para enviar a más de una dirección separe con punto y coma</span>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>
+					<button type="button" class="btn btn-success btn-sm" ng-click="sendMail()">Enviar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

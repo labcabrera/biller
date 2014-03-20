@@ -1,0 +1,108 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF8">
+</head>
+<body>
+<div class="row">
+	<div class="col-sm-9">
+		<div id="alertContainer"></div>	
+		<h4>Grupo de Empresas</h4>
+		<div class="m-top-15">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Nombre</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.name" ng-readonly="isReadOnly" />
+					</div>
+					<label class="col-sm-2 control-label input-sm">CIF</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.idCard.number" ng-readonly="isReadOnly" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Provincia</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly" />
+					</div>
+					<label for="inputPassword3" class="col-sm-2 control-label input-sm">Region</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.address.region.name" ng-readonly="isReadOnly" />
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="m-top-40">
+			<ul class="nav nav-tabs">
+				<li class="active"><a data-target="#companiesTab" data-toggle="tab">Empresas</a></li>
+				<li><a data-target="#contactTab" data-toggle="tab">Contacto</a></li>
+				<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
+			</ul>
+	
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div class="tab-pane active" id="companiesTab">
+					<div class="m-top-15">
+						<div ng-if="childs == null || childs.length == 0">No hay empresas asociadas a este grupo</div>
+						<ul class="list-group">
+							<li class="list-group-item" ng-repeat="child in childs"><a href="#/companies/id/{{child.id}}">{{child.name}}</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="tab-pane" id="contactTab">
+					<div class="m-top-15">
+						[TODO: INFORMACION DE CONTACTO]
+					</div>
+				</div>
+				<div class="tab-pane" id="commentsTab">
+					<div class="m-top-15">
+						<ul class="list-group">
+							<textarea class="form-control" rows="3" ng-model="entity.comments" ng-readonly="isReadOnly"></textarea>
+						</ul>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	<!-- Menu lateral de opciones -->
+	<div class="col-sm-3">
+		<div class="btn-group">
+			<button id="btnEdit" ng-click="edit()" ng-class='isReadOnly && entity != null && entity.id > 0 ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>Editar</button>
+			<button id="btnReset" ng-click="load()" ng-class='!isReadOnly && entity != null && entity.id > 0 ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>
+				<span class="glyphicon glyphicon-arrow-left"></span>
+			</button>
+			<button id="btnUpdate" ng-click="update()" ng-class='!isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>
+				<span class="glyphicon glyphicon-save"></span>
+			</button>
+			<button id="btnDelete" ng-click="remove()" ng-class='!isReadOnly && entity != null && entity.id > 0 ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>
+				<span class="glyphicon glyphicon-trash"></span>
+			</button>
+		</div>
+		<div class="m-top-40">
+			<h4>Grupos</h4>
+			<ul class="list-unstyled">
+				<li><a href="#/groups">Ver todos los grupos</a>
+			</ul>
+		</div>
+		<div class="m-top-40">
+			<h4>Facturación</h4>
+			<ul class="list-unstyled">
+				<li><a href="#">Liquidaciones de este grupo</a>
+			</ul>
+		</div>
+		<!-- popup con el json de debug -->
+			<div class="m-top-40">
+			<button class="btn btn-default btn-sm m-top-40" data-toggle="modal" data-target="#debugJson">Ver JSON</button>
+			<div class="modal fade" id="debugJson" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<pre>entity = {{entity | json}}</pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</html>

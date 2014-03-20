@@ -1,0 +1,222 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF8">
+</head>
+<body>
+<div class="row">
+	<div class="col-sm-9">
+		
+		<div id="alertContainer"></div>
+		
+		<h4>Empresa</h4>
+		<div class="m-top-15">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Nombre</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.name" ng-readonly="isReadOnly" placeholder="Nombre" />
+					</div>
+					<label class="col-sm-2 control-label input-sm">CIF</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.idCard.number" ng-readonly="isReadOnly" placeholder="CIF" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Grupo</label>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<input type="text" class="form-control input-sm" ng-model="entity.parent"  ng-readonly="isReadOnly" typeahead="group as group.name for group in groups($viewValue)" typeahead-editable="false" placeholder="Grupo" />
+							<span  class="input-group-addon input-sm">
+								<a ng-if="entity.parent != null" href="#/groups/id/{{entity.parent.id}}"><span class="glyphicon glyphicon-search"></span></a>
+								<span ng-if="entity.parent == null" class="glyphicon glyphicon-search"></span>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Provincia</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control input-sm" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly" placeholder="Provincia" />
+					</div>
+					<label class="col-sm-2 control-label input-sm">Municipio</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue)" ng-readonly="isReadOnly" placeholder="Municipio" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Dirección</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control input-sm" ng-model="entity.address.road" ng-readonly="isReadOnly" placeholder="Dirección" />
+					</div>
+					<label class="col-sm-2 control-label input-sm">Número</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control input-sm" ng-model="entity.address.number" ng-readonly="isReadOnly" placeholder="Número" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Código postal</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control input-sm" ng-model="entity.address.zipCode" ng-readonly="isReadOnly" placeholder="Código postal" />
+					</div>				
+					<label class="col-sm-2 control-label input-sm">Núm. Teléfono</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control input-sm" ng-model="entity.phoneNumber" ng-readonly="isReadOnly" placeholder="Teléfono" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Email</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control input-sm" ng-model="entity.email"  ng-readonly="isReadOnly" placeholder="email" />
+					</div>
+					<div class="col-sm-4 col-sm-offset-2">
+						<div class="checkbox">
+							<label><input type="checkbox" ng-model="entity.autoConfirm" ng-readonly=isReadOnly> Facturación automática</label>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		
+		<div style="margin-top: 40px;" >
+			<ul class="nav nav-tabs">
+				<li class="active"><a data-target="#stores" data-toggle="tab">Establecimientos</a></li>
+				<li><a data-target="#billingModel" data-toggle="tab">Modelo de liquidación</a></li>
+				<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
+			</ul>
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div class="tab-pane active" id="stores">
+					<div class="m-top-15">
+						<div ng-if="childs.results == null || childs.results.length == 0">No hay establecimientos asociados a esta empresa.</div>
+						<ul class="list-group">
+							<li class="list-group-item" ng-repeat="child in childs.results">
+								<a href="#/stores/id/{{child.id}}">{{child.name}}</a>
+								<a href="#" class="pull-right" title="Eliminar empresa del grupo"><span class="glyphicon glyphicon-trash"></span></a>
+							</li>
+						</ul>
+						<pagination
+							total-items="childs.totalItems" page="childs.currentPage"
+							items-per-page="childs.itemsPerPage" on-select-page="setPage(page)" max-size="10"
+							boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="Último"></pagination>
+						<div class="m-top-15">
+							<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addStoreModal">Añadir establecimiento</button>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane" id="billingModel">
+					<div class="m-top-15">	
+						[MODELO DE LIQUIDACION]
+					</div>
+				</div>
+				<div class="tab-pane" id="commentsTab">
+					<div class="m-top-15">
+						<textarea class="form-control" rows="3" ng-model="entity.comments" ng-readonly="isReadOnly"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- ventana modal para insertar nuevos conceptos -->
+	<div class="modal fade" id="addStoreModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Añadir establecimiento</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Nombre</label>
+							<div class="col-sm-8">
+								<input type='text' class="form-control input-sm" ng-model="newStore" typeahead="store as store.name for store in stores($viewValue)" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Empresa actual</label>
+							<div class="col-sm-4">
+								<input type='text' class="form-control input-sm" ng-model="newStore.parent.name	" ng-readonly="true" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">CIF</label>
+							<div class="col-sm-4">
+								<input type='text' class="form-control input-sm" ng-model="newStore.idCard.number" ng-readonly="true" />
+							</div>
+							<label class="col-sm-2 control-label input-sm">Titular</label>
+							<div class="col-sm-4">
+								<input type='text' class="form-control input-sm" ng-model="newStore.owner.completeName" ng-readonly="true" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Provincia</label>
+							<div class="col-sm-4">
+								<input type='text' class="form-control input-sm" ng-model="newStore.address.province.name" ng-readonly="true" />
+							</div>
+							<label class="col-sm-2 control-label input-sm">Region</label>
+							<div class="col-sm-4">
+								<input type='text' class="form-control input-sm" ng-model="newStore.address.region.name" ng-readonly="true" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Dirección</label>
+							<div class="col-sm-4">
+								<input type='text' class="form-control input-sm" ng-model="newStore.address.road" ng-readonly="true" />
+							</div>
+							<label class="col-sm-2 control-label input-sm">Número</label>
+							<div class="col-sm-4">
+								<input type='text' class="form-control input-sm" ng-model="newStore.address.number" ng-readonly="true" />
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>
+					<button type="button" class="btn btn-primary btn-sm" ng-click="addStore()" >Añadir</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col-sm-3">
+		<div class="btn-toolbar" role="toolbar">
+			<div class="btn-group">
+				<button id="btnEdit" ng-click="edit()" ng-class='isReadOnly && entity != null && entity.id > 0 ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>Editar</button>
+				<button id="btnReset" ng-click="load()" ng-class='!isReadOnly && entity != null && entity.id > 0 ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>
+					<span class="glyphicon glyphicon-arrow-left"></span>
+				</button>
+				<button id="btnUpdate" ng-click="update()" ng-class='!isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>
+					<span class="glyphicon glyphicon-save"></span>
+				</button>
+				<button id="btnDelete" ng-click="remove()" ng-class='!isReadOnly && entity != null && entity.id > 0 ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>
+					<span class="glyphicon glyphicon-trash"></span>
+				</button>
+			</div>		</div>
+		<div class="m-top-40">
+			<h4>Facturación</h4>
+			<ul class="list-unstyled">
+				<li><a href="#">Ver facturas pendientes</a></li>
+				<li><a href="#">Ver facturas</a></li>
+			</ul>
+		</div>
+		<div class="m-top-40">
+			<h4>Entidades</h4>
+			<ul class="list-unstyled">
+				<li><a href="#/companies">Ver empresas</a></li>
+			</ul>
+		</div>
+		<!-- popup con el json de debug -->
+		<div class="m-top-40">
+			<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#debugJson">Ver JSON</button>
+			<div class="modal fade" id="debugJson" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<pre>entity = {{entity | json}}</pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</html>

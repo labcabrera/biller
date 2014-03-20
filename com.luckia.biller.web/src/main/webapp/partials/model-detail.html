@@ -1,0 +1,130 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<div class="row">
+
+	<div class="col-sm-9">
+		<h4>Modelo de facturación</h4>
+		<div class="m-top-15">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Nombre</label>
+					<div class="col-sm-9">
+						<input type='text' class="form-control input-sm" ng-model="entity.name" ng-readonly="isReadOnly" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">Ventas</label>
+					<div class="col-sm-3">
+						<div class="input-group">
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.stakesPercent" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre las ventas" popover-trigger="mouseenter" />
+							<span class="input-group-addon">%</span>
+						</div>
+					</div>
+					<label class="col-sm-3 control-label input-sm">Attención comercial</label>
+					<div class="col-sm-3">
+						<div class="input-group">
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.commercialMonthlyFees" ng-readonly="isReadOnly" popover="Honorarios mensuales de atención al cliente" popover-trigger="mouseenter" />
+							<span class="input-group-addon">€</span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">GGR</label>
+					<div class="col-sm-3">
+						<div class="input-group">
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.ggrPercent" ng-readonly="isReadOnly" popover="Porcentaje sobre ingresos brutos del luego (ventas - premios)" popover-trigger="mouseenter"/>
+							<span class="input-group-addon">%</span>
+						</div>
+					</div>
+					<label class="col-sm-3 control-label input-sm">Servicio de atención técnico</label>
+					<div class="col-sm-3">
+						<div class="input-group">
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.satMonthlyFees" ng-readonly="isReadOnly" popover="Importe mensual del servicio de atención al cliente" popover-trigger="mouseenter" />
+							<span class="input-group-addon">€</span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+ 					<label class="col-sm-2 control-label input-sm">NGR</label>
+					<div class="col-sm-3">
+						<div class="input-group">
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.ngrPercent" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre los ingresos netos de juego: GGR - tasa de juego" popover-trigger="mouseenter"/>
+							<span class="input-group-addon">%</span>
+						</div>
+					</div>
+					<label class="col-sm-3 control-label input-sm">Gastos de co-explotación</label>
+					<div class="col-sm-3">
+						<div class="input-group">
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.coOperatingMonthlyFees" ng-readonly="isReadOnly" popover="Gastos mensuales de co-explotación. Este valor se utiliza como gastos operativos para calcular el NR" popover-trigger="mouseenter"/>
+							<span class="input-group-addon">€</span>
+						</div>
+						<span style="display:none" class="help-block">Importe mensual</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">NR</label>
+					<div class="col-sm-3">
+						<div class="input-group">
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.nrPercent" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre el resultado neto: NGR - gastos operativos" popover-trigger="mouseenter" />
+							<span class="input-group-addon">%</span>
+						</div>
+					</div> 
+				</div>
+			</form>
+		</div>
+		<div class="m-top-40">
+			<h4>Establecimientos que aplican este modelo</h4>
+			<div ng-if="childs.results.length < 1">No se han encontrado resultados</div>
+			<ul class="list-group">
+				<li class="list-group-item" ng-repeat="result in childs.results">
+					<div>
+						<a href="#/stores/{{result.id}}">{{result.name}}</a>
+						<span class="pull-right">{{result.parent.name}} - {{result.address.province.name}}</span>
+					</div>
+				</li>
+			</ul>
+			<pagination total-items="childs.totalItems" page="childs.currentPage" items-per-page="childs.itemsPerPage" on-select-page="setPage(page)" max-size="10"
+				boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="Último"></pagination>
+		</div>
+	</div>
+
+	<div class="col-sm-3">
+		<div class="btn-toolbar" role="toolbar">
+			<div class="btn-group">
+				<button ng-click="edit()" ng-class='isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>Editar</button>
+				<button ng-click="load()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
+					<span class="glyphicon glyphicon-arrow-left"></span>
+				</button>
+				<button ng-click="update()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
+					<span class="glyphicon glyphicon-save"></span>
+				</button>
+				<button ng-click="todo()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
+					<span class="glyphicon glyphicon-trash"></span>
+				</button>
+			</div>
+		</div>
+		<div class="m-top-40">
+			<h4>Consultas</h4>
+			<ul class="list-unstyled">
+				<li><a href="#/models">Modelos de facturación</a></li>
+				<li><a href="#/todo">Facturas emitidas con este modelo</a></li>
+			</ul>
+		</div>
+		<!-- popup con el json de debug -->
+		<div class="m-top-40">
+			<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#debugJson">Ver JSON</button>
+			<div class="modal fade" id="debugJson" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<pre>entity = {{entity | json}}</pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

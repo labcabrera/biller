@@ -1,0 +1,148 @@
+/*******************************************************************************
+ * Copyright (c) 2004, 2012 Kotasoft S.L.
+ * All rights reserved. This program and the accompanying materials
+ * may only be used prior written consent of Kotasoft S.L.
+ ******************************************************************************/
+package com.luckia.biller.core.services.entities;
+
+import java.io.Serializable;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+
+import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
+
+import com.luckia.biller.core.ClearCache;
+import com.luckia.biller.core.i18n.I18nService;
+import com.luckia.biller.core.jpa.EntityManagerProvider;
+import com.luckia.biller.core.jpa.FiqlParser;
+import com.luckia.biller.core.model.common.Message;
+import com.luckia.biller.core.model.common.SearchParams;
+import com.luckia.biller.core.model.common.SearchResults;
+
+/**
+ * Servicio que provee las funcionalidades basicas de JPA para diferentes entidades del modelo.
+ * 
+ * @param <I>
+ */
+public abstract class EntityService<I> {
+
+	@Inject
+	protected EntityManagerProvider entityManagerProvider;
+	@Inject
+	protected Validator validator;
+	@Inject
+	protected I18nService i18nService;
+	@Inject
+	protected FiqlParser fiqlParser;
+
+	protected abstract Class<I> getEntityClass();
+
+	@ClearCache
+	public I findById(Serializable primaryKey) {
+		return entityManagerProvider.get().find(getEntityClass(), primaryKey);
+	}
+
+	/**
+	 * Genera los resultados a partir de la expression FIQL definida en el <code>SearchParams.queryString</code>.
+	 * 
+	 * @param params
+	 * @return
+	 */
+	@ClearCache
+	public SearchResults<I> find(SearchParams params) {
+		Class<I> entityClass = getEntityClass();
+		EntityManager entityManager = entityManagerProvider.get();
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<I> criteria = builder.createQuery(entityClass);
+		Root<I> root = criteria.from(entityClass);
+		Predicate predicate = StringUtils.isBlank(params.getQueryString()) ? builder.conjunction() : fiqlParser.parse(params.getQueryString(), builder, root).build();
+		criteria.where(predicate);
+		buildOrderCriteria(criteria, builder, root);
+		TypedQuery<I> query = entityManager.createQuery(criteria);
+		configureQueryRange(query, params);
+		SearchResults<I> searchResults = new SearchResults<I>();
+		searchResults.setResults(query.getResultList());
+		// Numero de resultados
+		CriteriaQuery<Long> criteriaCount = builder.createQuery(Long.class);
+		criteriaCount.select(builder.count(root));
+		criteriaCount.where(predicate);
+		Long totalItems = entityManager.createQuery(criteriaCount).getSingleResult();
+		Long totalPages = (totalItems + (totalItems % params.getItemsPerPage())) / params.getItemsPerPage();
+		searchResults.setTotalItems(totalItems);
+		searchResults.setTotalPages(totalPages);
+		searchResults.setCurrentPage(params.getCurrentPage());
+		searchResults.setItemsPerPage(params.getItemsPerPage());
+		return searchResults;
+	}
+
+	public Message<I> validate(I entity) {
+		Set<ConstraintViolation<I>> violations = validator.validate(entity);
+		Message<I> message = new Message<I>();
+		message.setPayload(entity);
+		if (violations.isEmpty()) {
+			message.setCode(Message.CODE_SUCCESS);
+			message.setMessage("Entidad válida");
+		} else {
+			message.setCode(Message.CODE_GENERIC_ERROR);
+			message.setMessage("Entidad con errores de validación");
+			for (ConstraintViolation<I> violation : violations) {
+				message.addError(i18nService.getMessage(violation.getMessage()));
+			}
+		}
+		return message;
+	}
+
+	public Message<I> merge(I entity) {
+		throw new NotImplementedException();
+	}
+
+	public Message<I> persist(I entity) {
+		throw new NotImplementedException();
+	}
+
+	public Message<I> remove(Serializable primaryKey) {
+		throw new NotImplementedException();
+	}
+
+	/**
+	 * Podemos sobreescribir este metodo para establecer la ordenacion de resultados en nuestras consultas.
+	 * 
+	 * @param criteria
+	 * @param builder
+	 * @param root
+	 */
+	protected void buildOrderCriteria(CriteriaQuery<I> criteria, CriteriaBuilder builder, Root<I> root) {
+	}
+
+	/**
+	 * Podemos sobreescribir este metodo para establecer el numero de resultados por defecto.
+	 * 
+	 * @return
+	 */
+	protected Integer getDefaultsItemsPerPage() {
+		return 10;
+	}
+
+	protected void configureQueryRange(Query query, SearchParams params) {
+		if (params.getCurrentPage() == null || params.getCurrentPage() < 1) {
+			params.setCurrentPage(1);
+		}
+		if (params.getItemsPerPage() == null || params.getItemsPerPage() < 1) {
+			params.setItemsPerPage(getDefaultsItemsPerPage());
+		}
+		query.setMaxResults(params.getItemsPerPage());
+		query.setFirstResult(params.getItemsPerPage() * (params.getCurrentPage() - 1));
+	}
+
+}
