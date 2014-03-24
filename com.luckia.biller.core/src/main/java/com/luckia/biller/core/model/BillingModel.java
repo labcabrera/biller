@@ -16,14 +16,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.luckia.biller.core.jpa.Mergeable;
-import com.luckia.biller.core.serialization.NotSerializable;
 
 /**
  * Entidad que establece la parametrización con la que se van a generar tanto facturas como liquidaciones.
@@ -95,6 +94,7 @@ public class BillingModel implements Serializable, Mergeable<BillingModel> {
 	private BigDecimal satMonthlyFees;
 
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "model")
+	@OrderBy("amount")
 	private List<Rappel> rappel;
 
 	public Long getId() {
@@ -183,6 +183,14 @@ public class BillingModel implements Serializable, Mergeable<BillingModel> {
 
 	public void setSatMonthlyFees(BigDecimal satMonthlyFees) {
 		this.satMonthlyFees = satMonthlyFees;
+	}
+
+	public List<Rappel> getRappel() {
+		return rappel;
+	}
+
+	public void setRappel(List<Rappel> rappel) {
+		this.rappel = rappel;
 	}
 
 	@Override

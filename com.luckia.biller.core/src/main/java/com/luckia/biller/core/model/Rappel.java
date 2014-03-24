@@ -33,6 +33,15 @@ public class Rappel {
 	@Column(name = "BONUS_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal bonusAmount;
 
+	public Rappel() {
+	}
+
+	public Rappel(BigDecimal amount, BigDecimal bonusPercent, BigDecimal bonusAmount) {
+		this.amount = amount;
+		this.bonusPercent = bonusPercent;
+		this.bonusAmount = bonusAmount;
+	}
+
 	public Long getId() {
 		return id;
 	}
