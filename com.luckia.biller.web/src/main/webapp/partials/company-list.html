@@ -10,6 +10,7 @@
 			<li class="list-group-item" ng-repeat="company in results.results">
 				<div>
 					<a href="#/companies/id/{{company.id}}">{{company.name}}</a>
+					<span class="pull-right">{{company.address.province.name}}</span>
 				</div>
 			</li>
 		</ul>
