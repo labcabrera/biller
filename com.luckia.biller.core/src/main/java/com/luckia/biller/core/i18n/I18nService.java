@@ -25,7 +25,7 @@ public class I18nService {
 
 	public I18nService() {
 		Locale locale = new Locale("es", "ES");
-		messages = ResourceBundle.getBundle("com.luckia.biller.core.i18n.messages", locale);
+		messages = ResourceBundle.getBundle("luckia-messages", locale);
 	}
 
 	public String getMessage(String key) {
