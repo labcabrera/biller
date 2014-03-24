@@ -47,6 +47,7 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MasterWorkbookProcessor.class);
 	private static final String COST_CENTER_NAME = "Central de pagos (ccc EH)";
+	private static final String DATABASE_FILE = "./src/main/resources/bootstrap/hoja-maestra-facturacion.xlsx";
 
 	@Inject
 	protected EntityManagerProvider entityManagerProvider;
@@ -65,7 +66,7 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 	protected List<Store> stores;
 
 	public static void main(String[] args) throws IOException {
-		InputStream in = new FileInputStream("./src/main/resources/hoja-maestra-facturacion.xlsx");
+		InputStream in = new FileInputStream(DATABASE_FILE);
 		Injector injector = Guice.createInjector(new MainModule());
 		MasterWorkbookProcessor processor = injector.getInstance(MasterWorkbookProcessor.class);
 		processor.process(in, true);
