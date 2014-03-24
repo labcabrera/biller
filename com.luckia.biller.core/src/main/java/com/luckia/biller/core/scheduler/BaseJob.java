@@ -45,4 +45,8 @@ public abstract class BaseJob implements Job {
 			throw new RuntimeException();
 		}
 	}
+
+	public void setInjector(Injector value) {
+		this.injector = value;
+	}
 }
