@@ -35,13 +35,13 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope) {
 billerApp.run(function($rootScope, $http) {
 	$rootScope.isReadOnly = true;
 	$rootScope.itemsPerPage = 10;
-	$rootScope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
-	$rootScope.groups = function(name) { return $http.get("/rest/groups/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
-	$rootScope.companies = function(name) { return $http.get("/rest/companies/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
-	$rootScope.stores = function(name) { return $http.get("/rest/stores/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
-	$rootScope.owners = function(name) { return $http.get("/rest/owners/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
-	$rootScope.models = function(name) { return $http.get("/rest/models/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
-	$rootScope.costcenters = function(name) { return $http.get("/rest/costcenters/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
+	$rootScope.provinces = function(name) { return $http.get("rest/provinces/find/" + name).then(function(response) { return response.data; }); };
+	$rootScope.groups = function(name) { return $http.get("rest/groups/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
+	$rootScope.companies = function(name) { return $http.get("rest/companies/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
+	$rootScope.stores = function(name) { return $http.get("rest/stores/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
+	$rootScope.owners = function(name) { return $http.get("rest/owners/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
+	$rootScope.models = function(name) { return $http.get("rest/models/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
+	$rootScope.costcenters = function(name) { return $http.get("rest/costcenters/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
 
 	$rootScope.edit = function() {
 		$rootScope.isReadOnly = false;
