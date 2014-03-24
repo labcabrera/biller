@@ -23,6 +23,7 @@ public class Main {
 		Bootstrap.main(args);
 		MasterWorkbookProcessor.main(args);
 
+		System.out.println("Generando facturacion de enero");
 		Injector injector = Guice.createInjector(new MainModule());
 		BillerJob job = injector.getInstance(BillerJob.class);
 		job.setInjector(injector);
