@@ -38,7 +38,7 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 	// TODO no esta teniendo en cuenta el rapel anual
 	public BillingModel resolveBillingModel(Row row) {
 		BillingModel current = new BillingModel();
-		current.setStakesPercent(parseBigDecimal(row.getCell(13), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+		current.setStakesPercentStore(parseBigDecimal(row.getCell(13), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
 		current.setStakesPercentOperator(parseBigDecimal(row.getCell(14), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
 		current.setGgrPercent(parseBigDecimal(row.getCell(15), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
 		current.setNgrPercent(parseBigDecimal(row.getCell(16), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
@@ -91,7 +91,7 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 			matches &= compare(first.getNgrPercent(), second.getNgrPercent());
 			matches &= compare(first.getNrPercent(), second.getNrPercent());
 			matches &= compare(first.getSatMonthlyFees(), second.getSatMonthlyFees());
-			matches &= compare(first.getStakesPercent(), second.getStakesPercent());
+			matches &= compare(first.getStakesPercentStore(), second.getStakesPercentStore());
 			matches &= compare(first.getStakesPercentOperator(), second.getStakesPercentOperator());
 			return matches ? 0 : 1;
 		}

@@ -8,9 +8,10 @@ package com.luckia.biller.core.model;
 import javax.persistence.Entity;
 
 /**
- * Representa cada uno de los detalles que componen una factura.
+ * Representa cada uno de los detalles que componen una liquidacion a nivel de factura.
  */
 @Entity
 @SuppressWarnings("serial")
-public class BillDetail extends AbstractBillDetail {
+public class LiquidationDetail extends AbstractBillDetail {
+
 }

@@ -31,15 +31,15 @@
 			<form role="form">
 				<div class="form-group">
 					<label>C&oacute;digo</label>
-					<input type="text" class="form-control input-sm" ng-model="searchCode" placeholder="C&oacute;digo" />
+					<input type="text" class="form-control input-sm" ng-model="searchCode" />
 				</div>
 				<div class="form-group">
 					<label>Establecimiento</label>
-					<input type="text" class="form-control input-sm" typeahead="store as store.name for store in stores($viewValue)" ng-model="searchStore" placeholder="Establecimiento" />
+					<input type="text" class="form-control input-sm" typeahead="store as store.name for store in stores($viewValue)" ng-model="searchStore" />
 				</div>
 				<div class="form-group">
 					<label>Empresa</label>
-					<input type="text" class="form-control input-sm" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchCompany" placeholder="Empresa" />
+					<input type="text" class="form-control input-sm" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchCompany" />
 				</div>
 				<div class="form-group">
 					<label>Estado</label>

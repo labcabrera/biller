@@ -61,6 +61,7 @@
 					<li class="active"><a data-target="#detailTab" data-toggle="tab">Detalles</a></li>
 					<li><a data-target="#ownerTab" data-toggle="tab">Titular</a></li>
 					<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
+					<li><a data-target="#liquidationDetailTab" data-toggle="tab">Detalles de liquidacion</a></li>
 				</ul> 				
 				<div class="tab-content">
 				
@@ -180,6 +181,33 @@
 							<textarea class="form-control" rows="5" ng-model="entity.comments" ng-readonly="isReadOnly"></textarea>
 						</div>
 					</div>
+					
+					<!-- Pestaña de detalles de liquidacion -->
+					<div class="tab-pane" id="liquidationDetailTab">
+						<div class="m-top-15">
+							<table class="table">
+								<tr>
+									<th>Concepto</th>
+									<th class="data-amount">Unidades</th>
+									<th class="data-amount">Importe</th>
+									<th></th>
+								</tr>
+								<tr ng-repeat="detail in entity.liquidationDetails">
+									<td>{{detail.name}}</td>
+									<td class="data-amount">{{detail.units}}</td>
+									<td class="data-amount">{{detail.value}}</td>
+									<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+								</tr>
+								<tr>
+									<td><b>Total</b></td>
+									<td></td>
+									<td class="data-amount"><b>{{entity.liquidationAmount}}</b></td>
+									<td></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					
 				</div><!-- tab-content -->
 			</div>
 			<!--

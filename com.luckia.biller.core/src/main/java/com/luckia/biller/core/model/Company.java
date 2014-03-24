@@ -40,4 +40,15 @@ public class Company extends LegalEntity {
 	public void setBillingModel(BillingModel billingModel) {
 		this.billingModel = billingModel;
 	}
+
+	@Override
+	public void merge(LegalEntity entity) {
+		if (entity != null) {
+			super.merge(entity);
+			if (Company.class.isAssignableFrom(entity.getClass())) {
+				Company company = (Company) entity;
+				this.autoConfirm = company.autoConfirm;
+			}
+		}
+	}
 }

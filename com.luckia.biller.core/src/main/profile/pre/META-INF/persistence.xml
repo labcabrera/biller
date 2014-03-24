@@ -39,14 +39,6 @@
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/biller?characterEncoding=utf8&amp;useUnicode=true" />
 			<property name="javax.persistence.jdbc.user" value="root" />
 			<property name="javax.persistence.jdbc.password" value="MuagEabr" />
-			<!--
-			<property name="javax.persistence.jdbc.password" value="root" />
-			-->
-
-			<!--
-			<property name="eclipselink.jdbc.batch-writing" value="JDBC" />
-			<property name="eclipselink.jdbc.batch-writing.size" value="1000" />
-			-->
 
 			<!-- EclipseLink should create the database schema automatically -->
 			<!--
@@ -68,9 +60,9 @@
 		<class>com.luckia.biller.core.model.lis.LisTerminalRecord</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.151.200:13306/lis_ht" />
-			<property name="javax.persistence.jdbc.user" value="watcher_ht" />
-			<property name="javax.persistence.jdbc.password" value="SafCohaf752" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.152.10:3306/lis_ht" />
+			<property name="javax.persistence.jdbc.user" value="watcher_factu" />
+			<property name="javax.persistence.jdbc.password" value="V4s86u82163r" />
 			<property name="eclipselink.connection-pool.min" value="10" />
 			<property name="eclipselink.connection-pool.max" value="10" />
 		</properties>

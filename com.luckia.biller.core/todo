@@ -37,7 +37,6 @@ nombre
 direccion
 
 
-
 modelo rappel:
  - añadir al modelo del establecimiento la fecha de inicio de operaciones para poder ver si se genera el rappel
  - definir el modo en el que se va a lanzar (o bien a una fecha dada de forma anual, o bien periodicamente a los X meses)

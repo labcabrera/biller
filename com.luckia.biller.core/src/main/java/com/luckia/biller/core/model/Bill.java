@@ -41,6 +41,9 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	@OneToMany(cascade = CascadeType.DETACH, mappedBy = "bill")
 	private List<BillDetail> details;
 
+	@OneToMany(cascade = CascadeType.DETACH, mappedBy = "bill")
+	private List<LiquidationDetail> liquidationDetails;
+
 	@Column(name = "NET_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal netAmount;
 
@@ -49,6 +52,9 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	@Column(name = "VAT_PERCENT", precision = 18, scale = 2)
 	private BigDecimal vatPercent;
+
+	@Column(name = "LIQUIDATION_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal liquidationAmount;
 
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "LIQUIDATION_ID")
@@ -92,6 +98,22 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	public void setLiquidation(Liquidation liquidation) {
 		this.liquidation = liquidation;
+	}
+
+	public List<LiquidationDetail> getLiquidationDetails() {
+		return liquidationDetails;
+	}
+
+	public void setLiquidationDetails(List<LiquidationDetail> liquidationDetails) {
+		this.liquidationDetails = liquidationDetails;
+	}
+
+	public BigDecimal getLiquidationAmount() {
+		return liquidationAmount;
+	}
+
+	public void setLiquidationAmount(BigDecimal liquidationAmount) {
+		this.liquidationAmount = liquidationAmount;
 	}
 
 	@Override

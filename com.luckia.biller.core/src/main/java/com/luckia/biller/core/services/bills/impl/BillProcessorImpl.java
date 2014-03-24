@@ -24,6 +24,7 @@ import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillState;
+import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.SettingsService;
@@ -119,6 +120,13 @@ public class BillProcessorImpl implements BillProcessor {
 		bill.setAmount(amount);
 		bill.setVatPercent(vatPercent);
 		bill.setVatAmount(vatAmount);
+
+		BigDecimal liquidationAmount = BigDecimal.ZERO;
+		for (LiquidationDetail detail : bill.getLiquidationDetails()) {
+			liquidationAmount = liquidationAmount.add(detail.getValue());
+		}
+		bill.setLiquidationAmount(liquidationAmount);
+
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.getTransaction().begin();
 		entityManager.merge(bill);

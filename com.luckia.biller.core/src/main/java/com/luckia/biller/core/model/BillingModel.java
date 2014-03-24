@@ -63,7 +63,7 @@ public class BillingModel implements Serializable, Mergeable<BillingModel> {
 	 * Importe apostado
 	 */
 	@Column(name = "STAKES_PERCENT", precision = 18, scale = 2)
-	private BigDecimal stakesPercent;
+	private BigDecimal stakesPercentStore;
 
 	@Column(name = "STAKES_PERCENT_OPERATOR", precision = 18, scale = 2)
 	private BigDecimal stakesPercentOperator;
@@ -137,12 +137,12 @@ public class BillingModel implements Serializable, Mergeable<BillingModel> {
 		this.ggrPercent = ggrPercent;
 	}
 
-	public BigDecimal getStakesPercent() {
-		return stakesPercent;
+	public BigDecimal getStakesPercentStore() {
+		return stakesPercentStore;
 	}
 
-	public void setStakesPercent(BigDecimal stakesPercent) {
-		this.stakesPercent = stakesPercent;
+	public void setStakesPercentStore(BigDecimal value) {
+		this.stakesPercentStore = value;
 	}
 
 	public BigDecimal getStakesPercentOperator() {
@@ -179,14 +179,16 @@ public class BillingModel implements Serializable, Mergeable<BillingModel> {
 
 	@Override
 	public void merge(BillingModel entity) {
-		commercialMonthlyFees = entity.getCommercialMonthlyFees();
-		coOperatingMonthlyFees = entity.getCoOperatingMonthlyFees();
-		ggrPercent = entity.getGgrPercent();
-		name = entity.getName();
-		ngrPercent = entity.getNgrPercent();
-		nrPercent = entity.getNrPercent();
-		satMonthlyFees = entity.getSatMonthlyFees();
-		stakesPercent = entity.getStakesPercent();
-		stakesPercentOperator = entity.getStakesPercentOperator();
+		if (entity != null) {
+			this.commercialMonthlyFees = entity.commercialMonthlyFees;
+			this.coOperatingMonthlyFees = entity.coOperatingMonthlyFees;
+			this.ggrPercent = entity.ggrPercent;
+			this.name = entity.name;
+			this.ngrPercent = entity.ngrPercent;
+			this.nrPercent = entity.nrPercent;
+			this.satMonthlyFees = entity.satMonthlyFees;
+			this.stakesPercentStore = entity.stakesPercentStore;
+			this.stakesPercentOperator = entity.stakesPercentOperator;
+		}
 	}
 }

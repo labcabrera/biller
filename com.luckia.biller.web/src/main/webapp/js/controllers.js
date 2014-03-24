@@ -146,7 +146,7 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 
 billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
 	$scope.isReadOnly = false;
-	$scope.reset = function() { alert('reset!'); };
+	$scope.reset = function() { };
 	$scope.update = function() {
 		$http.post('rest/companies/merge/', $scope.entity).success(function(data) {
 			if(data.code == 200) {

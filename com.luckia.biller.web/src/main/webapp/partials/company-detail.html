@@ -14,18 +14,18 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Nombre</label>
 					<div class="col-sm-4">
-						<input type='text' class="form-control input-sm" ng-model="entity.name" ng-readonly="isReadOnly" placeholder="Nombre" />
+						<input type='text' class="form-control input-sm" ng-model="entity.name" ng-readonly="isReadOnly" />
 					</div>
 					<label class="col-sm-2 control-label input-sm">CIF</label>
 					<div class="col-sm-4">
-						<input type='text' class="form-control input-sm" ng-model="entity.idCard.number" ng-readonly="isReadOnly" placeholder="CIF" />
+						<input type='text' class="form-control input-sm" ng-model="entity.idCard.number" ng-readonly="isReadOnly" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Grupo</label>
 					<div class="col-sm-4">
 						<div class="input-group">
-							<input type="text" class="form-control input-sm" ng-model="entity.parent"  ng-readonly="isReadOnly" typeahead="group as group.name for group in groups($viewValue)" typeahead-editable="false" placeholder="Grupo" />
+							<input type="text" class="form-control input-sm" ng-model="entity.parent"  ng-readonly="isReadOnly" typeahead="group as group.name for group in groups($viewValue)" typeahead-editable="false" />
 							<span  class="input-group-addon input-sm">
 								<a ng-if="entity.parent != null" href="#/groups/id/{{entity.parent.id}}"><span class="glyphicon glyphicon-search"></span></a>
 								<span ng-if="entity.parent == null" class="glyphicon glyphicon-search"></span>
@@ -36,37 +36,37 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Provincia</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly" placeholder="Provincia" />
+						<input type="text" class="form-control input-sm" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly" />
 					</div>
 					<label class="col-sm-2 control-label input-sm">Municipio</label>
 					<div class="col-sm-4">
-						<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue)" ng-readonly="isReadOnly" placeholder="Municipio" />
+						<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue)" ng-readonly="isReadOnly" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Direcci&oacute;n</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.address.road" ng-readonly="isReadOnly" placeholder="Direcci&oacute;n" />
+						<input type="text" class="form-control input-sm" ng-model="entity.address.road" ng-readonly="isReadOnly" />
 					</div>
 					<label class="col-sm-2 control-label input-sm">N&uacute;mero</label>
 					<div class="col-sm-4">
-						<input type='text' class="form-control input-sm" ng-model="entity.address.number" ng-readonly="isReadOnly" placeholder="N&uacte;mero" />
+						<input type='text' class="form-control input-sm" ng-model="entity.address.number" ng-readonly="isReadOnly" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">C&oacute;digo postal</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.address.zipCode" ng-readonly="isReadOnly" placeholder="C&oacute;digo postal" />
+						<input type="text" class="form-control input-sm" ng-model="entity.address.zipCode" ng-readonly="isReadOnly" />
 					</div>				
 					<label class="col-sm-2 control-label input-sm">N&uacute;m. Teléfono</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.phoneNumber" ng-readonly="isReadOnly" placeholder="Teléfono" />
+						<input type="text" class="form-control input-sm" ng-model="entity.phoneNumber" ng-readonly="isReadOnly" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Email</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.email"  ng-readonly="isReadOnly" placeholder="email" />
+						<input type="text" class="form-control input-sm" ng-model="entity.email"  ng-readonly="isReadOnly" />
 					</div>
 					<div class="col-sm-4 col-sm-offset-2">
 						<div class="checkbox">
@@ -94,11 +94,10 @@
 								<a href="#" class="pull-right" title="Eliminar empresa del grupo"><span class="glyphicon glyphicon-trash"></span></a>
 							</li>
 						</ul>
-						<pagination
-							total-items="childs.totalItems" page="childs.currentPage"
+						<pagination ng-if="entity != null && entity.id > 0" total-items="childs.totalItems" page="childs.currentPage"
 							items-per-page="childs.itemsPerPage" on-select-page="setPage(page)" max-size="10"
 							boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&uacte;ltimo"></pagination>
-						<div class="m-top-15">
+						<div class="m-top-15" ng-if="entity != null && entity.id > 0">
 							<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addStoreModal">Añadir establecimiento</button>
 						</div>
 					</div>

@@ -192,7 +192,7 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 				}
 				store.setComments(comments.toString());
 				store.setTerminalRelations(new ArrayList<TerminalRelation>());
-				appendStoreTerminals(store, readCellAsString(row.getCell(3)), true, store.getTerminalRelations());
+				appendStoreTerminals(store, readCellAsString(row.getCell(3)).replaceAll(",", ""), true, store.getTerminalRelations());
 				appendStoreTerminals(store, readCellAsString(row.getCell(4)), false, store.getTerminalRelations());
 				store.setBillingModel(billingModelResolver.resolveBillingModel(row));
 				stores.add(store);

@@ -21,11 +21,18 @@ import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillingModel;
+import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 
 /**
- * Servicio encargado de crear los detalles de una factura a partir de los datos obtenidos a traves de {@link BillDataProvider}
+ * Servicio encargado de crear los detalles de una factura a partir de los datos obtenidos a traves de {@link BillDataProvider}. Esto genera
+ * dos listas de conceptos:
+ * <ul>
+ * <li>Conceptos de facturacion: en principio solo se facturara a los bares por un porcentaje de las ventas</li>
+ * <li>Conceptos de liquidacion: en este punto se generan los conceptos a partir de los cuales se realizara la liquidacion conjunta.</li>
+ * <li></li>
+ * </ul>
  */
 public class BillDetailProcessor {
 
@@ -46,43 +53,70 @@ public class BillDetailProcessor {
 			LOG.info("No se puede generar la factura de {}. No tiene terminales asociados.", store.getName());
 		} else {
 			Range<Date> range = Range.between(bill.getDateFrom(), bill.getDateTo());
-			processPercentConcepts(bill, model, range, terminals);
-			processFixedConcepts(bill, model, range, terminals);
+			Map<BillConcept, BigDecimal> billingData = billingDataProvider.retreive(bill, range, terminals);
+
+			// Calculamos los conceptos de la facturacion
+			if (MathUtils.isNotZero(model.getStakesPercentStore())) {
+				BigDecimal percent = model.getStakesPercentStore();
+				BigDecimal stakes = billingData.get(BillConcept.Stakes);
+				BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+				addBillingConcept(bill, BillConcept.Stakes, value, stakes, percent);
+			}
+
+			// Calculamos los conceptos de la liquidacion definidos a nivel de los porcentajes de las variables del terminal:
+			Map<BillConcept, BigDecimal> percentConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
+			percentConcepts.put(BillConcept.NGR, model.getNgrPercent());
+			percentConcepts.put(BillConcept.GGR, model.getGgrPercent());
+			percentConcepts.put(BillConcept.NR, model.getNrPercent());
+			percentConcepts.put(BillConcept.Stakes, model.getStakesPercentOperator());
+			for (BillConcept concept : percentConcepts.keySet()) {
+				BigDecimal percent = percentConcepts.get(concept);
+				if (MathUtils.isNotZero(percent)) {
+					addLiquidationConcept(bill, concept, percent, billingData);
+				}
+			}
+
+			// Calculamos los conceptos fijos
+			processLiquidationFixedConcepts(bill, model, range, terminals);
 		}
 	}
 
-	private void processPercentConcepts(Bill bill, BillingModel model, Range<Date> range, List<String> terminals) {
-		Map<BillConcept, BigDecimal> percentConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
-		Map<BillConcept, BigDecimal> billingData = billingDataProvider.retreive(bill, range, terminals);
-		percentConcepts.put(BillConcept.NGR, model.getNgrPercent());
-		percentConcepts.put(BillConcept.GGR, model.getGgrPercent());
-		percentConcepts.put(BillConcept.NR, model.getNrPercent());
-		percentConcepts.put(BillConcept.Stakes, model.getStakesPercent());
-		for (BillConcept concept : percentConcepts.keySet()) {
-			BigDecimal percent = percentConcepts.get(concept);
-			if (MathUtils.isNotZeroPositive(percent)) {
-				addConcept(bill, concept, percent, billingData);
+	private void processLiquidationFixedConcepts(Bill bill, BillingModel model, Range<Date> range, List<String> terminals) {
+		boolean check = false;
+		if (check) {
+			Map<BillConcept, BigDecimal> fixedConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
+			fixedConcepts.put(BillConcept.CommercialMonthlyFees, model.getCommercialMonthlyFees());
+			fixedConcepts.put(BillConcept.SatMonthlyFees, model.getSatMonthlyFees());
+			for (BillConcept concept : fixedConcepts.keySet()) {
+				BigDecimal value = fixedConcepts.get(concept);
+				if (MathUtils.isNotZeroPositive(value)) {
+					addLiquidationFixedConcept(bill, concept, value);
+				}
 			}
 		}
 	}
 
-	private void processFixedConcepts(Bill bill, BillingModel model, Range<Date> range, List<String> terminals) {
-		Map<BillConcept, BigDecimal> fixedConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
-		fixedConcepts.put(BillConcept.CommercialMonthlyFees, model.getCommercialMonthlyFees());
-		fixedConcepts.put(BillConcept.SatMonthlyFees, model.getSatMonthlyFees());
-		for (BillConcept concept : fixedConcepts.keySet()) {
-			BigDecimal value = fixedConcepts.get(concept);
-			if (MathUtils.isNotZeroPositive(value)) {
-				addFixedConcept(bill, concept, value);
-			}
+	private void addBillingConcept(Bill bill, BillConcept concept, BigDecimal value, BigDecimal total, BigDecimal percent) {
+		BillDetail detail = new BillDetail();
+		detail.setId(UUID.randomUUID().toString());
+		detail.setConcept(concept);
+		detail.setValue(value);
+		detail.setBill(bill);
+		detail.setBaseValue(total);
+		detail.setPercent(percent);
+		detail.setUnits(BigDecimal.ONE);
+		detail.setName(billDetailNameProvider.getName(detail));
+		if (bill.getDetails() == null) {
+			bill.setDetails(new ArrayList<BillDetail>());
 		}
+		bill.getDetails().add(detail);
 	}
 
-	private void addConcept(Bill bill, BillConcept concept, BigDecimal percent, Map<BillConcept, BigDecimal> billingData) {
+	private void addLiquidationConcept(Bill bill, BillConcept concept, BigDecimal percent, Map<BillConcept, BigDecimal> billingData) {
 		BigDecimal total = billingData.get(concept);
-		if (MathUtils.isNotZeroPositive(total)) {
+		if (MathUtils.isNotZero(total)) {
 			BigDecimal value = total.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
-			BillDetail detail = new BillDetail();
+			LiquidationDetail detail = new LiquidationDetail();
 			detail.setId(UUID.randomUUID().toString());
 			detail.setConcept(concept);
 			detail.setValue(value);
@@ -91,19 +125,25 @@ public class BillDetailProcessor {
 			detail.setPercent(percent);
 			detail.setUnits(BigDecimal.ONE);
 			detail.setName(billDetailNameProvider.getName(detail));
-			bill.getDetails().add(detail);
+			if (bill.getLiquidationDetails() == null) {
+				bill.setLiquidationDetails(new ArrayList<LiquidationDetail>());
+			}
+			bill.getLiquidationDetails().add(detail);
 		}
 	}
 
-	private void addFixedConcept(Bill bill, BillConcept concept, BigDecimal value) {
-		BillDetail detail = new BillDetail();
+	private void addLiquidationFixedConcept(Bill bill, BillConcept concept, BigDecimal value) {
+		LiquidationDetail detail = new LiquidationDetail();
 		detail.setId(UUID.randomUUID().toString());
 		detail.setConcept(concept);
 		detail.setValue(value);
 		detail.setBill(bill);
 		detail.setUnits(BigDecimal.ONE);
 		detail.setName(i18nService.getMessage("bill.concept.name." + concept.name()));
-		bill.getDetails().add(detail);
+		if (bill.getLiquidationDetails() == null) {
+			bill.setLiquidationDetails(new ArrayList<LiquidationDetail>());
+		}
+		bill.getLiquidationDetails().add(detail);
 	}
 
 	private List<String> resolveTerminals(Store store) {

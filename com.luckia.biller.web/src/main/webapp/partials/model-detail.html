@@ -16,18 +16,18 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Ventas</label>
+					<label class="col-sm-2 control-label input-sm">Ventas (local)</label>
 					<div class="col-sm-3">
 						<div class="input-group">
-							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.stakesPercent" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre las ventas" popover-trigger="mouseenter" />
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.stakesPercentStore" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre las ventas" popover-trigger="mouseenter" />
 							<span class="input-group-addon">%</span>
 						</div>
 					</div>
-					<label class="col-sm-3 control-label input-sm">Attenci&oacute;n comercial</label>
+					<label class="col-sm-3 control-label input-sm">Ventas (operador)</label>
 					<div class="col-sm-3">
 						<div class="input-group">
-							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.commercialMonthlyFees" ng-readonly="isReadOnly" popover="Honorarios mensuales de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
-							<span class="input-group-addon">€</span>
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.stakesPercentOperator" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre las ventas" popover-trigger="mouseenter" />
+							<span class="input-group-addon">%</span>
 						</div>
 					</div>
 				</div>
@@ -55,13 +55,12 @@
 							<span class="input-group-addon">%</span>
 						</div>
 					</div>
-					<label class="col-sm-3 control-label input-sm">Gastos de co-explotaci&oacute;n</label>
+					<label class="col-sm-3 control-label input-sm">Attenci&oacute;n comercial</label>
 					<div class="col-sm-3">
 						<div class="input-group">
-							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.coOperatingMonthlyFees" ng-readonly="isReadOnly" popover="Gastos mensuales de co-explotaci&oacute;n. Este valor se utiliza como gastos operativos para calcular el NR" popover-trigger="mouseenter"/>
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.commercialMonthlyFees" ng-readonly="isReadOnly" popover="Honorarios mensuales de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
 							<span class="input-group-addon">€</span>
 						</div>
-						<span style="display:none" class="help-block">Importe mensual</span>
 					</div>
 				</div>
 				<div class="form-group">
@@ -72,6 +71,14 @@
 							<span class="input-group-addon">%</span>
 						</div>
 					</div> 
+					<label class="col-sm-3 control-label input-sm">Gastos de co-explotaci&oacute;n</label>
+					<div class="col-sm-3">
+						<div class="input-group">
+							<input type='text' class="form-control input-sm numeric-field" ng-model="entity.coOperatingMonthlyFees" ng-readonly="isReadOnly" popover="Gastos mensuales de co-explotaci&oacute;n. Este valor se utiliza como gastos operativos para calcular el NR" popover-trigger="mouseenter"/>
+							<span class="input-group-addon">€</span>
+						</div>
+						<span style="display:none" class="help-block">Importe mensual</span>
+					</div>
 				</div>
 			</form>
 		</div>
