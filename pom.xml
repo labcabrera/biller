@@ -30,7 +30,7 @@
 	<modules>
 		<module>com.luckia.biller.core</module>
 		<module>com.luckia.biller.web</module>
-		<module>com.luckia.biller.deploy</module>
+		<!--module>com.luckia.biller.deploy</module -->
 	</modules>
 
 	<repositories>

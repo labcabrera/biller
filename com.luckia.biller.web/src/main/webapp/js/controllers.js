@@ -242,6 +242,10 @@ billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$rout
 	};
 	$scope.load();
 } ]);
+
+billerControllers.controller('OwnerNewCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+	
+}]);
 /* ----------------------------------------------------------------------------
  * CENTROS DE COSTE
  * ----------------------------------------------------------------------------
