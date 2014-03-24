@@ -25,13 +25,13 @@
 				<h4>Filtrar resultados</h4>
 				<form role="form">
 					<div class="form-group">
-						<label>C&oacute;digo</label> <input type="text" class="form-control input-sm" ng-model="searchCode" placeholder="C&oacute;digo" />
+						<label>C&oacute;digo</label> <input type="text" class="form-control input-sm" ng-model="searchCode" />
 					</div>
 					<div class="form-group">
-						<label>Centro de coste</label> <input type="text" class="form-control input-sm" typeahead="center as center.name for center in costcenters($viewValue)" ng-model="searchStore" placeholder="Establecimiento" />
+						<label>Centro de coste</label> <input type="text" class="form-control input-sm" typeahead="center as center.name for center in costcenters($viewValue)" ng-model="searchStore" />
 					</div>
 					<div class="form-group">
-						<label>Empresa</label> <input type="text" class="form-control input-sm" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchCompany" placeholder="Empresa" />
+						<label>Empresa</label> <input type="text" class="form-control input-sm" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchCompany" />
 					</div>
 					<div class="form-group">
 						<label>Estado</label> <select class="form-control input-sm" ng-model="searchState">

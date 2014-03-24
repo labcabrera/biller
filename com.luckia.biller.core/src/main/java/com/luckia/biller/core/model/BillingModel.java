@@ -7,18 +7,23 @@ package com.luckia.biller.core.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.luckia.biller.core.jpa.Mergeable;
+import com.luckia.biller.core.serialization.NotSerializable;
 
 /**
  * Entidad que establece la parametrización con la que se van a generar tanto facturas como liquidaciones.
@@ -88,6 +93,9 @@ public class BillingModel implements Serializable, Mergeable<BillingModel> {
 	 */
 	@Column(name = "SAT_MONTLY_FEES", precision = 18, scale = 2)
 	private BigDecimal satMonthlyFees;
+
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "model")
+	private List<Rappel> rappel;
 
 	public Long getId() {
 		return id;

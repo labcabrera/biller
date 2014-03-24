@@ -5,6 +5,7 @@
  ******************************************************************************/
 package com.luckia.biller.core.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -60,6 +61,8 @@ public class Store extends LegalEntity {
 	@Column(name = "AUTO_CONFIRM")
 	private Boolean autoConfirm;
 
+	private BigDecimal rappelProrataPercent;
+
 	/**
 	 * Posibilidades: usar un oneToOne, usar un ManyToOne y dejarlo a null cuando tenga la facturacion por defecto o cualquier otra
 	 * alternativa
@@ -114,6 +117,30 @@ public class Store extends LegalEntity {
 
 	public void setCostCenter(CostCenter costCenter) {
 		this.costCenter = costCenter;
+	}
+
+	public String getBillSequencePrefix() {
+		return billSequencePrefix;
+	}
+
+	public void setBillSequencePrefix(String billSequencePrefix) {
+		this.billSequencePrefix = billSequencePrefix;
+	}
+
+	public Boolean getAutoConfirm() {
+		return autoConfirm;
+	}
+
+	public void setAutoConfirm(Boolean autoConfirm) {
+		this.autoConfirm = autoConfirm;
+	}
+
+	public BigDecimal getRappelProrataPercent() {
+		return rappelProrataPercent;
+	}
+
+	public void setRappelProrataPercent(BigDecimal rappelProrataPercent) {
+		this.rappelProrataPercent = rappelProrataPercent;
 	}
 
 	@Override

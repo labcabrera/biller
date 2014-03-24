@@ -71,7 +71,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 
 			BigDecimal totalAmount = BigDecimal.ZERO;
 			for (Bill bill : billList) {
-				totalAmount = totalAmount.add(bill.getAmount());
+				totalAmount = totalAmount.add(bill.getLiquidationAmount());
 				bill.setLiquidation(liquidation);
 				entityManager.merge(bill);
 			}

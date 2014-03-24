@@ -104,6 +104,7 @@
 								<div class="btn-toolbar m-top-40" role="toolbar">
 									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-primary'>Añadir concepto</button>
 									<button ng-click="cancel()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-primary'>Anular</button>
+									<button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'BillConfirmed'" class='btn btn-sm btn-primary'>Rectificar</button>
 									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" href="/rest/bills/draft/{{entity.id}}" role="button">Consultar borrador</a> <a
 										class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'BillDraft' && entity.currentState.stateDefinition.id != 'BillCancelled'"
 										href="/rest/binary/download/{{entity.pdfFile.id}}" role="button">Descargar</a>
