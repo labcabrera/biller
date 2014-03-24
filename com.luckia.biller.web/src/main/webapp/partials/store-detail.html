@@ -48,8 +48,8 @@
 					<div class="col-sm-4">
 						<select class="form-control input-sm" ng-model="entity.type" ng-readonly="isReadOnly">
 							<option value="Bar">Bar</option>
-							<option value="BingoCorner">Córner en Bingo</option>
-							<option value="CasinoCorner">Córner en Casino</option>
+							<option value="BingoCorner">C&oacute;rner en Bingo</option>
+							<option value="CasinoCorner">C&oacute;rner en Casino</option>
 							<option value="SpecificStore">Tienda específica</option>
 							<option value="CasaDeApuestas">Casa de apuestas</option>
 						</select>
@@ -66,11 +66,11 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Dirección</label>
+					<label class="col-sm-2 control-label input-sm">Direcci&oacute;n</label>
 					<div class="col-sm-4">
 						<input type="text" class="form-control input-sm" ng-model="entity.address.road" ng-readonly="isReadOnly"  />
 					</div>
-					<label class="col-sm-1 control-label input-sm">Número</label>
+					<label class="col-sm-1 control-label input-sm">N&uacte;mero</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control input-sm" ng-model="entity.address.number" ng-readonly="isReadOnly"  />
 					</div>
@@ -88,7 +88,7 @@
 				<div class="form-group">
 					<div class="col-sm-4 col-sm-offset-2">
 						<div class="checkbox">
-							<label><input type="checkbox" ng-model="entity.autoConfirm" ng-readonly=isReadOnly> Facturación automática</label>
+							<label><input type="checkbox" ng-model="entity.autoConfirm" ng-readonly=isReadOnly> Facturaci&oacute;n automática</label>
 						</div>
 					</div>
 				</div>
@@ -99,7 +99,7 @@
 			<ul class="nav nav-tabs">
 				<li class="active"><a data-target="#ownerTab" data-toggle="tab">Titular</a></li>
 				<li><a data-target="#terminalTab" data-toggle="tab">Terminales</a></li>
-				<li><a data-target="#billingModelTab" data-toggle="tab">Modelo de facturación</a></li>
+				<li><a data-target="#billingModelTab" data-toggle="tab">Modelo de facturaci&oacute;n</a></li>
 				<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
 				<li><a data-target="#profileTab" data-toggle="tab">Datos de contacto</a></li>
 				<li><a data-target="#ispInfoTab" data-toggle="tab">ADSL</a></li>
@@ -144,17 +144,17 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label input-sm">Dirección</label>
+								<label class="col-sm-2 control-label input-sm">Direcci&oacute;n</label>
 								<div class="col-sm-4">
 									<input type='text' class="form-control input-sm" ng-model="entity.owner.address.road" ng-readonly="true"  />
 								</div>
-								<label class="col-sm-1 control-label input-sm">Número</label>
+								<label class="col-sm-1 control-label input-sm">N&uacte;mero</label>
 								<div class="col-sm-4">
 									<input type='text' class="form-control input-sm" ng-model="entity.owner.address.number" ng-readonly="true"  />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label input-sm">Código postal</label>
+								<label class="col-sm-2 control-label input-sm">C&oacute;digo postal</label>
 								<div class="col-sm-4">
 									<input type='text' class="form-control input-sm" ng-model="entity.owner.address.zipCode" ng-readonly="true"  />
 								</div>
@@ -163,7 +163,7 @@
 					</div>
 				</div>
 				
-				<!-- Pestaña del modelo de facturación -->
+				<!-- Pestaña del modelo de facturacion -->
 				<div class="tab-pane" id="billingModelTab">
 					<div class="m-top-15">
 						<form class="form-horizontal" role="form">
@@ -171,7 +171,7 @@
 								<label class="col-sm-2 control-label input-sm">Nombre</label>
 								<div class="col-sm-9">
 									<div class="input-group">
-										<input type='text' class="form-control input-sm" ng-model="entity.billingModel" placeholder="Modelo de facturación" typeahead="model as model.name for model in models($viewValue)" ng-readonly="isReadOnly" />
+										<input type='text' class="form-control input-sm" ng-model="entity.billingModel" placeholder="Modelo de facturaci&oacute;n" typeahead="model as model.name for model in models($viewValue)" ng-readonly="isReadOnly" />
 										<span  class="input-group-addon input-sm">
 											<a ng-if="entity.billingModel != null" href="#/models/id/{{entity.billingModel.id}}"><span class="glyphicon glyphicon-search"></span></a>
 											<span ng-if="entity.billingModel == null" class="glyphicon glyphicon-search"></span>
@@ -187,10 +187,10 @@
 										<span class="input-group-addon">%</span>
 									</div>
 								</div>
-								<label class="col-sm-3 control-label input-sm">Attención comercial</label>
+								<label class="col-sm-3 control-label input-sm">Atenci&oacute;n comercial</label>
 								<div class="col-sm-3">
 									<div class="input-group">
-										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.commercialMonthlyFees" ng-readonly="true" popover="Honorarios mensuales de atención al cliente" popover-trigger="mouseenter" />
+										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.commercialMonthlyFees" ng-readonly="true" popover="Honorarios mensuales de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
 										<span class="input-group-addon">€</span>
 									</div>
 								</div>
@@ -203,10 +203,10 @@
 										<span class="input-group-addon">%</span>
 									</div>
 								</div>
-								<label class="col-sm-3 control-label input-sm">Servicio de atención al cliente</label>
+								<label class="col-sm-3 control-label input-sm">Servicio de atenci&oacute;n al cliente</label>
 								<div class="col-sm-3">
 									<div class="input-group">
-										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.satMonthlyFees" ng-readonly="true" popover="Importe mensual del servicio de atención al cliente" popover-trigger="mouseenter" />
+										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.satMonthlyFees" ng-readonly="true" popover="Importe mensual del servicio de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
 										<span class="input-group-addon">€</span>
 									</div>
 								</div>
@@ -219,10 +219,10 @@
 										<span class="input-group-addon">%</span>
 									</div>
 								</div>
-								<label class="col-sm-3 control-label input-sm">Gastos de co-explotación</label>
+								<label class="col-sm-3 control-label input-sm">Gastos de co-explotaci&oacute;n</label>
 								<div class="col-sm-3">
 									<div class="input-group">
-										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.coOperatingMonthlyFees" ng-readonly="true" popover="Gastos mensuales de co-explotación" popover-trigger="mouseenter"/>
+										<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.coOperatingMonthlyFees" ng-readonly="true" popover="Gastos mensuales de co-explotaci&oacute;n" popover-trigger="mouseenter"/>
 										<span class="input-group-addon">€</span>
 									</div>
 									<span style="display:none" class="help-block">Importe mensual</span>
@@ -315,7 +315,7 @@
 			</div>
 		</div>
 		<div class="m-top-40">
-			<h4>Facturación</h4>
+			<h4>Facturaci&oacute;n</h4>
 			<ul class="list-unstyled">
 				<li><a href="#/bills?store={{entity.id}}">Ver facturas de este establecimiento</a></li>
 				<li><a href="#/bills?store={{entity.id}}&state=BillDraft">Ver facturas pendientes</a></li>
