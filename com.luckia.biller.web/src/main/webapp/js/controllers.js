@@ -244,8 +244,20 @@ billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$rout
 } ]);
 
 billerControllers.controller('OwnerNewCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
-	
+	$scope.isReadOnly = false;
+	$scope.reset = function() {};
+	$scope.update = function() {
+		$http.post('rest/owners/merge/', $scope.entity).success(function(data) {
+			$scope.displayAlert(data);
+			if(data.code == 200) {
+				$location.path("owners/id/" + data.payload.id);				
+			}
+		});
+	};
+	$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
+	$scope.regions = function(name) { return $http.get("/rest/regions/find/" + name).then(function(response) { return response.data; }); };
 }]);
+
 /* ----------------------------------------------------------------------------
  * CENTROS DE COSTE
  * ----------------------------------------------------------------------------
