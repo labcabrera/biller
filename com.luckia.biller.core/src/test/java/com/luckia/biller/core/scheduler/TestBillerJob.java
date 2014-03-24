@@ -18,8 +18,8 @@ public class TestBillerJob {
 		Injector injector = Guice.createInjector(new MainModule());
 		BillerJob job = injector.getInstance(BillerJob.class);
 		job.injector = injector;
-		Date from = new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate();
-		Date to = new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate();
+		Date from = new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate();
+		Date to = new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate();
 		job.execute(Range.between(from, to), 10);
 	}
 
