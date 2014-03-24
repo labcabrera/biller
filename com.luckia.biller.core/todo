@@ -46,7 +46,10 @@ modelo rappel:
  
  - Mysql
  	10.10.152.21:33306
- 	
+ 	show databases;
+ 	create user 'biller_user'@'%' identified by 'biller_pwd';
+ 	grant all privileges on *.* to 'biller_user'@'%' with grant option;
+ 		
  - Configuración GIT
  	eval 'ssh-agent'
  	ssh-add biller.server

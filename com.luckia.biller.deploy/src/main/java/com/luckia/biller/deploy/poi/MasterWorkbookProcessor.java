@@ -65,7 +65,7 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 	protected List<Store> stores;
 
 	public static void main(String[] args) throws IOException {
-		InputStream in = new FileInputStream("/home/lab/Downloads/luckia/Hoja maestra de facturación_Datos fiscales de terceros.xlsx");
+		InputStream in = new FileInputStream("./src/main/resources/hoja-maestra-facturacion.xlsx");
 		Injector injector = Guice.createInjector(new MainModule());
 		MasterWorkbookProcessor processor = injector.getInstance(MasterWorkbookProcessor.class);
 		processor.process(in, true);
