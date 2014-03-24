@@ -38,11 +38,16 @@ direccion
 
 
 
-
-
-
-
 modelo rappel:
  - añadir al modelo del establecimiento la fecha de inicio de operaciones para poder ver si se genera el rappel
  - definir el modo en el que se va a lanzar (o bien a una fecha dada de forma anual, o bien periodicamente a los X meses)
+ 
+ 
+ 
+ - Mysql
+ 	10.10.152.21:33306
+ 	
+ - Configuración GIT
+ 	eval 'ssh-agent'
+ 	ssh-add biller.server
  
