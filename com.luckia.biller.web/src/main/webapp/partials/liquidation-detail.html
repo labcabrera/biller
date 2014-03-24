@@ -72,6 +72,7 @@
 										<th>Fecha</th>
 										<th>Estado</th>
 										<th class="data-amount">Importe</th>
+										<th class="data-amount">Liquidación</th>
 										<th></th>
 									</tr>
 									<tr ng-repeat="bill in childs.results">
@@ -80,6 +81,7 @@
 										<td>{{bill.billDate.substr(0,10)}}</td>
 										<td>{{bill.currentState.stateDefinition.desc}}</td>
 										<td class="data-amount">{{bill.amount}}</td>
+										<td class="data-amount">{{bill.liquidationAmount}}</td>
 										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
 									</tr>
 									<tr>
@@ -88,6 +90,7 @@
 										<td></td>
 										<td></td>
 										<td class="data-amount"><b>{{entity.amount}}</b></td>
+										<td class="data-amount"><b>[TODO]</b></td>
 										<td></td>
 									</tr>
 								</table>

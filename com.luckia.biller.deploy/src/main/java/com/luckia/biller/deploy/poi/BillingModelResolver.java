@@ -38,8 +38,8 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 	// TODO no esta teniendo en cuenta el rapel anual
 	public BillingModel resolveBillingModel(Row row) {
 		BillingModel current = new BillingModel();
-		current.setStakesPercentStore(parseBigDecimal(row.getCell(13), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
-		current.setStakesPercentOperator(parseBigDecimal(row.getCell(14), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+		current.setStakesPercentStore(parseBigDecimal(row.getCell(13), 4).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+		current.setStakesPercentOperator(parseBigDecimal(row.getCell(14), 4).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
 		current.setGgrPercent(parseBigDecimal(row.getCell(15), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
 		current.setNgrPercent(parseBigDecimal(row.getCell(16), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
 		current.setCoOperatingMonthlyFees(parseBigDecimal(row.getCell(18), 2));

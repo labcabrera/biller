@@ -55,10 +55,11 @@ public class BillDetailProcessor {
 			Range<Date> range = Range.between(bill.getDateFrom(), bill.getDateTo());
 			Map<BillConcept, BigDecimal> billingData = billingDataProvider.retreive(bill, range, terminals);
 
-			// Calculamos los conceptos de la facturacion
+			// Calculamos los conceptos de la facturacion. CUIDADO: los importes que provienen de LIS tienen IVA, de modo que para hacer el
+			// calculo debemos volver a calcular la base
 			if (MathUtils.isNotZero(model.getStakesPercentStore())) {
 				BigDecimal percent = model.getStakesPercentStore();
-				BigDecimal stakes = billingData.get(BillConcept.Stakes);
+				BigDecimal stakes = billingData.get(BillConcept.Stakes).divide(new BigDecimal("1.21"), 2, RoundingMode.HALF_EVEN);
 				BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 				addBillingConcept(bill, BillConcept.Stakes, value, stakes, percent);
 			}
@@ -82,16 +83,13 @@ public class BillDetailProcessor {
 	}
 
 	private void processLiquidationFixedConcepts(Bill bill, BillingModel model, Range<Date> range, List<String> terminals) {
-		boolean check = false;
-		if (check) {
-			Map<BillConcept, BigDecimal> fixedConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
-			fixedConcepts.put(BillConcept.CommercialMonthlyFees, model.getCommercialMonthlyFees());
-			fixedConcepts.put(BillConcept.SatMonthlyFees, model.getSatMonthlyFees());
-			for (BillConcept concept : fixedConcepts.keySet()) {
-				BigDecimal value = fixedConcepts.get(concept);
-				if (MathUtils.isNotZeroPositive(value)) {
-					addLiquidationFixedConcept(bill, concept, value);
-				}
+		Map<BillConcept, BigDecimal> fixedConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
+		fixedConcepts.put(BillConcept.CommercialMonthlyFees, model.getCommercialMonthlyFees());
+		fixedConcepts.put(BillConcept.SatMonthlyFees, model.getSatMonthlyFees());
+		for (BillConcept concept : fixedConcepts.keySet()) {
+			BigDecimal value = fixedConcepts.get(concept);
+			if (MathUtils.isNotZeroPositive(value)) {
+				addLiquidationFixedConcept(bill, concept, value);
 			}
 		}
 	}

@@ -61,10 +61,6 @@ public class LisBillDataProvider implements BillDataProvider {
 				totalWinAmount = totalWinAmount.add(i.getWinAmount());
 				totalCancelledAmount = totalCancelledAmount.add(i.getCancelledAmount());
 			}
-			// TODO los importes vienen con IVA
-			totalBetAmount = totalBetAmount.divide(new BigDecimal("1.21"), 2, RoundingMode.HALF_EVEN);
-			totalWinAmount = totalWinAmount.divide(new BigDecimal("1.21"), 2, RoundingMode.HALF_EVEN);
-			totalCancelledAmount = totalCancelledAmount.divide(new BigDecimal("1.21"), 2, RoundingMode.HALF_EVEN);
 
 			BigDecimal gameFeesPercent = billFeesService.getGameFeesPercent(bill);
 			BigDecimal stakes = totalBetAmount.subtract(totalCancelledAmount);
