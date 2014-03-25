@@ -7,13 +7,18 @@ package com.luckia.biller.core.services.entities;
 
 import java.io.Serializable;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.common.Message;
+import com.luckia.biller.core.services.AuditService;
 
 public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGroup> {
+
+	@Inject
+	private AuditService auditService;
 
 	@Override
 	public Message<CompanyGroup> merge(CompanyGroup entity) {
@@ -34,6 +39,7 @@ public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGro
 		}
 		current.merge(entity);
 		CompanyGroup merged = entityManager.merge(current);
+		auditService.modify(current);
 		entityManager.getTransaction().commit();
 		return new Message<CompanyGroup>(Message.CODE_SUCCESS, isNew ? "Grupo creado" : "Grupo actualizado", merged);
 	}

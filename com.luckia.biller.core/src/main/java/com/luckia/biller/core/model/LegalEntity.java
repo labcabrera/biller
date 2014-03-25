@@ -6,6 +6,7 @@
 package com.luckia.biller.core.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -24,6 +25,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import com.luckia.biller.core.jpa.Mergeable;
@@ -39,7 +42,7 @@ import com.luckia.biller.core.model.validation.ValidLegalEntity;
 @SuppressWarnings("serial")
 @ValidLegalEntity
 @NamedQueries({ @NamedQuery(name = "LegalEntity.selectByName", query = "select e from LegalEntity e where e.name = :name") })
-public class LegalEntity implements Serializable, Mergeable<LegalEntity> {
+public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Auditable {
 
 	@Id
 	@Column(name = "ID")
@@ -72,6 +75,22 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity> {
 	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "COMMENTS", columnDefinition = "BLOB")
 	protected String comments;
+
+	@Column(name = "CREATED")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@Column(name = "DELETED")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date deleted;
+
+	@Column(name = "MODIFIED")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modified;
+
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "MODIFIED_BY")
+	private User modifiedBy;
 
 	public Long getId() {
 		return id;
@@ -135,6 +154,38 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity> {
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public Date getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Date deleted) {
+		this.deleted = deleted;
+	}
+
+	public Date getModified() {
+		return modified;
+	}
+
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+
+	public User getModifiedBy() {
+		return modifiedBy;
+	}
+
+	public void setModifiedBy(User modifiedBy) {
+		this.modifiedBy = modifiedBy;
 	}
 
 	@Override

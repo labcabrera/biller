@@ -53,7 +53,7 @@ public class Bootstrap implements Runnable {
 			feederMapping.put(AppSettingsFeeder.class, "");
 			feederMapping.put(UserFeeder.class, "bootstrap/users.csv");
 			feederMapping.put(ProvinceFeeder.class, "bootstrap/provinces.json");
-			feederMapping.put(RegionFeeder.class, "bootstrap/regions.csv");
+//			feederMapping.put(RegionFeeder.class, "bootstrap/regions.csv");
 			feederMapping.put(CompanyGroupFeeder.class, "bootstrap/company-groups.csv");
 			feederMapping.put(CostCenterFeeder.class, "bootstrap/cost-centers.csv");
 			feederMapping.put(BillingModelFeeder.class, "");

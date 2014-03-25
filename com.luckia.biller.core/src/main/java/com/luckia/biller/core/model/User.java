@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,6 +23,7 @@ import com.luckia.biller.core.serialization.NotSerializable;
 @Entity
 @Table(name = "S_USER")
 @SuppressWarnings("serial")
+@NamedQueries({ @NamedQuery(name = "User.selectByName", query = "select e from User e where e.name = :name") })
 public class User implements Serializable {
 
 	@Id

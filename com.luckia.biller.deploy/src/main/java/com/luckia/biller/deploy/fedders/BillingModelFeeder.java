@@ -11,11 +11,14 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.BillingModelType;
 import com.luckia.biller.core.model.Rappel;
+import com.luckia.biller.core.services.AuditService;
 
 public class BillingModelFeeder implements Feeder<BillingModel> {
 
 	@Inject
 	private EntityManagerProvider entityManagerProvider;
+	@Inject
+	private AuditService auditService;
 
 	@Override
 	public void loadEntities(InputStream source) {
@@ -34,6 +37,7 @@ public class BillingModelFeeder implements Feeder<BillingModel> {
 		for (Rappel i : modelA.getRappel()) {
 			i.setModel(modelA);
 		}
+		auditService.initEntity(modelA);
 		entityManager.persist(modelA);
 
 		BillingModel modelB = new BillingModel();
@@ -50,25 +54,29 @@ public class BillingModelFeeder implements Feeder<BillingModel> {
 		for (Rappel i : modelB.getRappel()) {
 			i.setModel(modelB);
 		}
+		auditService.initEntity(modelB);
 		entityManager.persist(modelB);
 
 		BillingModel modelC = new BillingModel();
 		modelC.setName("Módelo Salones Videomani");
 		modelC.setType(BillingModelType.Bill);
 		modelC.setNgrPercent(new BigDecimal("50.00"));
+		auditService.initEntity(modelC);
 		entityManager.persist(modelC);
 
 		BillingModel modelD = new BillingModel();
 		modelD.setName("Módelo Bares Videomani");
-		modelC.setNgrPercent(new BigDecimal("50.00"));
-		entityManager.persist(modelC);
+		modelD.setType(BillingModelType.Bill);
+		modelD.setNgrPercent(new BigDecimal("50.00"));
+		entityManager.persist(modelD);
 
 		BillingModel modelE = new BillingModel();
 		modelE.setName("Modelo Salones Binelde");
 		modelE.setType(BillingModelType.Bill);
-		modelC.setNrPercent(new BigDecimal("60.00"));
+		modelE.setNrPercent(new BigDecimal("60.00"));
+		auditService.initEntity(modelE);
 		entityManager.persist(modelE);
-
+		
 		entityManager.flush();
 	}
 }

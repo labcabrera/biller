@@ -2,8 +2,6 @@ package com.luckia.biller.core.services.entities;
 
 import javax.persistence.EntityManager;
 
-import com.luckia.biller.core.model.Address;
-import com.luckia.biller.core.model.IdCard;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 
@@ -21,24 +19,21 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 			return validationResult;
 		}
 		EntityManager entityManager = entityManagerProvider.get();
-		if (!entityManager.getTransaction().isActive()) {
-			entityManager.getTransaction().begin();
-		}
-		Boolean isNew = entity.getId() == null;
+		entityManager.getTransaction().begin();
 		Store current;
-		if (isNew) {
+		String message;
+		if (entity.getId() == null) {
 			current = new Store();
-			current.setIdCard(new IdCard());
-			current.setAddress(new Address());
+			current.merge(entity);
+			entityManager.persist(current);
+			message = "Establecimiento creado";
 		} else {
 			current = entityManager.find(Store.class, entity.getId());
+			current.merge(entity);
+			current = entityManager.merge(current);
+			message = "Establecimiento actualizado";
 		}
-		current.merge(entity);
-		current.setType(entity.getType());
-		current.setOwner(entity.getOwner());
-		current.setBillingModel(entity.getBillingModel());
-		Store merged = entityManager.merge(current);
 		entityManager.getTransaction().commit();
-		return new Message<Store>(Message.CODE_SUCCESS, isNew ? "Establecimiento creado" : "Establecimiento actualizado", merged);
+		return new Message<Store>(Message.CODE_SUCCESS, message, current);
 	}
 }

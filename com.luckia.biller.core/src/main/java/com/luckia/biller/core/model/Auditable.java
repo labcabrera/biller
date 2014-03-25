@@ -9,8 +9,20 @@ import java.util.Date;
 
 public interface Auditable {
 
-	Date getLastModificationDate();
+	Date getCreated();
 
-	User getLastModificationUser();
+	Date getDeleted();
+
+	Date getModified();
+
+	User getModifiedBy();
+
+	void setCreated(Date value);
+
+	void setDeleted(Date value);
+
+	void setModified(Date value);
+
+	void setModifiedBy(User value);
 
 }

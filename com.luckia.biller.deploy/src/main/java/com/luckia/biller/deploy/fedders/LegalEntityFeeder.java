@@ -27,11 +27,14 @@ import com.luckia.biller.core.model.IdCardType;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.Region;
+import com.luckia.biller.core.services.AuditService;
 
 public abstract class LegalEntityFeeder<T> implements Feeder<T> {
 
 	@Inject
 	protected EntityManagerProvider entityManagerProvider;
+	@Inject
+	protected AuditService auditService;
 
 	@Override
 	public void loadEntities(InputStream source) {
@@ -43,6 +46,7 @@ public abstract class LegalEntityFeeder<T> implements Feeder<T> {
 			while (dataSet.next()) {
 				LegalEntity entity = buildEntity(dataSet);
 				parseCommonData(entity, dataSet);
+//				auditService.create(entity);
 				entityManager.persist(entity);
 			}
 			entityManager.flush();

@@ -13,11 +13,14 @@ import net.sf.flatpack.Parser;
 
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.CostCenter;
+import com.luckia.biller.core.services.AuditService;
 
 public class CostCenterFeeder implements Feeder<CostCenter> {
 
 	@Inject
 	private EntityManagerProvider entityManagerProvider;
+	@Inject
+	private AuditService auditService;
 
 	@Override
 	public void loadEntities(InputStream source) {
@@ -30,6 +33,7 @@ public class CostCenterFeeder implements Feeder<CostCenter> {
 				CostCenter center = new CostCenter();
 				center.setCode(dataSet.getString("CODE"));
 				center.setName(dataSet.getString("NAME"));
+//				auditService.create(center);
 				entityManager.persist(center);
 			}
 			entityManager.flush();

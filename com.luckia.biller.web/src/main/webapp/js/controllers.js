@@ -144,6 +144,7 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 	$scope.load();
 } ]);
 
+/** Nueva empresa */
 billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
 	$scope.isReadOnly = false;
 	$scope.reset = function() { };
@@ -152,13 +153,10 @@ billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$htt
 			if(data.code == 200) {
 				$location.path("companies/id/" + data.payload.id);				
 			} else {
-				// TODO MOSTAR ALERTA
-				alert(data.code + ": " + data.message);
+				$scope.displayAlert(data);
 			}
 		});
 	};
-	$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
-	$scope.regions = function(name) { return $http.get("/rest/regions/find/" + name).then(function(response) { return response.data; }); };
 } ]);
 /* ----------------------------------------------------------------------------
  * LOCALES

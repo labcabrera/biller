@@ -7,6 +7,7 @@ package com.luckia.biller.core.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -16,11 +17,15 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.luckia.biller.core.jpa.Mergeable;
 
@@ -31,7 +36,7 @@ import com.luckia.biller.core.jpa.Mergeable;
 @Table(name = "B_BILLING_MODEL")
 @NamedQueries({ @NamedQuery(name = "BillingModel.selectAll", query = "select e from BillingModel e order by e.name") })
 @SuppressWarnings("serial")
-public class BillingModel implements Serializable, Mergeable<BillingModel> {
+public class BillingModel implements Serializable, Mergeable<BillingModel>, Auditable {
 
 	@Id
 	@GeneratedValue
@@ -96,6 +101,22 @@ public class BillingModel implements Serializable, Mergeable<BillingModel> {
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "model")
 	@OrderBy("amount")
 	private List<Rappel> rappel;
+
+	@Column(name = "CREATED")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	@Column(name = "DELETED")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date deleted;
+
+	@Column(name = "MODIFIED")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modified;
+
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "MODIFIED_BY")
+	private User modifiedBy;
 
 	public Long getId() {
 		return id;
@@ -191,6 +212,38 @@ public class BillingModel implements Serializable, Mergeable<BillingModel> {
 
 	public void setRappel(List<Rappel> rappel) {
 		this.rappel = rappel;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public Date getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Date deleted) {
+		this.deleted = deleted;
+	}
+
+	public Date getModified() {
+		return modified;
+	}
+
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+
+	public User getModifiedBy() {
+		return modifiedBy;
+	}
+
+	public void setModifiedBy(User modifiedBy) {
+		this.modifiedBy = modifiedBy;
 	}
 
 	@Override

@@ -41,6 +41,7 @@ import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.Region;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
+import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.SettingsService;
 
 public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
@@ -59,6 +60,8 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 	protected PersonNameResolver personNameResolver;
 	@Inject
 	protected SettingsService settingsService;
+	@Inject
+	protected AuditService auditService;
 
 	protected Sheet sheetCompanies;
 	protected Sheet sheetStores;
@@ -91,16 +94,25 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 				deleteEntities();
 				entityManager.flush();
 				for (BillingModel model : billingModelResolver.getNewModels()) {
+					auditService.initEntity(model);
 					entityManager.persist(model);
 				}
 				entityManager.flush();
 				for (Company company : companies.values()) {
+					auditService.initEntity(company);
 					entityManager.persist(company);
 				}
 				entityManager.flush();
 				for (Store store : stores) {
+					auditService.initEntity(store);
+					if (store.getOwner() != null) {
+						auditService.initEntity(store.getOwner());
+					}
 					entityManager.persist(store);
 				}
+				entityManager.flush();
+				entityManager.getTransaction().commit();
+				entityManager.getTransaction().begin();
 				updateCostCenters();
 				updateSettings();
 				entityManager.getTransaction().commit();
@@ -146,7 +158,7 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 				Long idCompany = idCompanyString.matches("\\d+") ? Long.parseLong(idCompanyString) : null;
 				String ownerCompleteName = readCellAsString(row.getCell(6));
 				String ownerIdCardNumber = readCellAsString(row.getCell(7));
-				String type = readCellAsString(row.getCell(3));
+				String type = readCellAsString(row.getCell(2));
 				String road = readCellAsString(row.getCell(8));
 				String regionName = readCellAsString(row.getCell(9));
 				String provinceName = readCellAsString(row.getCell(10));
