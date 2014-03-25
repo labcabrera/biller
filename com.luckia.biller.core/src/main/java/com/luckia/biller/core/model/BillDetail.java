@@ -12,5 +12,14 @@ import javax.persistence.Entity;
  */
 @Entity
 @SuppressWarnings("serial")
-public class BillDetail extends AbstractBillDetail {
+public class BillDetail extends AbstractBillDetail implements Cloneable {
+
+	@Override
+	public BillDetail clone() {
+		try {
+			return (BillDetail) super.clone();
+		} catch (CloneNotSupportedException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 }

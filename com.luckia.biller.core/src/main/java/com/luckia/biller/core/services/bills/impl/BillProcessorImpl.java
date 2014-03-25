@@ -24,6 +24,7 @@ import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillState;
+import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.FileService;
@@ -68,6 +69,7 @@ public class BillProcessorImpl implements BillProcessor {
 		bill.setModel(store.getBillingModel());
 		bill.setDateFrom(range.getMinimum());
 		bill.setDateTo(range.getMaximum());
+		bill.setBillType(BillType.Common);
 		if (store.getParent() != null) {
 			bill.setReceiver(store.getParent());
 		} else {
@@ -157,6 +159,38 @@ public class BillProcessorImpl implements BillProcessor {
 
 	@Override
 	public void cancelBill(Bill bill) {
-		stateMachineService.createTransition(bill, BillState.BillCancelled.name());
+		stateMachineService.createTransition(bill, BillState.BillRectified.name());
+	}
+
+	@Override
+	public Bill rectifyBill(Bill bill) {
+		EntityManager entityManager = entityManagerProvider.get();
+		entityManager.getTransaction().begin();
+		stateMachineService.createTransition(bill, BillState.BillConfirmed.name());
+		Bill rectified = new Bill();
+		rectified.setId(UUID.randomUUID().toString());
+		rectified.setBillDate(bill.getBillDate());
+		rectified.setSender(bill.getSender());
+		rectified.setReceiver(bill.getReceiver());
+		rectified.setModel(bill.getModel());
+		rectified.setDateFrom(bill.getDateFrom());
+		rectified.setDateTo(bill.getDateTo());
+		rectified.setBillType(BillType.Rectified);
+		rectified.setDetails(new ArrayList<BillDetail>());
+		rectified.setLiquidationDetails(new ArrayList<LiquidationDetail>());
+		rectified.setParent(bill);
+		entityManager.persist(rectified);
+		for (BillDetail detail : bill.getDetails()) {
+			BillDetail copy = detail.clone();
+			copy.setBill(rectified);
+			copy.setId(UUID.randomUUID().toString());
+			rectified.getDetails().add(copy);
+			entityManager.persist(rectified);
+		}
+		entityManager.merge(rectified);
+		stateMachineService.createTransition(rectified, BillState.BillDraft.name());
+		entityManager.getTransaction().commit();
+		processResults(bill);
+		return rectified;
 	}
 }

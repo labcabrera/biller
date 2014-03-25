@@ -174,7 +174,25 @@ public class BillRestService {
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.clear();
 		Bill bill = entityManager.find(Bill.class, id);
+		// TODO
 		return new Message<Bill>(Message.CODE_SUCCESS, "Factura enviada por correo", bill);
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/rectify/{id}")
+	@ClearCache
+	public Message<Bill> sendEmail(@PathParam("id") String id) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			entityManager.clear();
+			Bill bill = entityManager.find(Bill.class, id);
+			Bill rectified = billProcessor.rectifyBill(bill);
+			return new Message<Bill>(Message.CODE_SUCCESS, "Factura enviada por correo", rectified);
+		} catch (Exception ex) {
+			LOG.error("Error al generar la rectificación", ex);
+			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al generar la rectificación", null);
+		}
 	}
 
 	@GET

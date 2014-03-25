@@ -370,7 +370,7 @@ billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routePa
 	$scope.search();
 } ]);
 
-billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', function($scope, $rootScope, $routeParams, $location, $http) {
 	$scope.load = function() {
 		$http.get('rest/bills/' + $routeParams.id).success(function(data) { $scope.entity = data; });
 		$rootScope.isReadOnly = true;
@@ -434,6 +434,17 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
+				}
+			});
+		}
+	};
+	$scope.rectify = function() {
+		if($rootScope.autoconfirm || window.confirm('Se va a rectificar la factura')) {
+			$http.post('rest/bills/rectify/' + $scope.entity.id).success(function(data) {
+				if(data.code == 200) {
+					$location.path("bills/id/" + data.payload.id);
+				} else {
+					$scope.displayAlert(data);
 				}
 			});
 		}

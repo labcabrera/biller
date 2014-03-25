@@ -12,6 +12,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -37,6 +39,14 @@ import com.luckia.biller.core.jpa.Mergeable;
 @NamedQueries({ @NamedQuery(name = "Bill.selectPendingByReceiverInRange", query = "select b from Bill b where b.receiver = :receiver and b.billDate >= :from and b.billDate <= :to and b.liquidation is null") })
 public class Bill extends AbstractBill implements Mergeable<Bill> {
 
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "PARENT_ID")
+	private Bill parent;
+
+	@Column(name = "TYPE", length = 16, nullable = false)
+	@Enumerated(EnumType.STRING)
+	private BillType billType;
+
 	/** Lista de detalles que componen la factura */
 	@OneToMany(cascade = CascadeType.DETACH, mappedBy = "bill")
 	private List<BillDetail> details;
@@ -59,6 +69,22 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "LIQUIDATION_ID")
 	protected Liquidation liquidation;
+
+	public Bill getParent() {
+		return parent;
+	}
+
+	public void setParent(Bill parent) {
+		this.parent = parent;
+	}
+
+	public BillType getBillType() {
+		return billType;
+	}
+
+	public void setBillType(BillType billType) {
+		this.billType = billType;
+	}
 
 	public List<BillDetail> getDetails() {
 		return details;

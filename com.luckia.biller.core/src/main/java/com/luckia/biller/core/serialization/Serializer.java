@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.Owner;
 
 public class Serializer {
@@ -22,6 +23,7 @@ public class Serializer {
 		builder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
 		builder.registerTypeHierarchyAdapter(Owner.class, new OwnerSerializer());
 		builder.registerTypeAdapter(BigDecimal.class, new BigDecimalSerializer());
+		builder.registerTypeAdapter(BillType.class, new BillTypeSerializer());
 		return builder;
 	}
 

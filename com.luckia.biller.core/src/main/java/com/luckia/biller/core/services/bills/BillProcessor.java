@@ -49,4 +49,12 @@ public interface BillProcessor {
 	 */
 	void cancelBill(Bill bill);
 
+	/**
+	 * Genera la factura rectificada de otra.
+	 * 
+	 * @param bill
+	 * @return
+	 */
+	Bill rectifyBill(Bill bill);
+
 }

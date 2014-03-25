@@ -22,8 +22,8 @@ public enum BillState {
 	/** La factura se ha enviado al destinatario */
 	BillSent("Enviada"),
 
-	/** La factura se ha cancelado */
-	BillCancelled("Cancelada"),
+	/** La factura se ha rectificado */
+	BillRectified("Rectificada"),
 
 	/** No hay ningun detalle que facturar */
 	BillEmpty("Sin resultado");
