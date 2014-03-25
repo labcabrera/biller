@@ -347,19 +347,17 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
  * ----------------------------------------------------------------------------
  */
 
-billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
 	$scope.currentPage = 1;
-	$scope.searchCode = $routeParams.code;
-	$scope.searchState = $routeParams.state;
 	$scope.itemsPerPage = 15;
-	$scope.searchStore = { "id": $routeParams.store, "name": '' };
-	$scope.searchCompany = { "id": $routeParams.company, "name": '' };
 	$scope.getSearchUrl = function() {
 		var predicateBuilder = new PredicateBuilder('');
-		predicateBuilder.append("code==", $scope.searchCode);
-		predicateBuilder.append("sender.id==", $scope.searchStore.id);
-		predicateBuilder.append("receiver.id==", $scope.searchCompany.id);
-		predicateBuilder.append("currentState.stateDefinition.id==", $scope.searchState);
+		predicateBuilder.append("code=lk=", $scope.searchOptions.code);
+		predicateBuilder.append("sender.id==", $scope.searchOptions.store.id);
+		predicateBuilder.append("receiver.id==", $scope.searchOptions.company.id);
+		predicateBuilder.append("currentState.stateDefinition.id==", $scope.searchOptions.state);
+		predicateBuilder.append("dateFrom=ge=", $scope.searchOptions.from != null ? $filter('date')($scope.searchOptions.from, "yyyy-MM-dd") : null);
+		predicateBuilder.append("dateTo=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
 		return 'rest/bills/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 	};
 	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
@@ -367,6 +365,17 @@ billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routePa
 	    $scope.currentPage = page;
 	    $scope.search();
 	};
+	$scope.reset = function() {
+		$scope.searchOptions = {
+			'code': $routeParams.code,
+			'store': { "id": $routeParams.store, "name": '' },
+			'company': { "id": $routeParams.company, "name": '' },
+			'state': '',
+			'from': '',
+			'to':  ''
+		};
+	};
+	$scope.reset();
 	$scope.search();
 } ]);
 
