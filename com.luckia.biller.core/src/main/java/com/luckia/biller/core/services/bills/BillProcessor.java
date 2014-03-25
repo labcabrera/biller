@@ -43,13 +43,6 @@ public interface BillProcessor {
 	void confirmBill(Bill bill);
 
 	/**
-	 * Cancela una factura
-	 * 
-	 * @param bill
-	 */
-	void cancelBill(Bill bill);
-
-	/**
 	 * Genera la factura rectificada de otra.
 	 * 
 	 * @param bill

@@ -15,7 +15,7 @@ public class BillEntityService extends EntityService<Bill> {
 
 	@Override
 	protected void buildOrderCriteria(CriteriaQuery<Bill> criteria, CriteriaBuilder builder, Root<Bill> root) {
-		criteria.orderBy(builder.desc(root.<String> get("code")), builder.asc(root.<String> get("sender").get("name")));
+		criteria.orderBy(builder.desc(root.<String> get("billDate")), builder.asc(root.<String> get("sender").get("name")), builder.desc(root.<String> get("code")));
 	}
 
 	@Override

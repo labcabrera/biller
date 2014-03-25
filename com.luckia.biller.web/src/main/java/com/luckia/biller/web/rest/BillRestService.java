@@ -105,16 +105,6 @@ public class BillRestService {
 	}
 
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("cancel/{id}")
-	@ClearCache
-	public Message<Bill> cancel(@PathParam("id") String id) {
-		Bill bill = entityManagerProvider.get().find(Bill.class, id);
-		billProcessor.cancelBill(bill);
-		return new Message<Bill>(Message.CODE_SUCCESS, "Factura cancelada", bill);
-	}
-
-	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/merge")

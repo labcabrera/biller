@@ -23,13 +23,16 @@ public class Main {
 		Bootstrap.main(args);
 		MasterWorkbookProcessor.main(args);
 
-		System.out.println("Generando facturacion de enero");
 		Injector injector = Guice.createInjector(new MainModule());
+		injector.getInstance(BillSequencePrefixGenerator.class).run();
+		
+		System.out.println("Generando facturacion de enero");
 		BillerJob job = injector.getInstance(BillerJob.class);
 		job.setInjector(injector);
 
 		Date from = new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate();
 		Date to = new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate();
 		job.execute(Range.between(from, to), 10);
+
 	}
 }

@@ -158,15 +158,10 @@ public class BillProcessorImpl implements BillProcessor {
 	}
 
 	@Override
-	public void cancelBill(Bill bill) {
-		stateMachineService.createTransition(bill, BillState.BillRectified.name());
-	}
-
-	@Override
 	public Bill rectifyBill(Bill bill) {
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.getTransaction().begin();
-		stateMachineService.createTransition(bill, BillState.BillConfirmed.name());
+		stateMachineService.createTransition(bill, BillState.BillRectified.name());
 		Bill rectified = new Bill();
 		rectified.setId(UUID.randomUUID().toString());
 		rectified.setBillDate(bill.getBillDate());
