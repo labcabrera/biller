@@ -13,26 +13,22 @@ public class AuditService {
 	@Inject
 	private SecurityService securityService;
 
-	public void initEntity(Auditable auditable) {
+	public void processCreated(Auditable auditable) {
 		Date now = Calendar.getInstance().getTime();
 		auditable.setCreated(now);
 		auditable.setModifiedBy(securityService.getCurrentUser());
 	}
 
-	public void delete(Auditable auditable) {
-		// AuditInfo data = auditable.getAuditInfo();
-		// Date now = Calendar.getInstance().getTime();
-		// data.setDeleted(now);
-		// data.setModified(now);
-		// data.setModifiedBy(securityService.getCurrentUser());
-		// entityManagerProvider.get().merge(auditable);
+	public void processDelete(Auditable auditable) {
+		Date now = Calendar.getInstance().getTime();
+		auditable.setDeleted(now);
+		auditable.setModified(now);
+		auditable.setModifiedBy(securityService.getCurrentUser());
 	}
 
-	public void modify(Auditable auditable) {
-		// AuditInfo data = auditable.getAuditInfo();
-		// Date now = Calendar.getInstance().getTime();
-		// data.setModified(now);
-		// data.setModifiedBy(securityService.getCurrentUser());
-		// entityManagerProvider.get().merge(auditable);
+	public void processModify(Auditable auditable) {
+		Date now = Calendar.getInstance().getTime();
+		auditable.setModified(now);
+		auditable.setModifiedBy(securityService.getCurrentUser());
 	}
 }

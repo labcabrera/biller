@@ -39,7 +39,7 @@ public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGro
 		}
 		current.merge(entity);
 		CompanyGroup merged = entityManager.merge(current);
-		auditService.modify(current);
+		auditService.processModify(current);
 		entityManager.getTransaction().commit();
 		return new Message<CompanyGroup>(Message.CODE_SUCCESS, isNew ? "Grupo creado" : "Grupo actualizado", merged);
 	}

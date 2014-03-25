@@ -37,7 +37,7 @@ public class BillingModelFeeder implements Feeder<BillingModel> {
 		for (Rappel i : modelA.getRappel()) {
 			i.setModel(modelA);
 		}
-		auditService.initEntity(modelA);
+		auditService.processCreated(modelA);
 		entityManager.persist(modelA);
 
 		BillingModel modelB = new BillingModel();
@@ -54,14 +54,14 @@ public class BillingModelFeeder implements Feeder<BillingModel> {
 		for (Rappel i : modelB.getRappel()) {
 			i.setModel(modelB);
 		}
-		auditService.initEntity(modelB);
+		auditService.processCreated(modelB);
 		entityManager.persist(modelB);
 
 		BillingModel modelC = new BillingModel();
 		modelC.setName("Módelo Salones Videomani");
 		modelC.setType(BillingModelType.Bill);
 		modelC.setNgrPercent(new BigDecimal("50.00"));
-		auditService.initEntity(modelC);
+		auditService.processCreated(modelC);
 		entityManager.persist(modelC);
 
 		BillingModel modelD = new BillingModel();
@@ -74,7 +74,7 @@ public class BillingModelFeeder implements Feeder<BillingModel> {
 		modelE.setName("Modelo Salones Binelde");
 		modelE.setType(BillingModelType.Bill);
 		modelE.setNrPercent(new BigDecimal("60.00"));
-		auditService.initEntity(modelE);
+		auditService.processCreated(modelE);
 		entityManager.persist(modelE);
 		
 		entityManager.flush();

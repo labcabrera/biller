@@ -94,19 +94,19 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 				deleteEntities();
 				entityManager.flush();
 				for (BillingModel model : billingModelResolver.getNewModels()) {
-					auditService.initEntity(model);
+					auditService.processCreated(model);
 					entityManager.persist(model);
 				}
 				entityManager.flush();
 				for (Company company : companies.values()) {
-					auditService.initEntity(company);
+					auditService.processCreated(company);
 					entityManager.persist(company);
 				}
 				entityManager.flush();
 				for (Store store : stores) {
-					auditService.initEntity(store);
+					auditService.processCreated(store);
 					if (store.getOwner() != null) {
-						auditService.initEntity(store.getOwner());
+						auditService.processCreated(store.getOwner());
 					}
 					entityManager.persist(store);
 				}
