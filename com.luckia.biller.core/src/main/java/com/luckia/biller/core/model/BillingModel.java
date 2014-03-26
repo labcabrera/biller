@@ -7,25 +7,21 @@ package com.luckia.biller.core.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.luckia.biller.core.jpa.Mergeable;
 
@@ -102,21 +98,8 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	@OrderBy("amount")
 	private List<Rappel> rappel;
 
-	@Column(name = "CREATED")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
-
-	@Column(name = "DELETED")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date deleted;
-
-	@Column(name = "MODIFIED")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date modified;
-
-	@ManyToOne(cascade = CascadeType.DETACH)
-	@JoinColumn(name = "MODIFIED_BY")
-	private User modifiedBy;
+	@Embedded
+	private AuditData auditData;
 
 	public Long getId() {
 		return id;
@@ -214,36 +197,14 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 		this.rappel = rappel;
 	}
 
-	public Date getCreated() {
-		return created;
+	@Override
+	public AuditData getAuditData() {
+		return auditData;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public Date getDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(Date deleted) {
-		this.deleted = deleted;
-	}
-
-	public Date getModified() {
-		return modified;
-	}
-
-	public void setModified(Date modified) {
-		this.modified = modified;
-	}
-
-	public User getModifiedBy() {
-		return modifiedBy;
-	}
-
-	public void setModifiedBy(User modifiedBy) {
-		this.modifiedBy = modifiedBy;
+	@Override
+	public void setAuditData(AuditData auditData) {
+		this.auditData = auditData;
 	}
 
 	@Override

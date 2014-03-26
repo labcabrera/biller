@@ -68,6 +68,7 @@ public class BillingModelFeeder implements Feeder<BillingModel> {
 		modelD.setName("Módelo Bares Videomani");
 		modelD.setType(BillingModelType.Bill);
 		modelD.setNgrPercent(new BigDecimal("50.00"));
+		auditService.processCreated(modelD);
 		entityManager.persist(modelD);
 
 		BillingModel modelE = new BillingModel();

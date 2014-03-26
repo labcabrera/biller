@@ -5,9 +5,9 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import com.luckia.biller.core.model.AuditData;
 import com.luckia.biller.core.model.Auditable;
 
-// TODO ----------------------------- CREAR UNA ENTIDAD Y HACERLA EMBEDDABLE CON TODAS LAS FECHAS Y EL USUARIO ---------------
 public class AuditService {
 
 	@Inject
@@ -15,20 +15,23 @@ public class AuditService {
 
 	public void processCreated(Auditable auditable) {
 		Date now = Calendar.getInstance().getTime();
-		auditable.setCreated(now);
-		auditable.setModifiedBy(securityService.getCurrentUser());
+		if (auditable.getAuditData() == null) {
+			auditable.setAuditData(new AuditData());
+		}
+		auditable.getAuditData().setCreated(now);
+		auditable.getAuditData().setModifiedBy(securityService.getCurrentUser());
 	}
 
-	public void processDelete(Auditable auditable) {
+	public void processDeleted(Auditable auditable) {
 		Date now = Calendar.getInstance().getTime();
-		auditable.setDeleted(now);
-		auditable.setModified(now);
-		auditable.setModifiedBy(securityService.getCurrentUser());
+		auditable.getAuditData().setDeleted(now);
+		auditable.getAuditData().setModified(now);
+		auditable.getAuditData().setModifiedBy(securityService.getCurrentUser());
 	}
 
-	public void processModify(Auditable auditable) {
+	public void processModified(Auditable auditable) {
 		Date now = Calendar.getInstance().getTime();
-		auditable.setModified(now);
-		auditable.setModifiedBy(securityService.getCurrentUser());
+		auditable.getAuditData().setModified(now);
+		auditable.getAuditData().setModifiedBy(securityService.getCurrentUser());
 	}
 }

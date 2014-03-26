@@ -46,7 +46,7 @@ public abstract class LegalEntityFeeder<T> implements Feeder<T> {
 			while (dataSet.next()) {
 				LegalEntity entity = buildEntity(dataSet);
 				parseCommonData(entity, dataSet);
-//				auditService.create(entity);
+				auditService.processCreated(entity);
 				entityManager.persist(entity);
 			}
 			entityManager.flush();

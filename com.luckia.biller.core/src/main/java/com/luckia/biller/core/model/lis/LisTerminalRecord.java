@@ -41,6 +41,9 @@ public class LisTerminalRecord {
 	@Column(name = "cancelado")
 	private BigDecimal cancelledAmount;
 
+	@Column(name = "imputables")
+	private BigDecimal attributable;
+
 	public Date getDate() {
 		return date;
 	}
@@ -79,5 +82,13 @@ public class LisTerminalRecord {
 
 	public void setCancelledAmount(BigDecimal cancelledAmount) {
 		this.cancelledAmount = cancelledAmount;
+	}
+
+	public BigDecimal getAttributable() {
+		return attributable;
+	}
+
+	public void setAttributable(BigDecimal attributable) {
+		this.attributable = attributable;
 	}
 }

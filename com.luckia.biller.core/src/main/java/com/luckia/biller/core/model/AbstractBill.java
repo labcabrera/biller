@@ -9,6 +9,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -27,14 +28,14 @@ import javax.persistence.TemporalType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.CHAR, length = 1)
 @SuppressWarnings("serial")
-public abstract class AbstractBill implements Serializable, HasState {
+public abstract class AbstractBill implements Serializable, HasState, Auditable {
 
 	@Id
 	@Column(name = "ID", length = 36)
 	protected String id;
 
 	/**
-	 * Codigo de la factura.<br>
+	 * Número de factura.<br>
 	 * Hasta que la factura no pasa a estado borrador no se genera este valor.
 	 */
 	@Column(name = "CODE")
@@ -89,6 +90,9 @@ public abstract class AbstractBill implements Serializable, HasState {
 
 	@OneToOne(cascade = CascadeType.DETACH)
 	protected AppFile pdfFile;
+
+	@Embedded
+	protected AuditData auditData;
 
 	public String getId() {
 		return id;
@@ -186,6 +190,16 @@ public abstract class AbstractBill implements Serializable, HasState {
 
 	public void setPdfFile(AppFile pdfFile) {
 		this.pdfFile = pdfFile;
+	}
+
+	@Override
+	public AuditData getAuditData() {
+		return auditData;
+	}
+
+	@Override
+	public void setAuditData(AuditData auditData) {
+		this.auditData = auditData;
 	}
 
 	@SuppressWarnings("unchecked")

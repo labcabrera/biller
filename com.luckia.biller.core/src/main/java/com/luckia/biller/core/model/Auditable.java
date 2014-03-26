@@ -5,24 +5,32 @@
  ******************************************************************************/
 package com.luckia.biller.core.model;
 
-import java.util.Date;
-
+/**
+ * Esta interfaz engloba todas las entidades del modelo en las que queremos tener una mínima trazabilidad sobre las modificaciones que se
+ * realizan sobre ella. Generalmente se aplicará a todas las entidades que pueden ser modificadas desde la aplicación por un usuario. La
+ * trazabilidad nos proporciona los siguientes valores:
+ * <ul>
+ * <li>Fecha de creación de la entidad</li>
+ * <li>Fecha de modificación de la entidad</li>
+ * <li>Fecha de borrado lógico de la entidad</li>
+ * <li>Usuario que realiza la última modificación sobre la entidad</li>
+ * </ul>
+ * 
+ * @see AuditData
+ */
 public interface Auditable {
 
-	Date getCreated();
+	/**
+	 * Obtiene la información de auditoria asociada la entidad.
+	 * 
+	 * @return
+	 */
+	AuditData getAuditData();
 
-	Date getDeleted();
-
-	Date getModified();
-
-	User getModifiedBy();
-
-	void setCreated(Date value);
-
-	void setDeleted(Date value);
-
-	void setModified(Date value);
-
-	void setModifiedBy(User value);
-
+	/**
+	 * Asocia la información de auditoría asociada a la entidad.
+	 * 
+	 * @param value
+	 */
+	void setAuditData(AuditData value);
 }

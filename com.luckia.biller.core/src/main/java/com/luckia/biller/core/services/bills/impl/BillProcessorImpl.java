@@ -27,6 +27,7 @@ import com.luckia.biller.core.model.BillState;
 import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.StateMachineService;
@@ -51,6 +52,8 @@ public class BillProcessorImpl implements BillProcessor {
 	private FileService fileService;
 	@Inject
 	private PdfBillGenerator pdfBillGenerator;
+	@Inject
+	private AuditService auditService;
 
 	/*
 	 * (non-Javadoc)
@@ -75,6 +78,7 @@ public class BillProcessorImpl implements BillProcessor {
 		} else {
 			throw new RuntimeException("No se puede generar la factura: no se ha definido la empresa del local " + store);
 		}
+		auditService.processCreated(bill);
 		entityManager.getTransaction().begin();
 		entityManager.persist(bill);
 		stateMachineService.createTransition(bill, BillState.BillInitial.name());

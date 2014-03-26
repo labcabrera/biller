@@ -33,7 +33,7 @@ public class CostCenterFeeder implements Feeder<CostCenter> {
 				CostCenter center = new CostCenter();
 				center.setCode(dataSet.getString("CODE"));
 				center.setName(dataSet.getString("NAME"));
-//				auditService.create(center);
+				auditService.processCreated(center);
 				entityManager.persist(center);
 			}
 			entityManager.flush();

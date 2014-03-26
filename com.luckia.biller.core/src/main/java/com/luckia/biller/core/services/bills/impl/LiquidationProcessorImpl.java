@@ -23,6 +23,7 @@ import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
@@ -34,6 +35,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private EntityManagerProvider entityManagerProvider;
 	@Inject
 	private StateMachineService stateMachineService;
+	@Inject
+	private AuditService auditService;
 
 	/*
 	 * (non-Javadoc)
@@ -76,6 +79,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 				entityManager.merge(bill);
 			}
 			liquidation.setAmount(totalAmount);
+			auditService.processCreated(liquidation);
 			entityManager.persist(liquidation);
 
 			result.add(liquidation);
