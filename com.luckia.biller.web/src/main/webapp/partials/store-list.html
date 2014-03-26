@@ -30,19 +30,19 @@
 			<form role="form">
 				<div class="form-group">
 					<label>Nombre</label>
-					<input type="text" class="form-control input-sm" ng-model="searchName" placeholder="Nombre" />
+					<input type="text" class="form-control input-sm" ng-model="searchName" />
 				</div>
 				<div class="form-group">
 					<label>Empresa</label>
-					<input type="text" class="form-control input-sm" ng-model="searchCompany" placeholder="Empresa" typeahead="company as company.name for company in companies($viewValue)" />
+					<input type="text" class="form-control input-sm" ng-model="searchCompany" typeahead="company as company.name for company in companies($viewValue)" />
 				</div>
 				<div class="form-group">
 					<label>Provincia</label>
-					<input type="text" class="form-control input-sm" ng-model="searchProvince" placeholder="Provincia" typeahead="province as province.name for province in provinces($viewValue)" />
+					<input type="text" class="form-control input-sm" ng-model="searchProvince" typeahead="province as province.name for province in provinces($viewValue)" />
 				</div>
 				<div class="form-group">
 					<label>Centro de coste</label>
-					<input type="text" class="form-control input-sm" ng-model="searchCostCenter" placeholder="Centro de coste" typeahead="center as center.name for center in costcenters($viewValue)"/>
+					<input type="text" class="form-control input-sm" ng-model="searchCostCenter" typeahead="center as center.name for center in costcenters($viewValue)"/>
 				</div>
 				<button class="btn btn-primary btn-sm" ng-click="search()">Buscar</button>
 			</form>

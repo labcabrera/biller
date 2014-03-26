@@ -21,7 +21,7 @@
 					<label class="col-sm-2 control-label input-sm">Empresa</label>
 					<div class="col-sm-4">
 						<div class="input-group">
-							<input type="text" class="form-control input-sm" ng-model="entity.parent"  ng-readonly="isReadOnly" typeahead="company as company.name for company in companies($viewValue)" typeahead-editable="false" placeholder="Empresa" />
+							<input type="text" class="form-control input-sm" ng-model="entity.parent"  ng-readonly="isReadOnly" typeahead="company as company.name for company in companies($viewValue)" typeahead-editable="false" />
 							<span  class="input-group-addon input-sm">
 								<a ng-if="entity.parent != null" href="#/companies/id/{{entity.parent.id}}"><span class="glyphicon glyphicon-search"></span></a>
 								<span ng-if="entity.parent == null" class="glyphicon glyphicon-search"></span>
@@ -31,7 +31,7 @@
 					<label class="col-sm-1 control-label input-sm">Centro de coste</label>
 					<div class="col-sm-4">
 						<div class="input-group">
-							<input type="text" class="form-control input-sm" ng-model="entity.costCenter" ng-readonly="isReadOnly" typeahead="costCenter as costCenter.name for costCenter in costcenters($viewValue)" typeahead-editable="false" placeholder="Centro de coste" />
+							<input type="text" class="form-control input-sm" ng-model="entity.costCenter" ng-readonly="isReadOnly" typeahead="costCenter as costCenter.name for costCenter in costcenters($viewValue)" typeahead-editable="false" />
 							<span  class="input-group-addon input-sm">
 								<a ng-if="entity.costCenter != null" href="#/costcenters/id/{{entity.costCenter.id}}"><span class="glyphicon glyphicon-search"></span></a>
 								<span ng-if="entity.costCenter == null" class="glyphicon glyphicon-search"></span>
@@ -181,7 +181,7 @@
 								<label class="col-sm-2 control-label input-sm">Nombre</label>
 								<div class="col-sm-9">
 									<div class="input-group">
-										<input type='text' class="form-control input-sm" ng-model="entity.billingModel" placeholder="Modelo de facturaci&oacute;n" typeahead="model as model.name for model in models($viewValue)" ng-readonly="isReadOnly" />
+										<input type='text' class="form-control input-sm" ng-model="entity.billingModel" typeahead="model as model.name for model in models($viewValue)" ng-readonly="isReadOnly" />
 										<span  class="input-group-addon input-sm">
 											<a ng-if="entity.billingModel != null" href="#/models/id/{{entity.billingModel.id}}"><span class="glyphicon glyphicon-search"></span></a>
 											<span ng-if="entity.billingModel == null" class="glyphicon glyphicon-search"></span>

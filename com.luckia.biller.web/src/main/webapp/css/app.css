@@ -34,17 +34,11 @@ textarea {
 	text-align: right;
 }
 
-.bill-detail {
-	/*
-	height: 30px;
-	vertical-align: bottom;
-	*/
-}
-
 .pagination {
 	margin: 0;
 }
 
+/*
 .form-control::-webkit-input-placeholder {
 	color: #CCCCCC;
 }
@@ -52,3 +46,4 @@ textarea {
 .form-control::-moz-placeholder {
 	color: #CCCCCC;
 }
+*/

@@ -26,11 +26,11 @@
 			<form role="form">
 				<div class="form-group">
 					<label>Nombre</label>
-					<input type='text' class="form-control input-sm" ng-model="searchName" placeholder="Nombre"/>
+					<input type='text' class="form-control input-sm" ng-model="searchName" />
 				</div>
 				<div class="form-group">
 					<label for="entityIdCardNumber">Provincia</label>
-					<input type='text' class="form-control input-sm" ng-model="searchProvince" placeholder="Provincia" typeahead="province as province.name for province in provinces($viewValue)" />
+					<input type='text' class="form-control input-sm" ng-model="searchProvince" typeahead="province as province.name for province in provinces($viewValue)" />
 				</div>
 				<button ng-click="search()" class='btn btn-primary btn-sm '>Buscar</button></li>
 			</form>
