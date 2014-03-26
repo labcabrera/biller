@@ -20,12 +20,13 @@ public class Main {
 
 	public static void main(String[] args) throws IOException, JobExecutionException {
 		System.out.println("Biller deployment module");
+
 		Bootstrap.main(args);
 		MasterWorkbookProcessor.main(args);
 
 		Injector injector = Guice.createInjector(new MainModule());
 		injector.getInstance(BillSequencePrefixGenerator.class).run();
-		
+
 		System.out.println("Generando facturacion de enero");
 		BillerJob job = injector.getInstance(BillerJob.class);
 		job.setInjector(injector);

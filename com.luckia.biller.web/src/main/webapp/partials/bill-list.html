@@ -35,6 +35,7 @@
 			<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)"
 				max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
 		</div>
+		<pre>{{searchOptions|json}}</pre>
 	</div>
 
 	<div class="col-sm-3">
@@ -55,7 +56,7 @@
 				</div>
 				<div class="form-group">
 					<label>Estado</label>
-					<select class="form-control input-sm" ng-model="searchOptions.state">
+					<select class="selectpicker form-control input-sm" ng-model="searchOptions.state">
 						<option value=""></option>
 						<option value="BillDraft">Borradores</option>
 						<option value="BillConfirmed">Confirmadas</option>

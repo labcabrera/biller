@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillingModel;
-import com.luckia.biller.core.model.BillingModelType;
+import com.luckia.biller.core.model.BillingModelAttributes;
 
 public class BillingModelResolver extends BaseWoorbookProcessor {
 
@@ -38,15 +38,17 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 	// TODO no esta teniendo en cuenta el rapel anual
 	public BillingModel resolveBillingModel(Row row) {
 		BillingModel current = new BillingModel();
-		current.setStakesPercentStore(parseBigDecimal(row.getCell(13), 4).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
-		current.setStakesPercentOperator(parseBigDecimal(row.getCell(14), 4).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
-		current.setGgrPercent(parseBigDecimal(row.getCell(15), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
-		current.setNgrPercent(parseBigDecimal(row.getCell(16), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
-		current.setCoOperatingMonthlyFees(parseBigDecimal(row.getCell(18), 2));
-		current.setCommercialMonthlyFees(parseBigDecimal(row.getCell(17), 2));
-		current.setSatMonthlyFees(parseBigDecimal(row.getCell(19), 2));
+		current.setStoreModel(new BillingModelAttributes());
+		current.setCompanyModel(new BillingModelAttributes());
+		current.getStoreModel().setStakesPercent(parseBigDecimal(row.getCell(13), 4).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+
+		current.getCompanyModel().setStakesPercent(parseBigDecimal(row.getCell(14), 4).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+		current.getCompanyModel().setGgrPercent(parseBigDecimal(row.getCell(15), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+		current.getCompanyModel().setNgrPercent(parseBigDecimal(row.getCell(16), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+		current.getCompanyModel().setCoOperatingMonthlyFees(parseBigDecimal(row.getCell(18), 2));
+		current.getCompanyModel().setCommercialMonthlyFees(parseBigDecimal(row.getCell(17), 2));
+		current.getCompanyModel().setSatMonthlyFees(parseBigDecimal(row.getCell(19), 2));
 		current.setName(readCellAsString(row.getCell(11)));
-		current.setType(BillingModelType.Bill);
 		BillingModel result = null;
 		ModelComparator modelComparator = new ModelComparator();
 		// Buscamos en los modelos existentes previamente
@@ -85,14 +87,14 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 		@Override
 		public int compare(BillingModel first, BillingModel second) {
 			boolean matches = true;
-			matches &= compare(first.getCommercialMonthlyFees(), second.getCommercialMonthlyFees());
-			matches &= compare(first.getCoOperatingMonthlyFees(), second.getCoOperatingMonthlyFees());
-			matches &= compare(first.getGgrPercent(), second.getGgrPercent());
-			matches &= compare(first.getNgrPercent(), second.getNgrPercent());
-			matches &= compare(first.getNrPercent(), second.getNrPercent());
-			matches &= compare(first.getSatMonthlyFees(), second.getSatMonthlyFees());
-			matches &= compare(first.getStakesPercentStore(), second.getStakesPercentStore());
-			matches &= compare(first.getStakesPercentOperator(), second.getStakesPercentOperator());
+			matches &= compare(first.getCompanyModel().getCommercialMonthlyFees(), second.getCompanyModel().getCommercialMonthlyFees());
+			matches &= compare(first.getCompanyModel().getCoOperatingMonthlyFees(), second.getCompanyModel().getCoOperatingMonthlyFees());
+			matches &= compare(first.getCompanyModel().getGgrPercent(), second.getCompanyModel().getGgrPercent());
+			matches &= compare(first.getCompanyModel().getNgrPercent(), second.getCompanyModel().getNgrPercent());
+			matches &= compare(first.getCompanyModel().getNrPercent(), second.getCompanyModel().getNrPercent());
+			matches &= compare(first.getCompanyModel().getSatMonthlyFees(), second.getCompanyModel().getSatMonthlyFees());
+			matches &= compare(first.getCompanyModel().getStakesPercent(), second.getCompanyModel().getStakesPercent());
+			matches &= compare(first.getStoreModel().getStakesPercent(), second.getStoreModel().getStakesPercent());
 			return matches ? 0 : 1;
 		}
 

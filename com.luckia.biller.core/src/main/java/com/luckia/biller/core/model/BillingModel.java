@@ -6,15 +6,15 @@
 package com.luckia.biller.core.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -42,59 +42,27 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	@Column(name = "NAME", length = 256, nullable = false)
 	private String name;
 
-	@Column(name = "MODEL_TYPE", length = 32, nullable = false)
-	@Enumerated(EnumType.STRING)
-	private BillingModelType type;
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "stakesPercent", column = @Column(name = "STORE_STAKES_PERCENT", precision = 6, scale = 2)),
+			@AttributeOverride(name = "ggrPercent", column = @Column(name = "STORE_GGR_PERCENT", precision = 6, scale = 2)),
+			@AttributeOverride(name = "ngrPercent", column = @Column(name = "STORE_NGR_PERCENT", precision = 6, scale = 2)),
+			@AttributeOverride(name = "nrPercent", column = @Column(name = "STORE_NR_PERCENT", precision = 6, scale = 2)),
+			@AttributeOverride(name = "coOperatingMonthlyFees", column = @Column(name = "STORE_COOPERATING_FEES", precision = 18, scale = 2)),
+			@AttributeOverride(name = "commercialMonthlyFees", column = @Column(name = "STORE_COMMERCIAL_FEES", precision = 18, scale = 2)),
+			@AttributeOverride(name = "satMonthlyFees", column = @Column(name = "STORE_SAT_FEES", precision = 18, scale = 2)) })
+	private BillingModelAttributes storeModel;
 
-	/**
-	 * Resultado neto
-	 */
-	@Column(name = "NR_PERCENT", precision = 18, scale = 2)
-	private BigDecimal nrPercent;
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "stakesPercent", column = @Column(name = "COMPANY_STAKES_PERCENT", precision = 6, scale = 2)),
+			@AttributeOverride(name = "ggrPercent", column = @Column(name = "COMPANY_GGR_PERCENT", precision = 6, scale = 2)),
+			@AttributeOverride(name = "ngrPercent", column = @Column(name = "COMPANY_NGR_PERCENT", precision = 6, scale = 2)),
+			@AttributeOverride(name = "nrPercent", column = @Column(name = "COMPANY_NR_PERCENT", precision = 6, scale = 2)),
+			@AttributeOverride(name = "coOperatingMonthlyFees", column = @Column(name = "COMPANY_COOPERATING_FEES", precision = 18, scale = 2)),
+			@AttributeOverride(name = "commercialMonthlyFees", column = @Column(name = "COMPANY_COMMERCIAL_FEES", precision = 18, scale = 2)),
+			@AttributeOverride(name = "satMonthlyFees", column = @Column(name = "COMPANY_SAT_FEES", precision = 18, scale = 2)) })
+	private BillingModelAttributes companyModel;
 
-	/**
-	 * Ingresos netos de juego
-	 */
-	@Column(name = "NGR_PERCENT", precision = 18, scale = 2)
-	private BigDecimal ngrPercent;
-
-	/**
-	 * Ingresos netos de juego
-	 */
-	@Column(name = "GGR_PERCENT", precision = 18, scale = 2)
-	private BigDecimal ggrPercent;
-
-	/**
-	 * Importe apostado
-	 */
-	@Column(name = "STAKES_PERCENT", precision = 18, scale = 2)
-	private BigDecimal stakesPercentStore;
-
-	@Column(name = "STAKES_PERCENT_OPERATOR", precision = 18, scale = 2)
-	private BigDecimal stakesPercentOperator;
-
-	/**
-	 * Gastos mensuales de co-explotacionl. Este valor se utiliza como un importe fijo a la hora de calcular el NR (recordar que el NR es el
-	 * resultado de restar al NGR los gastos operativos).<br>
-	 * A diferencia de los gastos comerciales y gastos del servicio de atencion al cliente este valor no se añade como conceptor en las
-	 * facturas/liquidaciones.
-	 */
-	@Column(name = "CO_OP_MONTLY_FEES", precision = 18, scale = 2)
-	private BigDecimal coOperatingMonthlyFees;
-
-	/**
-	 * Gastos mensuales de atencion comercial
-	 */
-	@Column(name = "COMMERCIAL_MONTLY_FEES", precision = 18, scale = 2)
-	private BigDecimal commercialMonthlyFees;
-
-	/**
-	 * Gastos mensuales SAT
-	 */
-	@Column(name = "SAT_MONTLY_FEES", precision = 18, scale = 2)
-	private BigDecimal satMonthlyFees;
-
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "model")
+	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, mappedBy = "model")
 	@OrderBy("amount")
 	private List<Rappel> rappel;
 
@@ -117,78 +85,6 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 		this.name = name;
 	}
 
-	public BillingModelType getType() {
-		return type;
-	}
-
-	public void setType(BillingModelType type) {
-		this.type = type;
-	}
-
-	public BigDecimal getNrPercent() {
-		return nrPercent;
-	}
-
-	public void setNrPercent(BigDecimal nrPercent) {
-		this.nrPercent = nrPercent;
-	}
-
-	public BigDecimal getNgrPercent() {
-		return ngrPercent;
-	}
-
-	public void setNgrPercent(BigDecimal ngrPercent) {
-		this.ngrPercent = ngrPercent;
-	}
-
-	public BigDecimal getGgrPercent() {
-		return ggrPercent;
-	}
-
-	public void setGgrPercent(BigDecimal ggrPercent) {
-		this.ggrPercent = ggrPercent;
-	}
-
-	public BigDecimal getStakesPercentStore() {
-		return stakesPercentStore;
-	}
-
-	public void setStakesPercentStore(BigDecimal value) {
-		this.stakesPercentStore = value;
-	}
-
-	public BigDecimal getStakesPercentOperator() {
-		return stakesPercentOperator;
-	}
-
-	public void setStakesPercentOperator(BigDecimal stakesPercentOperator) {
-		this.stakesPercentOperator = stakesPercentOperator;
-	}
-
-	public BigDecimal getCoOperatingMonthlyFees() {
-		return coOperatingMonthlyFees;
-	}
-
-	public void setCoOperatingMonthlyFees(BigDecimal coOperatingMonthlyFees) {
-		this.coOperatingMonthlyFees = coOperatingMonthlyFees;
-	}
-
-	public BigDecimal getCommercialMonthlyFees() {
-		return commercialMonthlyFees;
-	}
-
-	public void setCommercialMonthlyFees(BigDecimal commercialMonthlyFees) {
-		this.commercialMonthlyFees = commercialMonthlyFees;
-	}
-
-	public BigDecimal getSatMonthlyFees() {
-		return satMonthlyFees;
-	}
-
-	public void setSatMonthlyFees(BigDecimal satMonthlyFees) {
-		this.satMonthlyFees = satMonthlyFees;
-	}
-
 	public List<Rappel> getRappel() {
 		return rappel;
 	}
@@ -202,6 +98,22 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 		return auditData;
 	}
 
+	public BillingModelAttributes getStoreModel() {
+		return storeModel;
+	}
+
+	public void setStoreModel(BillingModelAttributes storeModel) {
+		this.storeModel = storeModel;
+	}
+
+	public BillingModelAttributes getCompanyModel() {
+		return companyModel;
+	}
+
+	public void setCompanyModel(BillingModelAttributes companyModel) {
+		this.companyModel = companyModel;
+	}
+
 	@Override
 	public void setAuditData(AuditData auditData) {
 		this.auditData = auditData;
@@ -210,15 +122,15 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	@Override
 	public void merge(BillingModel entity) {
 		if (entity != null) {
-			this.commercialMonthlyFees = entity.commercialMonthlyFees;
-			this.coOperatingMonthlyFees = entity.coOperatingMonthlyFees;
-			this.ggrPercent = entity.ggrPercent;
+			if (this.storeModel == null && entity.storeModel != null) {
+				this.storeModel = new BillingModelAttributes();
+			}
+			if (this.companyModel == null && entity.companyModel != null) {
+				this.companyModel = new BillingModelAttributes();
+			}
 			this.name = entity.name;
-			this.ngrPercent = entity.ngrPercent;
-			this.nrPercent = entity.nrPercent;
-			this.satMonthlyFees = entity.satMonthlyFees;
-			this.stakesPercentStore = entity.stakesPercentStore;
-			this.stakesPercentOperator = entity.stakesPercentOperator;
+			this.companyModel.merge(entity.getCompanyModel());
+			this.storeModel.merge(entity.getStoreModel());
 		}
 	}
 }

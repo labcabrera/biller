@@ -56,18 +56,21 @@ public class LisBillDataProvider implements BillDataProvider {
 			BigDecimal totalBetAmount = BigDecimal.ZERO;
 			BigDecimal totalWinAmount = BigDecimal.ZERO;
 			BigDecimal totalCancelledAmount = BigDecimal.ZERO;
+			BigDecimal totalAttributable = BigDecimal.ZERO;
 			for (LisTerminalRecord i : records) {
 				totalBetAmount = totalBetAmount.add(i.getBetAmount());
 				totalWinAmount = totalWinAmount.add(i.getWinAmount());
 				totalCancelledAmount = totalCancelledAmount.add(i.getCancelledAmount());
+				totalAttributable = totalAttributable.add(i.getAttributable());
 			}
 
 			BigDecimal gameFeesPercent = billFeesService.getGameFeesPercent(bill);
 			BigDecimal stakes = totalBetAmount.subtract(totalCancelledAmount);
-			BigDecimal ggr = stakes.subtract(totalWinAmount);
+			// BigDecimal ggr = stakes.subtract(totalWinAmount);
+			BigDecimal ggr = stakes.subtract(totalAttributable);
 			BigDecimal tasaDeJuego = ggr.multiply(gameFeesPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 			BigDecimal ngr = ggr.subtract(tasaDeJuego);
-			BigDecimal gastosOperativos = bill.getModel().getCoOperatingMonthlyFees();
+			BigDecimal gastosOperativos = bill.getModel().getCompanyModel().getCoOperatingMonthlyFees();
 			BigDecimal nr = ngr.subtract(gastosOperativos);
 			map.put(BillConcept.Stakes, stakes);
 			map.put(BillConcept.GGR, ggr);

@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -20,7 +21,8 @@ public class Rappel {
 	@GeneratedValue
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.DETACH)
+	@ManyToOne(cascade = CascadeType.DETACH, optional = false)
+	@JoinColumn(name = "MODEL_ID", referencedColumnName = "ID", nullable = false)
 	@NotSerializable
 	private BillingModel model;
 

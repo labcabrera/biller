@@ -375,6 +375,7 @@ billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routePa
 	};
 	$scope.reset();
 	$scope.search();
+//	$('.selectpicker').selectpicker();
 } ]);
 
 billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', function($scope, $rootScope, $routeParams, $location, $http) {

@@ -18,6 +18,9 @@ textarea {
 .m-top-40 {
 	margin-top: 40px;
 }
+.m-bot-5 {
+	margin-bottom:5px;
+}
 
 .data-amount {
 	text-align: right;

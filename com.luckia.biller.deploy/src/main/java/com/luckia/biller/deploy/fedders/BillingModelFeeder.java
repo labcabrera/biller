@@ -1,19 +1,31 @@
 package com.luckia.biller.deploy.fedders;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import net.sf.flatpack.DataSet;
+import net.sf.flatpack.DefaultParserFactory;
+import net.sf.flatpack.Parser;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillingModel;
-import com.luckia.biller.core.model.BillingModelType;
+import com.luckia.biller.core.model.BillingModelAttributes;
 import com.luckia.biller.core.model.Rappel;
 import com.luckia.biller.core.services.AuditService;
 
 public class BillingModelFeeder implements Feeder<BillingModel> {
+
+	private static final Logger LOG = LoggerFactory.getLogger(BillingModelFeeder.class);
 
 	@Inject
 	private EntityManagerProvider entityManagerProvider;
@@ -22,62 +34,57 @@ public class BillingModelFeeder implements Feeder<BillingModel> {
 
 	@Override
 	public void loadEntities(InputStream source) {
-		EntityManager entityManager = entityManagerProvider.get();
+		try {
+			Reader reader = new InputStreamReader(source, "UTF8");
+			Parser parser = DefaultParserFactory.getInstance().newDelimitedParser(reader, ',', '"');
+			DataSet dataSet = parser.parse();
+			EntityManager entityManager = entityManagerProvider.get();
+			long readed = 0;
+			while (dataSet.next()) {
+				BillingModel model = new BillingModel();
+				model.setName(dataSet.getString("NAME"));
+				model.setStoreModel(new BillingModelAttributes());
+				model.setCompanyModel(new BillingModelAttributes());
 
-		BillingModel modelA = new BillingModel();
-		modelA.setName("Módelo Estándar para Bares");
-		modelA.setType(BillingModelType.Bill);
-		modelA.setGgrPercent(new BigDecimal("1.00"));
-		modelA.setRappel(new ArrayList<Rappel>());
-		modelA.getRappel().add(new Rappel(new BigDecimal("055000"), new BigDecimal("0.50"), new BigDecimal("0275")));
-		modelA.getRappel().add(new Rappel(new BigDecimal("075000"), new BigDecimal("1.00"), new BigDecimal("0750")));
-		modelA.getRappel().add(new Rappel(new BigDecimal("100000"), new BigDecimal("1.50"), new BigDecimal("1500")));
-		modelA.getRappel().add(new Rappel(new BigDecimal("125000"), new BigDecimal("1.75"), new BigDecimal("2188")));
-		modelA.getRappel().add(new Rappel(new BigDecimal("150000"), new BigDecimal("2.00"), new BigDecimal("3000")));
-		for (Rappel i : modelA.getRappel()) {
-			i.setModel(modelA);
+				model.getStoreModel().setStakesPercent(new BigDecimal(dataSet.getString("STORE_STAKES")).setScale(2));
+				model.getStoreModel().setGgrPercent(BigDecimal.ZERO);
+				model.getStoreModel().setNgrPercent(BigDecimal.ZERO);
+				model.getStoreModel().setNrPercent(BigDecimal.ZERO);
+				model.getStoreModel().setCoOperatingMonthlyFees(BigDecimal.ZERO);
+				model.getStoreModel().setCommercialMonthlyFees(BigDecimal.ZERO);
+				model.getStoreModel().setSatMonthlyFees(BigDecimal.ZERO);
+
+				model.getCompanyModel().setStakesPercent(new BigDecimal(dataSet.getString("COMPANY_STAKES")).setScale(2));
+				model.getCompanyModel().setGgrPercent(new BigDecimal(dataSet.getString("COMPANY_GGR")).setScale(2));
+				model.getCompanyModel().setNgrPercent(new BigDecimal(dataSet.getString("COMPANY_NGR")).setScale(2));
+				model.getCompanyModel().setNrPercent(new BigDecimal(dataSet.getString("COMPANY_NR")).setScale(2));
+				model.getCompanyModel().setCoOperatingMonthlyFees(new BigDecimal(dataSet.getString("COOPERATING")).setScale(2));
+				model.getCompanyModel().setCommercialMonthlyFees(new BigDecimal(dataSet.getString("COMMERCIAL")).setScale(2));
+				model.getCompanyModel().setSatMonthlyFees(new BigDecimal(dataSet.getString("SAT")).setScale(2));
+
+				String rappelStr = dataSet.getString("RAPPEL");
+				if (StringUtils.isNotBlank(rappelStr)) {
+					model.setRappel(new ArrayList<Rappel>());
+					String[] values = rappelStr.split("\\|");
+					for (String str : values) {
+						String[] i = str.split(";");
+						Rappel rappel = new Rappel();
+						rappel.setAmount(new BigDecimal(i[0]));
+						rappel.setBonusPercent(StringUtils.isNotBlank(i[1]) ? new BigDecimal(i[1]) : null);
+						rappel.setBonusAmount(StringUtils.isNotBlank(i[2]) ? new BigDecimal(i[2]) : null);
+						rappel.setModel(model);
+						model.getRappel().add(rappel);
+					}
+				}
+
+				auditService.processCreated(model);
+				entityManager.persist(model);
+				readed++;
+			}
+			entityManager.flush();
+			LOG.info("Cargados {} modelos de facturacion", readed);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
 		}
-		auditService.processCreated(modelA);
-		entityManager.persist(modelA);
-
-		BillingModel modelB = new BillingModel();
-		modelB.setName("Módelo Estándar para Salones");
-		modelB.setType(BillingModelType.Bill);
-		modelB.setNrPercent(new BigDecimal("50.00"));
-		modelB.setRappel(new ArrayList<Rappel>());
-		modelB.getRappel().add(new Rappel(new BigDecimal("0350000"), null, new BigDecimal("07000")));
-		modelB.getRappel().add(new Rappel(new BigDecimal("0500000"), null, new BigDecimal("10000")));
-		modelB.getRappel().add(new Rappel(new BigDecimal("0750000"), null, new BigDecimal("15000")));
-		modelB.getRappel().add(new Rappel(new BigDecimal("1000000"), null, new BigDecimal("20000")));
-		modelB.getRappel().add(new Rappel(new BigDecimal("1250000"), null, new BigDecimal("25000")));
-		modelB.getRappel().add(new Rappel(new BigDecimal("1500000"), null, new BigDecimal("30000")));
-		for (Rappel i : modelB.getRappel()) {
-			i.setModel(modelB);
-		}
-		auditService.processCreated(modelB);
-		entityManager.persist(modelB);
-
-		BillingModel modelC = new BillingModel();
-		modelC.setName("Módelo Salones Videomani");
-		modelC.setType(BillingModelType.Bill);
-		modelC.setNgrPercent(new BigDecimal("50.00"));
-		auditService.processCreated(modelC);
-		entityManager.persist(modelC);
-
-		BillingModel modelD = new BillingModel();
-		modelD.setName("Módelo Bares Videomani");
-		modelD.setType(BillingModelType.Bill);
-		modelD.setNgrPercent(new BigDecimal("50.00"));
-		auditService.processCreated(modelD);
-		entityManager.persist(modelD);
-
-		BillingModel modelE = new BillingModel();
-		modelE.setName("Modelo Salones Binelde");
-		modelE.setType(BillingModelType.Bill);
-		modelE.setNrPercent(new BigDecimal("60.00"));
-		auditService.processCreated(modelE);
-		entityManager.persist(modelE);
-		
-		entityManager.flush();
 	}
 }

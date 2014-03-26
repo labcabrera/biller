@@ -57,8 +57,9 @@ public class BillDetailProcessor {
 
 			// Calculamos los conceptos de la facturacion. CUIDADO: los importes que provienen de LIS tienen IVA, de modo que para hacer el
 			// calculo debemos volver a calcular la base
-			if (MathUtils.isNotZero(model.getStakesPercentStore())) {
-				BigDecimal percent = model.getStakesPercentStore();
+			// TODO tener en cuanta todos los conceptos que pudieran haberse definido
+			if (MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {
+				BigDecimal percent = model.getStoreModel().getStakesPercent();
 				BigDecimal stakes = billingData.get(BillConcept.Stakes).divide(new BigDecimal("1.21"), 2, RoundingMode.HALF_EVEN);
 				BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 				addBillingConcept(bill, BillConcept.Stakes, value, stakes, percent);
@@ -66,10 +67,10 @@ public class BillDetailProcessor {
 
 			// Calculamos los conceptos de la liquidacion definidos a nivel de los porcentajes de las variables del terminal:
 			Map<BillConcept, BigDecimal> percentConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
-			percentConcepts.put(BillConcept.NGR, model.getNgrPercent());
-			percentConcepts.put(BillConcept.GGR, model.getGgrPercent());
-			percentConcepts.put(BillConcept.NR, model.getNrPercent());
-			percentConcepts.put(BillConcept.Stakes, model.getStakesPercentOperator());
+			percentConcepts.put(BillConcept.NGR, model.getCompanyModel().getNgrPercent());
+			percentConcepts.put(BillConcept.GGR, model.getCompanyModel().getGgrPercent());
+			percentConcepts.put(BillConcept.NR, model.getCompanyModel().getNrPercent());
+			percentConcepts.put(BillConcept.Stakes, model.getCompanyModel().getStakesPercent());
 			for (BillConcept concept : percentConcepts.keySet()) {
 				BigDecimal percent = percentConcepts.get(concept);
 				if (MathUtils.isNotZero(percent)) {
@@ -84,8 +85,8 @@ public class BillDetailProcessor {
 
 	private void processLiquidationFixedConcepts(Bill bill, BillingModel model, Range<Date> range, List<String> terminals) {
 		Map<BillConcept, BigDecimal> fixedConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
-		fixedConcepts.put(BillConcept.CommercialMonthlyFees, model.getCommercialMonthlyFees());
-		fixedConcepts.put(BillConcept.SatMonthlyFees, model.getSatMonthlyFees());
+		fixedConcepts.put(BillConcept.CommercialMonthlyFees, model.getCompanyModel().getCommercialMonthlyFees());
+		fixedConcepts.put(BillConcept.SatMonthlyFees, model.getCompanyModel().getSatMonthlyFees());
 		for (BillConcept concept : fixedConcepts.keySet()) {
 			BigDecimal value = fixedConcepts.get(concept);
 			if (MathUtils.isNotZeroPositive(value)) {
