@@ -1,0 +1,8 @@
+<div class="btn-toolbar" role="toolbar">
+	<div class="btn-group">
+		<button ng-click="edit()" ng-class='isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>Editar</button>
+		<button ng-click="load()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'><span class="glyphicon glyphicon-arrow-left"></span></button>
+		<button ng-click="update()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'><span class="glyphicon glyphicon-save"></span></button>
+		<button ng-click="remove()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'><span class="glyphicon glyphicon-trash"></span></button>
+	</div>
+</div>

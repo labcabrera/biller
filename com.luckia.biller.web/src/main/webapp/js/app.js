@@ -74,9 +74,9 @@ billerApp.run(function($rootScope, $http) {
 		});
 	};
 	
-	// En caso de establecer esta variable a true no se muestran los popups de confirmacion 
+	$rootScope.debug = false;
+	// En caso de establecer esta variable a true no se muestran los popups de confirmacion
 	$rootScope.autoconfirm = true;
-	
 	$rootScope.dateFormat = 'dd-MM-yyyy';
 });
 
