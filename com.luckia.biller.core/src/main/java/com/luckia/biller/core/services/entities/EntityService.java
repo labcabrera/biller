@@ -29,6 +29,7 @@ import com.luckia.biller.core.jpa.FiqlParser;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
+import com.luckia.biller.core.services.AuditService;
 
 /**
  * Servicio que provee las funcionalidades basicas de JPA para diferentes entidades del modelo.
@@ -45,6 +46,8 @@ public abstract class EntityService<I> {
 	protected I18nService i18nService;
 	@Inject
 	protected FiqlParser fiqlParser;
+	@Inject
+	protected AuditService auditService;
 
 	protected abstract Class<I> getEntityClass();
 

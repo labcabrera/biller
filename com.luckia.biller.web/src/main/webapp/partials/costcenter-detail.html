@@ -38,7 +38,7 @@
 				</div>
 				<label class="col-sm-2 control-label input-sm">Region</label>
 				<div class="col-sm-4">
-					<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue)" ng-readonly="isReadOnly" />
+					<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
@@ -52,26 +52,30 @@
 				</div>
 			</div>
 		</form>
-	</div>
-	<div class="col-sm-3">
-		<div class="btn-toolbar" role="toolbar">
-			<div class="btn-group">
-				<button ng-click="edit()" ng-class='isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>Editar</button>
-				<button ng-click="load()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
-					<span class="glyphicon glyphicon-arrow-left"></span>
-				</button>
-				<button ng-click="update()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
-					<span class="glyphicon glyphicon-save"></span>
-				</button>
-				<button type="submit" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
-					<span class="glyphicon glyphicon-trash"></span>
-				</button>
+		<div class="m-top-40">
+			<ul class="nav nav-tabs">
+				<li class="active"><a data-target="#storesTab" data-toggle="tab">Locales</a></li>
+				<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
+			</ul>
+			<div class="tab-content">
+				<!-- Pestaña del titular del local -->
+				<div class="tab-pane active" id="storesTab">
+					<div ng-include src="'templates/store-list.html'"></div>
+				</div>
+				<div class="tab-pane" id="auditTab">
+					<div ng-include src="'templates/entity-audit-info.html'"></div>
+				</div>
 			</div>
 		</div>
+	</div>
+	
+	
+	<div class="col-sm-3">
+		<div ng-include src="'templates/entity-toolbar.html'"></div>
 		<div class="m-top-40">
-			<h4>Entidades</h4>
+			<h4>Centros de coste</h4>
 			<ul class="list-unstyled">
-				<li><a href="#/stores?owner={{entity.id}}">Consultar locales de este titular</a></li>
+				<li><a href="#/costcenters">Ver centros de coste</a></li>
 			</ul>
 		</div>
 		<div class="m-top-40">
@@ -81,17 +85,7 @@
 				<li><a href="#">Ver facturas emitidas</a></li>
 			</ul>
 		</div>
-		<!-- popup con el json de debug -->
-		<div class="m-top-40">
-			<button class="btn btn-default btn-sm m-top-40" data-toggle="modal" data-target="#debugJson">Ver JSON</button>
-			<div class="modal fade" id="debugJson" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<pre>entity = {{entity | json}}</pre>
-					</div>
-				</div>
-			</div>
-		</div>
+		<div ng-include src="'templates/entity-json-popup.html'"></div>
 	</div>
 </div>
 </html>

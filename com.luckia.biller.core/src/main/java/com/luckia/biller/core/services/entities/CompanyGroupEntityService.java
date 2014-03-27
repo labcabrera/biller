@@ -7,21 +7,13 @@ package com.luckia.biller.core.services.entities;
 
 import java.io.Serializable;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.common.Message;
-import com.luckia.biller.core.services.AuditService;
 
 public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGroup> {
-
-	@Inject
-	private AuditService auditService;
-	@Inject
-	private I18nService i18nService;
 
 	@Override
 	public Message<CompanyGroup> merge(CompanyGroup entity) {

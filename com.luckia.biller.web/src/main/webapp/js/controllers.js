@@ -115,12 +115,6 @@ billerControllers.controller('CompanyListCtrl', [ '$scope', '$http', '$routePara
 
 /** Detalle de empresa */
 billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
-	$scope.loadChilds = function() {
-		$http.get('rest/companies/id/' + $routeParams.id).success(function(data) {
-			$scope.entity = data;
-			$http.get('rest/stores/find?q=parent.id==' + $routeParams.id).success(function(data) { $scope.childs = data; });
-		});	
-	};
 	$scope.regions = function(name) {
 		var url = "/rest/regions/find/" + name + (angular.isDefined($scope.entity.address.province.id) ? '?province=' + $scope.entity.address.province.id : '');
 		return $http.get(url).then(function(response) { return response.data; });
@@ -129,9 +123,7 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 		$http.get('rest/companies/id/' + $routeParams.id).success(function(data) {
 			$rootScope.isReadOnly = true;
 			$scope.entity = data;
-			$http.get('rest/stores/find?q=parent.id==' + $routeParams.id).success(function(data) {
-				$scope.childs = data;
-			});
+			$scope.setStorePage(1);
 		});
 	};
 	$scope.update = function() {
@@ -159,7 +151,7 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 			}
 		});
 	};
-	$scope.setPage = function(page) {
+	$scope.setStorePage = function(page) {
 	    $scope.currentPage = page;
 	    $http.get('rest/stores/find?q=parent.id==' + $routeParams.id + "&n=10" + "&p=" + page).success(function(data) { $scope.childs = data; });
 	};
@@ -280,6 +272,7 @@ billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$rout
 	$scope.load = function() {
 		$http.get('rest/owners/id/' + $routeParams.id).success(function(data) { $scope.entity = data; });
 		$rootScope.isReadOnly = true;
+		$scope.setStorePage(1);
 	};
 	$scope.reset = function() { $scope.load(); };
 	$scope.update = function() {
@@ -290,6 +283,10 @@ billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$rout
 				$scope.message = data.payload;
 			}
 		});
+	};
+	$scope.setStorePage = function(page) {
+	    $scope.currentPage = page;
+	    $http.get('rest/stores/find?q=owner.id==' + $routeParams.id + "&n=10" + "&p=" + page).success(function(data) { $scope.childs = data; });
 	};
 	$scope.load();
 } ]);
@@ -328,10 +325,12 @@ billerControllers.controller('CostCenterListCtrl', [ '$scope', '$http', function
 	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
 } ]);
 
-billerControllers.controller('CostCenterDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+
+billerControllers.controller('CostCenterDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
 	$scope.load = function() {
 		$http.get('rest/costcenters/id/' + $routeParams.id).success(function(data) { $scope.entity = data; });
 		$rootScope.isReadOnly = true;
+		$scope.setStorePage(1);
 	};
 	$scope.reset = function() { $scope.load(); };
 	$scope.update = function() {
@@ -343,7 +342,30 @@ billerControllers.controller('CostCenterDetailCtrl', [ '$scope', '$rootScope', '
 			}
 		});
 	};
+	$scope.remove = function() {
+		$http.post('rest/costcenters/remove/' + $scope.entity.id).success(function(data) {
+			if(data.code == 200) { $location.path("costcenters"); } else { $scope.displayAlert(data); }
+		});
+	};
+	$scope.setStorePage = function(page) {
+	    $scope.currentPage = page;
+	    $http.get('rest/stores/find?q=costCenter.id==' + $routeParams.id + "&n=10" + "&p=" + page).success(function(data) { $scope.childs = data; });
+	};
 	$scope.load();
+} ]);
+
+billerControllers.controller('CostCenterNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+	$scope.isReadOnly = false;
+	$scope.update = function() {
+		$http.post('rest/costcenters/merge/', $scope.entity).success(function(data) {
+			if(data.code == 200) {
+				$location.path("costcenters/id/" + data.payload.id);				
+			} else {
+				$scope.displayAlert(data);
+			}
+		});
+	};
+	$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
 } ]);
 
 /* ----------------------------------------------------------------------------

@@ -11,11 +11,6 @@ import com.luckia.biller.core.model.common.Message;
 public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 
 	@Override
-	protected Class<Owner> getEntityClass() {
-		return Owner.class;
-	}
-
-	@Override
 	public Message<Owner> merge(Owner entity) {
 		Message<Owner> validationResult = validate(entity);
 		if (validationResult.hasErrors()) {
@@ -38,5 +33,10 @@ public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 		}
 		entityManager.getTransaction().commit();
 		return new Message<Owner>(Message.CODE_SUCCESS, message, current);
+	}
+
+	@Override
+	protected Class<Owner> getEntityClass() {
+		return Owner.class;
 	}
 }

@@ -1,0 +1,13 @@
+<div class="m-top-15">
+	<div ng-if="childs.results == null || childs.results.length == 0">No hay establecimientos asociados</div>
+	<div ng-if="childs.results.length > 0">
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="child in childs.results">
+				<a href="#/stores/id/{{child.id}}">{{child.name}}</a>
+			</li>
+		</ul>
+		<pagination ng-if="entity != null && entity.id > 0" total-items="childs.totalItems" page="childs.currentPage"
+			items-per-page="childs.itemsPerPage" on-select-page="setStorePage(page)" max-size="10"
+			boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&uacte;ltimo"></pagination>
+	</div>
+</div>

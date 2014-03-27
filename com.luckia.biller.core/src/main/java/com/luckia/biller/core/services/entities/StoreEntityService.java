@@ -2,25 +2,12 @@ package com.luckia.biller.core.services.entities;
 
 import java.io.Serializable;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
-import com.luckia.biller.core.services.AuditService;
 
 public class StoreEntityService extends LegalEntityBaseService<Store> {
-
-	@Inject
-	private AuditService auditService;
-	@Inject
-	private I18nService i18nService;
-
-	@Override
-	protected Class<Store> getEntityClass() {
-		return Store.class;
-	}
 
 	@Override
 	public Message<Store> merge(Store entity) {
@@ -59,4 +46,10 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 		entityManager.getTransaction().commit();
 		return new Message<Store>(Message.CODE_SUCCESS, i18nService.getMessage("store.remove"), current);
 	}
+
+	@Override
+	protected Class<Store> getEntityClass() {
+		return Store.class;
+	}
+
 }
