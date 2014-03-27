@@ -1,4 +1,4 @@
-package com.luckia.biller.core.services.bills;
+package com.luckia.biller.core.services.bills.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,6 +24,7 @@ import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
+import com.luckia.biller.core.services.bills.BillDataProvider;
 
 /**
  * Servicio encargado de crear los detalles de una factura a partir de los datos obtenidos a traves de {@link BillDataProvider}. Esto genera

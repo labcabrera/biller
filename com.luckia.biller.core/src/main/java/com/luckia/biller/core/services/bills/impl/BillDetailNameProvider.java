@@ -1,4 +1,4 @@
-package com.luckia.biller.core.services.bills;
+package com.luckia.biller.core.services.bills.impl;
 
 import javax.inject.Inject;
 
@@ -18,7 +18,11 @@ public class BillDetailNameProvider {
 		String conceptName = i18nService.getMessage("bill.concept.name." + detail.getConcept().name());
 		StringBuffer sb = new StringBuffer(conceptName);
 		if (MathUtils.isNotZero(detail.getBaseValue()) && MathUtils.isNotZero(detail.getPercent())) {
-			sb.append(" (").append(detail.getPercent()).append("% sobre un total de ").append(detail.getBaseValue()).append(" €)");
+			sb.append(" (");
+			sb.append(detail.getPercent());
+			sb.append("% sobre un total de ");
+			sb.append(detail.getBaseValue());
+			sb.append(" €)");
 		}
 		return sb.toString();
 	}

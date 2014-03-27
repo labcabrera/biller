@@ -31,7 +31,6 @@ import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.StateMachineService;
-import com.luckia.biller.core.services.bills.BillDetailProcessor;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
