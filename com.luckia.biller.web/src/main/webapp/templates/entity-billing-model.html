@@ -1,0 +1,127 @@
+<div class="m-top-15">
+	<form class="form-horizontal" role="form">
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">Nombre</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm" ng-model="entity.billingModel" typeahead="model as model.name for model in models($viewValue)" ng-readonly="isReadOnly" />
+					<span  class="input-group-addon input-sm">
+						<a ng-if="entity.billingModel != null" href="#/models/id/{{entity.billingModel.id}}"><span class="glyphicon glyphicon-search"></span></a>
+						<span ng-if="entity.billingModel == null" class="glyphicon glyphicon-search"></span>
+					</span>
+				</div>
+			</div>
+		</div>
+		<h5	 class="col-sm-offset-2">Operador</h5>
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">Ventas</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.companyModel.stakesPercent" ng-readonly="true" popover="Porcentaje mensual sobre las ventas" popover-trigger="mouseenter" />
+					<span class="input-group-addon">%</span>
+				</div>
+			</div>
+			<label class="col-sm-3 control-label input-sm">Atenci&oacute;n comercial</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.companyModel.commercialMonthlyFees" ng-readonly="true" popover="Honorarios mensuales de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
+					<span class="input-group-addon">€</span>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">GGR</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.companyModel.ggrPercent" ng-readonly="true" popover="Porcentaje sobre ingresos brutos del luego (ventas - premios)" popover-trigger="mouseenter"/>
+					<span class="input-group-addon">%</span>
+				</div>
+			</div>
+			<label class="col-sm-3 control-label input-sm">Servicio de atenci&oacute;n al cliente</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.companyModel.satMonthlyFees" ng-readonly="true" popover="Importe mensual del servicio de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
+					<span class="input-group-addon">€</span>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+				<label class="col-sm-2 control-label input-sm">NGR</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.companyModel.ngrPercent" ng-readonly="true" popover="Porcentaje mensual sobre los ingresos netos de juego: GGR - tasa de juego" popover-trigger="mouseenter"/>
+					<span class="input-group-addon">%</span>
+				</div>
+			</div>
+			<label class="col-sm-3 control-label input-sm">Gastos de co-explotaci&oacute;n</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.companyModel.coOperatingMonthlyFees" ng-readonly="true" popover="Gastos mensuales de co-explotaci&oacute;n" popover-trigger="mouseenter"/>
+					<span class="input-group-addon">€</span>
+				</div>
+				<span style="display:none" class="help-block">Importe mensual</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">NR</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.companyModel.nrPercent" ng-readonly="true" popover="Porcentaje mensual sobre el resultado neto: NGR - gastos operativos" popover-trigger="mouseenter" />
+					<span class="input-group-addon">%</span>
+				</div>
+			</div> 
+		</div>
+		<hr class="col-sm-offset-2"/>
+		<h5 class="col-sm-offset-2">Establecimiento</h5>
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">Ventas</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.storeModel.stakesPercent" ng-readonly="true" popover="Porcentaje mensual sobre las ventas" popover-trigger="mouseenter" />
+					<span class="input-group-addon">%</span>
+				</div>
+			</div>
+			<label class="col-sm-3 control-label input-sm">Atenci&oacute;n comercial</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.storeModel.commercialMonthlyFees" ng-readonly="true" popover="Honorarios mensuales de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
+					<span class="input-group-addon">€</span>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">GGR</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.storeModel.ggrPercent" ng-readonly="true" popover="Porcentaje sobre ingresos brutos del luego (ventas - premios)" popover-trigger="mouseenter"/>
+					<span class="input-group-addon">%</span>
+				</div>
+			</div>
+			<label class="col-sm-3 control-label input-sm">Servicio de atenci&oacute;n al cliente</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.storeModel.satMonthlyFees" ng-readonly="true" popover="Importe mensual del servicio de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
+					<span class="input-group-addon">€</span>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+				<label class="col-sm-2 control-label input-sm">NGR</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.storeModel.ngrPercent" ng-readonly="true" popover="Porcentaje mensual sobre los ingresos netos de juego: GGR - tasa de juego" popover-trigger="mouseenter"/>
+					<span class="input-group-addon">%</span>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">NR</label>
+			<div class="col-sm-3">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm numeric-field" ng-model="entity.billingModel.storeModel.nrPercent" ng-readonly="true" popover="Porcentaje mensual sobre el resultado neto: NGR - gastos operativos" popover-trigger="mouseenter" />
+					<span class="input-group-addon">%</span>
+				</div>
+			</div> 
+		</div>
+	</form>
+</div>

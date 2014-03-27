@@ -33,9 +33,9 @@ import com.luckia.biller.core.model.BillState;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Store;
 
-public class PdfBillGenerator extends PdfGenerator {
+public class PDFBillGenerator extends PDFGenerator<Bill> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PdfBillGenerator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PDFBillGenerator.class);
 
 	private final Font documentFont;
 	private final Font titleFont;
@@ -45,7 +45,7 @@ public class PdfBillGenerator extends PdfGenerator {
 	private final String monthFormat;
 	private final Locale locale;
 
-	public PdfBillGenerator() {
+	public PDFBillGenerator() {
 		documentFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12f, Font.NORMAL, Color.BLACK);
 		boldFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12f, Font.BOLD, Color.BLACK);
 		titleFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 16f, Font.BOLD, Color.BLACK);
@@ -55,6 +55,7 @@ public class PdfBillGenerator extends PdfGenerator {
 		monthFormat = "MMMM yyyy";
 	}
 
+	@Override
 	public void generate(Bill bill, OutputStream out) {
 		LOG.debug("Generando PDF de la factura {}", bill.getCode());
 		try {

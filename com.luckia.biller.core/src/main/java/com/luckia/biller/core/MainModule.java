@@ -11,9 +11,9 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.services.bills.BillDataProvider;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
-import com.luckia.biller.core.services.bills.LisBillDataProvider;
 import com.luckia.biller.core.services.bills.impl.BillProcessorImpl;
 import com.luckia.biller.core.services.bills.impl.LiquidationProcessorImpl;
+import com.luckia.biller.core.services.bills.impl.LISBillDataProvider;
 import com.luckia.biller.core.validation.LegalEntityValidator;
 
 /**
@@ -39,7 +39,7 @@ public class MainModule extends AbstractModule {
 		bindEntityManagers();
 		bind(BillProcessor.class).to(BillProcessorImpl.class);
 		bind(LiquidationProcessor.class).to(LiquidationProcessorImpl.class);
-		bind(BillDataProvider.class).to(LisBillDataProvider.class);
+		bind(BillDataProvider.class).to(LISBillDataProvider.class);
 		install(new ValidationModule());
 		bind(LegalEntityValidator.class);
 	}

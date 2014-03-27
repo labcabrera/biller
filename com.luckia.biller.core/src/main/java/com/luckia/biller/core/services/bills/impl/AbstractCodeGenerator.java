@@ -1,4 +1,4 @@
-package com.luckia.biller.core.services.bills;
+package com.luckia.biller.core.services.bills.impl;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,12 +11,11 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
 import com.luckia.biller.core.jpa.Sequencer;
-import com.luckia.biller.core.model.Bill;
-import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.services.bills.CodeGenerator;
 
 /**
- * Servicio encargado de generar los codigos de las facturas. Estos codigos han de ser consecutivos. Cada establecimiento puede definir una
- * plantilla de factura con un formato similar al siguiente:
+ * Servicio encargado de generar los codigos de facturas y liquidaciones. Estos codigos han de ser consecutivos. Cada establecimiento puede
+ * definir una plantilla de factura con un formato similar al siguiente:
  * 
  * <pre>
  * A{year}/1035/{sequence, 4}
@@ -56,19 +55,12 @@ import com.luckia.biller.core.model.Store;
  * </p>
  * 
  */
-public class BillCodeGenerator {
+public abstract class AbstractCodeGenerator<T> implements CodeGenerator<T> {
 
 	@Inject
-	private Sequencer sequencer;
+	protected Sequencer sequencer;
 
-	/**
-	 * En el caso de las facturas se genera el numero de factura a partir de la secuencia de cada establecimiento.
-	 * 
-	 * @param bill
-	 */
-	public void generateCode(Bill bill) {
-		Store store = bill.getSender(Store.class);
-		String template = store.getBillSequencePrefix() != null ? store.getBillSequencePrefix() : "";
+	protected String generateCode(String template) {
 		Map<Pattern, String> values = configureReplacements();
 		String prefix = template;
 		for (Pattern pattern : values.keySet()) {
@@ -86,11 +78,10 @@ public class BillCodeGenerator {
 			prefix = matcher.replaceAll("");
 		}
 		Long sequence = sequencer.nextSequence(prefix);
-		String code = prefix.concat(StringUtils.leftPad(String.valueOf(sequence), padding, "0"));
-		bill.setCode(code);
+		return prefix.concat(StringUtils.leftPad(String.valueOf(sequence), padding, "0"));
 	}
 
-	private Map<Pattern, String> configureReplacements() {
+	protected Map<Pattern, String> configureReplacements() {
 		Map<Pattern, String> values = new LinkedHashMap<Pattern, String>();
 		values.put(Pattern.compile("\\{year\\}"), String.valueOf(new DateTime().getYear()));
 		values.put(Pattern.compile("\\{month\\}"), String.valueOf(new DateTime().getMonthOfYear()));

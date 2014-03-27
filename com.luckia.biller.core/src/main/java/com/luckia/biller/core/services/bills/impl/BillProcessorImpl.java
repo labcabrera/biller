@@ -31,10 +31,9 @@ import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.StateMachineService;
-import com.luckia.biller.core.services.bills.BillCodeGenerator;
 import com.luckia.biller.core.services.bills.BillDetailProcessor;
 import com.luckia.biller.core.services.bills.BillProcessor;
-import com.luckia.biller.core.services.pdf.PdfBillGenerator;
+import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
 public class BillProcessorImpl implements BillProcessor {
 
@@ -51,7 +50,7 @@ public class BillProcessorImpl implements BillProcessor {
 	@Inject
 	private FileService fileService;
 	@Inject
-	private PdfBillGenerator pdfBillGenerator;
+	private PDFBillGenerator pdfBillGenerator;
 	@Inject
 	private AuditService auditService;
 
@@ -178,6 +177,7 @@ public class BillProcessorImpl implements BillProcessor {
 		rectified.setDetails(new ArrayList<BillDetail>());
 		rectified.setLiquidationDetails(new ArrayList<LiquidationDetail>());
 		rectified.setParent(bill);
+		auditService.processCreated(rectified);
 		entityManager.persist(rectified);
 		for (BillDetail detail : bill.getDetails()) {
 			BillDetail copy = detail.clone();

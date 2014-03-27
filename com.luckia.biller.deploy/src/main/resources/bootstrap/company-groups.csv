@@ -1,4 +1,4 @@
-"CIF","NAME","EMAIL","PROVINCE_ID","REGION_ID","ROAD","FLOOR","NUMBER"
-"CG0000001","Grupo Galicia","grupo.galicia@company.com","32","080","c/ Galicia","3ºA","134"
-"CG0000002","Grupo Valencia","grupo.valencia@company.com","46","250","c/ Valencia","1","65"
-"CG0000003","Grupo Madrid","grupo.madrid@company.com","28","079","P\ Sol","1","1"
+"NAME"
+"Grupo Galicia"
+"Grupo Valencia"
+"Grupo Madrid"

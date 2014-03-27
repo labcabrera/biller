@@ -18,11 +18,14 @@ import org.apache.commons.lang.NotImplementedException;
 
 import com.google.inject.Inject;
 import com.luckia.biller.core.ClearCache;
+import com.luckia.biller.core.i18n.I18nService;
+import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
+import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.LiquidationEntityService;
 
 @Path("liquidations")
@@ -30,6 +33,12 @@ public class LiquidationRestService {
 
 	@Inject
 	private LiquidationEntityService entityService;
+	@Inject
+	private LiquidationProcessor liquidationProcessor;
+	@Inject
+	private EntityManagerProvider entityManagerProvider;
+	@Inject
+	private I18nService i18nService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -58,5 +67,19 @@ public class LiquidationRestService {
 	@ClearCache
 	public Message<Liquidation> merge(Bill bill) {
 		throw new NotImplementedException();
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("confirm/{id}")
+	@ClearCache
+	public Message<Liquidation> confirm(@PathParam("id") String id) {
+		try {
+			Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, id);
+			liquidationProcessor.confirm(liquidation);
+			return new Message<Liquidation>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.confirm.success"), liquidation);
+		} catch (Exception ex) {
+			return new Message<Liquidation>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.confirm.error"));
+		}
 	}
 }

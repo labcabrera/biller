@@ -20,6 +20,7 @@ import com.luckia.biller.core.model.BillConcept;
  * <li>VENTAS_TOTALES: sumatorio de todas las ventas del terminal en el intervalo indicado</li>
  * <li>CANCELACIONES_TOTALES: sumatorio de todas las cancelaciones de tickets</li>
  * <li>IMPORTE_PAGADO: total de premios pagados por el terminal</li>
+ * <li>ATRIBUTABLE: total de pagos de premios atribuibles al terminal</li>
  * </ul>
  */
 public interface BillDataProvider {

@@ -1,6 +1,7 @@
 package com.luckia.biller.core.services.pdf;
 
 import java.awt.Color;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +18,11 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfWriter;
 
-public abstract class PdfGenerator {
+public abstract class PDFGenerator<T> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PdfGenerator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PDFGenerator.class);
+
+	public abstract void generate(T entity, OutputStream out);
 
 	protected abstract float getLineHeight();
 

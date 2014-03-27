@@ -1,4 +1,4 @@
-package com.luckia.biller.core.services.bills;
+package com.luckia.biller.core.services.bills.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,10 +23,15 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.lis.LisTerminalRecord;
+import com.luckia.biller.core.services.bills.BillDataProvider;
+import com.luckia.biller.core.services.bills.BillFeesService;
 
-public class LisBillDataProvider implements BillDataProvider {
+/**
+ * Implementación de {@link BillDataProvider} que obtiene la información de la base de datos de LIS.
+ */
+public class LISBillDataProvider implements BillDataProvider {
 
-	private static final Logger LOG = LoggerFactory.getLogger(LisBillDataProvider.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LISBillDataProvider.class);
 
 	@Inject
 	@Named(Constants.LIS)

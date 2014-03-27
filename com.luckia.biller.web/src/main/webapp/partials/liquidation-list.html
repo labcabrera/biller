@@ -6,19 +6,32 @@
 		<div class="col-sm-9">
 			<h4>Liquidaciones <small>({{results.totalItems}} resultados)</small></h4>
 			<div ng-if="results.results.length < 1">No se han encontrado resultados</div>
-			<ul class="list-group">
-				<li class="list-group-item" ng-repeat="result in results.results">
-					<a href="#/liquidations/id/{{result.id}}">
-						<span>{{result.billDate.substr(0,10)}} - </span>
-						<span ng-if="result.code != null">{{result.code}}</span>
-						<span>{{result.sender.name}}</span>
-						<span ng-if="result.currentState.stateDefinition.id == 'BillDraft'" class="glyphicon glyphicon-exclamation-sign" title="Borrador"></span>
-						<span ng-if="result.currentState.stateDefinition.id == 'BillCancelled'" class="glyphicon glyphicon-fire" title="Cancelada"></span>
-					</a>
-					<span class="pull-right"> <a href="#/costcenters/id/{{result.receiver.id}}">{{result.receiver.name}}</a></span>
-				</li>
-			</ul>
-			<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)" max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacte;ltimo"></pagination>
+			<div ng-if="results.results.length > 0">
+				<table class="table table-hover table-condensed" >
+					<tr>
+						<th>Empresa</th>
+						<th>Centro de coste</th>
+						<th>Código</th>
+						<th>Estado</th>
+						<th>Fecha</th>
+						<th></th>
+						<th></th>
+					</tr>
+					<tr ng-repeat="result in results.results">
+						<td><a href="#liquidations/id/{{result.id}}">{{result.sender.name}}</a></td>
+						<td><a href="#liquidations/id/{{result.id}}">{{result.receiver.name}}</a></td>
+						<td>{{result.code}}</td>
+						<td>
+							<span ng-if="result.currentState.stateDefinition.id == 'BillDraft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
+							<span ng-if="result.currentState.stateDefinition.id == 'BillRectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
+						</td>
+						<td>{{result.billDate.substr(0,10)}}</td>
+						<td>{{result.billType.desc}}</td>
+						<td><a href="#/liquidations/id/{{result.id}}"><span class="glyphicon glyphicon-search"></span></a></td>
+					</tr>
+				</table>
+				<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)" max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
+			</div>
 		</div>
 		<div class="col-sm-3">
 			<div>

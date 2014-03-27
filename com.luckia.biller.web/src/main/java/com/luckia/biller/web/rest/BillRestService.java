@@ -35,7 +35,7 @@ import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.bills.impl.BillProcessorImpl;
 import com.luckia.biller.core.services.entities.BillEntityService;
-import com.luckia.biller.core.services.pdf.PdfBillGenerator;
+import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
 @Path("bills")
 public class BillRestService {
@@ -49,7 +49,7 @@ public class BillRestService {
 	@Inject
 	private BillProcessorImpl billProcessor;
 	@Inject
-	private PdfBillGenerator pdfBillGenerator;
+	private PDFBillGenerator pdfBillGenerator;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

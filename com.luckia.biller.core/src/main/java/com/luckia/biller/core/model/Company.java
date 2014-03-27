@@ -33,6 +33,9 @@ public class Company extends LegalEntity {
 	@Column(name = "AUTO_CONFIRM")
 	private Boolean autoConfirm;
 
+	@Column(name = "LIQUIDATION_SEQUENCE_PREFIX", length = 32)
+	private String liquidationSequencePrefix;
+
 	public BillingModel getBillingModel() {
 		return billingModel;
 	}
@@ -50,5 +53,21 @@ public class Company extends LegalEntity {
 				this.autoConfirm = company.autoConfirm;
 			}
 		}
+	}
+
+	public Boolean getAutoConfirm() {
+		return autoConfirm;
+	}
+
+	public void setAutoConfirm(Boolean autoConfirm) {
+		this.autoConfirm = autoConfirm;
+	}
+
+	public String getLiquidationSequencePrefix() {
+		return liquidationSequencePrefix;
+	}
+
+	public void setLiquidationSequencePrefix(String liquidationSequencePrefix) {
+		this.liquidationSequencePrefix = liquidationSequencePrefix;
 	}
 }

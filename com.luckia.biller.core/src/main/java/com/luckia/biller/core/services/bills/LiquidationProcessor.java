@@ -10,6 +10,8 @@ import com.luckia.biller.core.model.Liquidation;
 
 public interface LiquidationProcessor {
 
-	public abstract List<Liquidation> process(Company company, Range<Date> range);
+	List<Liquidation> process(Company company, Range<Date> range);
+
+	void confirm(Liquidation liquidation);
 
 }

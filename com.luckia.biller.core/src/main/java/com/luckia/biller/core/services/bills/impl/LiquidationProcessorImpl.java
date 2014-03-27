@@ -1,5 +1,8 @@
 package com.luckia.biller.core.services.bills.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.jpa.EntityManagerProvider;
+import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillState;
 import com.luckia.biller.core.model.Company;
@@ -24,8 +28,10 @@ import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.AuditService;
+import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
+import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
 
 public class LiquidationProcessorImpl implements LiquidationProcessor {
 
@@ -37,6 +43,12 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private StateMachineService stateMachineService;
 	@Inject
 	private AuditService auditService;
+	@Inject
+	private PDFLiquidationGenerator pdfLiquidationGenerator;
+	@Inject
+	private FileService fileService;
+	@Inject
+	private LiquidationCodeGenerator liquidationCodeGenerator;
 
 	/*
 	 * (non-Javadoc)
@@ -106,5 +118,27 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			}
 		}
 		return costCenterMap;
+	}
+
+	@Override
+	public void confirm(Liquidation liquidation) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			entityManager.getTransaction().begin();
+			stateMachineService.createTransition(liquidation, BillState.BillConfirmed.name());
+			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
+			FileOutputStream out = new FileOutputStream(tempFile);
+			pdfLiquidationGenerator.generate(liquidation, out);
+			out.close();
+			FileInputStream in = new FileInputStream(tempFile);
+			String name = String.format("bill-%s.pdf", liquidation.getCode());
+			AppFile pdfFile = fileService.save(name, "application/pdf", in);
+			liquidation.setPdfFile(pdfFile);
+			entityManager.merge(liquidation);
+			liquidationCodeGenerator.generateCode(liquidation);
+			entityManager.getTransaction().commit();
+		} catch (Exception ex) {
+			throw new RuntimeException("Error al confirmar la factura", ex);
+		}
 	}
 }

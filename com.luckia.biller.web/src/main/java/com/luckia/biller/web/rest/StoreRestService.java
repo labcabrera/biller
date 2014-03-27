@@ -57,7 +57,7 @@ public class StoreRestService {
 			return storeService.merge(entity);
 		} catch (Exception ex) {
 			LOG.error("Error al actualizar el establecimiento", ex);
-			return new Message<Store>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("store.error.remove"));
+			return new Message<Store>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("store.error.merge"));
 		}
 	}
 
