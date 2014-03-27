@@ -255,17 +255,35 @@ billerControllers.controller('StoreNewCtrl', [ '$scope', '$routeParams', '$http'
  */
 billerControllers.controller('OwnerListCtrl', [ '$scope', '$http', function($scope, $http) {
 	$scope.currentPage = 1;
-	$scope.searchName = '';	
-	$scope.getSearchUrl = function() {
-		var url = 'rest/owners/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&name=" + $scope.searchName;
-		return url;
+	$scope.reset = function() {
+		$scope.searchOptions = {
+			'name': '',
+			'idCardNumber': '',
+			'showDeleted': false
+		};
 	};
-	$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
+	$scope.getSearchUrl = function() {
+		var predicateBuilder = new PredicateBuilder('');
+		console.log('[' + $scope.searchOptions.name + ']');
+		if($scope.searchOptions.name != null && $scope.searchOptions.name != '') {
+			var name = $scope.searchOptions.name;
+			var key = "(name=lk=" + name + ",firstSurname=lk=" + name + ",secondSurname=lk=" + name + ")";
+			console.log('append key!');
+			predicateBuilder.appendKey(key);
+		}
+		predicateBuilder.append("idCard.number=lk=", $scope.searchOptions.idCardNumber);
+		if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
+		return 'rest/owners/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
+	};
 	$scope.setPage = function(page) {
 		$scope.currentPage = page;
 		$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
 	};
 	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+	$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
+	$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
+	$scope.reset();
+	$scope.search();
 } ]);
 
 billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
@@ -288,10 +306,13 @@ billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$rout
 	    $scope.currentPage = page;
 	    $http.get('rest/stores/find?q=owner.id==' + $routeParams.id + "&n=10" + "&p=" + page).success(function(data) { $scope.childs = data; });
 	};
+	$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
+	$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
 	$scope.load();
 } ]);
 
-billerControllers.controller('OwnerNewCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+/** Nuevo titular */
+billerControllers.controller('OwnerNewCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
 	$scope.isReadOnly = false;
 	$scope.reset = function() {};
 	$scope.update = function() {
@@ -302,8 +323,8 @@ billerControllers.controller('OwnerNewCtrl', [ '$scope', '$rootScope', '$routePa
 			}
 		});
 	};
-	$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
-	$scope.regions = function(name) { return $http.get("/rest/regions/find/" + name).then(function(response) { return response.data; }); };
+	$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
+	$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
 }]);
 
 /* ----------------------------------------------------------------------------
@@ -450,7 +471,6 @@ billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routePa
 	};
 	$scope.reset();
 	$scope.search();
-//	$('.selectpicker').selectpicker();
 } ]);
 
 billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', function($scope, $rootScope, $routeParams, $location, $http) {
