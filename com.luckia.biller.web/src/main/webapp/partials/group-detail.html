@@ -4,9 +4,13 @@
 </head>
 <body>
 <div class="row">
+
 	<div class="col-sm-9">
+
 		<div id="alertContainer"></div>	
+
 		<h4>Grupo de Empresas</h4>
+
 		<div class="m-top-15">
 			<form class="form-horizontal" role="form">
 				<div class="form-group">
@@ -26,16 +30,20 @@
 					</div>
 					<label for="inputPassword3" class="col-sm-2 control-label input-sm">Region</label>
 					<div class="col-sm-4">
-						<input type='text' class="form-control" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly" />
+						<input type='text' class="form-control" ng-model="entity.address.region" ng-readonly="isReadOnly" typeahead-editable="false"
+							typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" />
 					</div>
 				</div>
 			</form>
 		</div>
+		
+		
 		<div class="m-top-40">
 			<ul class="nav nav-tabs">
 				<li class="active"><a data-target="#companiesTab" data-toggle="tab">Empresas</a></li>
 				<li><a data-target="#contactTab" data-toggle="tab">Contacto</a></li>
 				<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
+				<li><a data-target="#auditTab" data-toggle="tab">Auditoría</a></li>
 			</ul>
 	
 			<!-- Tab panes -->
@@ -50,7 +58,6 @@
 				</div>
 				<div class="tab-pane" id="contactTab">
 					<div class="m-top-15">
-						[TODO: INFORMACION DE CONTACTO]
 					</div>
 				</div>
 				<div class="tab-pane" id="commentsTab">
@@ -60,7 +67,21 @@
 						</ul>
 					</div>
 				</div>
-				
+				<div class="tab-pane" id="auditTab">
+					<div class="m-top-15">
+						<div class="col-sm-2">Creado</div>
+						<div class="col-sm-3">{{entity.auditData.created}}</div>
+						<div class="clearfix"></div>
+						<div class="col-sm-2">Modificado</div>
+						<div class="col-sm-3">{{entity.auditData.modified}}</div>
+						<div class="clearfix"></div>
+						<div class="col-sm-2">Eliminado</div>
+						<div class="col-sm-3">{{entity.auditData.deleted}}</div>
+						<div class="clearfix"></div>
+						<div class="col-sm-2">Usuario</div>
+						<div class="col-sm-3">{{entity.auditData.modifiedBy.name}}</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -23,7 +23,16 @@ billerControllers.controller('UserDetailCtrl', [ '$scope', '$routeParams', '$htt
 billerControllers.controller('GroupListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
 	$scope.currentPage = 1;
 	$scope.searchName = '';
-	$scope.getSearchUrl = function() { return 'rest/groups/find?p=' + $scope.currentPage + '&n=' + $rootScope.itemsPerPage + "&name=" + $scope.searchName; };
+	$scope.searchOptions = {
+		'showDeleted': false,
+		'name': '',
+	};
+	$scope.getSearchUrl = function() {
+		var predicateBuilder = new PredicateBuilder('');
+		predicateBuilder.append("name=lk=", $scope.searchOptions.name);			
+		if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
+		return 'rest/groups/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
+	};
 	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
 	$scope.setPage = function(page) {
 	    $scope.currentPage = page;
@@ -49,14 +58,11 @@ billerControllers.controller('GroupDetailCtrl', [ '$scope', '$rootScope', '$loca
 	};
 	$scope.remove = function() {
 		$http.post('rest/groups/remove/' + $scope.entity.id).success(function(data) {
-			if(data.code == 200) {
-				$location.path("groups");				
-			} else {
-				// TODO MOSTAR ALERTA
-				alert(data.code + ": " + data.message);
-			}
+			if(data.code == 200) { $location.path("groups"); } else { $scope.displayAlert(data); }
 		});
 	};
+	$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
+	$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
 	$scope.load();
 } ]);
 

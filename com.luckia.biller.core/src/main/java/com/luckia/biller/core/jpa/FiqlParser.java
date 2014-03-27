@@ -247,6 +247,7 @@ public class FiqlParser {
 			} else if (NOT_NULL.equals(operator)) {
 				result = builder.isNotNull(expressionValue);
 			} else if (NULL.equals(operator)) {
+				result = builder.isNull(expressionValue);
 			} else if (LK.equals(operator)) {
 				result = builder.like(expressionValue, "%" + targetValue + "%");
 			} else {
@@ -257,7 +258,7 @@ public class FiqlParser {
 
 		private Date parseDate(Object value) {
 			try {
-				return new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(value));
+				return value != null ? new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(value)) : null;
 			} catch (Exception ex) {
 				throw new RuntimeException(ex);
 			}

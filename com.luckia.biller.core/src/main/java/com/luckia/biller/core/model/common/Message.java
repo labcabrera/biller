@@ -6,7 +6,7 @@ import java.util.List;
 public class Message<I> {
 
 	public static final String CODE_SUCCESS = "200";
-	public static final String CODE_GENERIC_ERROR = "500";	
+	public static final String CODE_GENERIC_ERROR = "500";
 
 	private String code;
 	private String message;
@@ -15,6 +15,11 @@ public class Message<I> {
 	private I payload;
 
 	public Message() {
+	}
+
+	public Message(String code, String message) {
+		this.code = code;
+		this.message = message;
 	}
 
 	public Message(String code, String message, I payload) {

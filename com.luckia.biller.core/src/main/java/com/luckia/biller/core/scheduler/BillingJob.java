@@ -32,9 +32,9 @@ import com.luckia.biller.core.model.Company;
  * el job se ejecutara utilizando 10 threads.</li>
  * </ul>
  */
-public class BillerJob extends BaseJob {
+public class BillingJob extends BaseJob {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BillerJob.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BillingJob.class);
 
 	public static final String KEY_FROM = "from";
 	public static final String KEY_TO = "to";

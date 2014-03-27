@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
@@ -26,6 +27,8 @@ public class CompanyGroupRestService {
 
 	@Inject
 	private CompanyGroupEntityService companyGroupService;
+	@Inject
+	private I18nService i18nService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -48,7 +51,11 @@ public class CompanyGroupRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
 	public Message<CompanyGroup> merge(CompanyGroup entity) {
-		return companyGroupService.merge(entity);
+		try {
+			return companyGroupService.merge(entity);
+		} catch (Exception ex) {
+			return new Message<CompanyGroup>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("companyGroup.error.merge"), entity);
+		}
 	}
 
 	@POST
@@ -56,6 +63,10 @@ public class CompanyGroupRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/remove/{id}")
 	public Message<CompanyGroup> remove(@PathParam("id") Long id) {
-		return companyGroupService.remove(id);
+		try {
+			return companyGroupService.remove(id);
+		} catch (Exception ex) {
+			return new Message<CompanyGroup>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("companyGroup.error.remove"));
+		}
 	}
 }

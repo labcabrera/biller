@@ -4,6 +4,7 @@
 </head>
 <body>
 <div class="row">
+	
 	<div class="col-sm-9">
 		<div>
 			<h4>Grupos de Empresas  <small>({{results.totalItems}} resultados)</small></h4>
@@ -19,13 +20,19 @@
 			<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)"></pagination>
 		</div>
 	</div>
+
 	<div class="col-sm-3">
 		<div>
 			<h4>Filtrar resultados</h4>
 			<form role="form">
 				<div class="form-group">
 					<label>Nombre</label>
-					<input type="text" class="form-control input-sm" ng-model="searchName" />
+					<input type="text" class="form-control input-sm" ng-model="searchOptions.name" />
+				</div>
+				<div class="form-group">
+					<div class="checkbox">
+						<label><input type="checkbox" ng-model="searchOptions.showDeleted">Mostrar elementos eliminados</label>
+					</div>
 				</div>
 				<button class="btn btn-primary btn-sm" ng-click="search()">Buscar</button>
 			</form>

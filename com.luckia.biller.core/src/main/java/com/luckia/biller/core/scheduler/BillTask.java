@@ -18,7 +18,7 @@ import com.luckia.biller.core.services.bills.BillProcessor;
  * Componente encargado de generar una factura para un determinado establecimiento.<br>
  * El sistema ejecutara estas tareas en modo asincrono al final de cada mes.
  * 
- * @see BillerJob
+ * @see BillingJob
  */
 public class BillTask implements Runnable {
 

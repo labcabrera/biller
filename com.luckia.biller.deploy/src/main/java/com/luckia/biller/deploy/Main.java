@@ -10,7 +10,7 @@ import org.quartz.JobExecutionException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.MainModule;
-import com.luckia.biller.core.scheduler.BillerJob;
+import com.luckia.biller.core.scheduler.BillingJob;
 import com.luckia.biller.deploy.poi.MasterWorkbookProcessor;
 
 /**
@@ -28,7 +28,7 @@ public class Main {
 		injector.getInstance(BillSequencePrefixGenerator.class).run();
 
 		System.out.println("Generando facturacion de enero");
-		BillerJob job = injector.getInstance(BillerJob.class);
+		BillingJob job = injector.getInstance(BillingJob.class);
 		job.setInjector(injector);
 
 		Date from = new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate();

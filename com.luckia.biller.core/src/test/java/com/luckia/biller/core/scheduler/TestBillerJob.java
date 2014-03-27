@@ -16,7 +16,7 @@ public class TestBillerJob {
 	@Test
 	public void test() throws JobExecutionException {
 		Injector injector = Guice.createInjector(new MainModule());
-		BillerJob job = injector.getInstance(BillerJob.class);
+		BillingJob job = injector.getInstance(BillingJob.class);
 		job.injector = injector;
 		Date from = new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate();
 		Date to = new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate();

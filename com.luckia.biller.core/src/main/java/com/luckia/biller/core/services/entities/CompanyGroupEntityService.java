@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.services.AuditService;
@@ -19,6 +20,8 @@ public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGro
 
 	@Inject
 	private AuditService auditService;
+	@Inject
+	private I18nService i18nService;
 
 	@Override
 	public Message<CompanyGroup> merge(CompanyGroup entity) {
@@ -27,21 +30,24 @@ public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGro
 			return validationResult;
 		}
 		EntityManager entityManager = entityManagerProvider.get();
-		if (!entityManager.getTransaction().isActive()) {
-			entityManager.getTransaction().begin();
-		}
-		Boolean isNew = entity.getId() == null;
+		entityManager.getTransaction().begin();
 		CompanyGroup current;
-		if (isNew) {
+		String message;
+		if (entity.getId() == null) {
 			current = new CompanyGroup();
+			current.merge(entity);
+			auditService.processCreated(current);
+			entityManager.persist(current);
+			message = i18nService.getMessage("companyGroup.persist");
 		} else {
 			current = entityManager.find(CompanyGroup.class, entity.getId());
+			current.merge(entity);
+			auditService.processModified(current);
+			entityManager.persist(current);
+			message = i18nService.getMessage("companyGroup.merge");
 		}
-		current.merge(entity);
-		CompanyGroup merged = entityManager.merge(current);
-		auditService.processModified(current);
 		entityManager.getTransaction().commit();
-		return new Message<CompanyGroup>(Message.CODE_SUCCESS, isNew ? "Grupo creado" : "Grupo actualizado", merged);
+		return new Message<CompanyGroup>(Message.CODE_SUCCESS, message, current);
 	}
 
 	@Override
@@ -51,9 +57,9 @@ public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGro
 		CompanyGroup entity = entityManager.find(CompanyGroup.class, primaryKey);
 		entityManager.getTransaction().begin();
 		query.setParameter("parent", null).setParameter("value", entity.getId()).executeUpdate();
-		entityManager.remove(entity);
+		auditService.processDeleted(entity);
 		entityManager.getTransaction().commit();
-		return new Message<CompanyGroup>(Message.CODE_SUCCESS, "Grupo Eliminado", entity);
+		return new Message<CompanyGroup>(Message.CODE_SUCCESS, i18nService.getMessage("companyGroup.remove"), entity);
 	}
 
 	@Override
