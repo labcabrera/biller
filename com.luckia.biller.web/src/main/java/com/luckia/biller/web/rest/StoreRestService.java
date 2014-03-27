@@ -10,6 +10,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
@@ -19,8 +23,12 @@ import com.luckia.biller.core.services.entities.StoreEntityService;
 @Path("stores")
 public class StoreRestService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(StoreRestService.class);
+
 	@Inject
 	private StoreEntityService storeService;
+	@Inject
+	private I18nService i18nService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -45,6 +53,24 @@ public class StoreRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
 	public Message<Store> merge(Store entity) {
-		return storeService.merge(entity);
+		try {
+			return storeService.merge(entity);
+		} catch (Exception ex) {
+			LOG.error("Error al actualizar el establecimiento", ex);
+			return new Message<Store>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("store.error.remove"));
+		}
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/remove/{id}")
+	public Message<Store> remove(@PathParam("id") Long id) {
+		try {
+			return storeService.remove(id);
+		} catch (Exception ex) {
+			LOG.error("Error al eliminar el establecimiento", ex);
+			return new Message<Store>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("store.error.remove"));
+		}
 	}
 }

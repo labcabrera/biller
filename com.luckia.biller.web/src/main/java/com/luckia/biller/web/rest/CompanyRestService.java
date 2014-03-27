@@ -15,6 +15,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
@@ -24,8 +28,12 @@ import com.luckia.biller.core.services.entities.CompanyEntityService;
 @Path("companies")
 public class CompanyRestService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(CompanyRestService.class);
+
 	@Inject
 	private CompanyEntityService companyService;
+	@Inject
+	private I18nService i18nService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -50,6 +58,24 @@ public class CompanyRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
 	public Message<Company> merge(Company entity) {
-		return companyService.merge(entity);
+		try {
+			return companyService.merge(entity);
+		} catch (Exception ex) {
+			LOG.error("Error al actualizar la empresa", ex);
+			return new Message<Company>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("company.error.merge"));
+		}
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/remove/{id}")
+	public Message<Company> remove(@PathParam("id") Long id) {
+		try {
+			return companyService.remove(id);
+		} catch (Exception ex) {
+			LOG.error("Error al eliminar la empresa", ex);
+			return new Message<Company>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("company.error.remove"));
+		}
 	}
 }

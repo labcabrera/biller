@@ -10,7 +10,7 @@
 		<ul class="list-group">
 			<li class="list-group-item" ng-repeat="result in results.results | filter:query | orderBy:orderProp">
 				<div>
-					<a href="#/costcenters/id/{{result.id}}">{{result.name}} {{result.firstSurname}} {{result.secondSurname}}</a>
+					<a href="#/costcenters/id/{{result.id}}">{{result.code}} {{result.name}}</a>
 				</div>
 			</li>
 		</ul>
@@ -28,10 +28,6 @@
 				<div class="form-group">
 					<label>C&oacute;digo</label>
 					<input type="text" class="form-control input-sm" ng-model="searchName" />
-				</div>
-				<div class="form-group">
-					<label>Provincia</label>
-					<input type="text" class="form-control input-sm" ng-model="searchProvince" typeahead="province as province.name for province in provinces($viewValue)" />
 				</div>
 				<button class="btn btn-primary btn-sm" ng-click="search()">Buscar</button>
 			</form>

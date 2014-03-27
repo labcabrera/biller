@@ -168,6 +168,9 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 		if (this.idCard == null && entity.idCard != null) {
 			this.idCard = new IdCard();
 		}
+		if(entity.parent == null) {
+			this.parent = null;
+		}
 		this.name = entity.name;
 		this.email = entity.email;
 		this.comments = entity.comments;

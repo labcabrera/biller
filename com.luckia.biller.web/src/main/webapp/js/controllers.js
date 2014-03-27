@@ -23,9 +23,11 @@ billerControllers.controller('UserDetailCtrl', [ '$scope', '$routeParams', '$htt
 billerControllers.controller('GroupListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
 	$scope.currentPage = 1;
 	$scope.searchName = '';
-	$scope.searchOptions = {
-		'showDeleted': false,
-		'name': '',
+	$scope.reset = function() {
+		$scope.searchOptions = {
+				'name': '',
+				'showDeleted': false,
+		};
 	};
 	$scope.getSearchUrl = function() {
 		var predicateBuilder = new PredicateBuilder('');
@@ -38,6 +40,7 @@ billerControllers.controller('GroupListCtrl', [ '$scope', '$rootScope', '$routeP
 	    $scope.currentPage = page;
 		$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
 	};
+	$scope.reset();
 	$scope.search();
 } ]);
 
@@ -87,12 +90,18 @@ billerControllers.controller('GroupNewCtrl', [ '$scope', '$routeParams', '$http'
 billerControllers.controller('CompanyListCtrl', [ '$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
 	$scope.currentPage = 1;
 	$scope.itemsPerPage = 15;
-	$scope.searchName = '';
-	$scope.searchProvince = null;
+	$scope.reset = function() {
+		$scope.searchOptions = {
+				'name': '',
+				'province': { "id": null, "name": ''},
+				'showDeleted': false
+		};
+	};
 	$scope.getSearchUrl = function() {
 		var predicateBuilder = new PredicateBuilder('');
-		predicateBuilder.append("name=lk=", $scope.searchName);
-		predicateBuilder.append("address.province.id==", $scope.searchProvince != null ? $scope.searchProvince.id : null);	
+		predicateBuilder.append("name=lk=", $scope.searchOptions.name);
+		predicateBuilder.append("address.province.id==", $scope.searchOptions.province != null ? $scope.searchOptions.province.id : null);
+		if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
 		return 'rest/companies/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 	};
 	$scope.setPage = function(page) {
@@ -100,10 +109,12 @@ billerControllers.controller('CompanyListCtrl', [ '$scope', '$http', '$routePara
 		$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
 	};
 	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+	$scope.reset();
 	$scope.search();
 } ]);
 
-billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+/** Detalle de empresa */
+billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
 	$scope.loadChilds = function() {
 		$http.get('rest/companies/id/' + $routeParams.id).success(function(data) {
 			$scope.entity = data;
@@ -130,6 +141,11 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 				$scope.entity = data.payload;
 				$rootScope.isReadOnly = true;
 			}
+		});
+	};
+	$scope.remove = function() {
+		$http.post('rest/companies/remove/' + $scope.entity.id).success(function(data) {
+			if(data.code == 200) { $location.path("companies"); } else { $scope.displayAlert(data); }
 		});
 	};
 	$scope.addStore = function() {
@@ -170,16 +186,25 @@ billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$htt
  */
 billerControllers.controller('StoreListCtrl', [ '$scope', '$routeParams', '$http', function($scope, $routeParams, $http) {
 	$scope.currentPage = 1;
-	$scope.searchName = '';
 	$scope.itemsPerPage = 15;
-	$scope.searchProvince = null;
-	$scope.searchCompany = { "id": $routeParams.parent, "name": '' };
+	$scope.reset = function() {
+		$scope.searchOptions = {
+			'name': '',
+			'province': {"id": null, 'name': ''},
+			'company': {"id": null, 'name': ''},
+			'owner': {"id": null, 'name': ''},
+			'costCenter': {"id": null, 'name': ''},
+			'showDeleted': false,
+		};
+	};
 	$scope.getSearchUrl = function() {
 		var predicateBuilder = new PredicateBuilder('');
-		predicateBuilder.append("name=lk=", $scope.searchName);
-		predicateBuilder.append("address.province.id==", $scope.searchProvince != null ? $scope.searchProvince.id : null);
-		predicateBuilder.append("parent.id==", $scope.searchCompany != null ? $scope.searchCompany.id : null);
-		predicateBuilder.append("owner.id==", angular.isDefined($routeParams.owner) ? $routeParams.owner : null);		
+		predicateBuilder.append("name=lk=", $scope.searchOptions.name);
+		predicateBuilder.append("address.province.id==", $scope.searchOptions.province != null ? $scope.searchOptions.province.id : null);
+		predicateBuilder.append("parent.id==", $scope.searchOptions.company != null ? $scope.searchOptions.company.id : null);
+		predicateBuilder.append("costCenter.id==", $scope.searchOptions.costCenter != null ? $scope.searchOptions.costCenter.id : null);
+		predicateBuilder.append("owner.id==", $scope.searchOptions.owner != null ? $scope.searchOptions.owner.id : null);
+		if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
 		return 'rest/stores/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 	};
 	$scope.setPage = function(page) {
@@ -187,29 +212,51 @@ billerControllers.controller('StoreListCtrl', [ '$scope', '$routeParams', '$http
 	    $scope.search();
 	};
 	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+	$scope.reset();
 	$scope.search();
 } ]);
 
-billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+/** Detalle de establecimiento */
+billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
 	$scope.load = function() {
 		$http.get('rest/stores/id/' + $routeParams.id).success(function(data) { $scope.entity = data; });
 		$rootScope.isReadOnly = true;
 	};
 	$scope.update = function() {
 		$http.post('rest/stores/merge/', $scope.entity).success(function(data) {
-			$scope.message = "Establecimiento actualizado";
+			$rootScope.displayAlert(data);
+			if(data.code == 200) {
+				$scope.entity = data.payload;
+				$rootScope.isReadOnly = true;
+			}
 		});
-		$scope.isReadOnly = true;
 	};
-	$scope.regions = function(name) {
-		var url = "/rest/regions/find/" + name;
-		if(angular.isDefined($scope.entity.address.province.id)) {
-			url += '?province=' + $scope.entity.address.province.id;
-		}
-		return $http.get(url).then(function(response) { return response.data; });
+	$scope.remove = function() {
+		$http.post('rest/stores/remove/' + $scope.entity.id).success(function(data) {
+			if(data.code == 200) { $location.path("stores"); } else { $scope.displayAlert(data); }
+		});
 	};
+	$scope.$watch('entity.parent', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.parent = null; } });
+	$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
+	$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
 	$scope.load();
 } ]);
+
+/** Nuevo establecimiento */
+billerControllers.controller('StoreNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+	$scope.isReadOnly = false;
+	$scope.reset = function() { };
+	$scope.update = function() {
+		$http.post('rest/stores/merge/', $scope.entity).success(function(data) {
+			if(data.code == 200) {
+				$location.path("stores/id/" + data.payload.id);				
+			} else {
+				$scope.displayAlert(data);
+			}
+		});
+	};
+} ]);
+
 /* ----------------------------------------------------------------------------
  * TITULARES
  * ----------------------------------------------------------------------------

@@ -15,6 +15,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.common.Message;
@@ -22,8 +25,20 @@ import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.entities.CompanyGroupEntityService;
 
+/**
+ * Servicio REST de grupos de empresas con los métodos:
+ * <ul>
+ * <li>findById (GET)</li>
+ * <li>find (GET)</li>
+ * <li>merge (POST)</li>
+ * <li>remove (POST)</li>
+ * </ul>
+ * 
+ */
 @Path("groups")
 public class CompanyGroupRestService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(CompanyGroupRestService.class);
 
 	@Inject
 	private CompanyGroupEntityService companyGroupService;
@@ -54,6 +69,7 @@ public class CompanyGroupRestService {
 		try {
 			return companyGroupService.merge(entity);
 		} catch (Exception ex) {
+			LOG.error("Error al actualizar el grupo", ex);
 			return new Message<CompanyGroup>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("companyGroup.error.merge"), entity);
 		}
 	}
@@ -66,6 +82,7 @@ public class CompanyGroupRestService {
 		try {
 			return companyGroupService.remove(id);
 		} catch (Exception ex) {
+			LOG.error("Error al eliminar el grupo", ex);
 			return new Message<CompanyGroup>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("companyGroup.error.remove"));
 		}
 	}

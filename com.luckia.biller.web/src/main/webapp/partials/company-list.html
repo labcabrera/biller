@@ -20,21 +20,29 @@
 		<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)"
 			max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
 	</div>
+	
 	<div class="col-sm-3">
 		<div>
 			<h4>Filtrar resultados</h4>
 			<form role="form">
 				<div class="form-group">
 					<label>Nombre</label>
-					<input type='text' class="form-control input-sm" ng-model="searchName" />
+					<input type='text' class="form-control input-sm" ng-model="searchOptions.name" />
 				</div>
 				<div class="form-group">
 					<label for="entityIdCardNumber">Provincia</label>
-					<input type='text' class="form-control input-sm" ng-model="searchProvince" typeahead="province as province.name for province in provinces($viewValue)" />
+					<input type='text' class="form-control input-sm" ng-model="searchOptions.province" typeahead-editable="false"
+						typeahead="province as province.name for province in provinces($viewValue)" />
+				</div>
+				<div class="form-group">
+					<div class="checkbox">
+						<label><input type="checkbox" ng-model="searchOptions.showDeleted">Mostrar empresas eliminadas</label>
+					</div>
 				</div>
 				<button ng-click="search()" class='btn btn-primary btn-sm '>Buscar</button></li>
 			</form>
 		</div>
+		
 		<!-- popup con el json de debug -->
 		<div class="m-top-40">
 			<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#debugJson">Ver JSON</button>

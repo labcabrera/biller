@@ -62,7 +62,7 @@
 					</div>
 					<label class="col-sm-1 control-label input-sm">Region</label>
 					<div class="col-sm-4">
-						<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue)" ng-readonly="isReadOnly"  />
+						<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly"  />
 					</div>
 				</div>
 				<div class="form-group">
@@ -113,6 +113,7 @@
 				<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
 				<li><a data-target="#profileTab" data-toggle="tab">Datos de contacto</a></li>
 				<li><a data-target="#ispInfoTab" data-toggle="tab">ADSL</a></li>
+				<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
 			</ul>
 	
 			<div class="tab-content">
@@ -305,6 +306,14 @@
 						</form>
 					</div>
 				</div>
+				<div class="tab-pane" id="auditTab">
+					<div class="m-top-15">
+						<div class="col-sm-2">Usuario</div><div class="col-sm-3">{{entity.auditData.modifiedBy.name}}</div><div class="clearfix"></div>
+						<div class="col-sm-2">Creado</div><div class="col-sm-3">{{entity.auditData.created}}</div><div class="clearfix"></div>
+						<div class="col-sm-2">Modificado</div><div class="col-sm-3">{{entity.auditData.modified}}</div><div class="clearfix"></div>
+						<div class="col-sm-2">Eliminado</div><div class="col-sm-3">{{entity.auditData.deleted}}</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -313,15 +322,9 @@
 		<div class="btn-toolbar" role="toolbar">
 			<div class="btn-group">
 				<button ng-click="edit()" ng-class='isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>Editar</button>
-				<button ng-click="load()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
-					<span class="glyphicon glyphicon-arrow-left"></span>
-				</button>
-				<button ng-click="update()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
-					<span class="glyphicon glyphicon-save"></span>
-				</button>
-				<button ng-click="todo()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
-					<span class="glyphicon glyphicon-trash"></span>
-				</button>
+				<button ng-click="load()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'><span class="glyphicon glyphicon-arrow-left"></span></button>
+				<button ng-click="update()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'><span class="glyphicon glyphicon-save"></span></button>
+				<button ng-click="remove()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'><span class="glyphicon glyphicon-trash"></span></button>
 			</div>
 		</div>
 		<div class="m-top-40">
