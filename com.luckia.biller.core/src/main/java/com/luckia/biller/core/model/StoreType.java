@@ -17,7 +17,7 @@ public enum StoreType {
 
 	SalonCorner("Córner en Salón"), CasinoCorner("Córner en casino"), BingoCorner("Córner en bingo"),
 
-	SpecifigStore("Establecimiento específico"), LSC("LCS"), CasaDeApuestas("Casa de apuestas");
+	SpecifigStore("Establecimiento específico"), LSC("Luckia Sport Café"), CasaDeApuestas("Casa de apuestas");
 
 	private String desc;
 

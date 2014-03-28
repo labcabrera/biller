@@ -5,6 +5,9 @@
  ******************************************************************************/
 package com.luckia.biller.web.rest;
 
+import javax.persistence.EntityManager;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -12,9 +15,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.luckia.biller.core.ClearCache;
@@ -27,9 +33,12 @@ import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.LiquidationEntityService;
+import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
 
 @Path("liquidations")
 public class LiquidationRestService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(LiquidationRestService.class);
 
 	@Inject
 	private LiquidationEntityService entityService;
@@ -39,6 +48,8 @@ public class LiquidationRestService {
 	private EntityManagerProvider entityManagerProvider;
 	@Inject
 	private I18nService i18nService;
+	@Inject
+	private PDFLiquidationGenerator pdfLiquidationGenerator;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -80,6 +91,26 @@ public class LiquidationRestService {
 			return new Message<Liquidation>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.confirm.success"), liquidation);
 		} catch (Exception ex) {
 			return new Message<Liquidation>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.confirm.error"));
+		}
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Path("/draft/{id}")
+	@ClearCache
+	public void getArtifactBinaryContent(@PathParam("id") String id, @Context HttpServletResponse response) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Liquidation bill = entityManager.find(Liquidation.class, id);
+			ServletOutputStream out = response.getOutputStream();
+			pdfLiquidationGenerator.generate(bill, out);
+			response.setContentType("application/octet-stream");
+			response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", "borrador.pdf"));
+			response.setHeader("Content-Type", "application/pdf");
+			out.flush();
+		} catch (Exception ex) {
+			LOG.error("Error al generar el borrador", ex);
+			throw new RuntimeException("Error la generar el borrador");
 		}
 	}
 }

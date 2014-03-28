@@ -77,13 +77,17 @@ public class BillRestService {
 	@Path("/merge")
 	@ClearCache
 	public Message<Bill> merge(Bill bill) {
-		EntityManager entityManager = entityManagerProvider.get();
-		Bill current = entityManager.find(Bill.class, bill.getId());
-		current.merge(bill);
-		entityManager.getTransaction().begin();
-		entityManager.merge(current);
-		entityManager.getTransaction().commit();
-		return new Message<Bill>(Message.CODE_SUCCESS, "Factura actualizada", bill);
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Bill current = entityManager.find(Bill.class, bill.getId());
+			current.merge(bill);
+			entityManager.getTransaction().begin();
+			entityManager.merge(current);
+			entityManager.getTransaction().commit();
+			return new Message<Bill>(Message.CODE_SUCCESS, "Factura actualizada", bill);
+		} catch (Exception ex) {
+			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al actualizar la factura", bill);
+		}
 	}
 
 	@GET

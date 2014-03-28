@@ -122,15 +122,23 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	@Override
 	public void merge(BillingModel entity) {
 		if (entity != null) {
-			if (this.storeModel == null && entity.storeModel != null) {
-				this.storeModel = new BillingModelAttributes();
+			if (entity.companyModel == null) {
+				companyModel = null;
+			} else {
+				if (companyModel == null) {
+					companyModel = new BillingModelAttributes();
+				}
+				companyModel.merge(entity.companyModel);
 			}
-			if (this.companyModel == null && entity.companyModel != null) {
-				this.companyModel = new BillingModelAttributes();
+			if (entity.storeModel == null) {
+				storeModel = null;
+			} else {
+				if (storeModel == null) {
+					storeModel = new BillingModelAttributes();
+				}
+				storeModel.merge(entity.storeModel);
 			}
 			this.name = entity.name;
-			this.companyModel.merge(entity.getCompanyModel());
-			this.storeModel.merge(entity.getStoreModel());
 		}
 	}
 }
