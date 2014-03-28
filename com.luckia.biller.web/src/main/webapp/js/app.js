@@ -10,24 +10,25 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope) {
 	}).when('/groups', { templateUrl : 'partials/group-list.html', controller : 'GroupListCtrl'
 	}).when('/groups/id/:id', { templateUrl : 'partials/group-detail.html', controller : 'GroupDetailCtrl'
 	}).when('/groups/new', { templateUrl : 'partials/group-detail.html', controller : 'GroupNewCtrl'
+	}).when('/companies', { templateUrl : 'partials/company-list.html', controller : 'CompanyListCtrl'
 	}).when('/companies/id/:id', { templateUrl : 'partials/company-detail.html', controller : 'CompanyDetailCtrl'
 	}).when('/companies/new', { templateUrl : 'partials/company-detail.html', controller : 'CompanyNewCtrl'
-	}).when('/companies', { templateUrl : 'partials/company-list.html', controller : 'CompanyListCtrl'
 	}).when('/costcenters', { templateUrl : 'partials/costcenter-list.html', controller : 'CostCenterListCtrl'
 	}).when('/costcenters/id/:id', { templateUrl : 'partials/costcenter-detail.html', controller : 'CostCenterDetailCtrl'
 	}).when('/costcenters/new', { templateUrl : 'partials/costcenter-detail.html', controller : 'CostCenterNewCtrl'
+	}).when('/stores', { templateUrl : 'partials/store-list.html', controller : 'StoreListCtrl'
 	}).when('/stores/id/:id', { templateUrl : 'partials/store-detail.html', controller : 'StoreDetailCtrl'
 	}).when('/stores/new', { templateUrl : 'partials/store-detail.html', controller : 'StoreNewCtrl'
-	}).when('/stores', { templateUrl : 'partials/store-list.html', controller : 'StoreListCtrl'
 	}).when('/owners', { templateUrl : 'partials/owner-list.html', controller : 'OwnerListCtrl'
 	}).when('/owners/id/:id', { templateUrl : 'partials/owner-detail.html', controller : 'OwnerDetailCtrl'
 	}).when('/owners/new', { templateUrl : 'partials/owner-detail.html', controller : 'OwnerNewCtrl'
+	}).when('/models', { templateUrl : 'partials/model-list.html', controller : 'ModelListCtrl'
+	}).when('/models/id/:id', { templateUrl : 'partials/model-detail.html', controller : 'ModelDetailCtrl'
+	}).when('/models/new', { templateUrl : 'partials/model-detail.html', controller : 'ModelNewCtrl'
 	}).when('/bills', { templateUrl : 'partials/bill-list.html', controller : 'BillListCtrl'
 	}).when('/bills/id/:id', { templateUrl : 'partials/bill-detail.html', controller : 'BillDetailCtrl'
 	}).when('/liquidations', { templateUrl : 'partials/liquidation-list.html', controller : 'LiquidationListCtrl'
 	}).when('/liquidations/id/:id', { templateUrl : 'partials/liquidation-detail.html', controller : 'LiquidationDetailCtrl'
-	}).when('/models', { templateUrl : 'partials/model-list.html', controller : 'ModelListCtrl'
-	}).when('/models/id/:id', { templateUrl : 'partials/model-detail.html', controller : 'ModelDetailCtrl'
 	}).when('/admin/console', { templateUrl : 'partials/admin-console.html'
 	}).when('/admin/settings', { templateUrl : 'partials/admin-settings.html', controller: 'SettingsCtrl'
 	}).when('/', { templateUrl : 'partials/index.html'
@@ -78,7 +79,7 @@ billerApp.run(function($rootScope, $http) {
 	// Muestra elementos de debug en el front como popups con el json de las entidades
 	$rootScope.debug = true;
 	// En caso de establecer esta variable a true no se muestran los popups de confirmacion
-	$rootScope.autoconfirm = true;
+	$rootScope.autoconfirm = false;
 	$rootScope.dateFormat = 'dd-MM-yyyy';
 });
 

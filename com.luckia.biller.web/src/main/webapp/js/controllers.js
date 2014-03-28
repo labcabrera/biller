@@ -186,6 +186,7 @@ billerControllers.controller('StoreListCtrl', [ '$scope', '$routeParams', '$http
 			'company': {"id": null, 'name': ''},
 			'owner': {"id": null, 'name': ''},
 			'costCenter': {"id": null, 'name': ''},
+			'type': '',
 			'showDeleted': false,
 		};
 	};
@@ -196,6 +197,7 @@ billerControllers.controller('StoreListCtrl', [ '$scope', '$routeParams', '$http
 		predicateBuilder.append("parent.id==", $scope.searchOptions.company != null ? $scope.searchOptions.company.id : null);
 		predicateBuilder.append("costCenter.id==", $scope.searchOptions.costCenter != null ? $scope.searchOptions.costCenter.id : null);
 		predicateBuilder.append("owner.id==", $scope.searchOptions.owner != null ? $scope.searchOptions.owner.id : null);
+		predicateBuilder.append("type==", $scope.searchOptions.type);
 		if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
 		return 'rest/stores/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 	};
@@ -405,10 +407,16 @@ billerControllers.controller('CostCenterNewCtrl', [ '$scope', '$routeParams', '$
  */
 billerControllers.controller('ModelListCtrl', [ '$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {
 	$scope.currentPage = 1;
-	$scope.searchName = '';
+	$scope.reset = function() {
+		$scope.searchOptions = {
+			'name': '',
+			'showDeleted': false
+		};
+	};
 	$scope.getSearchUrl = function() {
 		var predicateBuilder = new PredicateBuilder('');
-		predicateBuilder.append("name=lk=", $scope.searchName);
+		predicateBuilder.append("name=lk=", $scope.searchOptions.name);
+		if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
 		return 'rest/models/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 	};
 	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
@@ -416,10 +424,11 @@ billerControllers.controller('ModelListCtrl', [ '$scope', '$rootScope', '$http',
 	    $scope.currentPage = page;
 	    $scope.search();
 	};
+	$scope.reset();
 	$scope.search();
 } ]);
 
-
+/** Detalle de modelo de facturacion */
 billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
 	$scope.load = function() {
 		$rootScope.isReadOnly = true;
@@ -439,11 +448,26 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 			}
 		});
 	};
-	$scope.setPage = function(page) {
+	$scope.setStorePage = function(page) {
 	    $scope.currentPage = page;
 	    $http.get('rest/stores/find?model=' + $routeParams.id + "&n=10" + "&p=" + page).success(function(data) { $scope.childs = data; });
 	};
 	$scope.load();
+} ]);
+
+/** Nuevo modelo de facturacion */
+billerControllers.controller('ModelNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+	$scope.isReadOnly = false;
+	$scope.update = function() {
+		$http.post('rest/models/merge/', $scope.entity).success(function(data) {
+			if(data.code == 200) {
+				$location.path("models/id/" + data.payload.id);				
+			} else {
+				$scope.displayAlert(data);
+			}
+		});
+	};
+	$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
 } ]);
 
 /* ----------------------------------------------------------------------------
@@ -454,12 +478,24 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
 	$scope.currentPage = 1;
 	$scope.itemsPerPage = 15;
+	$scope.reset = function() {
+		$scope.searchOptions = {
+			'code': $routeParams.code,
+			'store': { "id": $routeParams.store, "name": '' },
+			'company': { "id": $routeParams.company, "name": '' },
+			'model': { "id": $routeParams.model},
+			'state': $routeParams.state,
+			'from': '',
+			'to':  ''
+		};
+	};
 	$scope.getSearchUrl = function() {
 		var predicateBuilder = new PredicateBuilder('');
 		predicateBuilder.append("code=lk=", $scope.searchOptions.code);
 		predicateBuilder.append("sender.id==", $scope.searchOptions.store.id);
 		predicateBuilder.append("receiver.id==", $scope.searchOptions.company.id);
 		predicateBuilder.append("currentState.stateDefinition.id==", $scope.searchOptions.state);
+		predicateBuilder.append("model.id==", $scope.searchOptions.model != null ? $scope.searchOptions.model.id : null);
 		predicateBuilder.append("dateFrom=ge=", $scope.searchOptions.from != null ? $filter('date')($scope.searchOptions.from, "yyyy-MM-dd") : null);
 		predicateBuilder.append("dateTo=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
 		return 'rest/bills/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
@@ -468,16 +504,6 @@ billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routePa
 	$scope.setPage = function(page) {
 	    $scope.currentPage = page;
 	    $scope.search();
-	};
-	$scope.reset = function() {
-		$scope.searchOptions = {
-			'code': $routeParams.code,
-			'store': { "id": $routeParams.store, "name": '' },
-			'company': { "id": $routeParams.company, "name": '' },
-			'state': '',
-			'from': '',
-			'to':  ''
-		};
 	};
 	$scope.reset();
 	$scope.search();
@@ -591,8 +617,7 @@ billerControllers.controller('SettingsCtrl', [ '$scope', '$rootScope', '$routePa
  * LIQUIDACIONES
  * ----------------------------------------------------------------------------
  */
-
-billerControllers.controller('LiquidationListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+billerControllers.controller('LiquidationListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
 	$scope.currentPage = 1;
 	$scope.itemsPerPage = 15;
 	$scope.reset = function() {
@@ -610,6 +635,8 @@ billerControllers.controller('LiquidationListCtrl', [ '$scope', '$rootScope', '$
 		predicateBuilder.append("code==", $scope.searchOptions.code);
 		predicateBuilder.append("sender.id==", $scope.searchOptions.company != null ? $scope.searchOptions.company.id : null);
 		predicateBuilder.append("receiver.id==", $scope.searchOptions.costCenter != null ? $scope.searchOptions.costCenter.id : null);
+		predicateBuilder.append("dateFrom=ge=", $scope.searchOptions.from != null ? $filter('date')($scope.searchOptions.from, "yyyy-MM-dd") : null);
+		predicateBuilder.append("dateTo=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
 		predicateBuilder.append("currentState.stateDefinition.id==", $scope.searchOptions.state);
 		return 'rest/liquidations/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 	};

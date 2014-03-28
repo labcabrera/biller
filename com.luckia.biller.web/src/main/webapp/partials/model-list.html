@@ -15,7 +15,7 @@
 				</li>
 			</ul>
 			<div class="pull-right">
-				<a href="#">Nuevo modelo de facturaci&oacute;n</a>
+				<a href="#/models/new">Nuevo modelo de facturaci&oacute;n</a>
 			</div>
 			<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)" max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
 		</div>
@@ -26,21 +26,16 @@
 		<form role="form">
 			<div class="form-group">
 				<label>Nombre</label>
-				<input type='text' class="form-control input-sm" ng-model="searchName" />
+				<input type='text' class="form-control input-sm" ng-model="searchOptions.name" />
 			</div>
-			<button ng-click="search()" class='btn btn-sm btn-primary'>Buscar</button></li>
-		</form>
-		<!-- popup con el json de debug -->
-		<div class="m-top-40">
-			<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#debugJson">Ver JSON</button>
-			<div class="modal fade" id="debugJson" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<pre>entity = {{results | json}}</pre>
-					</div>
+			<div class="form-group">
+				<div class="checkbox">
+					<label><input type="checkbox" ng-model="searchOptions.showDeleted">Mostrar grupos eliminados</label>
 				</div>
 			</div>
-		</div>
+			<button ng-click="search()" class='btn btn-sm btn-primary'>Buscar</button></li>
+			<button ng-click="reset()" class='btn btn-sm btn-default'>Reset</button></li>
+		</form>
 	</div>
 
 </div>	

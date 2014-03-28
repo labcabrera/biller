@@ -9,20 +9,20 @@
 		<h4>Facturas <small>({{results.totalItems}} resultados)</small></h4>
 		<div ng-if="results.results.length < 1">No se han encontrado resultados</div>
 		<div ng-if="results.results.length > 0">
-			<table class="table table-hover table-condensed" >
+			<table class="table table-hover table-condensed">
 				<tr>
+					<th>N&uacute;mero</th>
 					<th>Establecimiento</th>
 					<th>Empresa</th>
-					<th>Código</th>
 					<th>Estado</th>
 					<th>Fecha</th>
 					<th>Tipo</th>
 					<th></th>
 				</tr>
 				<tr ng-repeat="result in results.results">
-					<td><a href="#bills/id/{{result.id}}">{{result.sender.name}}</a></td>
-					<td><a href="#bills/id/{{result.id}}">{{result.receiver.name}}</a></td>
-					<td>{{result.code}}</td>
+					<td><a href="#/bills/id/{{result.id}}">{{result.code != null ? result.code : 'Borrador'}}</a></td>
+					<td>{{result.sender.name}}</td>
+					<td>{{result.receiver.name}}</td>
 					<td>
 						<span ng-if="result.currentState.stateDefinition.id == 'BillDraft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
 						<span ng-if="result.currentState.stateDefinition.id == 'BillRectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
@@ -86,32 +86,7 @@
 				<button class="btn btn-default btn-sm" ng-click="reset()">Reset</button>
 			</form>
 		</div>
-		<!--
-		<div class="m-top-40">
-			<h4>Facturaci&oacute;n</h4>
-			<ul class="list-unstyled">
-				<li><a href="#/bills?state=BillDraft">Ver facturas pendientes</a></li>
-				<li><a href="#/bills?state=BillConfirmed">Ver facturas aceptadas</a></li>
-				<li><a href="#/bills?state=BillSent">Ver facturas enviadas</a></li>
-				<li><a href="#/bills?state=BillCancelled">Ver facturas anuladas</a></li>
-			</ul>				
-		</div>
-		-->
-		<!-- popup con el json de debug -->
-		<div class="m-top-40">
-			<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#debugJson">Ver JSON</button>
-			<div class="modal fade" id="debugJson" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<pre>entity = {{results | json}}</pre>
-					</div>
-				</div>
-			</div>
-		</div>
 	</div>
 </div>
-
-<!-- pre>results = {{results | json}}</pre -->				
-	
 </body>
 </html>
