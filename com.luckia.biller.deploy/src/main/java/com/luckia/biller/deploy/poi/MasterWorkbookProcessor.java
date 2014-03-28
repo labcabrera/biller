@@ -68,7 +68,7 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 	protected Map<Long, Company> companies;
 	protected List<Store> stores;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String... args) throws IOException {
 		InputStream in = new FileInputStream(DATABASE_FILE);
 		Injector injector = Guice.createInjector(new MainModule());
 		MasterWorkbookProcessor processor = injector.getInstance(MasterWorkbookProcessor.class);
