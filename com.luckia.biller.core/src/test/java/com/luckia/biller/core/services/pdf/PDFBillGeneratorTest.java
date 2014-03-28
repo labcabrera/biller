@@ -13,7 +13,7 @@ import com.luckia.biller.core.MainModule;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 
-public class PdfBillGeneratorTest {
+public class PDFBillGeneratorTest {
 
 	@Test
 	public void test() throws FileNotFoundException {
