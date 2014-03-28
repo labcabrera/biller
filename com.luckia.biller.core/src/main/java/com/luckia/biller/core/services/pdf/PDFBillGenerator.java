@@ -1,59 +1,27 @@
 package com.luckia.biller.core.services.pdf;
 
-import java.awt.Color;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
-import com.luckia.biller.core.model.BillState;
-import com.luckia.biller.core.model.LegalEntity;
-import com.luckia.biller.core.model.Store;
 
 public class PDFBillGenerator extends PDFGenerator<Bill> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PDFBillGenerator.class);
-
-	private final Font documentFont;
-	private final Font titleFont;
-	private final Font boldFont;
-	private final Font waterMarkFont;
-	private final String dateFormat;
-	private final String monthFormat;
-	private final Locale locale;
-
-	public PDFBillGenerator() {
-		documentFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12f, Font.NORMAL, Color.BLACK);
-		boldFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12f, Font.BOLD, Color.BLACK);
-		titleFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 16f, Font.BOLD, Color.BLACK);
-		waterMarkFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 80f, Font.BOLD, new Color(240, 240, 240));
-		locale = new Locale("es", "ES");
-		dateFormat = "dd-MM-yyyy";
-		monthFormat = "MMMM yyyy";
-	}
 
 	@Override
 	public void generate(Bill bill, OutputStream out) {
@@ -65,95 +33,13 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 			addMetaData(document, bill);
 			document.open();
 			addWaterMark(document, writer, bill);
-			printLegalEntities(document, bill);
+			printLegalEntities(document, bill.getSender(), bill.getReceiver());
 			printTitle(document, bill);
 			printDetails(document, bill);
 			document.close();
 		} catch (Exception ex) {
 			LOG.error("Error al generar la factura", ex);
 		}
-	}
-
-	private void printLegalEntities(Document document, Bill bill) throws DocumentException {
-		LegalEntity sender = bill.getSender();
-		LegalEntity receiver = bill.getReceiver();
-		if (Store.class.isAssignableFrom(bill.getSender().getClass()) && ((Store) bill.getSender()).getOwner() != null) {
-			sender = ((Store) bill.getSender()).getOwner();
-		}
-		PdfPTable table = new PdfPTable(new float[] { 40, 40f, 40 });
-		table.setWidthPercentage(100f);
-		table.getDefaultCell().setBorder(0);
-		table.getDefaultCell().setBorderWidth(0f);
-		table.addCell(createLegalEntityCell("EMISOR", sender, bill.getSender()));
-		table.addCell(createCell("", Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createLegalEntityCell("DESTINATARIO", receiver, null));
-		Paragraph paragraph = new Paragraph();
-		paragraph.add(table);
-		document.add(paragraph);
-	}
-
-	private PdfPCell createLegalEntityCell(String title, LegalEntity legalEntity, LegalEntity child) {
-		PdfPCell cell = new PdfPCell();
-		cell.setBorder(0);
-		cell.addElement(new Paragraph(new Phrase(title, boldFont)));
-		cell.addElement(new Paragraph(new Phrase("Nombre: " + legalEntity.getName(), documentFont)));
-		if (legalEntity.getAddress() != null) {
-			cell.addElement(new Paragraph(new Phrase("Dirección:\n" + formatAddress(legalEntity.getAddress()), documentFont)));
-		}
-		if (legalEntity.getIdCard() != null && StringUtils.isNotBlank(legalEntity.getIdCard().getNumber())) {
-			cell.addElement(new Paragraph(new Phrase("NIF/CIF: " + legalEntity.getIdCard().getNumber(), documentFont)));
-		}
-		if (child != null && child.getId() != legalEntity.getId()) {
-			cell.addElement(new Paragraph(new Phrase("LOCAL:", boldFont)));
-			cell.addElement(new Paragraph(new Phrase("Nombre: " + child.getName(), documentFont)));
-			if (child.getAddress() != null) {
-				cell.addElement(new Paragraph(new Phrase("Dirección: " + child.getAddress().getRoad(), documentFont)));
-			}
-			if (child.getIdCard() != null && StringUtils.isNotBlank(child.getIdCard().getNumber())) {
-				cell.addElement(new Paragraph(new Phrase("NIF/CIF: " + child.getIdCard().getNumber(), documentFont)));
-			}
-		}
-		return cell;
-	}
-
-	private String formatAddress(Address address) {
-		StringBuffer sb = new StringBuffer();
-		if (StringUtils.isNotBlank(address.getRoad())) {
-			sb.append(address.getRoad()).append(" ");
-		}
-		if (StringUtils.isNotBlank(address.getNumber())) {
-			sb.append(address.getNumber());
-		}
-		sb.append("\n");
-		if (StringUtils.isNotEmpty(address.getZipCode())) {
-			sb.append(address.getZipCode());
-		}
-		if (address.getRegion() != null) {
-			sb.append(address.getRegion().getName()).append(" ");
-		}
-		if (address.getProvince() != null) {
-			sb.append(address.getProvince().getName()).append(" ");
-		}
-		return sb.toString();
-	}
-
-	private void printTitle(Document document, Bill bill) throws DocumentException {
-		PdfPTable table = new PdfPTable(new float[] { 80f, 20f, 100f });
-		table.setWidthPercentage(100f);
-		table.addCell(createCell("Número de factura", Element.ALIGN_LEFT, documentFont));
-		table.addCell(createCell(bill.getCode(), Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createCell("", Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createCell("Fecha de emisión", Element.ALIGN_LEFT, documentFont));
-		table.addCell(createCell(new SimpleDateFormat(dateFormat).format(bill.getBillDate()), Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createCell("", Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createCell("Periodo de facturación", Element.ALIGN_LEFT, documentFont));
-		table.addCell(createCell(new SimpleDateFormat(monthFormat, locale).format(bill.getBillDate()), Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createCell("", Element.ALIGN_RIGHT, documentFont));
-		Paragraph paragraph = new Paragraph();
-		paragraph.setSpacingBefore(25f);
-		paragraph.add(new Phrase("FACTURA MÁQUINA DE APUESTAS", titleFont));
-		paragraph.add(table);
-		document.add(paragraph);
 	}
 
 	private void printDetails(Document document, Bill bill) throws DocumentException {
@@ -236,21 +122,7 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 		document.add(paragraph);
 	}
 
-	private void addWaterMark(Document document, PdfWriter writer, Bill bill) {
-		if (BillState.BillDraft.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
-			PdfContentByte canvas = writer.getDirectContent();
-			Phrase phrase = new Phrase("BORRADOR", waterMarkFont);
-			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase, document.getPageSize().getHeight() / 2, 200f, 45f);
-		}
-	}
 
-	private void addMetaData(Document document, Bill bill) {
-		document.addTitle(String.format("Factura %s", bill.getCode()));
-		document.addSubject("-subject-");
-		document.addKeywords("Factura, Luckia");
-		document.addAuthor("Luckia");
-		document.addCreator("lab.cabrera@gmail.com");
-	}
 
 	@Override
 	protected float getLineHeight() {
