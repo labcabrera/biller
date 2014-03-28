@@ -231,6 +231,8 @@ public class FiqlParser {
 				targetValue = new BigDecimal(String.valueOf(value));
 			} else if (Date.class.isAssignableFrom(type)) {
 				targetValue = parseDate(value);
+			} else if (Enum.class.isAssignableFrom(type)) {
+				targetValue = Enum.valueOf((Class) type, (String) value);
 			} else {
 				targetValue = value;
 			}
