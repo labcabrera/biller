@@ -664,7 +664,7 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	    $http.get('rest/bills/find?q=liquidation.id==' + $routeParams.id + "&n=15" + "&p=" + page).success(function(data) { $scope.childs = data; });
 	};
 	$scope.confirm = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a aceptar la liquidación')) {
+		if($rootScope.autoconfirm || window.confirm('Se va a aceptar la liquidacion')) {
 			$http.post('rest/liquidations/confirm/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
