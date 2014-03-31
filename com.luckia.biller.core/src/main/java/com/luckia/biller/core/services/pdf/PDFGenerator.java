@@ -186,6 +186,14 @@ public abstract class PDFGenerator<T> {
 		return cell;
 	}
 
+	protected List<PdfPCell> createEmptyCells(int number) {
+		List<PdfPCell> list = new ArrayList<PdfPCell>();
+		for (int i = 0; i < number; i++) {
+			list.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		}
+		return list;
+	}
+
 	protected void printCanvas(Document document, PdfWriter writer, Font font, float x, float y, float maxWidth, List<String> text) {
 		PdfContentByte canvas = writer.getDirectContent();
 		List<String> splitedLines = new ArrayList<String>();

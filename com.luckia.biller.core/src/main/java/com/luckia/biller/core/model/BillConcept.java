@@ -10,10 +10,6 @@ package com.luckia.biller.core.model;
  */
 public enum BillConcept {
 
-	// TODO que diferencia hay con Stakes?
-	/** Ventas totales */
-	TurnOver,
-
 	/** Resultado neto (NGR - Gastos operativos) */
 	NR,
 
