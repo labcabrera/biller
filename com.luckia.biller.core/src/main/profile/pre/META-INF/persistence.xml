@@ -6,6 +6,7 @@
 	<persistence-unit name="com.luckia.biller" transaction-type="RESOURCE_LOCAL">
 	
 		<class>com.luckia.biller.core.model.AbstractBill</class>
+		<class>com.luckia.biller.core.model.AbstractBillDetail</class>
 		<class>com.luckia.biller.core.model.ActionExecution</class>
 		<class>com.luckia.biller.core.model.Address</class>
 		<class>com.luckia.biller.core.model.AppFile</class>
@@ -20,10 +21,12 @@
 		<class>com.luckia.biller.core.model.IdCard</class>
 		<class>com.luckia.biller.core.model.IspInfo</class>
 		<class>com.luckia.biller.core.model.Liquidation</class>
+		<class>com.luckia.biller.core.model.LiquidationDetail</class>
 		<class>com.luckia.biller.core.model.LegalEntity</class>
 		<class>com.luckia.biller.core.model.Owner</class>
 		<class>com.luckia.biller.core.model.Person</class>
 		<class>com.luckia.biller.core.model.Province</class>
+		<class>com.luckia.biller.core.model.Rappel</class>
 		<class>com.luckia.biller.core.model.Region</class>
 		<class>com.luckia.biller.core.model.Sequence</class>
 		<class>com.luckia.biller.core.model.State</class>
