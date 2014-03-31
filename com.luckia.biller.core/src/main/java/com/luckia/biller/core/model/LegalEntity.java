@@ -74,6 +74,9 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 	@Column(name = "COMMENTS", columnDefinition = "BLOB")
 	protected String comments;
 
+	@Column(name = "ACCOUNT_NUMBER", length = 64)
+	protected String accountNumber;
+
 	@Embedded
 	protected AuditData auditData;
 
@@ -149,6 +152,14 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 		this.auditData = auditData;
 	}
 
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
 	@Override
 	public String toString() {
 		return "LegalEntity [id=" + id + ", idCard=" + idCard + ", name=" + name + ", email=" + email + "]";
@@ -168,7 +179,7 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 		if (this.idCard == null && entity.idCard != null) {
 			this.idCard = new IdCard();
 		}
-		if(entity.parent == null) {
+		if (entity.parent == null) {
 			this.parent = null;
 		}
 		this.name = entity.name;

@@ -1,6 +1,10 @@
 package com.luckia.biller.deploy;
 
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.Range;
 import org.joda.time.DateTime;
@@ -9,6 +13,10 @@ import org.quartz.JobExecutionException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.MainModule;
+import com.luckia.biller.core.jpa.EntityManagerProvider;
+import com.luckia.biller.core.model.Address;
+import com.luckia.biller.core.model.Company;
+import com.luckia.biller.core.model.IdCard;
 import com.luckia.biller.core.scheduler.BillingJob;
 import com.luckia.biller.deploy.poi.MasterWorkbookProcessor;
 
@@ -42,8 +50,27 @@ public class Main implements Runnable {
 	 * DESTINATARIO: Egasa Hattrick S.A. Arzobispo Fabian y Fuero 17B 46009 Valencia España Tel: 961100793 NIF: A98359169
 	 */
 	private void updateEgasaInfo() {
-		// TODO
-
+		EntityManager entityManager = injector.getInstance(EntityManagerProvider.class).get();
+		TypedQuery<Company> query = entityManager.createQuery("select e from Company e where e.name like :name", Company.class);
+		List<Company> list = query.setParameter("name", "%Egasa%").getResultList();
+		if (!list.isEmpty()) {
+			Company egasa = list.iterator().next();
+			if (egasa.getAddress() == null) {
+				egasa.setAddress(new Address());
+			}
+			egasa.getAddress().setRoad("Arzobispo Fabian y Fuero");
+			egasa.getAddress().setNumber("17B");
+			egasa.getAddress().setZipCode("46009");
+			egasa.setPhoneNumber("961100793");
+			if (egasa.getIdCard() == null) {
+				egasa.setIdCard(new IdCard());
+			}
+			egasa.getIdCard().setNumber("A98359169");
+			egasa.setAccountNumber("ES29 0182 6205 16 02001501686");
+			entityManager.getTransaction().begin();
+			entityManager.merge(egasa);
+			entityManager.getTransaction().commit();
+		}
 	}
 
 	private void generateBills() throws JobExecutionException {
