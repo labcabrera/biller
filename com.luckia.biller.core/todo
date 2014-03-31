@@ -68,12 +68,18 @@ modelo rappel:
 DEPLOY
  
  - Mysql
+ 	mysql --host=10.10.152.10 --user=watcher_factu --password=V4s86u82163r
+ 	mysql --user=root --password=MuagEabr
+ 	
+ 
  	10.10.152.21:33306
  	show databases;
  	create user 'biller_user'@'%' identified by 'biller_pwd';
  	grant all privileges on *.* to 'biller_user'@'%' with grant option;
  		
  - Configuración GIT
- 	eval 'ssh-agent'
  	ssh-add biller.server
+ 	Si no funciona probamos con alguno de los siguientes:
+ 		exec ssh-agent bash
+ 		eval 'ssh-agent'
  
