@@ -77,7 +77,7 @@ billerApp.run(function($rootScope, $http) {
 	};
 	
 	// Muestra elementos de debug en el front como popups con el json de las entidades
-	$rootScope.debug = true;
+	$rootScope.debug = false;
 	// En caso de establecer esta variable a true no se muestran los popups de confirmacion
 	$rootScope.autoconfirm = false;
 	$rootScope.dateFormat = 'dd-MM-yyyy';
