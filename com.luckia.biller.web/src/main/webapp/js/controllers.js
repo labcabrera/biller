@@ -81,6 +81,7 @@ billerControllers.controller('GroupNewCtrl', [ '$scope', '$routeParams', '$http'
 		});
 	};
 	$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
+	
 } ]);
 
 /* ----------------------------------------------------------------------------

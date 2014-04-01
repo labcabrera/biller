@@ -66,6 +66,9 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	@OrderBy("amount")
 	private List<Rappel> rappel;
 
+	@Column(name = "INCLUDE_STORE_BILLS")
+	private Boolean includeStoreBills;
+
 	@Embedded
 	private AuditData auditData;
 
@@ -117,6 +120,14 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	@Override
 	public void setAuditData(AuditData auditData) {
 		this.auditData = auditData;
+	}
+
+	public Boolean getIncludeStoreBills() {
+		return includeStoreBills;
+	}
+
+	public void setIncludeStoreBills(Boolean includeStoreBills) {
+		this.includeStoreBills = includeStoreBills;
 	}
 
 	@Override
