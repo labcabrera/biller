@@ -171,6 +171,8 @@ billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$htt
 			}
 		});
 	};
+	$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
+	$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
 } ]);
 /* ----------------------------------------------------------------------------
  * LOCALES
@@ -249,6 +251,8 @@ billerControllers.controller('StoreNewCtrl', [ '$scope', '$routeParams', '$http'
 			}
 		});
 	};
+	$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
+	$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
 } ]);
 
 /* ----------------------------------------------------------------------------
