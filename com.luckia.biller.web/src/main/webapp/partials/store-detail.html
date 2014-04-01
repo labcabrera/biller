@@ -49,8 +49,10 @@
 						<select class="form-control input-sm" ng-model="entity.type" ng-readonly="isReadOnly">
 							<option value="Bar">Bar</option>
 							<option value="BingoCorner">C&oacute;rner en Bingo</option>
+							<option value="SalonCorner">C&oacute;rner en Sal&oacute;n</option>
 							<option value="CasinoCorner">C&oacute;rner en Casino</option>
-							<option value="SpecificStore">Tienda específica</option>
+							<option value="SpecificStore">Tienda espec&iacute;fica</option>
+							<option value="LSC">Luckia Sport Caf&eacute;</option>
 							<option value="CasaDeApuestas">Casa de apuestas</option>
 						</select>
 					</div>
@@ -60,7 +62,7 @@
 					<div class="col-sm-4">
 						<input type="text" class="form-control input-sm" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly"  />
 					</div>
-					<label class="col-sm-1 control-label input-sm">Region</label>
+					<label class="col-sm-1 control-label input-sm">Localidad</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly"  />
 					</div>

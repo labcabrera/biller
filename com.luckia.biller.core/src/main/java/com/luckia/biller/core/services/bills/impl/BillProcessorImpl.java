@@ -127,7 +127,7 @@ public class BillProcessorImpl implements BillProcessor {
 
 		BigDecimal liquidationAmount = BigDecimal.ZERO;
 		for (LiquidationDetail detail : bill.getLiquidationDetails()) {
-			liquidationAmount = liquidationAmount.add(detail.getValue());
+			liquidationAmount = liquidationAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
 		}
 		bill.setLiquidationAmount(liquidationAmount);
 

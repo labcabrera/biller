@@ -1,0 +1,56 @@
+<div class="m-top-15">
+	<form class="form-horizontal" role="form">
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">Titular</label>
+			<div class="col-sm-4">
+				<div class="input-group">
+					<input type='text' class="form-control input-sm" ng-model="entity.sender.owner" ng-readonly="true" typeahead="owner as owner.completeName for owner in owners($viewValue)" />
+					<span  class="input-group-addon input-sm">
+						<a ng-if="entity.owner != null" href="#/owners/id/{{entity.owner.id}}"><span class="glyphicon glyphicon-search"></span></a>
+						<span ng-if="entity.owner == null" class="glyphicon glyphicon-search"></span>
+					</span>
+				</div>
+			</div>
+			<label class="col-sm-1 control-label input-sm">NIF</label>
+			<div class="col-sm-4">
+				<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.idCard.number" ng-readonly="true"  />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">Email</label>
+			<div class="col-sm-4">
+				<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.email" ng-readonly="true"  />
+			</div>
+			<label class="col-sm-1 control-label input-sm">Teléfono</label>
+			<div class="col-sm-4">
+				<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.phoneNumber" ng-readonly="true"  />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">Provincia</label>
+			<div class="col-sm-4">
+				<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.address.province.name" ng-readonly="true"  />
+			</div>
+			<label class="col-sm-1 control-label input-sm">Localidad</label>
+			<div class="col-sm-4">
+				<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.address.region.name" ng-readonly="true"  />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">Direcci&oacute;n</label>
+			<div class="col-sm-4">
+				<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.address.road" ng-readonly="true"  />
+			</div>
+			<label class="col-sm-1 control-label input-sm">N&uacute;mero</label>
+			<div class="col-sm-4">
+				<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.address.number" ng-readonly="true"  />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label input-sm">C&oacute;digo postal</label>
+			<div class="col-sm-4">
+				<input type='text' class="form-control input-sm" ng-model="entity.sender.owner.address.zipCode" ng-readonly="true"  />
+			</div>
+		</div>
+	</form>
+</div>

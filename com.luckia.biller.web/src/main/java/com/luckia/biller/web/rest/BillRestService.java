@@ -30,6 +30,7 @@ import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
+import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
@@ -208,5 +209,42 @@ public class BillRestService {
 			LOG.error("Error al generar el borrador", ex);
 			throw new RuntimeException("Error la generar el borrador");
 		}
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/liquidation/id/{id}")
+	@ClearCache
+	public LiquidationDetail findLiquidationDetail(@PathParam("id") String id) {
+		return entityManagerProvider.get().find(LiquidationDetail.class, id);
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/liquidation/merge")
+	@ClearCache
+	public Message<Bill> mergeLiquidation(LiquidationDetail detail) {
+		EntityManager entityManager = entityManagerProvider.get();
+		Bill bill;
+		Boolean isNew = detail.getId() == null;
+		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
+		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
+		entityManager.getTransaction().begin();
+		if (isNew) {
+			bill = entityManager.find(Bill.class, detail.getBill().getId());
+			detail.setId(UUID.randomUUID().toString());
+			entityManager.persist(detail);
+			bill.getLiquidationDetails().add(detail);
+		} else {
+			BillDetail current = entityManager.find(BillDetail.class, detail.getId());
+			current.merge(detail);
+			entityManager.merge(detail);
+			bill = current.getBill();
+		}
+		entityManager.getTransaction().commit();
+		entityManager.clear();
+		billProcessor.processResults(bill);
+		return new Message<Bill>(Message.CODE_SUCCESS, isNew ? "Detalle guardado" : "Detalle actualizado", bill);
 	}
 }

@@ -46,7 +46,7 @@ billerApp.run(function($rootScope, $http) {
 	$rootScope.models = function(name) { return $http.get("rest/models/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
 	$rootScope.costcenters = function(name) { return $http.get("rest/costcenters/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
 	$rootScope.provinces = function(name) { return $http.get("rest/provinces/find/" + name).then(function(response) { return response.data; }); };
-	$rootScope.regions = function(name, provinceId) { return $http.get("/rest/regions/find/" + name + (provinceId != null ? '?province=' + provinceId : '')).then(function(response) { return response.data; }); };
+	$rootScope.regions = function(name, provinceId) { return $http.get("rest/regions/find/" + name + (provinceId != null ? '?province=' + provinceId : '')).then(function(response) { return response.data; }); };
 
 	$rootScope.edit = function() {
 		$rootScope.isReadOnly = false;
@@ -77,7 +77,7 @@ billerApp.run(function($rootScope, $http) {
 	};
 	
 	// Muestra elementos de debug en el front como popups con el json de las entidades
-	$rootScope.debug = false;
+	$rootScope.debug = true;
 	// En caso de establecer esta variable a true no se muestran los popups de confirmacion
 	$rootScope.autoconfirm = false;
 	$rootScope.dateFormat = 'dd-MM-yyyy';
