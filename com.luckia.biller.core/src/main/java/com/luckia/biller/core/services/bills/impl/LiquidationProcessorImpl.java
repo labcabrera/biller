@@ -27,6 +27,7 @@ import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
@@ -46,6 +47,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private FileService fileService;
 	@Inject
 	private LiquidationCodeGenerator liquidationCodeGenerator;
+	@Inject
+	private AuditService auditService;
 
 	/*
 	 * (non-Javadoc)
@@ -70,7 +73,6 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		for (CostCenter costCenter : costCenterMap.keySet()) {
 			LOG.info("Generando liquidacion asociada al centro de coste {}", costCenter.getName());
 			List<Bill> billList = costCenterMap.get(costCenter);
-
 			Liquidation liquidation = new Liquidation();
 			liquidation.setId(UUID.randomUUID().toString());
 			liquidation.setSender(company);
@@ -80,9 +82,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			liquidation.setDateTo(range.getMaximum());
 			liquidation.setBillDate(range.getMaximum());
 			liquidation.setModel(company.getBillingModel());
-
 			updateResults(liquidation);
-
+			auditService.processCreated(liquidation);
 			result.add(liquidation);
 			stateMachineService.createTransition(liquidation, BillState.BillDraft.name());
 		}
