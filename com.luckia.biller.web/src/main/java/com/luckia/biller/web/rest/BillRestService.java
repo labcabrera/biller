@@ -6,7 +6,7 @@
 package com.luckia.biller.web.rest;
 
 import java.math.RoundingMode;
-import java.util.List;
+import java.util.Arrays;
 import java.util.UUID;
 
 import javax.persistence.EntityManager;
@@ -22,22 +22,36 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.mail.EmailAttachment;
+import org.apache.commons.mail.HtmlEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
+import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
-import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
+import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.bills.impl.BillProcessorImpl;
 import com.luckia.biller.core.services.entities.BillEntityService;
+import com.luckia.biller.core.services.mail.MailService;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
+/**
+ * Servicio REST que aparte del CRUD básico de facturas provee de las siguientes funcionalidades:
+ * <ul>
+ * <li>Aceptación de la factura</li>
+ * <li>Rectificación de la factura</li>
+ * <li>CRUD de detalles de facturación</li>
+ * <li>Descarga del borrador de la factura</li>
+ * <li>Envío de la factura por email</li>
+ * </ul>
+ */
 @Path("bills")
 public class BillRestService {
 
@@ -51,6 +65,10 @@ public class BillRestService {
 	private BillProcessorImpl billProcessor;
 	@Inject
 	private PDFBillGenerator pdfBillGenerator;
+	@Inject
+	private MailService mailService;
+	@Inject
+	private FileService fileService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -160,24 +178,43 @@ public class BillRestService {
 		}
 	}
 
+	/**
+	 * Envia el PDF por correo a un destinatario.
+	 * 
+	 * @param id
+	 * @param emailAddress
+	 *            destinatarios de correo
+	 * @return
+	 */
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/send/{id}")
 	@ClearCache
-	public Message<Bill> sendEmail(@PathParam("id") String id, List<String> values) {
-		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.clear();
-		Bill bill = entityManager.find(Bill.class, id);
-		// TODO
-		return new Message<Bill>(Message.CODE_SUCCESS, "Factura enviada por correo", bill);
+	public Message<Bill> sendEmail(@PathParam("id") String id, String emailAddress) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			entityManager.clear();
+			Bill bill = entityManager.find(Bill.class, id);
+			AppFile pdfFile = bill.getPdfFile();
+			String title = "Factura " + bill.getCode();
+			String body = "Adjunto PDF";
+			String filePath = fileService.getFilePath(pdfFile);
+			EmailAttachment attachment = mailService.createAttachment(pdfFile.getName(), pdfFile.getName(), filePath);
+			// TODO quiza sea mejor hacerlo de forma asincrona
+			HtmlEmail email = mailService.createEmail(emailAddress, emailAddress, title, body, Arrays.asList(attachment));
+			email.send();
+			return new Message<Bill>(Message.CODE_SUCCESS, "Factura enviada por correo a " + emailAddress, bill);
+		} catch (Exception ex) {
+			LOG.error("Error al enviar la factura", ex);
+			return new Message<Bill>(Message.CODE_SUCCESS, "Error al enviar la factura por correo");
+		}
 	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/rectify/{id}")
 	@ClearCache
-	public Message<Bill> sendEmail(@PathParam("id") String id) {
+	public Message<Bill> rectify(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.clear();
@@ -210,41 +247,41 @@ public class BillRestService {
 			throw new RuntimeException("Error la generar el borrador");
 		}
 	}
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/liquidation/id/{id}")
-	@ClearCache
-	public LiquidationDetail findLiquidationDetail(@PathParam("id") String id) {
-		return entityManagerProvider.get().find(LiquidationDetail.class, id);
-	}
 
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/liquidation/merge")
-	@ClearCache
-	public Message<Bill> mergeLiquidation(LiquidationDetail detail) {
-		EntityManager entityManager = entityManagerProvider.get();
-		Bill bill;
-		Boolean isNew = detail.getId() == null;
-		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
-		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
-		entityManager.getTransaction().begin();
-		if (isNew) {
-			bill = entityManager.find(Bill.class, detail.getBill().getId());
-			detail.setId(UUID.randomUUID().toString());
-			entityManager.persist(detail);
-			bill.getLiquidationDetails().add(detail);
-		} else {
-			BillDetail current = entityManager.find(BillDetail.class, detail.getId());
-			current.merge(detail);
-			entityManager.merge(detail);
-			bill = current.getBill();
-		}
-		entityManager.getTransaction().commit();
-		entityManager.clear();
-		billProcessor.processResults(bill);
-		return new Message<Bill>(Message.CODE_SUCCESS, isNew ? "Detalle guardado" : "Detalle actualizado", bill);
-	}
+	// @GET
+	// @Produces(MediaType.APPLICATION_JSON)
+	// @Path("/liquidation/id/{id}")
+	// @ClearCache
+	// public LiquidationDetail findLiquidationDetail(@PathParam("id") String id) {
+	// return entityManagerProvider.get().find(LiquidationDetail.class, id);
+	// }
+	//
+	// @POST
+	// @Consumes(MediaType.APPLICATION_JSON)
+	// @Produces(MediaType.APPLICATION_JSON)
+	// @Path("/liquidation/merge")
+	// @ClearCache
+	// public Message<Bill> mergeLiquidation(LiquidationDetail detail) {
+	// EntityManager entityManager = entityManagerProvider.get();
+	// Bill bill;
+	// Boolean isNew = detail.getId() == null;
+	// detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
+	// detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
+	// entityManager.getTransaction().begin();
+	// if (isNew) {
+	// bill = entityManager.find(Bill.class, detail.getBill().getId());
+	// detail.setId(UUID.randomUUID().toString());
+	// entityManager.persist(detail);
+	// bill.getLiquidationDetails().add(detail);
+	// } else {
+	// BillDetail current = entityManager.find(BillDetail.class, detail.getId());
+	// current.merge(detail);
+	// entityManager.merge(detail);
+	// bill = current.getBill();
+	// }
+	// entityManager.getTransaction().commit();
+	// entityManager.clear();
+	// billProcessor.processResults(bill);
+	// return new Message<Bill>(Message.CODE_SUCCESS, isNew ? "Detalle guardado" : "Detalle actualizado", bill);
+	// }
 }

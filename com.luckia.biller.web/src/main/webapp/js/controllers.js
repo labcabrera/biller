@@ -81,7 +81,6 @@ billerControllers.controller('GroupNewCtrl', [ '$scope', '$routeParams', '$http'
 		});
 	};
 	$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
-	
 } ]);
 
 /* ----------------------------------------------------------------------------
@@ -482,7 +481,7 @@ billerControllers.controller('ModelNewCtrl', [ '$scope', '$routeParams', '$http'
 
 billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
 	$scope.currentPage = 1;
-	$scope.itemsPerPage = 15;
+	$scope.itemsPerPage = 20;
 	$scope.reset = function() {
 		$scope.searchOptions = {
 			'code': $routeParams.code,
@@ -545,6 +544,9 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		$http.post('rest/bills/detail/merge/', $scope.billDetail).success(function(data) {
 			$scope.displayAlert(data);
 			if(data.code == 200) {
+				if(data.propagate) {
+					alert("TODO generar detalle de liquidación");
+				}
 				$("#editBillConceptModal").modal('hide');
 				$scope.billDetail = null;
 				$scope.entity = data.payload;
@@ -594,17 +596,12 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		}
 	};
 	$scope.editSendMail = function() {
-		$('#sendMailModal').modal('show');	
+		$('#sendMailModal').modal('show');
 	};
 	$scope.sendMail = function() {
-		var values = [ $scope.sendMail.value ];
-		$http.post('rest/bills/send/' + $scope.entity.id, values).success(function(data) {
+		$http.post('rest/bills/send/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {
 			$scope.displayAlert(data);
-			if(data.code == 200) {
-				$scope.entity = data.payload;
-				$('#sendMailModal').modal('hide');
-				$scope.sendMail = null;
-			}
+			$('#sendMailModal').modal('hide');
 		});
 	};
 	$scope.load();

@@ -10,8 +10,14 @@ import com.luckia.biller.core.model.Liquidation;
 
 public interface LiquidationProcessor {
 
-	List<Liquidation> process(Company company, Range<Date> range);
+	List<Liquidation> processBills(Company company, Range<Date> range);
 
+	/**
+	 * Actualiza el estado de la liquidación y genera el PDF asociado.
+	 * 
+	 * @param liquidation
+	 *            Liquidacion
+	 */
 	void confirm(Liquidation liquidation);
 
 }

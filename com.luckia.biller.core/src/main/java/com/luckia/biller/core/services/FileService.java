@@ -31,6 +31,13 @@ import com.luckia.biller.core.model.AppFile;
  */
 public class FileService {
 
+	public static void main(String[] args) {
+		String x = "uno/dos\\tres:cuatro;cinco";
+		System.out.println(x);
+		String y = x.replaceAll("[/\\\\:;]", "_");
+		System.out.println(y);
+	}
+
 	@Inject
 	@Named("file.repository.path")
 	private String basePath;
@@ -82,7 +89,12 @@ public class FileService {
 		}
 	}
 
+	public String getFilePath(AppFile appFile) {
+		return new File(basePath, appFile.getInternalPath()).getAbsolutePath();
+	}
+
 	private File generateFileTarget(String name, Date date) {
+		name = name.replaceAll("[/\\\\:;]", "_");
 		File folderBase = new File(basePath);
 		if (!folderBase.exists() && !folderBase.mkdirs()) {
 			throw new RuntimeException("Error al crear el directorio " + folderBase.getAbsolutePath());

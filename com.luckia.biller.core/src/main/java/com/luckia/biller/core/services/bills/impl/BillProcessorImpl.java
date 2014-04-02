@@ -19,6 +19,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
 
+import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
@@ -118,16 +119,22 @@ public class BillProcessorImpl implements BillProcessor {
 			netAmount = netAmount.add(detail.getValue());
 		}
 		BigDecimal vatPercent = settingsService.getBillingSettings().getValue("vat", BigDecimal.class);
-		BigDecimal vatAmount = netAmount.multiply(vatPercent).divide(new BigDecimal("100.00"), 2, RoundingMode.HALF_EVEN);
+		BigDecimal vatAmount = netAmount.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 		BigDecimal amount = netAmount.add(vatAmount);
 		bill.setNetAmount(netAmount);
 		bill.setAmount(amount);
 		bill.setVatPercent(vatPercent);
 		bill.setVatAmount(vatAmount);
 
+		// Sumamos todos los conceptos de liquidacion y los ajustes operativos que han de propagarse a la liquidacion para obtener el valor
 		BigDecimal liquidationAmount = BigDecimal.ZERO;
 		for (LiquidationDetail detail : bill.getLiquidationDetails()) {
 			liquidationAmount = liquidationAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
+		}
+		for (BillDetail detail : bill.getDetails()) {
+			if (detail.getPropagate() != null && detail.getPropagate()) {
+				liquidationAmount = liquidationAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
+			}
 		}
 		bill.setLiquidationAmount(liquidationAmount);
 
@@ -143,6 +150,7 @@ public class BillProcessorImpl implements BillProcessor {
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.getTransaction().begin();
 			stateMachineService.createTransition(bill, BillState.BillConfirmed.name());
+			billCodeGenerator.generateCode(bill);
 			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
 			FileOutputStream out = new FileOutputStream(tempFile);
 			pdfBillGenerator.generate(bill, out);
@@ -152,7 +160,6 @@ public class BillProcessorImpl implements BillProcessor {
 			AppFile pdfFile = fileService.save(name, "application/pdf", in);
 			bill.setPdfFile(pdfFile);
 			entityManager.merge(bill);
-			billCodeGenerator.generateCode(bill);
 			entityManager.getTransaction().commit();
 		} catch (Exception ex) {
 			throw new RuntimeException("Error al confirmar la factura", ex);

@@ -57,7 +57,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 * org.apache.commons.lang3.Range)
 	 */
 	@Override
-	public List<Liquidation> process(Company company, Range<Date> range) {
+	public List<Liquidation> processBills(Company company, Range<Date> range) {
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<Bill> query = entityManager.createNamedQuery("Bill.selectPendingByReceiverInRange", Bill.class);
 		query.setParameter("receiver", company);
@@ -101,6 +101,12 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		return result;
 	}
 
+	/**
+	 * Desglosa las facturas por centro de coste asociadas a una empresa.
+	 * 
+	 * @param bills
+	 * @return
+	 */
 	private Map<CostCenter, List<Bill>> getCostCenterMapping(List<Bill> bills) {
 		Map<CostCenter, List<Bill>> costCenterMap = new LinkedHashMap<CostCenter, List<Bill>>();
 		for (Bill bill : bills) {
@@ -120,6 +126,9 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		return costCenterMap;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public void confirm(Liquidation liquidation) {
 		try {

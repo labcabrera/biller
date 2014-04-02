@@ -35,7 +35,7 @@ public class LiquidationTask implements Runnable {
 			EntityManager entityManager = entityManagerProvider.get();
 			Company company = entityManager.find(Company.class, companyId);
 			LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
-			liquidationProcessor.process(company, range);
+			liquidationProcessor.processBills(company, range);
 			long ms = System.currentTimeMillis() - t0;
 			LOG.debug("Procesada liquidacion de la empresa {} en {} ms", company.getName(), ms);
 		} catch (Exception ex) {

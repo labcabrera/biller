@@ -42,6 +42,17 @@ public class MailService {
 	@Named("mail.port")
 	private Integer port;
 
+	/**
+	 * Genera un objeto {@link HtmlEmail}
+	 * 
+	 * @param address
+	 * @param displayName
+	 * @param title
+	 * @param body
+	 * @param attachments
+	 * @return
+	 * @throws EmailException
+	 */
 	public HtmlEmail createEmail(String address, String displayName, String title, String body, List<EmailAttachment> attachments) throws EmailException {
 		LOG.debug("Creando email con titulo {}", displayName);
 		HtmlEmail email = new HtmlEmail();
@@ -67,7 +78,7 @@ public class MailService {
 		return email;
 	}
 
-	public static EmailAttachment createAttachment(String description, String name, String path) {
+	public EmailAttachment createAttachment(String description, String name, String path) {
 		EmailAttachment emailAttachment = new EmailAttachment();
 		emailAttachment.setDescription(description);
 		emailAttachment.setName(name);

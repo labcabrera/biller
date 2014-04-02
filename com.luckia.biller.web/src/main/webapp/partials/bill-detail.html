@@ -159,7 +159,13 @@
 									<td>{{detail.name}}</td>
 									<td class="data-amount">{{detail.units}}</td>
 									<td class="data-amount">{{detail.value}}</td>
-									<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+									<td></td>
+								</tr>
+								<tr ng-repeat="detail in entity.details" ng-if="detail.propagate">
+									<td>[Bill] {{detail.name}}</td>
+									<td class="data-amount">{{detail.units}}</td>
+									<td class="data-amount">{{detail.value}}</td>
+									<td></td>
 								</tr>
 								<tr>
 									<td><b>Total</b></td>
@@ -170,13 +176,9 @@
 							</table>
 						</div>
 					</div>
-					
-				</div><!-- tab-content -->
+				</div>
 			</div>
-			<!--
-			<pre>{{billDetail | json}}</pre>
-			-->
-		</div><!-- sm-9 -->
+		</div>
 
 		<!-- Menu lateral -->
 		<div class="col-sm-3">
@@ -257,9 +259,9 @@
 				<div class="modal-body">
 					<form class="form-horizontal" role="form">
 						<div class="form-group">
-							<label class="col-sm-2 control-label input-sm">Direcciones</label>
+							<label class="col-sm-2 control-label input-sm">Direcci&oacute;n</label>
 							<div class="col-sm-8">
-								<input type='text' class="form-control input-sm" ng-model="sendMail.value" /> <span class="help-block">Para enviar a m&acute;s de una direcci&oacute;n separe con punto y coma</span>
+								<input type='text' class="form-control input-sm" ng-model="sendMail.value" />
 							</div>
 						</div>
 					</form>

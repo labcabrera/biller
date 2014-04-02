@@ -51,6 +51,7 @@ public class Company extends LegalEntity {
 			if (Company.class.isAssignableFrom(entity.getClass())) {
 				Company company = (Company) entity;
 				this.autoConfirm = company.autoConfirm;
+				this.liquidationSequencePrefix = company.liquidationSequencePrefix;
 			}
 		}
 	}
