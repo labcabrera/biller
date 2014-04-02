@@ -82,7 +82,14 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			liquidation.setDateTo(range.getMaximum());
 			liquidation.setBillDate(range.getMaximum());
 			liquidation.setModel(company.getBillingModel());
-			updateResults(liquidation);
+
+			BigDecimal totalAmount = BigDecimal.ZERO;
+			for (Bill bill : liquidation.getBills()) {
+				totalAmount = totalAmount.add(bill.getLiquidationAmount());
+			}
+			liquidation.setAmount(totalAmount);
+			LOG.debug("Resultado de la liquidacion: {}", totalAmount);
+			entityManager.merge(liquidation);
 			auditService.processCreated(liquidation);
 			result.add(liquidation);
 			stateMachineService.createTransition(liquidation, BillState.BillDraft.name());
@@ -91,27 +98,6 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		return result;
 	}
 
-	private void updateResults(Liquidation liquidation) {
-		LOG.debug("Actualizando resultados de la liquidacion {}", liquidation);
-		EntityManager entityManager = entityManagerProvider.get();
-		Boolean currentTransaction = entityManager.getTransaction().isActive();
-		if (currentTransaction) {
-			entityManager.getTransaction().commit();
-		}
-		entityManager.getTransaction().begin();
-		BigDecimal totalAmount = BigDecimal.ZERO;
-		for (Bill bill : liquidation.getBills()) {
-			totalAmount = totalAmount.add(bill.getLiquidationAmount());
-		}
-		liquidation.setAmount(totalAmount);
-		entityManager.merge(liquidation);
-		LOG.debug("Resultado de la liquidacion: {}", totalAmount);
-		entityManager.getTransaction().commit();
-	}
-
-	/**
-	 * 
-	 */
 	@Override
 	public void confirm(Liquidation liquidation) {
 		try {

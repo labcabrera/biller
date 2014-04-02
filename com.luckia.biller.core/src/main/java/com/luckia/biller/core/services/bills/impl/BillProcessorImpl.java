@@ -36,7 +36,6 @@ import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.BillProcessor;
-import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
 public class BillProcessorImpl implements BillProcessor {
@@ -59,8 +58,6 @@ public class BillProcessorImpl implements BillProcessor {
 	private PDFBillGenerator pdfBillGenerator;
 	@Inject
 	private AuditService auditService;
-	@Inject
-	private LiquidationProcessor liquidationProcessor;
 
 	/*
 	 * (non-Javadoc)
