@@ -162,7 +162,7 @@
 									<td></td>
 								</tr>
 								<tr ng-repeat="detail in entity.details" ng-if="detail.propagate">
-									<td>[Bill] {{detail.name}}</td>
+									<td>{{detail.name}}</td>
 									<td class="data-amount">{{detail.units}}</td>
 									<td class="data-amount">{{detail.value}}</td>
 									<td></td>
@@ -237,7 +237,6 @@
 							</div>
 						</div>
 					</form>
-					<pre>{{billDetail | json}}</pre>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>

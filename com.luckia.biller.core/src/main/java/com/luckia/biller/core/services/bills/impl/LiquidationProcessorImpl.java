@@ -27,7 +27,6 @@ import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
-import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
@@ -41,8 +40,6 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private EntityManagerProvider entityManagerProvider;
 	@Inject
 	private StateMachineService stateMachineService;
-	@Inject
-	private AuditService auditService;
 	@Inject
 	private PDFLiquidationGenerator pdfLiquidationGenerator;
 	@Inject
@@ -84,15 +81,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			liquidation.setBillDate(range.getMaximum());
 			liquidation.setModel(company.getBillingModel());
 
-			BigDecimal totalAmount = BigDecimal.ZERO;
-			for (Bill bill : billList) {
-				totalAmount = totalAmount.add(bill.getLiquidationAmount());
-				bill.setLiquidation(liquidation);
-				entityManager.merge(bill);
-			}
-			liquidation.setAmount(totalAmount);
-			auditService.processCreated(liquidation);
-			entityManager.persist(liquidation);
+			updateResults(liquidation);
 
 			result.add(liquidation);
 			stateMachineService.createTransition(liquidation, BillState.BillDraft.name());
@@ -101,29 +90,22 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		return result;
 	}
 
-	/**
-	 * Desglosa las facturas por centro de coste asociadas a una empresa.
-	 * 
-	 * @param bills
-	 * @return
-	 */
-	private Map<CostCenter, List<Bill>> getCostCenterMapping(List<Bill> bills) {
-		Map<CostCenter, List<Bill>> costCenterMap = new LinkedHashMap<CostCenter, List<Bill>>();
-		for (Bill bill : bills) {
-			if (!BillState.BillEmpty.equals(bill.getCurrentState().getStateDefinition().getId())) {
-				Store store = bill.getSender(Store.class);
-				CostCenter costCenter = store.getCostCenter();
-				if (costCenter == null) {
-					LOG.warn("El local {} de la factura {} carece de centro de coste. No se puede realizar la liquidacion", store, bill);
-				} else {
-					if (!costCenterMap.containsKey(store.getCostCenter())) {
-						costCenterMap.put(costCenter, new ArrayList<Bill>());
-					}
-					costCenterMap.get(costCenter).add(bill);
-				}
-			}
+	private void updateResults(Liquidation liquidation) {
+		LOG.debug("Actualizando resultados de la liquidacion {}", liquidation);
+		EntityManager entityManager = entityManagerProvider.get();
+		Boolean currentTransaction = entityManager.getTransaction().isActive();
+		if (currentTransaction) {
+			entityManager.getTransaction().commit();
 		}
-		return costCenterMap;
+		entityManager.getTransaction().begin();
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		for (Bill bill : liquidation.getBills()) {
+			totalAmount = totalAmount.add(bill.getLiquidationAmount());
+		}
+		liquidation.setAmount(totalAmount);
+		entityManager.merge(liquidation);
+		LOG.debug("Resultado de la liquidacion: {}", totalAmount);
+		entityManager.getTransaction().commit();
 	}
 
 	/**
@@ -149,5 +131,30 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		} catch (Exception ex) {
 			throw new RuntimeException("Error al confirmar la factura", ex);
 		}
+	}
+
+	/**
+	 * Desglosa las facturas por centro de coste asociadas a una empresa.
+	 * 
+	 * @param bills
+	 * @return
+	 */
+	private Map<CostCenter, List<Bill>> getCostCenterMapping(List<Bill> bills) {
+		Map<CostCenter, List<Bill>> costCenterMap = new LinkedHashMap<CostCenter, List<Bill>>();
+		for (Bill bill : bills) {
+			if (!BillState.BillEmpty.equals(bill.getCurrentState().getStateDefinition().getId())) {
+				Store store = bill.getSender(Store.class);
+				CostCenter costCenter = store.getCostCenter();
+				if (costCenter == null) {
+					LOG.warn("El local {} de la factura {} carece de centro de coste. No se puede realizar la liquidacion", store, bill);
+				} else {
+					if (!costCenterMap.containsKey(store.getCostCenter())) {
+						costCenterMap.put(costCenter, new ArrayList<Bill>());
+					}
+					costCenterMap.get(costCenter).add(bill);
+				}
+			}
+		}
+		return costCenterMap;
 	}
 }

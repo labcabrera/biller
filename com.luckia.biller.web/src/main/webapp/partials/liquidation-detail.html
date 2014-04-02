@@ -40,16 +40,8 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Modelo</label>
+						<label class="col-sm-2 control-label input-sm">Estado</label>
 						<div class="col-sm-5">
-							<div class="input-group">
-								<input type='text' class="form-control" ng-model="entity.model.name" ng-readonly="true" /> <span class="input-group-addon input-sm"> <a
-									href="#/models/id/{{entity.model.id}}"><span class="glyphicon glyphicon-search"></span></a>
-								</span>
-							</div>
-						</div>
-						<label class="col-sm-1 control-label input-sm">Estado</label>
-						<div class="col-sm-3">
 							<input type='text' class="form-control" ng-model="entity.currentState.stateDefinition.desc" ng-readonly="true" />
 						</div>
 					</div>
@@ -82,7 +74,11 @@
 										<td>{{bill.currentState.stateDefinition.desc}}</td>
 										<td class="data-amount">{{bill.amount}}</td>
 										<td class="data-amount">{{bill.liquidationAmount}}</td>
-										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+										<td>
+											<a ng-click="editDetail(detail.id)" href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'">
+												<span class="glyphicon glyphicon-pencil"></span>
+											</a>
+										</td>
 									</tr>
 									<tr>
 										<td><b>Total</b></td>

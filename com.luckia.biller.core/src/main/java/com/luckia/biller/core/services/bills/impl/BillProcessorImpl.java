@@ -18,6 +18,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
@@ -26,6 +28,7 @@ import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillState;
 import com.luckia.biller.core.model.BillType;
+import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.AuditService;
@@ -33,9 +36,12 @@ import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.BillProcessor;
+import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
 public class BillProcessorImpl implements BillProcessor {
+
+	private static final Logger LOG = LoggerFactory.getLogger(BillProcessorImpl.class);
 
 	@Inject
 	private EntityManagerProvider entityManagerProvider;
@@ -53,6 +59,8 @@ public class BillProcessorImpl implements BillProcessor {
 	private PDFBillGenerator pdfBillGenerator;
 	@Inject
 	private AuditService auditService;
+	@Inject
+	private LiquidationProcessor liquidationProcessor;
 
 	/*
 	 * (non-Javadoc)
@@ -93,18 +101,18 @@ public class BillProcessorImpl implements BillProcessor {
 	@Override
 	public void processDetails(Bill bill) {
 		billDetailProcessor.process(bill);
-		if (bill.getDetails().isEmpty()) {
-			stateMachineService.createTransition(bill, BillState.BillEmpty.name());
-		} else {
-			EntityManager entityManager = entityManagerProvider.get();
-			entityManager.getTransaction().begin();
-			for (BillDetail detail : bill.getDetails()) {
-				entityManager.merge(detail);
-			}
-			entityManager.merge(bill);
-			stateMachineService.createTransition(bill, BillState.BillDraft.name());
-			entityManager.getTransaction().commit();
+		// if (bill.getDetails().isEmpty()) {
+		// stateMachineService.createTransition(bill, BillState.BillEmpty.name());
+		// } else {
+		EntityManager entityManager = entityManagerProvider.get();
+		entityManager.getTransaction().begin();
+		for (BillDetail detail : bill.getDetails()) {
+			entityManager.merge(detail);
 		}
+		entityManager.merge(bill);
+		stateMachineService.createTransition(bill, BillState.BillDraft.name());
+		entityManager.getTransaction().commit();
+		// }
 	}
 
 	/*
@@ -136,11 +144,25 @@ public class BillProcessorImpl implements BillProcessor {
 				liquidationAmount = liquidationAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
 			}
 		}
+		LOG.debug("Bill liquidation amount: {}", liquidationAmount);
 		bill.setLiquidationAmount(liquidationAmount);
-
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.getTransaction().begin();
 		entityManager.merge(bill);
+		if (bill.getLiquidation() != null) {
+			entityManager.flush();
+			entityManager.clear();
+			Liquidation liquidation = entityManager.find(Liquidation.class, bill.getLiquidation().getId());
+			LOG.debug("Actualizando resultados de la liquidacion {}", liquidation);
+			BigDecimal totalAmount = BigDecimal.ZERO;
+			for (Bill i : liquidation.getBills()) {
+				LOG.debug("Liquidacion de {}: {}", i.getSender(), i.getLiquidationAmount());
+				totalAmount = totalAmount.add(i.getLiquidationAmount());
+			}
+			liquidation.setAmount(totalAmount);
+			LOG.debug("Resultado de la liquidacion: {}", totalAmount);
+			entityManager.merge(liquidation);
+		}
 		entityManager.getTransaction().commit();
 	}
 

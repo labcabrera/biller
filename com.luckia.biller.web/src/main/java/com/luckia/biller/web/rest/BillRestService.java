@@ -153,6 +153,8 @@ public class BillRestService {
 		entityManager.getTransaction().commit();
 		entityManager.clear();
 		billProcessor.processResults(bill);
+		entityManager.clear();
+		bill = entityManager.find(Bill.class, detail.getBill().getId());
 		return new Message<Bill>(Message.CODE_SUCCESS, isNew ? "Detalle guardado" : "Detalle actualizado", bill);
 	}
 
@@ -160,7 +162,7 @@ public class BillRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/detail/remove/id/{id}")
 	@ClearCache
-	public Message<Bill> merge(@PathParam("id") String id) {
+	public Message<Bill> removeDetail(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			BillDetail detail = entityManager.find(BillDetail.class, id);
@@ -247,41 +249,4 @@ public class BillRestService {
 			throw new RuntimeException("Error la generar el borrador");
 		}
 	}
-
-	// @GET
-	// @Produces(MediaType.APPLICATION_JSON)
-	// @Path("/liquidation/id/{id}")
-	// @ClearCache
-	// public LiquidationDetail findLiquidationDetail(@PathParam("id") String id) {
-	// return entityManagerProvider.get().find(LiquidationDetail.class, id);
-	// }
-	//
-	// @POST
-	// @Consumes(MediaType.APPLICATION_JSON)
-	// @Produces(MediaType.APPLICATION_JSON)
-	// @Path("/liquidation/merge")
-	// @ClearCache
-	// public Message<Bill> mergeLiquidation(LiquidationDetail detail) {
-	// EntityManager entityManager = entityManagerProvider.get();
-	// Bill bill;
-	// Boolean isNew = detail.getId() == null;
-	// detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
-	// detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
-	// entityManager.getTransaction().begin();
-	// if (isNew) {
-	// bill = entityManager.find(Bill.class, detail.getBill().getId());
-	// detail.setId(UUID.randomUUID().toString());
-	// entityManager.persist(detail);
-	// bill.getLiquidationDetails().add(detail);
-	// } else {
-	// BillDetail current = entityManager.find(BillDetail.class, detail.getId());
-	// current.merge(detail);
-	// entityManager.merge(detail);
-	// bill = current.getBill();
-	// }
-	// entityManager.getTransaction().commit();
-	// entityManager.clear();
-	// billProcessor.processResults(bill);
-	// return new Message<Bill>(Message.CODE_SUCCESS, isNew ? "Detalle guardado" : "Detalle actualizado", bill);
-	// }
 }
