@@ -12,7 +12,7 @@ import org.quartz.JobExecutionException;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.MainModule;
+import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.Company;
@@ -37,7 +37,7 @@ public class Main implements Runnable {
 			System.out.println("Biller deployment module");
 			Bootstrap.main();
 			MasterWorkbookProcessor.main();
-			injector = Guice.createInjector(new MainModule());
+			injector = Guice.createInjector(new LuckiaCoreModule());
 			injector.getInstance(BillSequencePrefixGenerator.class).run();
 			generateBills();
 			updateEgasaInfo();

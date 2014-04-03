@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.MainModule;
+import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 
@@ -23,7 +23,7 @@ public class TestBillerSerializer {
 
 	@Test
 	public void test() {
-		Injector injector = Guice.createInjector(new MainModule());
+		Injector injector = Guice.createInjector(new LuckiaCoreModule());
 		EntityManager entityManager = injector.getInstance(EntityManagerProvider.class).get();
 		Serializer serializer = injector.getInstance(Serializer.class);
 

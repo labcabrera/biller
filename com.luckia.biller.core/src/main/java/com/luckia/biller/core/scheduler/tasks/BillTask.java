@@ -1,4 +1,4 @@
-package com.luckia.biller.core.scheduler;
+package com.luckia.biller.core.scheduler.tasks;
 
 import java.util.Date;
 
@@ -12,6 +12,7 @@ import com.google.inject.Injector;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.scheduler.BillingJob;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
 /**

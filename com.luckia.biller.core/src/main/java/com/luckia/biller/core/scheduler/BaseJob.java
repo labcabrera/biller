@@ -23,10 +23,28 @@ public abstract class BaseJob implements Job {
 
 	protected Injector injector;
 
+	/**
+	 * Obtiene el parametro pasado al {@link Job} a partir de su clave y tipo.
+	 * 
+	 * @param context
+	 * @param key
+	 * @param type
+	 * @return
+	 */
 	protected <T> T getParameter(JobExecutionContext context, String key, Class<T> type) {
 		return getParameter(context, key, type, null);
 	}
 
+	/**
+	 * Obtiene el parametro pasado al {@link Job} a partir de su clave y tipo. En caso de no esté establecido en el contexto del job
+	 * devuelve su valor por defecto.
+	 * 
+	 * @param context
+	 * @param key
+	 * @param type
+	 * @param defaultValue
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	protected <T> T getParameter(JobExecutionContext context, String key, Class<T> type, T defaultValue) {
 		Object result = context.get(key);
@@ -37,6 +55,11 @@ public abstract class BaseJob implements Job {
 		}
 	}
 
+	/**
+	 * Inicializa el job estableciendo el {@link Injector} de Guice.
+	 * 
+	 * @param context
+	 */
 	protected void init(JobExecutionContext context) {
 		try {
 			injector = (Injector) context.getScheduler().getContext().get(Injector.class.getName());
@@ -46,6 +69,11 @@ public abstract class BaseJob implements Job {
 		}
 	}
 
+	/**
+	 * Establece el {@link Injector} de Guice.
+	 * 
+	 * @param value
+	 */
 	public void setInjector(Injector value) {
 		this.injector = value;
 	}

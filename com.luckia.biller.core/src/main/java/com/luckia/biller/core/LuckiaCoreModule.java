@@ -11,9 +11,11 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.services.bills.BillDataProvider;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
+import com.luckia.biller.core.services.bills.RappelStoreProcessor;
 import com.luckia.biller.core.services.bills.impl.BillProcessorImpl;
-import com.luckia.biller.core.services.bills.impl.LiquidationProcessorImpl;
 import com.luckia.biller.core.services.bills.impl.LISBillDataProvider;
+import com.luckia.biller.core.services.bills.impl.LiquidationProcessorImpl;
+import com.luckia.biller.core.services.bills.impl.RappelStoreProcessorImpl;
 import com.luckia.biller.core.validation.LegalEntityValidator;
 
 /**
@@ -25,7 +27,7 @@ import com.luckia.biller.core.validation.LegalEntityValidator;
  * <li>Registra el módulo de validacion de Apache BVal (JSR 303)</li>
  * </ul>
  */
-public class MainModule extends AbstractModule {
+public class LuckiaCoreModule extends AbstractModule {
 
 	/*
 	 * (non-Javadoc)
@@ -39,6 +41,7 @@ public class MainModule extends AbstractModule {
 		bindEntityManagers();
 		bind(BillProcessor.class).to(BillProcessorImpl.class);
 		bind(LiquidationProcessor.class).to(LiquidationProcessorImpl.class);
+		bind(RappelStoreProcessor.class).to(RappelStoreProcessorImpl.class);
 		bind(BillDataProvider.class).to(LISBillDataProvider.class);
 		install(new ValidationModule());
 		bind(LegalEntityValidator.class);

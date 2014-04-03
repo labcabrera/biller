@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.MainModule;
+import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.deploy.fedders.AppSettingsFeeder;
 import com.luckia.biller.deploy.fedders.BillingModelFeeder;
@@ -35,7 +35,7 @@ public class Bootstrap implements Runnable {
 	private Injector injector;
 
 	public static void main(String... args) {
-		Injector injector = Guice.createInjector(new MainModule());
+		Injector injector = Guice.createInjector(new LuckiaCoreModule());
 		Bootstrap bootstrap = injector.getInstance(Bootstrap.class);
 		bootstrap.run();
 	}

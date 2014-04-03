@@ -1,4 +1,4 @@
-package com.luckia.biller.core.scheduler;
+package com.luckia.biller.core.scheduler.tasks;
 
 import java.util.Date;
 

@@ -12,14 +12,14 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.MainModule;
+import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.model.AppFile;
 
 public class FileServiceTest {
 
 	@Test
 	public void test() {
-		Injector injector = Guice.createInjector(new MainModule());
+		Injector injector = Guice.createInjector(new LuckiaCoreModule());
 		FileService fileService = injector.getInstance(FileService.class);
 		InputStream inputStream = new ByteArrayInputStream("test".getBytes());
 		AppFile file = fileService.save("test.txt", "text/txt", inputStream);

@@ -30,7 +30,7 @@ public class SettingsService {
 		return entityManagerProvider.get().find(AppSettings.class, BILLING);
 	}
 
-	public AppSettings getRepositorySettings() {
+	public AppSettings getSystemSettings() {
 		return entityManagerProvider.get().find(AppSettings.class, SYSTEM);
 	}
 }

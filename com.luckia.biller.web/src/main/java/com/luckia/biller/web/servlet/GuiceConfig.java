@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import com.luckia.biller.core.MainModule;
+import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.scheduler.SchedulerService;
 
 public class GuiceConfig extends GuiceServletContextListener {
@@ -17,7 +17,7 @@ public class GuiceConfig extends GuiceServletContextListener {
 	@Override
 	protected Injector getInjector() {
 		LOG.debug("Configuring web application");
-		Injector injector = Guice.createInjector(new RestModule(), new MainModule());
+		Injector injector = Guice.createInjector(new RestModule(), new LuckiaCoreModule());
 		configureScheduler(injector);
 		return injector;
 	}

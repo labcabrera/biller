@@ -21,7 +21,6 @@ import javax.validation.Validator;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.persistence.config.QueryHints;
 
 import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.i18n.I18nService;

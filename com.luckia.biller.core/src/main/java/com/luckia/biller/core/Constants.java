@@ -10,14 +10,29 @@ package com.luckia.biller.core;
  */
 public final class Constants {
 
+	/**
+	 * Luckia Information Server
+	 */
 	public static final String LIS = "LIS";
 
+	/**
+	 * Persistence unit de la aplicación
+	 */
 	public static final String PERSISTENCE_UNIT_NAME = "com.luckia.biller";
 
+	/**
+	 * Persistence unit de la base de datos de LIS
+	 */
 	public static final String PERSISTENCE_UNIT_NAME_LIS = "com.luckia.lis";
 
+	/**
+	 * Nombre del fichero de propiedades de la aplicación
+	 */
 	public static final String PROPERTIES_FILE = "com.luckia.biller.properties";
 
+	/**
+	 * Constructor privado para evitar que se generen instancias de esta clase.
+	 */
 	private Constants() {
 	}
 

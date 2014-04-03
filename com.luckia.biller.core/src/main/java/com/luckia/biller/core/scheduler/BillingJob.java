@@ -5,6 +5,7 @@
  ******************************************************************************/
 package com.luckia.biller.core.scheduler;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -15,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.Range;
+import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -22,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Company;
+import com.luckia.biller.core.scheduler.tasks.BillTask;
+import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 
 /**
  * Job encargado de generar las facturas mensualmente. Recibe los siguientes parametros:
@@ -50,7 +54,31 @@ public class BillingJob extends BaseJob {
 		Date from = getParameter(context, KEY_FROM, Date.class);
 		Date to = getParameter(context, KEY_TO, Date.class);
 		Integer threadCount = getParameter(context, KEY_THREAD_COUNT, Integer.class, 10);
-		execute(Range.between(from, to), threadCount);
+		Range<Date> range;
+		if (from == null || to == null) {
+			range = getCurrentRange();
+		} else {
+			range = Range.between(from, to);
+		}
+		execute(range, threadCount);
+	}
+
+	/**
+	 * En la primera quincena hacemos la facturacion del mes anterior. En la segunda quincena lanzamos la facturacion del mes en curso
+	 * 
+	 * @return
+	 */
+	private Range<Date> getCurrentRange() {
+		DateTime currentDate = new DateTime(Calendar.getInstance().getTime());
+		DateTime dateTime = new DateTime(currentDate);
+		DateTime effectiveFrom = new DateTime(dateTime);
+		if (dateTime.getDayOfMonth() < 15) {
+			effectiveFrom = new DateTime(dateTime).plusMonths(-1);
+		}
+		effectiveFrom = effectiveFrom.dayOfMonth().withMinimumValue();
+		DateTime effectiveTo = new DateTime(effectiveFrom);
+		effectiveTo = effectiveTo.dayOfMonth().withMaximumValue();
+		return Range.between(effectiveFrom.toDate(), effectiveTo.toDate());
 	}
 
 	public void execute(Range<Date> range, Integer threadCount) throws JobExecutionException {

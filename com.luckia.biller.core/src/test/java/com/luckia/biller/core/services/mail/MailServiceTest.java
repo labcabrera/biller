@@ -14,13 +14,13 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.MainModule;
+import com.luckia.biller.core.LuckiaCoreModule;
 
 public class MailServiceTest {
 
 	@Test
 	public void test() throws EmailException {
-		Injector injector = Guice.createInjector(new MainModule());
+		Injector injector = Guice.createInjector(new LuckiaCoreModule());
 		MailService mailService = injector.getInstance(MailService.class);
 		String address = "lab.cabrera@gmail.com";
 		String displayName = "displayName";

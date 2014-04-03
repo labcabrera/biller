@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.MainModule;
+import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.common.ASTNode;
 import com.luckia.biller.core.model.Bill;
 
@@ -21,7 +21,7 @@ public class TestFiqlParser {
 
 	@Test
 	public void test() {
-		Injector injector = Guice.createInjector(new MainModule());
+		Injector injector = Guice.createInjector(new LuckiaCoreModule());
 		EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
 		Class<Bill> entityClass = Bill.class;
 		EntityManager entityManager = entityManagerProvider.get();
