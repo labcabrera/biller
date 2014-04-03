@@ -13,6 +13,7 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,10 @@ public class LISBillDataProvider implements BillDataProvider {
 	@Inject
 	private BillFeesService billFeesService;
 
+	public Map<BillConcept, BigDecimal> retreive(Range<Date> range, List<String> terminals) {
+		return retreive(null, range, terminals);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -48,6 +53,8 @@ public class LISBillDataProvider implements BillDataProvider {
 	 */
 	@Override
 	public Map<BillConcept, BigDecimal> retreive(Bill bill, Range<Date> range, List<String> terminals) {
+		Validate.notNull(terminals, "No se ha establecido la lista de terminales");
+		Validate.notEmpty(terminals, "La lista de terminales no puede estar vacia");
 		Map<BillConcept, BigDecimal> map = new HashMap<BillConcept, BigDecimal>();
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<LisTerminalRecord> query = entityManager.createNamedQuery("LisTerminalRecord.selectByCodesInRange", LisTerminalRecord.class);
@@ -68,14 +75,12 @@ public class LISBillDataProvider implements BillDataProvider {
 				totalCancelledAmount = totalCancelledAmount.add(i.getCancelledAmount());
 				totalAttributable = totalAttributable.add(i.getAttributable());
 			}
-
-			BigDecimal gameFeesPercent = billFeesService.getGameFeesPercent(bill);
+			BigDecimal gameFeesPercent = bill != null ? billFeesService.getGameFeesPercent(bill) : BigDecimal.ZERO;
 			BigDecimal stakes = totalBetAmount.subtract(totalCancelledAmount);
-			// BigDecimal ggr = stakes.subtract(totalWinAmount);
 			BigDecimal ggr = stakes.subtract(totalAttributable);
 			BigDecimal tasaDeJuego = ggr.multiply(gameFeesPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 			BigDecimal ngr = ggr.subtract(tasaDeJuego);
-			BigDecimal gastosOperativos = bill.getModel().getCompanyModel().getCoOperatingMonthlyFees();
+			BigDecimal gastosOperativos = bill != null ? bill.getModel().getCompanyModel().getCoOperatingMonthlyFees() : BigDecimal.ZERO;
 			BigDecimal nr = ngr.subtract(gastosOperativos);
 			map.put(BillConcept.Stakes, stakes);
 			map.put(BillConcept.GGR, ggr);
@@ -84,4 +89,5 @@ public class LISBillDataProvider implements BillDataProvider {
 		}
 		return map;
 	}
+
 }

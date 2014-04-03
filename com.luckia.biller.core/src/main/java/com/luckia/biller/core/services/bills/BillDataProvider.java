@@ -25,6 +25,8 @@ import com.luckia.biller.core.model.BillConcept;
  */
 public interface BillDataProvider {
 
+	Map<BillConcept, BigDecimal> retreive(Range<Date> range, List<String> terminals);
+
 	/**
 	 * Obtiene la tabla con los datos de facturacion para una lista determinada de terminales y un rango de fechas.
 	 * 

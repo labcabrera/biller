@@ -27,6 +27,8 @@
 		<class>com.luckia.biller.core.model.Person</class>
 		<class>com.luckia.biller.core.model.Province</class>
 		<class>com.luckia.biller.core.model.Rappel</class>
+		<class>com.luckia.biller.core.model.RappelLiquidation</class>
+		<class>com.luckia.biller.core.model.RappelStoreBonus</class>
 		<class>com.luckia.biller.core.model.Region</class>
 		<class>com.luckia.biller.core.model.Sequence</class>
 		<class>com.luckia.biller.core.model.State</class>
