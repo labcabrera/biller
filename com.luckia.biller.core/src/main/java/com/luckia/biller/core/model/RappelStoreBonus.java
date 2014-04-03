@@ -53,9 +53,16 @@ public class RappelStoreBonus implements Auditable, HasState {
 	@Column(name = "PRORATA", precision = 18, scale = 2, nullable = true)
 	protected BigDecimal prorata;
 
-	@ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JoinColumn(name = "CURRENT_STATE")
 	protected State currentState;
+
+	/**
+	 * Rango de rappel utilizado para generar el bonus
+	 */
+	@ManyToOne(cascade = CascadeType.DETACH, optional = true)
+	@JoinColumn(name = "ID_RAPPEL")
+	protected Rappel rappel;
 
 	@Embedded
 	protected AuditData auditData;
@@ -126,5 +133,21 @@ public class RappelStoreBonus implements Auditable, HasState {
 	@Override
 	public void setAuditData(AuditData value) {
 		this.auditData = value;
+	}
+
+	public RappelLiquidation getRappelLiquidation() {
+		return rappelLiquidation;
+	}
+
+	public void setRappelLiquidation(RappelLiquidation rappelLiquidation) {
+		this.rappelLiquidation = rappelLiquidation;
+	}
+
+	public Rappel getRappel() {
+		return rappel;
+	}
+
+	public void setRappel(Rappel rappel) {
+		this.rappel = rappel;
 	}
 }

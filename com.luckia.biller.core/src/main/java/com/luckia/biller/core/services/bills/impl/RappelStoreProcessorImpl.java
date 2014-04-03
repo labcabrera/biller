@@ -12,10 +12,11 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
 
-import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillState;
+import com.luckia.biller.core.model.BillingModel;
+import com.luckia.biller.core.model.Rappel;
 import com.luckia.biller.core.model.RappelStoreBonus;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
@@ -24,6 +25,9 @@ import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.BillDataProvider;
 import com.luckia.biller.core.services.bills.RappelStoreProcessor;
 
+/**
+ * Implementación de {@link RappelStoreProcessor}
+ */
 public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 
 	@Inject
@@ -35,33 +39,64 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	@Inject
 	private StateMachineService stateMachineService;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#processRappel(com.luckia.biller.core.model.Store,
+	 * org.apache.commons.lang3.Range)
+	 */
 	@Override
 	public void processRappel(Store store, Range<Date> range) {
-		List<String> terminals = new ArrayList<>();
-		for (TerminalRelation terminalRelation : store.getTerminalRelations()) {
-			terminals.add(terminalRelation.getCode());
-		}
-		Map<BillConcept, BigDecimal> billingData = billDataProvider.retreive(range, terminals);
-		BigDecimal baseValue = billingData.get(BillConcept.Stakes);
-		BigDecimal rappelBonus = getRappelBonusAmount(baseValue);
-		if (MathUtils.isNotZeroPositive(rappelBonus)) {
+		try {
+			List<String> terminals = new ArrayList<>();
+			for (TerminalRelation terminalRelation : store.getTerminalRelations()) {
+				terminals.add(terminalRelation.getCode());
+			}
+			Map<BillConcept, BigDecimal> billingData = billDataProvider.retreive(range, terminals);
+			BigDecimal baseValue = billingData.get(BillConcept.Stakes);
+			Rappel rappel = getRappelBonusAmount(store, baseValue, BigDecimal.ZERO);
 			RappelStoreBonus bonus = new RappelStoreBonus();
 			bonus.setId(UUID.randomUUID().toString());
 			bonus.setStore(store);
 			bonus.setBaseValue(baseValue);
-			bonus.setValue(rappelBonus);
+			bonus.setValue(rappel != null ? rappel.getBonusAmount() : BigDecimal.ZERO);
+			bonus.setRappel(rappel);
 			bonus.setBonusDate(range.getMaximum());
-			auditService.processCreated(bonus);
-			stateMachineService.createTransition(bonus, BillState.BillDraft.name());
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.getTransaction().begin();
+			auditService.processCreated(bonus);
+			stateMachineService.createTransition(bonus, BillState.BillDraft.name());
 			entityManager.persist(bonus);
 			entityManager.getTransaction().commit();
+		} catch (Exception ex) {
+			throw new RuntimeException("Error al calcular el rappel del establecimiento " + store.getName(), ex);
 		}
 	}
 
-	// TODO check rappel del store.billingModel
-	public BigDecimal getRappelBonusAmount(BigDecimal baseValue) {
-		return new BigDecimal("100");
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#updateRappel(com.luckia.biller.core.model.RappelStoreBonus,
+	 * java.math.BigDecimal)
+	 */
+	@Override
+	public void updateRappel(RappelStoreBonus rappelStoreBonus, BigDecimal prorata) {
+		// TODO
+	}
+
+	public Rappel getRappelBonusAmount(Store store, BigDecimal baseValue, BigDecimal prorata) {
+		// TODO aplicar prorateo
+		BillingModel billingModel = store.getBillingModel();
+		Rappel bestRappel = null;
+		if (billingModel.getRappel() != null) {
+			for (Rappel rappel : billingModel.getRappel()) {
+				boolean checkRappel = rappel.getAmount().compareTo(baseValue) <= 0;
+				boolean checkBest = bestRappel == null || rappel.getBonusAmount().compareTo(rappel.getBonusAmount()) <= 0;
+				if (checkRappel && checkBest) {
+					bestRappel = rappel;
+				}
+			}
+		}
+		return bestRappel;
 	}
 }

@@ -29,6 +29,8 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope) {
 	}).when('/bills/id/:id', { templateUrl : 'partials/bill-detail.html', controller : 'BillDetailCtrl'
 	}).when('/liquidations', { templateUrl : 'partials/liquidation-list.html', controller : 'LiquidationListCtrl'
 	}).when('/liquidations/id/:id', { templateUrl : 'partials/liquidation-detail.html', controller : 'LiquidationDetailCtrl'
+	}).when('/rappel/stores/', { templateUrl : 'partials/rappel-store-list.html', controller : 'RappelStoreListCtrl'
+	}).when('/rappel/stores/id/:id', { templateUrl : 'partials/rappel-store-detail.html', controller : 'RappelStoreDetailCtrl'
 	}).when('/admin/console', { templateUrl : 'partials/admin-console.html'
 	}).when('/admin/settings', { templateUrl : 'partials/admin-settings.html', controller: 'SettingsCtrl'
 	}).when('/', { templateUrl : 'partials/index.html'
@@ -77,7 +79,7 @@ billerApp.run(function($rootScope, $http) {
 	};
 	
 	// Muestra elementos de debug en el front como popups con el json de las entidades
-	$rootScope.debug = false;
+	$rootScope.debug = true;
 	// En caso de establecer esta variable a true no se muestran los popups de confirmacion
 	$rootScope.autoconfirm = false;
 	$rootScope.dateFormat = 'dd-MM-yyyy';

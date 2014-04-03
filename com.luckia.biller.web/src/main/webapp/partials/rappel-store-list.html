@@ -1,0 +1,80 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+
+<div class="row">
+	<div class="col-sm-9">
+		<h4>Rappel de establecimientos <small>({{results.totalItems}} resultados)</small></h4>
+		<div ng-if="results.results.length < 1">No se han encontrado resultados</div>
+		<div ng-if="results.results.length > 0">
+			<table class="table table-hover table-condensed">
+				<tr>
+					<th>Establecimiento</th>
+					<th>Estado</th>
+					<th>Fecha</th>
+					<th>Importe</th>
+					<th></th>
+				</tr>
+				<tr ng-repeat="result in results.results">
+					<td><a href="#/rappel/stores/id/{{result.id}}">{{result.store.name}}</a></td>
+					<td>
+						<span ng-if="result.currentState.stateDefinition.id == 'BillDraft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
+						<span ng-if="result.currentState.stateDefinition.id == 'BillRectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
+					</td>
+					<td>{{result.bonusDate.substr(0,10)}}</td>
+					<td class="data-amount">{{result.value}}</td>
+					<td><a href="#/rappel/stores/id/{{result.id}}"><span class="glyphicon glyphicon-search"></span></a></td>
+				</tr>
+			</table>
+			<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)"
+				max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
+		</div>
+		<!--
+		<pre>{{searchOptions|json}}</pre>
+		-->
+	</div>
+
+	<div class="col-sm-3">
+		<div>
+			<h4>Filtrar resultados</h4>
+			<form role="form">
+				<div class="form-group">
+					<label>Establecimiento</label>
+					<input type="text" class="form-control input-sm" typeahead="store as store.name for store in stores($viewValue)" ng-model="searchOptions.store" />
+				</div>
+				<div class="form-group">
+					<label>Estado</label>
+					<select class="selectpicker form-control input-sm" ng-model="searchOptions.state">
+						<option value=""></option>
+						<option value="BillDraft">Borradores</option>
+						<option value="BillConfirmed">Confirmadas</option>
+						<option value="BillSent">Enviadas</option>
+						<option value="BillRectified">Rectificadas</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label>Desde</label>
+					<div class="input-group">
+						<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="searchOptions.from"
+							ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
+						<span class="input-group-addon glyphicon glyphicon-calendar"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>Hasta</label>
+					<div class="input-group">
+						<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="searchOptions.to"
+							ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
+						<span class="input-group-addon glyphicon glyphicon-calendar"></span>
+					</div>
+				</div>
+				<button class="btn btn-primary btn-sm" ng-click="search()">Buscar</button>
+				<button class="btn btn-default btn-sm" ng-click="reset()">Reset</button>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>

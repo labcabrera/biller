@@ -678,3 +678,60 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	$scope.load();
 } ]);
 
+/* ----------------------------------------------------------------------------
+ * RAPPEL DE ESTABLECIMIENTOS
+ * ----------------------------------------------------------------------------
+ */
+billerControllers.controller('RappelStoreListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
+	$scope.currentPage = 1;
+	$scope.itemsPerPage = 15;
+	$scope.reset = function() {
+		$scope.searchOptions = {
+//			'code': $routeParams.code,
+//			'company': { "id": $routeParams.company, "name": '' },
+//			'costCenter': { "id": $routeParams.costcenter, "name": '' },
+//			'state': $routeParams.state,
+//			'from': '',
+//			'to':  ''
+		};
+	};
+	$scope.getSearchUrl = function() {
+		var predicateBuilder = new PredicateBuilder('');
+//		predicateBuilder.append("code==", $scope.searchOptions.code);
+//		predicateBuilder.append("sender.id==", $scope.searchOptions.company != null ? $scope.searchOptions.company.id : null);
+//		predicateBuilder.append("receiver.id==", $scope.searchOptions.costCenter != null ? $scope.searchOptions.costCenter.id : null);
+//		predicateBuilder.append("dateFrom=ge=", $scope.searchOptions.from != null ? $filter('date')($scope.searchOptions.from, "yyyy-MM-dd") : null);
+//		predicateBuilder.append("dateTo=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
+//		predicateBuilder.append("currentState.stateDefinition.id==", $scope.searchOptions.state);
+		return 'rest/rappel/stores/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
+	};
+	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+	$scope.setPage = function(page) {
+	    $scope.currentPage = page;
+	    $scope.search();
+	};
+	$scope.reset();
+	$scope.search();
+} ]);
+
+billerControllers.controller('RappelStoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+	$scope.load = function() {
+		$http.get('rest/rappel/stores/id/' + $routeParams.id).success(function(data) {
+			$scope.entity = data;
+		});
+		$rootScope.isReadOnly = true;
+	};
+	$scope.confirm = function() {
+		if($rootScope.autoconfirm || window.confirm('Se va a aceptar el rappel')) {
+			$http.post('rest/rappel/stores/confirm/' + $scope.entity.id).success(function(data) {
+				$scope.displayAlert(data);
+				if(data.code == 200) {
+					$scope.entity = data.payload;
+				}
+			});
+		}
+	};
+	$scope.load();
+} ]);
+
+

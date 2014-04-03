@@ -1,0 +1,71 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+	<div class="row">
+		<div class="col-sm-9">
+			<div id="alertContainer"></div>
+			<h4>Rappel de establecimiento</h4>
+			<div>
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">Establecimiento</label>
+						<div class="col-sm-4">
+							<div class=" input-group">
+								<input type='text' class="form-control" ng-model="entity.store.name" ng-readonly="true" />
+								<span class="input-group-addon input-sm">
+									<a href="#/stores/id/{{entity.store.id}}"> <span class="glyphicon glyphicon-search"></span></a>
+								</span>
+							</div>
+						</div>
+						<label class="col-sm-2 control-label input-sm">Fecha</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control data-date" datepicker-popup="{{dateFormat}}" ng-model="entity.bonusDate" ng-readonly="isReadOnly"
+								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">Estado</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control" ng-model="entity.currentState.stateDefinition.desc" ng-readonly="true" />
+						</div>
+						<label class="col-sm-2 control-label input-sm">Prorateo</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control data-amount" ng-model="entity.prorata" ng-readonly="isReadOnly" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">Base</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control data-amount" ng-model="entity.baseValue" ng-readonly="true" />
+						</div>
+						<label class="col-sm-2 control-label input-sm">Bonus</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control data-amount" ng-model="entity.value" ng-readonly="true" />
+						</div>
+					</div>
+				</form>
+				<div class="btn-toolbar m-top-40" role="toolbar">
+					<button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-success pull-right'>Aceptar</button>
+					<button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-primary pull-right'>Aplicar prorateo</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Menu lateral -->
+		<div class="col-sm-3">
+			<div ng-include src="'templates/entity-toolbar.html'"></div>
+			<div class="m-top-40">
+				<h4>Facturaci&oacute;n</h4>
+				<ul class="list-unstyled">
+					<li><a href="#/bills">Ver facturas</a></li>
+					<li><a href="#/bills?store={{entity.store.id}}">Ver facturas de este establecimiento</a></li>
+				</ul>
+			</div>
+			<div ng-include src="'templates/entity-json-popup.html'"></div>
+		</div>
+	</div>
+
+</body>
+</html>

@@ -67,7 +67,7 @@ public class SchedulerService {
 			AppSettings systemSettings = settingsService.getSystemSettings();
 			registerJob("Billing job", systemSettings.getValue("job.biller.cron", String.class), BillingJob.class);
 			registerJob("System check job", "0 0/1 * 1/1 * ? *", SystemCheckJob.class);
-			registerJob("Rappel liquidation job", "0 0/1 * 1/1 * ? *", SystemCheckJob.class);
+			registerJob("Rappel liquidation job", "0 0/1 * 1/1 * ? *", RappelLiquidationJob.class);
 		} catch (Exception ex) {
 			throw new RuntimeException("Error al registrar las tareas programadas", ex);
 		}
