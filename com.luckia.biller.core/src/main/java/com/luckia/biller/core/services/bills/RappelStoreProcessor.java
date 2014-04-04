@@ -29,4 +29,6 @@ public interface RappelStoreProcessor {
 	 */
 	void updateRappel(RappelStoreBonus rappelStoreBonus, BigDecimal prorata);
 
+	void confirm(RappelStoreBonus bonus);
+
 }

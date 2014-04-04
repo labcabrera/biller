@@ -39,10 +39,17 @@ import com.luckia.biller.core.jpa.Mergeable;
 @NamedQueries({ @NamedQuery(name = "Bill.selectPendingByReceiverInRange", query = "select b from Bill b where b.receiver = :receiver and b.billDate >= :from and b.billDate <= :to and b.liquidation is null") })
 public class Bill extends AbstractBill implements Mergeable<Bill> {
 
+	/**
+	 * Determinadas facturas pueden tener una relación padre-hijo con otras (por ejemplo las rectificaciones). Este atributo nos permite
+	 * definir esta relación.
+	 */
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "PARENT_ID")
 	private Bill parent;
 
+	/**
+	 * Tipo de la factura (ordinaria o rectificativa)
+	 */
 	@Column(name = "TYPE", length = 16, nullable = false)
 	@Enumerated(EnumType.STRING)
 	private BillType billType;

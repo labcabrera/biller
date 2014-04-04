@@ -26,7 +26,7 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
-import com.luckia.biller.core.model.BillState;
+import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
@@ -85,7 +85,7 @@ public class BillProcessorImpl implements BillProcessor {
 		auditService.processCreated(bill);
 		entityManager.getTransaction().begin();
 		entityManager.persist(bill);
-		stateMachineService.createTransition(bill, BillState.BillInitial.name());
+		stateMachineService.createTransition(bill, CommonState.Initial.name());
 		entityManager.getTransaction().commit();
 		return bill;
 	}
@@ -107,7 +107,7 @@ public class BillProcessorImpl implements BillProcessor {
 			entityManager.merge(detail);
 		}
 		entityManager.merge(bill);
-		stateMachineService.createTransition(bill, BillState.BillDraft.name());
+		stateMachineService.createTransition(bill, CommonState.Draft.name());
 		entityManager.getTransaction().commit();
 		// }
 	}
@@ -168,7 +168,7 @@ public class BillProcessorImpl implements BillProcessor {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.getTransaction().begin();
-			stateMachineService.createTransition(bill, BillState.BillConfirmed.name());
+			stateMachineService.createTransition(bill, CommonState.Confirmed.name());
 			billCodeGenerator.generateCode(bill);
 			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
 			FileOutputStream out = new FileOutputStream(tempFile);
@@ -189,7 +189,7 @@ public class BillProcessorImpl implements BillProcessor {
 	public Bill rectifyBill(Bill bill) {
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.getTransaction().begin();
-		stateMachineService.createTransition(bill, BillState.BillRectified.name());
+		stateMachineService.createTransition(bill, CommonState.Rectified.name());
 		Bill rectified = new Bill();
 		rectified.setId(UUID.randomUUID().toString());
 		rectified.setBillDate(bill.getBillDate());
@@ -212,7 +212,7 @@ public class BillProcessorImpl implements BillProcessor {
 			entityManager.persist(rectified);
 		}
 		entityManager.merge(rectified);
-		stateMachineService.createTransition(rectified, BillState.BillDraft.name());
+		stateMachineService.createTransition(rectified, CommonState.Draft.name());
 		entityManager.getTransaction().commit();
 		processResults(bill);
 		return rectified;

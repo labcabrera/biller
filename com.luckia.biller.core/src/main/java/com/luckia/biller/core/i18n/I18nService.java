@@ -14,7 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Servicio encargado de obtener los mensajes de la aplicacion. Los mensajes se recuperan desde el bundle <code>messages.properties</code>.
+ * Servicio encargado de obtener los mensajes de la aplicacion. Los mensajes se recuperan desde el bundle
+ * <code>luckia-messages.properties</code>.
  */
 @Singleton
 public class I18nService {
@@ -23,11 +24,20 @@ public class I18nService {
 
 	private final ResourceBundle messages;
 
+	/**
+	 * Constructor que inicializa el <code>ResourceBundle</code>.
+	 */
 	public I18nService() {
 		Locale locale = new Locale("es", "ES");
 		messages = ResourceBundle.getBundle("luckia-messages", locale);
 	}
 
+	/**
+	 * Obtiene el literal asociado a la clave a partir.
+	 * 
+	 * @param key
+	 * @return
+	 */
 	public String getMessage(String key) {
 		if (messages.containsKey(key)) {
 			return messages.getString(key);

@@ -14,7 +14,7 @@ import org.apache.commons.lang3.Range;
 
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillConcept;
-import com.luckia.biller.core.model.BillState;
+import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Rappel;
 import com.luckia.biller.core.model.RappelStoreBonus;
@@ -65,7 +65,7 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.getTransaction().begin();
 			auditService.processCreated(bonus);
-			stateMachineService.createTransition(bonus, BillState.BillDraft.name());
+			stateMachineService.createTransition(bonus, CommonState.Draft.name());
 			entityManager.persist(bonus);
 			entityManager.getTransaction().commit();
 		} catch (Exception ex) {
@@ -84,6 +84,22 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 		// TODO
 	}
 
+	@Override
+	public void confirm(RappelStoreBonus bonus) {
+		EntityManager entityManager = entityManagerProvider.get();
+		entityManager.getTransaction().begin();
+		stateMachineService.createTransition(bonus, CommonState.Confirmed.name());
+		entityManager.persist(bonus);
+		entityManager.getTransaction().commit();
+	}
+
+	/**
+	 * 
+	 * @param store
+	 * @param baseValue
+	 * @param prorata
+	 * @return
+	 */
 	public Rappel getRappelBonusAmount(Store store, BigDecimal baseValue, BigDecimal prorata) {
 		// TODO aplicar prorateo
 		BillingModel billingModel = store.getBillingModel();

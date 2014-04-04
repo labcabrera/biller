@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
-import com.luckia.biller.core.model.BillState;
+import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.Liquidation;
@@ -94,7 +94,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			entityManager.merge(liquidation);
 			auditService.processCreated(liquidation);
 			result.add(liquidation);
-			stateMachineService.createTransition(liquidation, BillState.BillDraft.name());
+			stateMachineService.createTransition(liquidation, CommonState.Draft.name());
 		}
 		entityManager.getTransaction().commit();
 		return result;
@@ -105,7 +105,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.getTransaction().begin();
-			stateMachineService.createTransition(liquidation, BillState.BillConfirmed.name());
+			stateMachineService.createTransition(liquidation, CommonState.Confirmed.name());
 			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
 			FileOutputStream out = new FileOutputStream(tempFile);
 			pdfLiquidationGenerator.generate(liquidation, out);
@@ -131,7 +131,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private Map<CostCenter, List<Bill>> getCostCenterMapping(List<Bill> bills) {
 		Map<CostCenter, List<Bill>> costCenterMap = new LinkedHashMap<CostCenter, List<Bill>>();
 		for (Bill bill : bills) {
-			if (!BillState.BillEmpty.equals(bill.getCurrentState().getStateDefinition().getId())) {
+			if (!CommonState.Empty.equals(bill.getCurrentState().getStateDefinition().getId())) {
 				Store store = bill.getSender(Store.class);
 				CostCenter costCenter = store.getCostCenter();
 				if (costCenter == null) {

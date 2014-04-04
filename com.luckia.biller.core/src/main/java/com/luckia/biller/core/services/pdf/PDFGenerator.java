@@ -30,7 +30,7 @@ import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.Bill;
-import com.luckia.biller.core.model.BillState;
+import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Store;
 
@@ -98,7 +98,7 @@ public abstract class PDFGenerator<T> {
 	 * @param bill
 	 */
 	protected void addWaterMark(Document document, PdfWriter writer, AbstractBill bill) {
-		if (BillState.BillDraft.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
+		if (CommonState.Draft.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
 			PdfContentByte canvas = writer.getDirectContent();
 			Phrase phrase = new Phrase("BORRADOR", waterMarkFont);
 			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase, document.getPageSize().getHeight() / 2, 200f, 45f);

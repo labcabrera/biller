@@ -12,7 +12,7 @@ import javax.persistence.EntityManager;
 
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
-import com.luckia.biller.core.model.BillState;
+import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.StateDefinition;
 
 public class StateDefinitionFeeder implements Feeder<StateDefinition> {
@@ -23,7 +23,7 @@ public class StateDefinitionFeeder implements Feeder<StateDefinition> {
 	@Override
 	public void loadEntities(InputStream source) {
 		EntityManager entityManager = entityManagerProvider.get();
-		for (BillState state : BillState.values()) {
+		for (CommonState state : CommonState.values()) {
 			entityManager.persist(new StateDefinition(state.name(), Bill.class, state.desc()));
 		}
 	}

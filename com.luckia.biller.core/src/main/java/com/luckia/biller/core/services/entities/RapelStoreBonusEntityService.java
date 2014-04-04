@@ -8,6 +8,7 @@ import com.luckia.biller.core.model.RappelStoreBonus;
 import com.luckia.biller.core.model.Store;
 
 public class RapelStoreBonusEntityService extends EntityService<RappelStoreBonus> {
+	
 
 	@Override
 	protected Class<RappelStoreBonus> getEntityClass() {
