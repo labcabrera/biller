@@ -7,7 +7,7 @@ package com.luckia.biller.core.scheduler;
 
 import java.util.Date;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 

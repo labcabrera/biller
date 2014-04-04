@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import javax.persistence.EntityManager;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.junit.Test;
 
 import com.google.inject.Guice;

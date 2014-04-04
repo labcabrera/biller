@@ -11,8 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.User;
 import com.luckia.biller.core.services.entities.UserEntityService;
@@ -48,12 +46,5 @@ public class UserRestService {
 		entityManager.clear();
 		List<User> values = entityManager.createQuery("select u from User u where u.email = :mail", User.class).setParameter("mail", mail).getResultList();
 		return values.isEmpty() ? null : values.iterator().next();
-	}
-
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/logout")
-	public String logout() {
-		throw new NotImplementedException();
 	}
 }

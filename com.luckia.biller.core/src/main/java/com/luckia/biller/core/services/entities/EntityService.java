@@ -19,8 +19,7 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.i18n.I18nService;
@@ -107,15 +106,15 @@ public abstract class EntityService<I> {
 	}
 
 	public Message<I> merge(I entity) {
-		throw new NotImplementedException();
+		throw new RuntimeException("Not implemented");
 	}
 
 	public Message<I> persist(I entity) {
-		throw new NotImplementedException();
+		throw new RuntimeException("Not implemented");
 	}
 
 	public Message<I> remove(Serializable primaryKey) {
-		throw new NotImplementedException();
+		throw new RuntimeException("Not implemented");
 	}
 
 	/**

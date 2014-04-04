@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +50,10 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 		List<PdfPCell> cells = new ArrayList<PdfPCell>();
 
 		cells.add(createCell("Titulo por definir", Element.ALIGN_LEFT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
 
 		cells.add(createCell("Descripción", Element.ALIGN_LEFT, boldFont));
 		cells.add(createCell("Cantidad", Element.ALIGN_RIGHT, boldFont));
@@ -66,28 +67,28 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
 			cells.add(createCell(detail.getValue() + " €", Element.ALIGN_RIGHT, documentFont));
 		}
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
 
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
 		cells.add(createCell("Base", Element.ALIGN_RIGHT, documentFont));
 		cells.add(createCell(bill.getNetAmount().toString() + " €", Element.ALIGN_RIGHT, documentFont));
 
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
 		cells.add(createCell(String.format("IVA (%s%%)", bill.getVatPercent()), Element.ALIGN_RIGHT, documentFont));
 		cells.add(createCell(bill.getVatAmount().toString() + " €", Element.ALIGN_RIGHT, documentFont));
 
 		cells.add(createCell("TOTAL", Element.ALIGN_LEFT, boldFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
 		cells.add(createCell(bill.getAmount().toString() + " €", Element.ALIGN_RIGHT, boldFont));
 
 		int cols = 5;
@@ -121,8 +122,6 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 		paragraph.add(table);
 		document.add(paragraph);
 	}
-
-
 
 	@Override
 	protected float getLineHeight() {

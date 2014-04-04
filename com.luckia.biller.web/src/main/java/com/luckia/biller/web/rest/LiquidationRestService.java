@@ -18,7 +18,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +76,7 @@ public class LiquidationRestService {
 	@Path("/merge")
 	@ClearCache
 	public Message<Liquidation> merge(Bill bill) {
-		throw new NotImplementedException();
+		throw new RuntimeException("Not implemented");
 	}
 
 	@POST

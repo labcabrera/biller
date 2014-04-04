@@ -17,8 +17,6 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import com.luckia.biller.core.common.ASTNode;
 
 /**
@@ -253,7 +251,7 @@ public class FiqlParser {
 			} else if (LK.equals(operator)) {
 				result = builder.like(expressionValue, "%" + targetValue + "%");
 			} else {
-				throw new NotImplementedException("Operator: " + operator);
+				throw new RuntimeException("Not implemented operator: " + operator);
 			}
 			return result;
 		}

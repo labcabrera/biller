@@ -2,7 +2,7 @@ package com.luckia.biller.core.serialization;
 
 import java.lang.reflect.Type;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
