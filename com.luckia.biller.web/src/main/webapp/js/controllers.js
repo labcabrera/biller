@@ -534,7 +534,7 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 				$('#editBillConceptModal').modal('show');
 			});	
 		} else {
-			$scope.billDetail = { "bill" : { "id" : $scope.entity.id } };
+			$scope.billDetail = { "bill" : { "id" : $scope.entity.id }, "value":"", "units":"" };
 			$('#editBillConceptModal').modal('show');			
 		};
 	};
@@ -549,11 +549,11 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 	};
 	$scope.removeDetail = function(data) {
 		$http.post('rest/bills/detail/remove/' + data).success(function(data) {
-			$scope.displayAlert(data);
-			$("#editBillConceptModal").modal('hide');
 			if(data.code == 200) {
 				$scope.entity = data.payload;
 			}
+			$scope.displayAlert(data);
+			$("#editBillConceptModal").modal('hide');
 		});
 	};
 	$scope.confirm = function() {
