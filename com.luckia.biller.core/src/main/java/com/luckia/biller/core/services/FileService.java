@@ -17,7 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.io.IOUtils;
@@ -31,19 +30,27 @@ import com.luckia.biller.core.model.AppFile;
  */
 public class FileService {
 
-	public static void main(String[] args) {
-		String x = "uno/dos\\tres:cuatro;cinco";
-		System.out.println(x);
-		String y = x.replaceAll("[/\\\\:;]", "_");
-		System.out.println(y);
-	}
+	private static final String INVALID_FILE_CHARACTERS = "[/\\\\:;]";
+	private static final String INVALID_FILE_CHARACTERS_REPLACEMENT = "_";
+	private static final String FOLDER_DATE_FORMAT = "yyyy/MM/dd";
 
 	@Inject
-	@Named("file.repository.path")
-	private String basePath;
+	private SettingsService settingsService;
 	@Inject
 	private EntityManagerProvider entityManagerProvider;
 
+	/**
+	 * Guarda en base de datos el descriptor del fichero y almacena su contenido en el repositorio de la aplicación.
+	 * 
+	 * @param name
+	 *            Nombre identificativo del fichero (no tiene por que ser el nombre real del fichero, sólo indica el nombre que tiene dentro
+	 *            de la aplicación)
+	 * @param contentType
+	 *            Media type del fichero
+	 * @param inputStream
+	 * 
+	 * @return
+	 */
 	public AppFile save(String name, String contentType, InputStream inputStream) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Date now = Calendar.getInstance().getTime();
@@ -57,7 +64,7 @@ public class FileService {
 		}
 		// Guardamos solo la ruta relativa al basePath
 		String relativePath = target.getAbsolutePath();
-		Pattern pattern = Pattern.compile(String.format("^%s/?(.+)", basePath));
+		Pattern pattern = Pattern.compile(String.format("^%s/?(.+)", getBasePath()));
 		Matcher matcher = pattern.matcher(relativePath);
 		if (matcher.matches()) {
 			relativePath = matcher.group(1);
@@ -80,7 +87,7 @@ public class FileService {
 	}
 
 	public InputStream getInputStream(AppFile appFile) {
-		File target = new File(basePath, appFile.getInternalPath());
+		File target = new File(getBasePath(), appFile.getInternalPath());
 		Validate.isTrue(target.exists(), "No se encuentra el fichero " + appFile.getInternalPath());
 		try {
 			return new FileInputStream(target);
@@ -89,17 +96,34 @@ public class FileService {
 		}
 	}
 
+	/**
+	 * Obtiene la ruta base del repositorio de ficheros establecida en configuración.
+	 * 
+	 * @see SettingsService
+	 * @return
+	 */
+	public String getBasePath() {
+		return settingsService.getSystemSettings().getValue("repositoryPath", String.class);
+	}
+
+	/**
+	 * Obtiene la ruta absoluta del fichero a partir de su descriptor {@link AppFile}
+	 * 
+	 * @param appFile
+	 * @return
+	 */
 	public String getFilePath(AppFile appFile) {
-		return new File(basePath, appFile.getInternalPath()).getAbsolutePath();
+		return new File(getBasePath(), appFile.getInternalPath()).getAbsolutePath();
 	}
 
 	private File generateFileTarget(String name, Date date) {
-		name = name.replaceAll("[/\\\\:;]", "_");
+		String basePath = getBasePath();
+		name = name.replaceAll(INVALID_FILE_CHARACTERS, INVALID_FILE_CHARACTERS_REPLACEMENT);
 		File folderBase = new File(basePath);
 		if (!folderBase.exists() && !folderBase.mkdirs()) {
 			throw new RuntimeException("Error al crear el directorio " + folderBase.getAbsolutePath());
 		}
-		File folder = new File(folderBase, new SimpleDateFormat("yyyy/MM/dd").format(date));
+		File folder = new File(folderBase, new SimpleDateFormat(FOLDER_DATE_FORMAT).format(date));
 		if (!folder.exists() && !folder.mkdirs()) {
 			throw new RuntimeException("Error al crear el directorio " + folder.getAbsolutePath());
 		}

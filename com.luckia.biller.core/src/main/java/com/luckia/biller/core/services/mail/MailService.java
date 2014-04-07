@@ -7,6 +7,8 @@ package com.luckia.biller.core.services.mail;
 
 import java.util.List;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
@@ -14,33 +16,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import com.luckia.biller.core.model.AppSettings;
+import com.luckia.biller.core.services.SettingsService;
 
+@Singleton
 public class MailService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
 
 	@Inject
-	@Named("mail.hostName")
+	private SettingsService settingsService;
+
 	private String hostName;
-	@Inject
-	@Named("mail.emailUser")
 	private String emailUser;
-	@Inject
-	@Named("mail.emailPassword")
 	private String emailPassword;
-	@Inject
-	@Named("mail.sslConnection")
 	private String sslConnection;
-	@Inject
-	@Named("mail.fromEmail")
 	private String fromEmail;
-	@Inject
-	@Named("mail.fromName")
 	private String fromName;
-	@Inject(optional = true)
-	@Named("mail.port")
 	private Integer port;
+
+	public void init() {
+		LOG.debug("Loading mail settings");
+		AppSettings appSettings = settingsService.getMailSettings();
+		hostName = appSettings.getValue("hostName", String.class);
+		emailUser = appSettings.getValue("emailUser", String.class);
+		emailPassword = appSettings.getValue("emailPassword", String.class);
+		sslConnection = appSettings.getValue("sslConnection", String.class);
+		fromEmail = appSettings.getValue("fromEmail", String.class);
+		port = appSettings.getValue("port", Integer.class);
+	}
 
 	/**
 	 * Genera un objeto {@link HtmlEmail}
@@ -54,6 +58,7 @@ public class MailService {
 	 * @throws EmailException
 	 */
 	public HtmlEmail createEmail(String address, String displayName, String title, String body, List<EmailAttachment> attachments) throws EmailException {
+		init();
 		LOG.debug("Creando email con titulo {}", displayName);
 		HtmlEmail email = new HtmlEmail();
 		if (emailUser != null && !emailUser.equals("") && emailPassword != null && !emailPassword.equals("")) {

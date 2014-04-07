@@ -270,11 +270,9 @@ billerControllers.controller('OwnerListCtrl', [ '$scope', '$http', function($sco
 	};
 	$scope.getSearchUrl = function() {
 		var predicateBuilder = new PredicateBuilder('');
-		console.log('[' + $scope.searchOptions.name + ']');
 		if($scope.searchOptions.name != null && $scope.searchOptions.name != '') {
 			var name = $scope.searchOptions.name;
 			var key = "(name=lk=" + name + ",firstSurname=lk=" + name + ",secondSurname=lk=" + name + ")";
-			console.log('append key!');
 			predicateBuilder.appendKey(key);
 		}
 		predicateBuilder.append("idCard.number=lk=", $scope.searchOptions.idCardNumber);
@@ -599,14 +597,6 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 	$scope.load();
 } ]);
 
-billerControllers.controller('SettingsCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
-	$scope.load = function() {
-		$http.get('rest/settints/find/MAIL').success(function(data) { $scope.mail = data; });
-	};
-	$scope.load();
-}]);
-
-
 /* ----------------------------------------------------------------------------
  * LIQUIDACIONES
  * ----------------------------------------------------------------------------
@@ -756,4 +746,16 @@ billerControllers.controller('RappelStoreDetailCtrl', [ '$scope', '$rootScope', 
 	$scope.load();
 } ]);
 
+/* ----------------------------------------------------------------------------
+ * CONFIGURACION DE LA APLICACION
+ * ----------------------------------------------------------------------------
+ */
+billerControllers.controller('SettingsCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+	$scope.load = function() {
+		$http.get('rest/settings/id/MAIL').success(function(data) { $scope.mailSettings = data; });
+		$http.get('rest/settings/id/SYSTEM').success(function(data) { $scope.systemSettings = data; });
+		$http.get('rest/settings/id/BILLING').success(function(data) { $scope.billingSettings = data; });
+	};
+	$scope.load();
+}]);
 
