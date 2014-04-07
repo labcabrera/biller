@@ -6,40 +6,40 @@
 package com.luckia.biller.core.model.common;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
+/**
+ * Entidad que representa los parámetros de búsqueda desde el front:
+ * <ul>
+ * <li>Página actual de resultados (paginación)</li>
+ * <li>Número de resultados por página</li>
+ * <li>Expresión FIQL con las condiciones de búsqueda</li>
+ * </ul>
+ * Generalmente las búsquedas devolverán un objeto de tipo {@link SearchResults} con los resultados.
+ */
 @SuppressWarnings("serial")
 public class SearchParams implements Serializable {
 
-	private Map<String, Object> params;
 	private Integer currentPage;
 	private Integer itemsPerPage;
 	private String queryString;
 
+	/**
+	 * Constructor sin parámetros
+	 */
 	public SearchParams() {
-		params = new LinkedHashMap<String, Object>();
 	}
 
-	public boolean containsKey(String key) {
-		return params != null && params.containsKey(key);
-	}
-
-	public Object get(String key) {
-		return params != null ? params.get(key) : null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> T get(String name, Class<T> clazz) {
-		return params.containsKey(name) ? (T) params.get(name) : null;
-	}
-
-	public Map<String, Object> getParams() {
-		return params;
-	}
-
-	public void setParams(Map<String, Object> params) {
-		this.params = params;
+	/**
+	 * Constructor a partir de la expresión de búsqueda, página actual y número de resultados por página
+	 * 
+	 * @param currentPage
+	 * @param itemsPerPage
+	 * @param queryString
+	 */
+	public SearchParams(Integer currentPage, Integer itemsPerPage, String queryString) {
+		this.currentPage = currentPage;
+		this.itemsPerPage = itemsPerPage;
+		this.queryString = queryString;
 	}
 
 	public Integer getCurrentPage() {

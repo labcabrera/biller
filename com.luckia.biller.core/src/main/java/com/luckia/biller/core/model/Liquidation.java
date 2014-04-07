@@ -61,5 +61,4 @@ public class Liquidation extends AbstractBill {
 	public void setDetails(List<LiquidationDetail> details) {
 		this.details = details;
 	}
-
 }

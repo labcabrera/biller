@@ -542,11 +542,8 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		console.log("Actualizando detalle de factura " + data);
 		$http.post('rest/bills/detail/merge/', $scope.billDetail).success(function(data) {
 			$scope.displayAlert(data);
+			$("#editBillConceptModal").modal('hide');
 			if(data.code == 200) {
-				if(data.propagate) {
-					alert("TODO generar detalle de liquidación");
-				}
-				$("#editBillConceptModal").modal('hide');
 				$scope.billDetail = null;
 				$scope.entity = data.payload;
 			}
@@ -554,10 +551,10 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 	};
 	$scope.removeDetail = function(data) {
 		console.log("Eliminando detalle de factura " + data);
-		$http.post('rest/bills/detail/remove/id/' + data).success(function(data) {
+		$http.post('rest/bills/detail/remove/' + data).success(function(data) {
 			$scope.displayAlert(data);
+			$("#editBillConceptModal").modal('hide');
 			if(data.code == 200) {
-				$("#editBillConceptModal").modal('hide');
 				$scope.billDetail = null;
 				$scope.entity = data.payload;
 			}
@@ -677,17 +674,25 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	$scope.editDetail = function(data) {
 		$('#editLiquidationConceptModal').modal('show');
 		$scope.liquidationDetail = { "liquidation" : { "id" : $scope.entity.id } };
-		/*
 		if(data != null && !(typeof data === 'undefined') ) {	
-			$http.get('rest/bills/detail/id/' + data).success(function(data) {
-				$scope.billDetail = data;
-				$scope.billDetail.bill = { "id": $scope.entity.id };
+			$http.get('rest/liquidations/detail/id/' + data).success(function(data) {
+				$scope.liquidationDetail = data;
+				$scope.liquidationDetail.liquidation = { "id": $scope.entity.id };
 			});	
 		};
-		*/
 	};
 	$scope.mergeDetail = function(data) {
 		$http.post('rest/liquidations/detail/merge/', $scope.liquidationDetail).success(function(data) {
+			$scope.displayAlert(data);
+			$("#editLiquidationConceptModal").modal('hide');
+			if(data.code == 200) {
+				$scope.liquidationDetail = null;
+				$scope.entity = data.payload;
+			}
+		});
+	};
+	$scope.removeDetail = function(data) {
+		$http.post('rest/liquidations/detail/remove/' + $scope.liquidationDetail.id).success(function(data) {
 			$scope.displayAlert(data);
 			if(data.code == 200) {
 				$("#editLiquidationConceptModal").modal('hide');

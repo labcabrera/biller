@@ -146,7 +146,7 @@ public class BillRestService {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/detail/remove/id/{id}")
+	@Path("/detail/remove/{id}")
 	@ClearCache
 	public Message<Bill> removeDetail(@PathParam("id") String id) {
 		try {

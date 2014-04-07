@@ -88,6 +88,14 @@ public class LiquidationRestService {
 		}
 	}
 
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/detail/id/{id}")
+	@ClearCache
+	public LiquidationDetail mergeDetail(@PathParam("id") String id) {
+		return entityManagerProvider.get().find(LiquidationDetail.class, id);
+	}
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -96,6 +104,21 @@ public class LiquidationRestService {
 	public Message<Liquidation> mergeDetail(LiquidationDetail detail) {
 		try {
 			Liquidation liquidation = liquidationProcessor.mergeDetail(detail);
+			return new Message<>(Message.CODE_SUCCESS, "Detalle actualizado", liquidation);
+		} catch (Exception ex) {
+			LOG.error("Error al confirmar la liquidacion", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al confirmar la liquidacion");
+		}
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/detail/remove/{id}")
+	@ClearCache
+	public Message<Liquidation> removeDetail(@PathParam("id") String id) {
+		try {
+			LiquidationDetail detail = entityManagerProvider.get().find(LiquidationDetail.class, id);
+			Liquidation liquidation = liquidationProcessor.removeDetail(detail);
 			return new Message<>(Message.CODE_SUCCESS, "Detalle actualizado", liquidation);
 		} catch (Exception ex) {
 			LOG.error("Error al confirmar la liquidacion", ex);

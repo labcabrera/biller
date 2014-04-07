@@ -21,6 +21,15 @@ public interface LiquidationProcessor {
 	 */
 	void confirm(Liquidation liquidation);
 
+	/**
+	 * Actualiza el resultado de la liquidación (por ejemplo en el caso en el que hayamos modificado una factura o añadido un ajuste
+	 * operativo).
+	 * 
+	 * @param liquidation
+	 * @return
+	 */
+	Liquidation updateResults(Liquidation liquidation);
+
 	Liquidation mergeDetail(LiquidationDetail detail);
 
 	Liquidation removeDetail(LiquidationDetail detail);

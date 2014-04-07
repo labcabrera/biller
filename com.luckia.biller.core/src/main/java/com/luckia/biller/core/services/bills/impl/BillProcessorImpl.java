@@ -245,7 +245,7 @@ public class BillProcessorImpl implements BillProcessor {
 		} else {
 			BillDetail current = entityManager.find(BillDetail.class, detail.getId());
 			current.merge(detail);
-			entityManager.merge(detail);
+			entityManager.merge(current);
 			bill = current.getBill();
 		}
 		entityManager.getTransaction().commit();

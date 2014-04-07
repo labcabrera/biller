@@ -3,6 +3,7 @@ package com.luckia.biller.core.services.bills.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -105,6 +106,28 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		return result;
 	}
 
+	@Override
+	public Liquidation updateResults(Liquidation liquidation) {
+		EntityManager entityManager = entityManagerProvider.get();
+		entityManager.clear();
+		Liquidation current = entityManager.find(Liquidation.class, liquidation.getId());
+		entityManager.getTransaction().begin();
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		if (current.getBills() != null) {
+			for (Bill i : current.getBills()) {
+				totalAmount = totalAmount.add(i.getLiquidationAmount() != null ? i.getLiquidationAmount() : BigDecimal.ZERO);
+			}
+		}
+		if (current.getDetails() != null) {
+			for (LiquidationDetail i : current.getDetails()) {
+				totalAmount = totalAmount.add(i.getValue() != null ? i.getValue() : BigDecimal.ZERO);
+			}
+		}
+		current.setAmount(totalAmount);
+		entityManager.getTransaction().commit();
+		return current;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -127,7 +150,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			entityManager.merge(liquidation);
 			liquidationCodeGenerator.generateCode(liquidation);
 			entityManager.getTransaction().commit();
-		} catch (Exception ex) {
+		} catch (IOException ex) {
 			throw new RuntimeException("Error al confirmar la factura", ex);
 		}
 	}
@@ -153,14 +176,11 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		} else {
 			LiquidationDetail current = entityManager.find(LiquidationDetail.class, detail.getId());
 			current.merge(detail);
-			entityManager.merge(detail);
+			entityManager.merge(current);
 			liquidation = current.getLiquidation();
 		}
 		entityManager.getTransaction().commit();
-		entityManager.clear();
-		// TODO ACTUALIZAR RESULTADO DE LA LIQUIDACION
-		liquidation = entityManager.find(Liquidation.class, liquidation.getId());
-		return liquidation;
+		return updateResults(liquidation);
 	}
 
 	/*
@@ -170,7 +190,13 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 */
 	@Override
 	public Liquidation removeDetail(LiquidationDetail detail) {
-		throw new RuntimeException("Not implemented");
+		EntityManager entityManager = entityManagerProvider.get();
+		Liquidation liquidation = detail.getLiquidation();
+		liquidation.getDetails().remove(detail);
+		entityManager.getTransaction().begin();
+		entityManager.remove(detail);
+		entityManager.getTransaction().commit();
+		return updateResults(liquidation);
 	}
 
 	/**
