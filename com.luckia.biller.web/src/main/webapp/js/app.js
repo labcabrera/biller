@@ -33,7 +33,7 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope) {
 	}).when('/rappel/stores/id/:id', { templateUrl : 'partials/rappel-store-detail.html', controller : 'RappelStoreDetailCtrl'
 	}).when('/admin/console', { templateUrl : 'partials/admin-console.html'
 	}).when('/admin/settings', { templateUrl : 'partials/admin-settings.html', controller: 'SettingsCtrl'
-	}).when('/', { templateUrl : 'partials/index.html'
+	}).when('/', { templateUrl : 'static/index.html'
 	}).otherwise({ templateUrl : 'partials/404.html'
 	});
 } ]);
