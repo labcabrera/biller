@@ -80,7 +80,7 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	 * java.math.BigDecimal)
 	 */
 	@Override
-	public void applyProrata(RappelStoreBonus bonus, BigDecimal prorata) {
+	public RappelStoreBonus applyProrata(RappelStoreBonus bonus, BigDecimal prorata) {
 		throw new RuntimeException("Not implemented");
 	}
 

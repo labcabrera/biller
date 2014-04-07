@@ -27,7 +27,7 @@ public interface RappelStoreProcessor {
 	 * @param rappelStoreBonus
 	 * @param prorata
 	 */
-	void applyProrata(RappelStoreBonus bonus, BigDecimal prorata);
+	RappelStoreBonus applyProrata(RappelStoreBonus bonus, BigDecimal prorata);
 
 	void confirm(RappelStoreBonus bonus);
 

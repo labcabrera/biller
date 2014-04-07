@@ -1,77 +1,45 @@
-UNDEFINED
+2014-04-07
 
-- anulacion de facturas
-	HACERLA MANUALMENTE
-	LINKAR LA FACTURA A LA ANULADA
-
-
-- saldo de caja
-	El concepto se basa en los pagos imputables que nos tienen que dar en la tabla de lis
-
-- conceptos a la factura / liquidacion y recalcular el resultado de la liquidacion
-	NUNCA RECALCULAMOS NADA
-
-- editar fecha de inicio de operaciones del establecimiento (para pagos de rappel)
-
-- RAPPEL
-	posibilidad de prorratear el rappel para un establecimiento (por defecto deshabilitado)
+	Maquetación de PDF
+	Inclusión de facturas en la liquidación (ahora esta definido dentro del billingModel, lo mismo es mas sencillo establecerlo por empresa)
+	Importes en la liquidación
+	Seguridad
+	Liquidación de rappel
+	Prorateo de rappel
+	Aceptar de forma automatica las facturas si se ha marcado el flag de autoliquidacion
 
 
-
-
-ANULA
-
-
-
-- LOS AJUSTES OPERATIVOS
-
-
-TODO
-
-- añadir un prefijo de facturacion a nivel de cada establecimiento
-- descancelar la factura: generando una copia de la anulada
-- job para aceptar de forma automatica las facturas si se ha marcado el flag de autoliquidacion
-- añadir persona de contacto a nivel de empresa
-- cuando no exista informacion del titular mostraremos en la factura la direccion del local
-- añadir una pestaña al local con las facturas emitidas (que se pueda ver el modelo que se ha aplicado)
-- vista de terminales: agrupar informacion relativa a ventas/pagos/cancelaciones por terminal
-
-DONE
-
-- modelo: añadir a nivel de empresa/local un boolean para indicar si se hace la facturacion
-  automatica (se aceptan directamente al generarse sin depender del operador)
-- modelo: revisar asociacion entre centros de coste con terminales|locales
-- generar codigos solo cuando se acepten las facturas
-
-
-
-
-
-factura: debajo de la informacion del emisor de la factura/liquidacion mostrar el codigo del centro de coste	
-facturas: el emisor el el titular del establecimiento (aunque indicando abajo el bar para el que se realiza la factura)
-formato del emisor de la factura:
-
-EMISOR
-TITULAR:
-nombre, apellidos
-direccion fiscal
-LOCAL:
-nombre
-direccion
-
-
-PDF de liquidacion:
-
-Recaudacion en posesion de X: sum(bets) - sum(payments)
-
-
-
-modelo rappel:
- - añadir al modelo del establecimiento la fecha de inicio de operaciones para poder ver si se genera el rappel
- - definir el modo en el que se va a lanzar (o bien a una fecha dada de forma anual, o bien periodicamente a los X meses)
+	TODO
+	
+	- añadir persona de contacto a nivel de empresa
+	- cuando no exista informacion del titular mostraremos en la factura la direccion del local
+	- añadir una pestaña al local con las facturas emitidas (que se pueda ver el modelo que se ha aplicado)
+	- vista de terminales: agrupar informacion relativa a ventas/pagos/cancelaciones por terminal
+	
+	
+	factura: debajo de la informacion del emisor de la factura/liquidacion mostrar el codigo del centro de coste	
+	facturas: el emisor el el titular del establecimiento (aunque indicando abajo el bar para el que se realiza la factura)
+	formato del emisor de la factura:
+	
+	EMISOR
+	TITULAR:
+	nombre, apellidos
+	direccion fiscal
+	LOCAL:
+	nombre
+	direccion
+	
+	
+	PDF de liquidacion:
+	
+	Recaudacion en posesion de X: sum(bets) - sum(payments)
+	
+	modelo rappel:
+	 - añadir al modelo del establecimiento la fecha de inicio de operaciones para poder ver si se genera el rappel
+	 - definir el modo en el que se va a lanzar (o bien a una fecha dada de forma anual, o bien periodicamente a los X meses)
  
 
-DEPLOY
+DEPLOYMENT
  
  - Mysql
  	mysql --host=10.10.152.10 --user=watcher_factu --password=V4s86u82163r

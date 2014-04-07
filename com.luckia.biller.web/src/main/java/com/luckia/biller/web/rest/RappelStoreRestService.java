@@ -46,14 +46,14 @@ public class RappelStoreRestService {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/confirm")
+	@Path("/confirm/{id}")
 	public Message<RappelStoreBonus> confirm(@PathParam("id") String primaryKey) {
 		try {
 			RappelStoreBonus bonus = entityService.findById(primaryKey);
 			rappelStoreProcessor.confirm(bonus);
-			return new Message<>(Message.CODE_SUCCESS, "Liquidación confirmada", bonus);
+			return new Message<>(Message.CODE_SUCCESS, "Rappel confirmado", bonus);
 		} catch (Exception e) {
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al aceptar la liquidación");
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al aceptar el rappel");
 		}
 	}
 
@@ -64,9 +64,9 @@ public class RappelStoreRestService {
 		try {
 			RappelStoreBonus bonus = entityService.findById(primaryKey);
 			rappelStoreProcessor.applyProrata(bonus, prorata);
-			return new Message<>(Message.CODE_SUCCESS, "Liquidación actualizada", bonus);
+			return new Message<>(Message.CODE_SUCCESS, "Aplicado prorateo de rappel", bonus);
 		} catch (Exception e) {
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al aceptar la liquidación");
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al aceptar el prorateo de rappel");
 		}
 	}
 }
