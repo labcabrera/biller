@@ -527,35 +527,31 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		});
 	};
 	$scope.editDetail = function(data) {
-		$('#editBillConceptModal').modal('show');
-		console.log("Editando detalle " + data);
-		$scope.billDetail = { "bill" : { "id" : $scope.entity.id } };
-		if(data != null && !(typeof data === 'undefined') ) {
-			console.log('Recuperando informacion del detalle ' + data + ' via REST');	
+		if(data != null && !(typeof data === 'undefined') ) {	
 			$http.get('rest/bills/detail/id/' + data).success(function(data) {
 				$scope.billDetail = data;
 				$scope.billDetail.bill = { "id": $scope.entity.id };
+				$('#editBillConceptModal').modal('show');
 			});	
+		} else {
+			$scope.billDetail = { "bill" : { "id" : $scope.entity.id } };
+			$('#editBillConceptModal').modal('show');			
 		};
 	};
 	$scope.mergeDetail = function(data) {
-		console.log("Actualizando detalle de factura " + data);
 		$http.post('rest/bills/detail/merge/', $scope.billDetail).success(function(data) {
 			$scope.displayAlert(data);
 			$("#editBillConceptModal").modal('hide');
 			if(data.code == 200) {
-				$scope.billDetail = null;
 				$scope.entity = data.payload;
 			}
 		});
 	};
 	$scope.removeDetail = function(data) {
-		console.log("Eliminando detalle de factura " + data);
 		$http.post('rest/bills/detail/remove/' + data).success(function(data) {
 			$scope.displayAlert(data);
 			$("#editBillConceptModal").modal('hide');
 			if(data.code == 200) {
-				$scope.billDetail = null;
 				$scope.entity = data.payload;
 			}
 		});
@@ -672,21 +668,22 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 		}
 	};
 	$scope.editDetail = function(data) {
-		$('#editLiquidationConceptModal').modal('show');
-		$scope.liquidationDetail = { "liquidation" : { "id" : $scope.entity.id } };
-		if(data != null && !(typeof data === 'undefined') ) {	
+		if(data != null && !(typeof data === 'undefined') ) {
 			$http.get('rest/liquidations/detail/id/' + data).success(function(data) {
 				$scope.liquidationDetail = data;
 				$scope.liquidationDetail.liquidation = { "id": $scope.entity.id };
+				$('#editLiquidationConceptModal').modal('show');
 			});	
-		};
+		} else {
+			$scope.liquidationDetail = { "liquidation" : { "id" : $scope.entity.id }, "units":"", value: "" };			
+			$('#editLiquidationConceptModal').modal('show');
+		}
 	};
 	$scope.mergeDetail = function(data) {
 		$http.post('rest/liquidations/detail/merge/', $scope.liquidationDetail).success(function(data) {
 			$scope.displayAlert(data);
 			$("#editLiquidationConceptModal").modal('hide');
 			if(data.code == 200) {
-				$scope.liquidationDetail = null;
 				$scope.entity = data.payload;
 			}
 		});
@@ -694,9 +691,8 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	$scope.removeDetail = function(data) {
 		$http.post('rest/liquidations/detail/remove/' + $scope.liquidationDetail.id).success(function(data) {
 			$scope.displayAlert(data);
+			$("#editLiquidationConceptModal").modal('hide');
 			if(data.code == 200) {
-				$("#editLiquidationConceptModal").modal('hide');
-				$scope.liquidationDetail = null;
 				$scope.entity = data.payload;
 			}
 		});

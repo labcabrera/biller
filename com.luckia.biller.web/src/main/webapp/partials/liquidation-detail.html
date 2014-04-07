@@ -74,11 +74,7 @@
 										<td>{{bill.currentState.stateDefinition.desc}}</td>
 										<td class="data-amount">{{bill.amount}}</td>
 										<td class="data-amount">{{bill.liquidationAmount}}</td>
-										<td>
-											<a ng-click="editDetail(detail.id)" href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'Draft'">
-												<span class="glyphicon glyphicon-pencil"></span>
-											</a>
-										</td>
+										<td><a href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
 									</tr>
 									<tr ng-if="entity.details != null && entity.details.length > 0">
 										<th>Ajustes operativos</th>
