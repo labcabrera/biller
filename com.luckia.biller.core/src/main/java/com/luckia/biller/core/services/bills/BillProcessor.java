@@ -5,6 +5,7 @@ import java.util.Date;
 import org.apache.commons.lang3.Range;
 
 import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.Store;
 
 /**
@@ -49,5 +50,9 @@ public interface BillProcessor {
 	 * @return
 	 */
 	Bill rectifyBill(Bill bill);
+
+	Bill mergeDetail(BillDetail detail);
+	
+	Bill removeDetail(BillDetail detail);
 
 }

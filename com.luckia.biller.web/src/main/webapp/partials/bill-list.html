@@ -24,8 +24,8 @@
 					<td>{{result.sender.name}}</td>
 					<td>{{result.receiver.name}}</td>
 					<td>
-						<span ng-if="result.currentState.stateDefinition.id == 'BillDraft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
-						<span ng-if="result.currentState.stateDefinition.id == 'BillRectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
+						<span ng-if="result.currentState.stateDefinition.id == 'Draft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
+						<span ng-if="result.currentState.stateDefinition.id == 'Rectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
 					</td>
 					<td>{{result.billDate.substr(0,10)}}</td>
 					<td>{{result.billType.desc}}</td>
@@ -60,10 +60,10 @@
 					<label>Estado</label>
 					<select class="selectpicker form-control input-sm" ng-model="searchOptions.state">
 						<option value=""></option>
-						<option value="BillDraft">Borradores</option>
-						<option value="BillConfirmed">Confirmadas</option>
-						<option value="BillSent">Enviadas</option>
-						<option value="BillRectified">Rectificadas</option>
+						<option value="Draft">Borradores</option>
+						<option value="Confirmed">Confirmadas</option>
+						<option value="Sent">Enviadas</option>
+						<option value="Rectified">Rectificadas</option>
 					</select>
 				</div>
 				<div class="form-group">

@@ -75,10 +75,28 @@
 										<td class="data-amount">{{bill.amount}}</td>
 										<td class="data-amount">{{bill.liquidationAmount}}</td>
 										<td>
-											<a ng-click="editDetail(detail.id)" href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'">
+											<a ng-click="editDetail(detail.id)" href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'Draft'">
 												<span class="glyphicon glyphicon-pencil"></span>
 											</a>
 										</td>
+									</tr>
+									<tr ng-if="entity.details != null && entity.details.length > 0">
+										<th>Ajustes operativos</th>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr ng-repeat="detail in entity.details">
+										<td>{{detail.name}}</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount">{{detail.value}}</td>
+										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
 									</tr>
 									<tr>
 										<td><b>Total</b></td>
@@ -92,17 +110,17 @@
 								</table>
 								<pagination total-items="childs.totalItems" page="childs.currentPage" items-per-page="childs.itemsPerPage" on-select-page="setPage(page)" max-size="10"
 									boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
-								
 								<div class="btn-toolbar m-top-40" role="toolbar">
-									<button ng-click="cancel()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-primary'>Anular</button>
-									<button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'BillConfirmed'" class='btn btn-sm btn-primary'>Rectificar</button>
-									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" href="rest/liquidations/draft/{{entity.id}}" role="button">Consultar borrador</a>
-									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'BillDraft' && entity.currentState.stateDefinition.id != 'BillCancelled'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button">Descargar</a>
-									<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-success pull-right'>Aceptar borrador</button>
-									<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'BillConfirmed'" class='btn btn-sm btn-success  pull-right'>Enviar</button>
+									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary'>A&ntilde;adir concepto</button>
+									<button ng-click="cancel()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary'>Anular</button>
+									<button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-primary'>Rectificar</button>
+									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft'" href="rest/liquidations/draft/{{entity.id}}" role="button">Consultar borrador</a>
+									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button">Descargar</a>
+									<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right'>Aceptar borrador</button>
+									<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-success  pull-right'>Enviar</button>
 								</div>
 							</div>
-						</div><!-- m-top-15 -->
+						</div>
 					</div>
 					<!-- Pestaña de observaciones -->
 					<div class="tab-pane" id="commentsTab">
@@ -110,44 +128,27 @@
 							<textarea class="form-control" rows="5" ng-model="entity.comments" ng-readonly="isReadOnly"></textarea>
 						</div>
 					</div>
-				</div><!-- tab-content -->
+				</div>
 			</div>
-			<!--
-			<pre>{{billDetail | json}}</pre>
-			-->
-		</div><!-- sm-9 -->
+		</div>
 
 		<!-- Menu lateral -->
 		<div class="col-sm-3">
-			<div class="btn-toolbar" role="toolbar">
-				<div class="btn-group">
-					<button ng-click="edit()" ng-class='isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"'>Editar</button>
-					<button ng-click="load()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
-						<span class="glyphicon glyphicon-arrow-left"></span>
-					</button>
-					<button ng-click="update()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
-						<span class="glyphicon glyphicon-save"></span>
-					</button>
-					<button ng-click="todo()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"'>
-						<span class="glyphicon glyphicon-trash"></span>
-					</button>
-				</div>
-			</div>
+			<div ng-include src="'templates/entity-toolbar.html'"></div>
 			<div class="m-top-40">
 				<h4>Facturaci&oacute;n</h4>
 				<ul class="list-unstyled">
 					<li><a href="#/liquidations?company={{entity.sender.id}}">Ver liquidaciones de esta empresa</a></li>
 					<li><a href="#/liquidations">Ver liquidaciones</a></li>
-					<li><a href="#/liquidations?state=BillDraft">Ver liquidaciones pendientes</a></li>
+					<li><a href="#/liquidations?state=Draft">Ver liquidaciones pendientes</a></li>
 				</ul>
 			</div>
-			<!-- popup con el json de debug -->
 			<div ng-include src="'templates/entity-json-popup.html'"></div>
 		</div>
 	</div>
 
 	<!-- ventana modal para insertar nuevos conceptos -->
-	<div class="modal fade" id="editBillConceptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="editLiquidationConceptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -159,25 +160,23 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label input-sm">Nombre</label>
 							<div class="col-sm-8">
-								<input type='text' class="form-control" ng-model="billDetail.name" />
+								<input type='text' class="form-control" ng-model="liquidationDetail.name" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label input-sm">Unidades</label>
 							<div class="col-sm-4">
-								<number-only-input input-value="billDetail.units" input-name="billDetail.dummyUnits"/>
+								<number-only-input input-value="liquidationDetail.units" input-name="liquidationDetail.dummyUnits"/>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label input-sm">Importe</label>
 							<div class="col-sm-4">
-								<number-only-input input-value="billDetail.value" input-name="billDetail.dummyValue"/>
+								<number-only-input input-value="liquidationDetail.value" input-name="liquidationDetail.dummyValue"/>
 							</div>
 						</div>
 					</form>
-					<!--
-					<pre>{{billDetail | json}}</pre>
-					-->
+					<pre>{{liquidationDetail|json}}</pre>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>

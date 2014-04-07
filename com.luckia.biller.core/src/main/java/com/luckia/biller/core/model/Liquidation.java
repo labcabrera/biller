@@ -33,10 +33,18 @@ import com.luckia.biller.core.serialization.NotSerializable;
 @SuppressWarnings("serial")
 public class Liquidation extends AbstractBill {
 
+	/**
+	 * Lista de facturas que componen la liquidación.
+	 */
 	@OneToMany(cascade = CascadeType.PERSIST)
 	@JoinTable(name = "B_LIQUIDATION_BILL")
 	@NotSerializable
 	private List<Bill> bills;
+
+	/**
+	 * Lista de detalles (ajustes operativos) de la liquidación.
+	 */
+	private List<LiquidationDetail> details;
 
 	public List<Bill> getBills() {
 		return bills;
@@ -45,4 +53,13 @@ public class Liquidation extends AbstractBill {
 	public void setBills(List<Bill> bills) {
 		this.bills = bills;
 	}
+
+	public List<LiquidationDetail> getDetails() {
+		return details;
+	}
+
+	public void setDetails(List<LiquidationDetail> details) {
+		this.details = details;
+	}
+
 }

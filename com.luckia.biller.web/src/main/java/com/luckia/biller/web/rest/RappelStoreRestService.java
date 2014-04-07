@@ -12,6 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.luckia.biller.core.model.RappelStoreBonus;
+import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.bills.RappelStoreProcessor;
@@ -46,16 +47,26 @@ public class RappelStoreRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/confirm")
-	public RappelStoreBonus confirm(@PathParam("id") String primaryKey) {
-		RappelStoreBonus bonus = entityService.findById(primaryKey);
-		rappelStoreProcessor.confirm(bonus);
-		return bonus;
+	public Message<RappelStoreBonus> confirm(@PathParam("id") String primaryKey) {
+		try {
+			RappelStoreBonus bonus = entityService.findById(primaryKey);
+			rappelStoreProcessor.confirm(bonus);
+			return new Message<>(Message.CODE_SUCCESS, "Liquidación confirmada", bonus);
+		} catch (Exception e) {
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al aceptar la liquidación");
+		}
 	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/prorata")
-	public RappelStoreBonus applyProrata(@PathParam("id") String primaryKey, BigDecimal prorata) {
-		throw new RuntimeException("TODO");
+	public Message<RappelStoreBonus> applyProrata(@PathParam("id") String primaryKey, BigDecimal prorata) {
+		try {
+			RappelStoreBonus bonus = entityService.findById(primaryKey);
+			rappelStoreProcessor.applyProrata(bonus, prorata);
+			return new Message<>(Message.CODE_SUCCESS, "Liquidación actualizada", bonus);
+		} catch (Exception e) {
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al aceptar la liquidación");
+		}
 	}
 }

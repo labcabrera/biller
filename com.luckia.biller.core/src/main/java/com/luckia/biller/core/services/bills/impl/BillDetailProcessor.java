@@ -21,7 +21,7 @@ import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillingModel;
-import com.luckia.biller.core.model.LiquidationDetail;
+import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.services.bills.BillDataProvider;
@@ -116,7 +116,7 @@ public class BillDetailProcessor {
 		BigDecimal total = billingData.get(concept);
 		if (MathUtils.isNotZero(total)) {
 			BigDecimal value = total.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
-			LiquidationDetail detail = new LiquidationDetail();
+			BillLiquidationDetail detail = new BillLiquidationDetail();
 			detail.setId(UUID.randomUUID().toString());
 			detail.setConcept(concept);
 			detail.setValue(value);
@@ -126,14 +126,14 @@ public class BillDetailProcessor {
 			detail.setUnits(BigDecimal.ONE);
 			detail.setName(billDetailNameProvider.getName(detail));
 			if (bill.getLiquidationDetails() == null) {
-				bill.setLiquidationDetails(new ArrayList<LiquidationDetail>());
+				bill.setLiquidationDetails(new ArrayList<BillLiquidationDetail>());
 			}
 			bill.getLiquidationDetails().add(detail);
 		}
 	}
 
 	private void addLiquidationFixedConcept(Bill bill, BillConcept concept, BigDecimal value) {
-		LiquidationDetail detail = new LiquidationDetail();
+		BillLiquidationDetail detail = new BillLiquidationDetail();
 		detail.setId(UUID.randomUUID().toString());
 		detail.setConcept(concept);
 		detail.setValue(value);
@@ -141,7 +141,7 @@ public class BillDetailProcessor {
 		detail.setUnits(BigDecimal.ONE);
 		detail.setName(i18nService.getMessage("bill.concept.name." + concept.name()));
 		if (bill.getLiquidationDetails() == null) {
-			bill.setLiquidationDetails(new ArrayList<LiquidationDetail>());
+			bill.setLiquidationDetails(new ArrayList<BillLiquidationDetail>());
 		}
 		bill.getLiquidationDetails().add(detail);
 	}

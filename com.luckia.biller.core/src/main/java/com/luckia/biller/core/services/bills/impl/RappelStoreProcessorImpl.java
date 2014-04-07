@@ -14,8 +14,8 @@ import org.apache.commons.lang3.Range;
 
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillConcept;
-import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.BillingModel;
+import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Rappel;
 import com.luckia.biller.core.model.RappelStoreBonus;
 import com.luckia.biller.core.model.Store;
@@ -76,14 +76,19 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#updateRappel(com.luckia.biller.core.model.RappelStoreBonus,
+	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#applyProrata(com.luckia.biller.core.model.RappelStoreBonus,
 	 * java.math.BigDecimal)
 	 */
 	@Override
-	public void updateRappel(RappelStoreBonus rappelStoreBonus, BigDecimal prorata) {
-		// TODO
+	public void applyProrata(RappelStoreBonus bonus, BigDecimal prorata) {
+		throw new RuntimeException("Not implemented");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#confirm(com.luckia.biller.core.model.RappelStoreBonus)
+	 */
 	@Override
 	public void confirm(RappelStoreBonus bonus) {
 		EntityManager entityManager = entityManagerProvider.get();

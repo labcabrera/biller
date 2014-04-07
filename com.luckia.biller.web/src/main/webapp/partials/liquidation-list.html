@@ -23,8 +23,8 @@
 						<td><a href="#liquidations/id/{{result.id}}">{{result.receiver.name}}</a></td>
 						<td>{{result.code}}</td>
 						<td>
-							<span ng-if="result.currentState.stateDefinition.id == 'BillDraft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
-							<span ng-if="result.currentState.stateDefinition.id == 'BillRectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
+							<span ng-if="result.currentState.stateDefinition.id == 'Draft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
+							<span ng-if="result.currentState.stateDefinition.id == 'Rectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
 						</td>
 						<td>{{result.billDate.substr(0,10)}}</td>
 						<td class="data-amount">{{result.amount}}</td>
@@ -51,10 +51,10 @@
 					<div class="form-group">
 						<label>Estado</label> <select class="form-control input-sm" ng-model="searchOptions.state">
 							<option value=""></option>
-							<option value="BillDraft">Borradores</option>
-							<option value="BillConfirmed">Confirmadas</option>
-							<option value="BillSent">Enviadas</option>
-							<option value="BillCancelled">Canceladas</option>
+							<option value="Draft">Borradores</option>
+							<option value="Confirmed">Confirmadas</option>
+							<option value="Sent">Enviadas</option>
+							<option value="Cancelled">Canceladas</option>
 						</select>
 					</div>
 					<div class="form-group">
@@ -77,17 +77,6 @@
 					<button class="btn btn-default btn-sm" ng-click="reset()">Reset</button>
 				</form>
 			</div>
-			<!--
-			<div class="m-top-40">
-				<h4>Facturaci&oacute;n</h4>
-				<ul class="list-unstyled">
-					<li><a href="#/bills?state=BillDraft">Ver pendientes</a></li>
-					<li><a href="#/bills?state=BillConfirmed">Ver aceptadas</a></li>
-					<li><a href="#/bills?state=BillSent">Ver enviadas</a></li>
-					<li><a href="#/bills?state=BillCancelled">Ver anuladas</a></li>
-				</ul>
-			</div>
-			-->
 		</div>
 	</div>
 </body>

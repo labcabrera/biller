@@ -478,7 +478,6 @@ billerControllers.controller('ModelNewCtrl', [ '$scope', '$routeParams', '$http'
  * FACTURAS
  * ----------------------------------------------------------------------------
  */
-
 billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
 	$scope.currentPage = 1;
 	$scope.itemsPerPage = 20;
@@ -674,6 +673,28 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 				}
 			});
 		}
+	};
+	$scope.editDetail = function(data) {
+		$('#editLiquidationConceptModal').modal('show');
+		$scope.liquidationDetail = { "liquidation" : { "id" : $scope.entity.id } };
+		/*
+		if(data != null && !(typeof data === 'undefined') ) {	
+			$http.get('rest/bills/detail/id/' + data).success(function(data) {
+				$scope.billDetail = data;
+				$scope.billDetail.bill = { "id": $scope.entity.id };
+			});	
+		};
+		*/
+	};
+	$scope.mergeDetail = function(data) {
+		$http.post('rest/liquidations/detail/merge/', $scope.liquidationDetail).success(function(data) {
+			$scope.displayAlert(data);
+			if(data.code == 200) {
+				$("#editLiquidationConceptModal").modal('hide');
+				$scope.liquidationDetail = null;
+				$scope.entity = data.payload;
+			}
+		});
 	};
 	$scope.load();
 } ]);

@@ -1,17 +1,88 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2012 Kotasoft S.L.
- * All rights reserved. This program and the accompanying materials
- * may only be used prior written consent of Kotasoft S.L.
- ******************************************************************************/
 package com.luckia.biller.core.model;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-/**
- * Representa cada uno de los detalles que componen una liquidacion a nivel de factura.
- */
+import com.luckia.biller.core.jpa.Mergeable;
+import com.luckia.biller.core.serialization.NotSerializable;
+
 @Entity
+@Table(name = "B_LIQUIDATION_DETAIL")
 @SuppressWarnings("serial")
-public class LiquidationDetail extends AbstractBillDetail {
+public class LiquidationDetail implements Mergeable<LiquidationDetail>, Serializable {
 
+	@Id
+	@Column(name = "ID", length = 36)
+	private String id;
+
+	@NotSerializable
+	@ManyToOne(cascade = CascadeType.DETACH, optional = false)
+	@JoinColumn(name = "LIQUIDATION_ID", referencedColumnName = "ID", nullable = false)
+	private Liquidation liquidation;
+
+	@Column(name = "NAME", length = 256)
+	private String name;
+
+	@Column(name = "UNITS", precision = 18, scale = 2)
+	private BigDecimal units;
+
+	@Column(name = "VALUE", precision = 18, scale = 2)
+	private BigDecimal value;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Liquidation getLiquidation() {
+		return liquidation;
+	}
+
+	public void setLiquidation(Liquidation liquidation) {
+		this.liquidation = liquidation;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public BigDecimal getUnits() {
+		return units;
+	}
+
+	public void setUnits(BigDecimal units) {
+		this.units = units;
+	}
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
+
+	@Override
+	public void merge(LiquidationDetail entity) {
+		if (entity != null) {
+			this.name = entity.name;
+			this.units = entity.units;
+			this.value = entity.value;
+		}
+	}
 }

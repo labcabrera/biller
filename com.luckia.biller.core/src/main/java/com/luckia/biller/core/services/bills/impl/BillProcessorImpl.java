@@ -26,10 +26,10 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
-import com.luckia.biller.core.model.CommonState;
+import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.BillType;
+import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
-import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
@@ -98,9 +98,6 @@ public class BillProcessorImpl implements BillProcessor {
 	@Override
 	public void processDetails(Bill bill) {
 		billDetailProcessor.process(bill);
-		// if (bill.getDetails().isEmpty()) {
-		// stateMachineService.createTransition(bill, BillState.BillEmpty.name());
-		// } else {
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.getTransaction().begin();
 		for (BillDetail detail : bill.getDetails()) {
@@ -109,7 +106,6 @@ public class BillProcessorImpl implements BillProcessor {
 		entityManager.merge(bill);
 		stateMachineService.createTransition(bill, CommonState.Draft.name());
 		entityManager.getTransaction().commit();
-		// }
 	}
 
 	/*
@@ -133,7 +129,7 @@ public class BillProcessorImpl implements BillProcessor {
 
 		// Sumamos todos los conceptos de liquidacion y los ajustes operativos que han de propagarse a la liquidacion para obtener el valor
 		BigDecimal liquidationAmount = BigDecimal.ZERO;
-		for (LiquidationDetail detail : bill.getLiquidationDetails()) {
+		for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
 			liquidationAmount = liquidationAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
 		}
 		for (BillDetail detail : bill.getDetails()) {
@@ -163,6 +159,11 @@ public class BillProcessorImpl implements BillProcessor {
 		entityManager.getTransaction().commit();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.luckia.biller.core.services.bills.BillProcessor#confirmBill(com.luckia.biller.core.model.Bill)
+	 */
 	@Override
 	public void confirmBill(Bill bill) {
 		try {
@@ -185,6 +186,11 @@ public class BillProcessorImpl implements BillProcessor {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.luckia.biller.core.services.bills.BillProcessor#rectifyBill(com.luckia.biller.core.model.Bill)
+	 */
 	@Override
 	public Bill rectifyBill(Bill bill) {
 		EntityManager entityManager = entityManagerProvider.get();
@@ -200,7 +206,7 @@ public class BillProcessorImpl implements BillProcessor {
 		rectified.setDateTo(bill.getDateTo());
 		rectified.setBillType(BillType.Rectified);
 		rectified.setDetails(new ArrayList<BillDetail>());
-		rectified.setLiquidationDetails(new ArrayList<LiquidationDetail>());
+		rectified.setLiquidationDetails(new ArrayList<BillLiquidationDetail>());
 		rectified.setParent(bill);
 		auditService.processCreated(rectified);
 		entityManager.persist(rectified);
@@ -216,5 +222,51 @@ public class BillProcessorImpl implements BillProcessor {
 		entityManager.getTransaction().commit();
 		processResults(bill);
 		return rectified;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.luckia.biller.core.services.bills.BillProcessor#mergeDetail(com.luckia.biller.core.model.BillDetail)
+	 */
+	@Override
+	public Bill mergeDetail(BillDetail detail) {
+		EntityManager entityManager = entityManagerProvider.get();
+		Boolean isNew = detail.getId() == null;
+		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
+		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
+		Bill bill;
+		entityManager.getTransaction().begin();
+		if (isNew) {
+			bill = entityManager.find(Bill.class, detail.getBill().getId());
+			detail.setId(UUID.randomUUID().toString());
+			entityManager.persist(detail);
+			bill.getDetails().add(detail);
+		} else {
+			BillDetail current = entityManager.find(BillDetail.class, detail.getId());
+			current.merge(detail);
+			entityManager.merge(detail);
+			bill = current.getBill();
+		}
+		entityManager.getTransaction().commit();
+		entityManager.clear();
+		processResults(bill);
+		entityManager.clear();
+		bill = entityManager.find(Bill.class, detail.getBill().getId());
+		return bill;
+	}
+
+	@Override
+	public Bill removeDetail(BillDetail detail) {
+		EntityManager entityManager = entityManagerProvider.get();
+		Bill bill = detail.getBill();
+		bill.getDetails().remove(detail);
+		entityManager.getTransaction().begin();
+		entityManager.remove(detail);
+		entityManager.getTransaction().commit();
+		entityManager.clear();
+		bill = entityManager.find(Bill.class, detail.getBill().getId());
+		processResults(bill);
+		return bill;
 	}
 }

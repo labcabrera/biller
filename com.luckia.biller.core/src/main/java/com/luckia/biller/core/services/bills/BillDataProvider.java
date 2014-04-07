@@ -20,7 +20,9 @@ import com.luckia.biller.core.model.BillConcept;
  * <li>VENTAS_TOTALES: sumatorio de todas las ventas del terminal en el intervalo indicado</li>
  * <li>CANCELACIONES_TOTALES: sumatorio de todas las cancelaciones de tickets</li>
  * <li>IMPORTE_PAGADO: total de premios pagados por el terminal</li>
- * <li>ATRIBUTABLE: total de pagos de premios atribuibles al terminal</li>
+ * <li>ATRIBUTABLE: total de pagos de premios atribuibles al terminal. Este valor nos permite diferenciar entre los pagos de premios de
+ * diferentes empresas del mismo grupo. Recordar que por ejemplo diferentes casinos pueden pagar los premios de otros, con lo que la
+ * diferencia entre ventas y premios no se ajusta a los resultados reales del establecimiento.</li>
  * </ul>
  */
 public interface BillDataProvider {

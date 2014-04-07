@@ -21,7 +21,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
-import com.luckia.biller.core.model.LiquidationDetail;
+import com.luckia.biller.core.model.BillLiquidationDetail;
 
 public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 
@@ -174,7 +174,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		List<Map<String, String>> otherDetails = new ArrayList<Map<String, String>>();
 		Map<String, String> map;
 		for (Bill bill : liquidation.getBills()) {
-			for (LiquidationDetail i : bill.getLiquidationDetails()) {
+			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
 				switch (i.getConcept()) {
 				case GGR:
 				case NGR:

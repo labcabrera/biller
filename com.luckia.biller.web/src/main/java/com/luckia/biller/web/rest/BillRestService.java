@@ -5,10 +5,6 @@
  ******************************************************************************/
 package com.luckia.biller.web.rest;
 
-import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.UUID;
-
 import javax.persistence.EntityManager;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -22,8 +18,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.mail.EmailAttachment;
-import org.apache.commons.mail.HtmlEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +34,7 @@ import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.bills.impl.BillProcessorImpl;
 import com.luckia.biller.core.services.entities.BillEntityService;
 import com.luckia.biller.core.services.mail.MailService;
+import com.luckia.biller.core.services.mail.SendMailTask;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
 /**
@@ -105,7 +100,23 @@ public class BillRestService {
 			entityManager.getTransaction().commit();
 			return new Message<Bill>(Message.CODE_SUCCESS, "Factura actualizada", bill);
 		} catch (Exception ex) {
-			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al actualizar la factura", bill);
+			LOG.error("Error al actualizar la factura", ex);
+			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al actualizar la factura");
+		}
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("confirm/{id}")
+	@ClearCache
+	public Message<Bill> confirm(@PathParam("id") String id) {
+		try {
+			Bill bill = entityManagerProvider.get().find(Bill.class, id);
+			billProcessor.confirmBill(bill);
+			return new Message<Bill>(Message.CODE_SUCCESS, "Factura confirmada", bill);
+		} catch (Exception ex) {
+			LOG.error("Error al confirmar la factura", ex);
+			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al confirmar la factura");
 		}
 	}
 
@@ -117,15 +128,6 @@ public class BillRestService {
 		return entityManagerProvider.get().find(BillDetail.class, id);
 	}
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("confirm/{id}")
-	@ClearCache
-	public Message<Bill> confirm(@PathParam("id") String id) {
-		Bill bill = entityManagerProvider.get().find(Bill.class, id);
-		billProcessor.confirmBill(bill);
-		return new Message<Bill>(Message.CODE_SUCCESS, "Factura confirmada", bill);
-	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -133,29 +135,13 @@ public class BillRestService {
 	@Path("/detail/merge")
 	@ClearCache
 	public Message<Bill> merge(BillDetail detail) {
-		EntityManager entityManager = entityManagerProvider.get();
-		Bill bill;
-		Boolean isNew = detail.getId() == null;
-		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
-		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
-		entityManager.getTransaction().begin();
-		if (isNew) {
-			bill = entityManager.find(Bill.class, detail.getBill().getId());
-			detail.setId(UUID.randomUUID().toString());
-			entityManager.persist(detail);
-			bill.getDetails().add(detail);
-		} else {
-			BillDetail current = entityManager.find(BillDetail.class, detail.getId());
-			current.merge(detail);
-			entityManager.merge(detail);
-			bill = current.getBill();
+		try {
+			Bill bill = billProcessor.mergeDetail(detail);
+			return new Message<Bill>(Message.CODE_SUCCESS, "Detalle actualizado", bill);
+		} catch (Exception ex) {
+			LOG.error("Error al actualizar el detalle", ex);
+			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al actualizar el detalle");
 		}
-		entityManager.getTransaction().commit();
-		entityManager.clear();
-		billProcessor.processResults(bill);
-		entityManager.clear();
-		bill = entityManager.find(Bill.class, detail.getBill().getId());
-		return new Message<Bill>(Message.CODE_SUCCESS, isNew ? "Detalle guardado" : "Detalle actualizado", bill);
 	}
 
 	@POST
@@ -166,17 +152,11 @@ public class BillRestService {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			BillDetail detail = entityManager.find(BillDetail.class, id);
-			Bill bill = detail.getBill();
-			bill.getDetails().remove(detail);
-			entityManager.getTransaction().begin();
-			entityManager.remove(detail);
-			entityManager.getTransaction().commit();
-			entityManager.clear();
-			bill = entityManager.find(Bill.class, detail.getBill().getId());
-			billProcessor.processResults(bill);
+			Bill bill = billProcessor.removeDetail(detail);
 			return new Message<Bill>(Message.CODE_SUCCESS, "Detalle eliminado", bill);
 		} catch (Exception ex) {
-			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al eliminar el detalle: " + ex.getMessage(), null);
+			LOG.error("Error al eliminar el detalle", ex);
+			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al eliminar el detalle", null);
 		}
 	}
 
@@ -197,14 +177,11 @@ public class BillRestService {
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.clear();
 			Bill bill = entityManager.find(Bill.class, id);
-			AppFile pdfFile = bill.getPdfFile();
+			AppFile appFile = bill.getPdfFile();
 			String title = "Factura " + bill.getCode();
 			String body = "Adjunto PDF";
-			String filePath = fileService.getFilePath(pdfFile);
-			EmailAttachment attachment = mailService.createAttachment(pdfFile.getName(), pdfFile.getName(), filePath);
-			// TODO quiza sea mejor hacerlo de forma asincrona
-			HtmlEmail email = mailService.createEmail(emailAddress, emailAddress, title, body, Arrays.asList(attachment));
-			email.send();
+			SendMailTask task = new SendMailTask(emailAddress, appFile, title, body, fileService, mailService);
+			new Thread(task).start();
 			return new Message<Bill>(Message.CODE_SUCCESS, "Factura enviada por correo a " + emailAddress, bill);
 		} catch (Exception ex) {
 			LOG.error("Error al enviar la factura", ex);

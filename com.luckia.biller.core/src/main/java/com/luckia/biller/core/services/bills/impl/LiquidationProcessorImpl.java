@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -26,6 +27,7 @@ import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
@@ -33,6 +35,9 @@ import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
 
+/**
+ * Implementación de {@link LiquidationProcessor}
+ */
 public class LiquidationProcessorImpl implements LiquidationProcessor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LiquidationProcessorImpl.class);
@@ -100,6 +105,11 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.luckia.biller.core.services.bills.LiquidationProcessor#confirm(com.luckia.biller.core.model.Liquidation)
+	 */
 	@Override
 	public void confirm(Liquidation liquidation) {
 		try {
@@ -120,6 +130,47 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		} catch (Exception ex) {
 			throw new RuntimeException("Error al confirmar la factura", ex);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.luckia.biller.core.services.bills.LiquidationProcessor#mergeDetail(com.luckia.biller.core.model.LiquidationDetail)
+	 */
+	@Override
+	public Liquidation mergeDetail(LiquidationDetail detail) {
+		EntityManager entityManager = entityManagerProvider.get();
+		entityManager.getTransaction().begin();
+		Boolean isNew = detail.getId() == null;
+		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
+		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
+		Liquidation liquidation;
+		if (isNew) {
+			liquidation = entityManager.find(Liquidation.class, detail.getLiquidation().getId());
+			detail.setId(UUID.randomUUID().toString());
+			entityManager.persist(detail);
+			liquidation.getDetails().add(detail);
+		} else {
+			LiquidationDetail current = entityManager.find(LiquidationDetail.class, detail.getId());
+			current.merge(detail);
+			entityManager.merge(detail);
+			liquidation = current.getLiquidation();
+		}
+		entityManager.getTransaction().commit();
+		entityManager.clear();
+		// TODO ACTUALIZAR RESULTADO DE LA LIQUIDACION
+		liquidation = entityManager.find(Liquidation.class, liquidation.getId());
+		return liquidation;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.luckia.biller.core.services.bills.LiquidationProcessor#removeDetail(com.luckia.biller.core.model.LiquidationDetail)
+	 */
+	@Override
+	public Liquidation removeDetail(LiquidationDetail detail) {
+		throw new RuntimeException("Not implemented");
 	}
 
 	/**
@@ -146,4 +197,5 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		}
 		return costCenterMap;
 	}
+
 }

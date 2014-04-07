@@ -97,7 +97,7 @@
 										<td>{{detail.name}}</td>
 										<td class="data-amount">{{detail.units}}</td>
 										<td class="data-amount">{{detail.value}}</td>
-										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
 									</tr>
 									<tr>
 										<td><b>Base</b></td>
@@ -119,15 +119,15 @@
 									</tr>
 								</table>
 								<div class="btn-toolbar m-top-40" role="toolbar">
-									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-primary'>A&ntilde;adir concepto</button>
-									<button ng-click="cancel()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-primary'>Anular</button>
-									<button ng-click="rectify()" ng-if="entity.currentState.stateDefinition.id == 'BillConfirmed'" class='btn btn-sm btn-primary'>Rectificar</button>
-									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" href="rest/bills/draft/{{entity.id}}" role="button">Consultar borrador</a> <a
-										class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'BillDraft' && entity.currentState.stateDefinition.id != 'BillCancelled'"
+									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary'>A&ntilde;adir concepto</button>
+									<button ng-click="cancel()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary'>Anular</button>
+									<button ng-click="rectify()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-primary'>Rectificar</button>
+									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft'" href="rest/bills/draft/{{entity.id}}" role="button">Consultar borrador</a> <a
+										class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'"
 										href="rest/binary/download/{{entity.pdfFile.id}}" role="button">Descargar</a>
-									<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'BillDraft'" class='btn btn-sm btn-success pull-right'>Aceptar borrador</button>
-									<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'BillConfirmed'" class='btn btn-sm btn-success pull-right'>Enviar</button>
-									<button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'BillCancelled'" class="btn btn-sm btn-success pull-right">Rectificar</button>
+									<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right'>Aceptar borrador</button>
+									<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-success pull-right'>Enviar</button>
+									<button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'Cancelled'" class="btn btn-sm btn-success pull-right">Rectificar</button>
 								</div>
 							</div>
 						</div>
@@ -188,7 +188,7 @@
 				<ul class="list-unstyled">
 					<li><a href="#/bills">Ver facturas</a></li>
 					<li><a href="#/bills?store={{entity.sender.id}}">Ver facturas de este establecimiento</a></li>
-					<li><a href="#/bills?state=BillDraft">Ver facturas pendientes</a></li>
+					<li><a href="#/bills?state=Draft">Ver facturas pendientes</a></li>
 				</ul>
 				<div ng-if="entity.liquidation != null">
 					<h4>Liquidaci&oacute;n</h4>

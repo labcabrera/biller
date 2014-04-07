@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Range;
 
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.model.LiquidationDetail;
 
 public interface LiquidationProcessor {
 
@@ -19,5 +20,9 @@ public interface LiquidationProcessor {
 	 *            Liquidacion
 	 */
 	void confirm(Liquidation liquidation);
+
+	Liquidation mergeDetail(LiquidationDetail detail);
+
+	Liquidation removeDetail(LiquidationDetail detail);
 
 }
