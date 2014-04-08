@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +24,14 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.BillLiquidationDetail;
+import com.luckia.biller.core.services.bills.impl.BillDetailNameProvider;
 
 public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PDFLiquidationGenerator.class);
+
+	@Inject
+	private BillDetailNameProvider billDetailNameProvider;
 
 	@Override
 	public void generate(Liquidation liquidation, OutputStream out) {
@@ -175,6 +181,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		Map<String, String> map;
 		for (Bill bill : liquidation.getBills()) {
 			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
+				String desc = billDetailNameProvider.getName(i);
 				switch (i.getConcept()) {
 				case GGR:
 				case NGR:
@@ -182,20 +189,20 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 				case Stakes:
 					// TODO establecer el nombre del concepto
 					map = new HashMap<String, String>();
-					map.put("name", bill.getSender().getName() + ": " + i.getConcept().name());
+					map.put("name", bill.getSender().getName() + ": " + desc);
 					map.put("value", i.getValue().toString());
 					betDetails.add(map);
 					break;
 				case SatMonthlyFees:
 				case CommercialMonthlyFees:
 					map = new HashMap<String, String>();
-					map.put("name", bill.getSender().getName() + ": " + i.getConcept().name());
+					map.put("name", bill.getSender().getName() + ": " + desc);
 					map.put("value", i.getValue().toString());
 					satDetails.add(map);
 					break;
 				default:
 					map = new HashMap<String, String>();
-					map.put("name", bill.getSender().getName() + ": " + i.getConcept().name());
+					map.put("name", bill.getSender().getName() + ": " + desc);
 					map.put("value", i.getValue().toString());
 					otherDetails.add(map);
 					break;

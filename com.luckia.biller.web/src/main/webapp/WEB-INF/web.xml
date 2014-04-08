@@ -4,6 +4,26 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 
+    <context-param>
+        <param-name>resteasy.guice.modules</param-name>
+        <param-value>com.luckia.biller.web.servlet.RestModule</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>com.luckia.biller.web.servlet.GuiceServletListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>Resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Resteasy</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+<!--
+
 	<filter>
 		<filter-name>guiceFilter</filter-name>
 		<filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
@@ -18,7 +38,7 @@
 		<display-name>GuiceConfig</display-name>
 		<listener-class>com.luckia.biller.web.servlet.GuiceConfig</listener-class>
 	</listener>
-
+-->
 	<welcome-file-list>
 		<welcome-file>main.html</welcome-file>
 	</welcome-file-list>

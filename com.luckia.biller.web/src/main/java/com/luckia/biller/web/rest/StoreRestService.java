@@ -20,7 +20,7 @@ import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.entities.StoreEntityService;
 
-@Path("stores")
+@Path("rest/stores")
 public class StoreRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StoreRestService.class);

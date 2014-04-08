@@ -21,7 +21,7 @@ public class PDFBillGeneratorTest {
 		EntityManager entityManager = injector.getInstance(EntityManagerProvider.class).get();
 		Bill bill = entityManager.createQuery("select b from Bill b order by b.code desc", Bill.class).setMaxResults(1).getSingleResult();
 		FileOutputStream out = new FileOutputStream("./target/test.pdf");
-		PDFBillGenerator generator = new PDFBillGenerator();
+		PDFBillGenerator generator = injector.getInstance(PDFBillGenerator.class);
 		generator.generate(bill, out);
 	}
 }

@@ -16,7 +16,7 @@ import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.entities.BillingModelEntityService;
 
-@Path("models")
+@Path("rest/models")
 public class BillingModelRestService {
 
 	@Inject

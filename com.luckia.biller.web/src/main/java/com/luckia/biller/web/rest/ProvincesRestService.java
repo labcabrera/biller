@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Province;
 
-@Path("provinces")
+@Path("rest/provinces")
 public class ProvincesRestService {
 
 	@Inject

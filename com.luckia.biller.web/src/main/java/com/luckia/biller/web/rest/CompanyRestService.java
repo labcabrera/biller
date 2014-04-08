@@ -25,7 +25,7 @@ import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.entities.CompanyEntityService;
 
-@Path("companies")
+@Path("rest/companies")
 public class CompanyRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CompanyRestService.class);

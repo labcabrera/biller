@@ -27,7 +27,7 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.Region;
 
-@Path("regions")
+@Path("rest/regions")
 public class RegionsRestService {
 
 	@Inject

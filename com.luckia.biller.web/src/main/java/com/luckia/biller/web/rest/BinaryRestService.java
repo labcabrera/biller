@@ -5,28 +5,30 @@
  ******************************************************************************/
 package com.luckia.biller.web.rest;
 
-import java.io.DataInputStream;
 import java.io.InputStream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.services.FileService;
 
-@Path("binary")
+@Path("rest/binary")
 public class BinaryRestService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(BinaryRestService.class);
 
 	@Inject
 	private EntityManagerProvider entityManagerProvider;
@@ -36,28 +38,19 @@ public class BinaryRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("download/{id}")
-	public void getArtifactBinaryContent(@PathParam("id") Long id, @Context HttpServletResponse response) throws Exception {
+	public Response getArtifactBinaryContent(@PathParam("id") Long id) throws Exception {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			AppFile appFile = entityManager.find(AppFile.class, id);
 			Validate.notNull(appFile, "No se encuentra el contenido " + id);
 			InputStream contentInputStream = fileService.getInputStream(appFile);
-			response.setContentType("application/octet-stream");
-			// response.setContentLength(fLength);
-			response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", appFile.getName()));
-			response.setHeader("Content-Type", appFile.getContentType());
-			ServletOutputStream sos = response.getOutputStream();
-			byte[] bbuf = new byte[1024];
-			DataInputStream in = new DataInputStream(contentInputStream);
-			int length = 0;
-			while ((in != null) && ((length = in.read(bbuf)) != -1)) {
-				sos.write(bbuf, 0, length);
-			}
-			in.close();
-			sos.flush();
-			sos.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+			ResponseBuilder response = Response.ok(contentInputStream);
+			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", appFile.getName()));
+			response.header("Content-Type", appFile.getContentType());
+			return response.build();
+		} catch (Exception ex) {
+			LOG.error(ex.getMessage(), ex);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 

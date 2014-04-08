@@ -1,4 +1,4 @@
-package com.luckia.biller.web.rest;
+package com.luckia.biller.web.json;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +21,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.luckia.biller.core.serialization.Serializer;
 
+/**
+ * Componente encargado de la serialización a JSON de los servicios REST que utiliza la API de Gson.
+ */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

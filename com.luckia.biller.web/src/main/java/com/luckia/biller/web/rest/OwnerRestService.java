@@ -20,7 +20,7 @@ import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.entities.OwnerEntityService;
 
-@Path("owners")
+@Path("rest/owners")
 public class OwnerRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OwnerRestService.class);

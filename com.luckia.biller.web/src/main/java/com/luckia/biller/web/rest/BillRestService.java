@@ -5,9 +5,10 @@
  ******************************************************************************/
 package com.luckia.biller.web.rest;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import javax.persistence.EntityManager;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -15,8 +16,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,7 @@ import com.luckia.biller.core.services.pdf.PDFBillGenerator;
  * <li>Envío de la factura por email</li>
  * </ul>
  */
-@Path("bills")
+@Path("rest/bills")
 public class BillRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BillRestService.class);
@@ -127,7 +129,6 @@ public class BillRestService {
 	public BillDetail find(@PathParam("id") String id) {
 		return entityManagerProvider.get().find(BillDetail.class, id);
 	}
-
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -210,17 +211,16 @@ public class BillRestService {
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("/draft/{id}")
 	@ClearCache
-	public void getArtifactBinaryContent(@PathParam("id") String id, @Context HttpServletResponse response) {
+	public Response getArtifactBinaryContent(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
-			entityManager.clear();
 			Bill bill = entityManager.find(Bill.class, id);
-			ServletOutputStream out = response.getOutputStream();
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			pdfBillGenerator.generate(bill, out);
-			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", "borrador.pdf"));
-			response.setHeader("Content-Type", "application/pdf");
-			out.flush();
+			ResponseBuilder response = Response.ok(new ByteArrayInputStream(out.toByteArray()));
+			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "borrador.pdf"));
+			response.header("Content-Type", "application/pdf");
+			return response.build();
 		} catch (Exception ex) {
 			LOG.error("Error al generar el borrador", ex);
 			throw new RuntimeException("Error la generar el borrador");

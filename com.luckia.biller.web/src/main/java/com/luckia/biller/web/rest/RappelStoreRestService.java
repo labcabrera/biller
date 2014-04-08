@@ -18,7 +18,7 @@ import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.bills.RappelStoreProcessor;
 import com.luckia.biller.core.services.entities.RapelStoreBonusEntityService;
 
-@Path("rappel/stores")
+@Path("rest/rappel/stores")
 public class RappelStoreRestService {
 
 	@Inject

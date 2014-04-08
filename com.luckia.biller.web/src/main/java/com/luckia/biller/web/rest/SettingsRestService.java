@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppSettings;
 
-@Path("settings")
+@Path("rest/settings")
 public class SettingsRestService {
 
 	@Inject

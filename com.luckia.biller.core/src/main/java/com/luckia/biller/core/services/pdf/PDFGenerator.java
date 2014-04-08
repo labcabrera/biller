@@ -50,9 +50,9 @@ public abstract class PDFGenerator<T> {
 	protected final Locale locale;
 
 	public PDFGenerator() {
-		documentFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12f, Font.NORMAL, Color.BLACK);
-		boldFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12f, Font.BOLD, Color.BLACK);
-		titleFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 16f, Font.BOLD, Color.BLACK);
+		documentFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9f, Font.NORMAL, Color.BLACK);
+		boldFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9f, Font.BOLD, Color.BLACK);
+		titleFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12f, Font.BOLD, Color.BLACK);
 		waterMarkFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 80f, Font.BOLD, new Color(240, 240, 240));
 		locale = new Locale("es", "ES");
 		dateFormat = "dd-MM-yyyy";
@@ -71,19 +71,33 @@ public abstract class PDFGenerator<T> {
 		String billCodeLabel = isBill ? i18nService.getMessage("pdf.label.billCodeLabel") : i18nService.getMessage("pdf.label.liquidationCodeLabel");
 		String billPeriodLabel = isBill ? i18nService.getMessage("pdf.label.billPeriodLabel") : i18nService.getMessage("pdf.label.liquidationPeriodLabel");
 		String billDateLabel = i18nService.getMessage("pdf.label.billDate");
+
+		List<PdfPCell> cells = new ArrayList<>();
+		cells.add(createCell(billCodeLabel, Element.ALIGN_LEFT, documentFont));
+		cells.add(createCell(abstractBill.getCode(), Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(billDateLabel, Element.ALIGN_LEFT, documentFont));
+		cells.add(createCell(dateFormated, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(billPeriodLabel, Element.ALIGN_LEFT, documentFont));
+		cells.add(createCell(monthFormated, Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+
+		for (PdfPCell cell : cells) {
+			cell.setBorderColor(new Color(200, 200, 200));
+			cell.setBorderWidth(1);
+			cell.setBorder(PdfPCell.BOTTOM | PdfPCell.TOP | PdfPCell.LEFT | PdfPCell.RIGHT);
+		}
+
 		PdfPTable table = new PdfPTable(new float[] { 80f, 20f, 100f });
 		table.setWidthPercentage(100f);
-		table.addCell(createCell(billCodeLabel, Element.ALIGN_LEFT, documentFont));
-		table.addCell(createCell(abstractBill.getCode(), Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createCell(billDateLabel, Element.ALIGN_LEFT, documentFont));
-		table.addCell(createCell(dateFormated, Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createCell(billPeriodLabel, Element.ALIGN_LEFT, documentFont));
-		table.addCell(createCell(monthFormated, Element.ALIGN_RIGHT, documentFont));
-		table.addCell(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		table.setSpacingBefore(0);
+		for (PdfPCell cell : cells) {
+			table.addCell(cell);
+		}
+
 		Paragraph paragraph = new Paragraph();
-		paragraph.setSpacingBefore(25f);
+		paragraph.setSpacingBefore(5f);
 		paragraph.add(new Phrase(billTitleLabel, titleFont));
 		paragraph.add(table);
 		document.add(paragraph);
@@ -125,7 +139,7 @@ public abstract class PDFGenerator<T> {
 		PdfPCell cell = new PdfPCell();
 		cell.setBorder(0);
 		cell.addElement(new Paragraph(new Phrase(title, boldFont)));
-		cell.addElement(new Paragraph(new Phrase("Nombre: " + legalEntity.getName(), documentFont)));
+		cell.addElement(new Paragraph(new Phrase(legalEntity.getName(), documentFont)));
 		if (legalEntity.getAddress() != null) {
 			cell.addElement(new Paragraph(new Phrase("Dirección:\n" + formatAddress(legalEntity.getAddress()), documentFont)));
 		}
