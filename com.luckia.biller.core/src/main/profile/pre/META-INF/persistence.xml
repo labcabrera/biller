@@ -14,6 +14,7 @@
 		<class>com.luckia.biller.core.model.Bill</class>
 		<class>com.luckia.biller.core.model.BillingProvinceFees</class>
 		<class>com.luckia.biller.core.model.BillDetail</class>
+		<class>com.luckia.biller.core.model.BillLiquidationDetail</class>
 		<class>com.luckia.biller.core.model.BillingModel</class>
 		<class>com.luckia.biller.core.model.Company</class>
 		<class>com.luckia.biller.core.model.CompanyGroup</class>
@@ -27,6 +28,8 @@
 		<class>com.luckia.biller.core.model.Person</class>
 		<class>com.luckia.biller.core.model.Province</class>
 		<class>com.luckia.biller.core.model.Rappel</class>
+		<class>com.luckia.biller.core.model.RappelLiquidation</class>
+		<class>com.luckia.biller.core.model.RappelStoreBonus</class>
 		<class>com.luckia.biller.core.model.Region</class>
 		<class>com.luckia.biller.core.model.Sequence</class>
 		<class>com.luckia.biller.core.model.State</class>
