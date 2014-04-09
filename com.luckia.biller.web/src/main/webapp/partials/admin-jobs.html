@@ -11,6 +11,18 @@
 			<div class="form-group">
 				<label>Cron</label>
 				<input type="text" class="form-control" ng-model="dummy" />
+				<label>Desde</label>
+				<div class="input-group">
+					<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="job.from"
+						ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
+					<span class="input-group-addon glyphicon glyphicon-calendar"></span>
+				</div>
+				<label>Hasta</label>
+				<div class="input-group">
+					<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="job.to"
+						ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
+					<span class="input-group-addon glyphicon glyphicon-calendar"></span>
+				</div>
 			</div>
 			<button class="btn btn-primary btn-sm" ng-click="updateBillCron()">Actualizar</button>
 			<button class="btn btn-primary btn-sm" ng-click="executeBillCron()">Ejecutar</button>
