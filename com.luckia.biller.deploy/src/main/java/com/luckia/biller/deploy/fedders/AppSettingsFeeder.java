@@ -25,7 +25,8 @@ public class AppSettingsFeeder implements Feeder<AppSettings> {
 		mailSettings.setValue("hostName", "smtp.office365.com");
 		mailSettings.setValue("fromEmail", "notificaciones@luckia.com");
 		mailSettings.setValue("fromName", "Notificaciones Luckia");
-		mailSettings.setValue("sslConnection", "true");
+		mailSettings.setValue("sslConnection", "false");
+		mailSettings.setValue("tlsConnection", "true");
 		mailSettings.setValue("port", "587");
 
 		AppSettings billingSettings = new AppSettings();

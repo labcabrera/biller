@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
@@ -31,6 +32,7 @@ public class MailService {
 	private String emailUser;
 	private String emailPassword;
 	private String sslConnection;
+	private String tlsConnection;
 	private String fromEmail;
 	private String fromName;
 	private Integer port;
@@ -41,9 +43,10 @@ public class MailService {
 		hostName = appSettings.getValue("hostName", String.class);
 		emailUser = appSettings.getValue("emailUser", String.class);
 		emailPassword = appSettings.getValue("emailPassword", String.class);
-		sslConnection = appSettings.getValue("sslConnection", String.class);
 		fromEmail = appSettings.getValue("fromEmail", String.class);
-		port = appSettings.getValue("port", Integer.class);
+		sslConnection = appSettings.getValue("sslConnection", String.class);
+		tlsConnection = appSettings.getValue("tlsConnection", String.class);
+		port = Integer.parseInt(appSettings.getValue("port", String.class));
 	}
 
 	/**
@@ -67,7 +70,9 @@ public class MailService {
 		if (port != null) {
 			email.setSmtpPort(port);
 		}
-		if (sslConnection != null && !sslConnection.equals("")) {
+		if (StringUtils.isNotBlank(tlsConnection) && Boolean.valueOf(tlsConnection)) {
+			email.setStartTLSRequired(true);
+		} else if (StringUtils.isNotBlank(sslConnection) && Boolean.valueOf(sslConnection)) {
 			email.setSSLOnConnect(Boolean.valueOf(sslConnection));
 		}
 		email.setHostName(hostName);

@@ -8,7 +8,6 @@ package com.luckia.biller.core.services.mail;
 import java.util.List;
 
 import org.apache.commons.mail.EmailAttachment;
-import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.junit.Test;
 
@@ -19,15 +18,20 @@ import com.luckia.biller.core.LuckiaCoreModule;
 public class MailServiceTest {
 
 	@Test
-	public void test() throws EmailException {
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
-		MailService mailService = injector.getInstance(MailService.class);
-		String address = "lab.cabrera@gmail.com";
-		String displayName = "displayName";
-		String title = "title";
-		String body = "body";
-		List<EmailAttachment> emailAttachments = null;
-		HtmlEmail email = mailService.createEmail(address, displayName, title, body, emailAttachments);
-		email.send();
+	public void test() {
+		try {
+			Injector injector = Guice.createInjector(new LuckiaCoreModule());
+			MailService mailService = injector.getInstance(MailService.class);
+			String address = "lab.cabrera@gmail.com";
+			String displayName = "displayName";
+			String title = "title";
+			String body = "body";
+			List<EmailAttachment> emailAttachments = null;
+			HtmlEmail email = mailService.createEmail(address, displayName, title, body, emailAttachments);
+			email.send();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			throw new RuntimeException(ex);
+		}
 	}
 }
