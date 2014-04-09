@@ -148,7 +148,7 @@ public abstract class PDFGenerator<T> {
 		}
 		if (child != null && child.getId() != legalEntity.getId()) {
 			cell.addElement(new Paragraph(new Phrase("LOCAL:", boldFont)));
-			cell.addElement(new Paragraph(new Phrase("Nombre: " + child.getName(), documentFont)));
+			cell.addElement(new Paragraph(new Phrase(child.getName(), documentFont)));
 			if (child.getAddress() != null) {
 				cell.addElement(new Paragraph(new Phrase("Dirección: " + child.getAddress().getRoad(), documentFont)));
 			}

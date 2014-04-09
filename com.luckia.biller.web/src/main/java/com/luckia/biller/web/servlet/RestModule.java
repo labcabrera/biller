@@ -44,7 +44,8 @@ public class RestModule implements Module {
 		binder.bind(SettingsRestService.class);
 		binder.bind(StoreRestService.class);
 		binder.bind(UserRestService.class);
+		// Deshabilitamos la seguridad
+		// binder.bind(SecurityInterceptor.class);
 	}
-	
-	
+
 }

@@ -20,12 +20,13 @@ public class AppSettingsFeeder implements Feeder<AppSettings> {
 
 		AppSettings mailSettings = new AppSettings();
 		mailSettings.setId(SettingsService.MAIL);
-		mailSettings.setValue("emailUser", "lab.cabrera");
-		mailSettings.setValue("emailPassword", "#####");
-		mailSettings.setValue("hostName", "smtp.gmail.com");
-		mailSettings.setValue("fromEmail", "lab.cabrera@gmail.com");
-		mailSettings.setValue("fromName", "lab.cabrera");
+		mailSettings.setValue("emailUser", "notificaciones@luckia.com");
+		mailSettings.setValue("emailPassword", "N7r2or59");
+		mailSettings.setValue("hostName", "smtp.office365.com");
+		mailSettings.setValue("fromEmail", "notificaciones@luckia.com");
+		mailSettings.setValue("fromName", "Notificaciones Luckia");
 		mailSettings.setValue("sslConnection", "true");
+		mailSettings.setValue("port", "587");
 
 		AppSettings billingSettings = new AppSettings();
 		billingSettings.setId(SettingsService.BILLING);

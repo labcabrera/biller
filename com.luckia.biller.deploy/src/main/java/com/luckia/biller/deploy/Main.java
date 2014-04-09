@@ -21,7 +21,7 @@ import com.luckia.biller.core.scheduler.BillingJob;
 import com.luckia.biller.deploy.poi.MasterWorkbookProcessor;
 
 /**
- * Clase encargada de realizar la carga inicial de base de datos.
+ * Clase encargada de generar el esquema de base de datos y realizar la carga inicial.
  */
 public class Main implements Runnable {
 
@@ -31,6 +31,11 @@ public class Main implements Runnable {
 
 	private Injector injector;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		try {
@@ -79,6 +84,10 @@ public class Main implements Runnable {
 		job.setInjector(injector);
 		Date from = new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate();
 		Date to = new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate();
+		job.execute(Range.between(from, to), 10);
+		
+		from = new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate();
+		to = new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate();
 		job.execute(Range.between(from, to), 10);
 	}
 }

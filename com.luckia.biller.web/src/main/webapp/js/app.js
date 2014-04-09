@@ -33,6 +33,7 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope) {
 	}).when('/rappel/stores/id/:id', { templateUrl : 'partials/rappel-store-detail.html', controller : 'RappelStoreDetailCtrl'
 	}).when('/admin/console', { templateUrl : 'partials/admin-console.html'
 	}).when('/admin/settings', { templateUrl : 'partials/admin-settings.html', controller: 'SettingsCtrl'
+	}).when('/admin/jobs', { templateUrl : 'partials/admin-jobs.html', controller: 'SettingsCtrl'
 	}).when('/', { templateUrl : 'static/index.html'
 	}).otherwise({ templateUrl : 'partials/404.html'
 	});
@@ -78,14 +79,25 @@ billerApp.run(function($rootScope, $http) {
 		});
 	};
 	
-	// Muestra elementos de debug en el front como popups con el json de las entidades
+	/*
+	 * Muestra elementos de debug en el front como popups con el json de las entidades
+	 */
 	$rootScope.debug = true;
-	// En caso de establecer esta variable a true no se muestran los popups de confirmacion
+	
+	/*
+	 * En caso de establecer esta variable a true no se muestran los popups de confirmacion
+	 */
 	$rootScope.autoconfirm = false;
+	
+	/*
+	 * Formato de fechas de los controles
+	 */
 	$rootScope.dateFormat = 'dd-MM-yyyy';
 });
 
-/** Directiva para generar inputs que solo aceptan valores numericos con una cantidad dada de decimales */
+/*
+ * Directiva para generar inputs que solo aceptan valores numericos con una cantidad dada de decimales
+ */
 billerApp.directive('numberOnlyInput', function () {
     return {
         restrict: 'EA',
@@ -114,7 +126,7 @@ billerApp.directive('numberOnlyInput', function () {
     };
 });
 
-/**
+/*
  * Utilidad para generar consultas de FIQL
  */
 function PredicateBuilder(expression) {

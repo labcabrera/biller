@@ -14,7 +14,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * Representa una empresa
+ * Representa un operador. Los operadores tienen dos roles:
+ * <ul>
+ * <li>Reciben las facturas de los establecimientos</li>
+ * <li>Realizan las liquidaciones de co-explotación con Luckia</li>
+ * </ul>
  */
 @Entity
 @Table(name = "B_COMPANY")
@@ -35,6 +39,12 @@ public class Company extends LegalEntity {
 
 	@Column(name = "LIQUIDATION_SEQUENCE_PREFIX", length = 32)
 	private String liquidationSequencePrefix;
+
+	/**
+	 * En alguna empresas el pago de las facturas debe estar incluido en la liquidacion.
+	 */
+	@Column(name = "INCLUDE_STORE_BILLS")
+	private Boolean includeStoreBills;
 
 	public BillingModel getBillingModel() {
 		return billingModel;
@@ -70,5 +80,13 @@ public class Company extends LegalEntity {
 
 	public void setLiquidationSequencePrefix(String liquidationSequencePrefix) {
 		this.liquidationSequencePrefix = liquidationSequencePrefix;
+	}
+
+	public Boolean getIncludeStoreBills() {
+		return includeStoreBills;
+	}
+
+	public void setIncludeStoreBills(Boolean includeStoreBills) {
+		this.includeStoreBills = includeStoreBills;
 	}
 }
