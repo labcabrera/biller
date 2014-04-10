@@ -37,7 +37,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 	public void generate(Liquidation liquidation, OutputStream out) {
 		LOG.debug("Generando PDF de la liquidacion {}", liquidation.getCode());
 		try {
-			Rectangle rectangle = PageSize.A3.rotate();
+			Rectangle rectangle = PageSize.A3;
 			Document document = new Document(rectangle, 50f, 50f, 50f, 50f);
 			PdfWriter writer = PdfWriter.getInstance(document, out);
 			addMetaData(document, liquidation);

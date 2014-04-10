@@ -45,6 +45,7 @@ public abstract class PDFGenerator<T> {
 	protected final Font titleFont;
 	protected final Font boldFont;
 	protected final Font waterMarkFont;
+	protected final Font smallFont;
 	protected final String dateFormat;
 	protected final String monthFormat;
 	protected final Locale locale;
@@ -53,6 +54,7 @@ public abstract class PDFGenerator<T> {
 		documentFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9f, Font.NORMAL, Color.BLACK);
 		boldFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9f, Font.BOLD, Color.BLACK);
 		titleFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12f, Font.BOLD, Color.BLACK);
+		smallFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 8f, Font.ITALIC, Color.BLACK);
 		waterMarkFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 80f, Font.BOLD, new Color(240, 240, 240));
 		locale = new Locale("es", "ES");
 		dateFormat = "dd-MM-yyyy";
@@ -83,21 +85,17 @@ public abstract class PDFGenerator<T> {
 		cells.add(createCell(monthFormated, Element.ALIGN_RIGHT, documentFont));
 		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
 
-		for (PdfPCell cell : cells) {
-			cell.setBorderColor(new Color(200, 200, 200));
-			cell.setBorderWidth(1);
-			cell.setBorder(PdfPCell.BOTTOM | PdfPCell.TOP | PdfPCell.LEFT | PdfPCell.RIGHT);
-		}
-
 		PdfPTable table = new PdfPTable(new float[] { 80f, 20f, 100f });
 		table.setWidthPercentage(100f);
-		table.setSpacingBefore(0);
+		table.setSpacingBefore(0f);
+		table.setSpacingAfter(0f);
 		for (PdfPCell cell : cells) {
 			table.addCell(cell);
 		}
 
 		Paragraph paragraph = new Paragraph();
-		paragraph.setSpacingBefore(5f);
+		paragraph.setSpacingBefore(0f);
+		paragraph.setSpacingAfter(0f);
 		paragraph.add(new Phrase(billTitleLabel, titleFont));
 		paragraph.add(table);
 		document.add(paragraph);
@@ -115,11 +113,15 @@ public abstract class PDFGenerator<T> {
 		if (CommonState.Draft.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
 			PdfContentByte canvas = writer.getDirectContent();
 			Phrase phrase = new Phrase("BORRADOR", waterMarkFont);
-			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase, document.getPageSize().getHeight() / 2, 200f, 45f);
+			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase, 280f, 400f, 45f);
 		}
 	}
 
 	protected void printLegalEntities(Document document, LegalEntity sender, LegalEntity receiver) throws DocumentException {
+		printLegalEntities(document, sender, receiver, 0f);
+	}
+
+	protected void printLegalEntities(Document document, LegalEntity sender, LegalEntity receiver, float spacingBefore) throws DocumentException {
 		if (Store.class.isAssignableFrom(sender.getClass()) && ((Store) sender).getOwner() != null) {
 			sender = ((Store) sender).getOwner();
 		}
@@ -131,6 +133,7 @@ public abstract class PDFGenerator<T> {
 		table.addCell(createCell("", Element.ALIGN_RIGHT, documentFont));
 		table.addCell(createLegalEntityCell("DESTINATARIO", receiver, null));
 		Paragraph paragraph = new Paragraph();
+		paragraph.setSpacingBefore(spacingBefore);
 		paragraph.add(table);
 		document.add(paragraph);
 	}
@@ -273,10 +276,8 @@ public abstract class PDFGenerator<T> {
 	}
 
 	protected void addMetaData(Document document, Object entity) {
-		// document.addTitle(String.format("Factura %s", bill.getCode()));
-		// document.addSubject("-subject-");
 		document.addKeywords("Factura, Luckia");
 		document.addAuthor("Luckia");
-		document.addCreator("lab.cabrera@gmail.com");
+		document.addCreator("Luckia");
 	}
 }

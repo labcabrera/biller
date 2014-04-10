@@ -16,6 +16,9 @@ import javax.validation.Payload;
 
 import com.luckia.biller.core.validation.LegalEntityValidator;
 
+/**
+ * Definición de la validación de una entidad legal
+ */
 @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = LegalEntityValidator.class)

@@ -20,7 +20,7 @@ public class PDFBillGeneratorTest {
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
 		EntityManager entityManager = injector.getInstance(EntityManagerProvider.class).get();
 		Bill bill = entityManager.createQuery("select b from Bill b order by b.code desc", Bill.class).setMaxResults(1).getSingleResult();
-		FileOutputStream out = new FileOutputStream("./target/test.pdf");
+		FileOutputStream out = new FileOutputStream("./target/test-bill.pdf");
 		PDFBillGenerator generator = injector.getInstance(PDFBillGenerator.class);
 		generator.generate(bill, out);
 	}

@@ -13,6 +13,9 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
+/**
+ * Tarea encargada de realizar la liquidación (o liquidaciones en el caso de que hubiera más de un centro de coste) de un operador.
+ */
 public class LiquidationTask implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LiquidationTask.class);
@@ -27,6 +30,11 @@ public class LiquidationTask implements Runnable {
 		this.injector = injector;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		try {
