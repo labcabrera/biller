@@ -48,12 +48,12 @@
 			<!--
 			<property name="eclipselink.jdbc.batch-writing" value="JDBC" />
 			<property name="eclipselink.jdbc.batch-writing.size" value="1000" />
-			<property name="eclipselink.logging.level" value="SEVERE" />
 			<property name="eclipselink.ddl-generation" value="update-tables" />
+			<property name="eclipselink.logging.level" value="ALL" />
 			-->
 			<property name="eclipselink.ddl-generation" value="create-tables" />
 			<property name="eclipselink.ddl-generation.output-mode" value="database" />
-			<property name="eclipselink.logging.level" value="ALL" />
+			<property name="eclipselink.logging.level" value="SEVERE" />
 
 		</properties>
 	</persistence-unit>
