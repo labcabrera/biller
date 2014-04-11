@@ -20,6 +20,7 @@ import com.luckia.biller.web.rest.RappelStoreRestService;
 import com.luckia.biller.web.rest.RegionsRestService;
 import com.luckia.biller.web.rest.SettingsRestService;
 import com.luckia.biller.web.rest.StoreRestService;
+import com.luckia.biller.web.rest.TerminalRelationRestService;
 import com.luckia.biller.web.rest.UserRestService;
 
 public class RestModule implements Module {
@@ -43,6 +44,7 @@ public class RestModule implements Module {
 		binder.bind(RegionsRestService.class);
 		binder.bind(SettingsRestService.class);
 		binder.bind(StoreRestService.class);
+		binder.bind(TerminalRelationRestService.class);
 		binder.bind(UserRestService.class);
 		// Deshabilitamos la seguridad
 		// binder.bind(SecurityInterceptor.class);

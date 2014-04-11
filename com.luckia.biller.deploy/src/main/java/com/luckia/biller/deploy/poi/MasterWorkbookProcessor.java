@@ -218,11 +218,21 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 		Matcher matcher = pattern.matcher(input);
 		while (matcher.find()) {
 			String value = input.substring(matcher.start(), matcher.end());
-			TerminalRelation relation = new TerminalRelation();
-			relation.setCode(value);
-			relation.setIsMaster(isMaster);
-			relation.setStore(store);
-			list.add(relation);
+			boolean find = false;
+			for (TerminalRelation i : list) {
+				if (value.equals(i.getCode())) {
+					find = true;
+					break;
+				}
+			}
+			if (!find) {
+				TerminalRelation relation = new TerminalRelation();
+				relation.setCode(value);
+				relation.setIsMaster(isMaster);
+				relation.setStore(store);
+				auditService.processCreated(relation);
+				list.add(relation);
+			}
 		}
 	}
 

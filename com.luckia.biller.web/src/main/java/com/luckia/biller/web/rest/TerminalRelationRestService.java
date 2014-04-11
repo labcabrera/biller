@@ -13,35 +13,34 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.i18n.I18nService;
-import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
-import com.luckia.biller.core.services.entities.StoreEntityService;
+import com.luckia.biller.core.services.entities.TerminalRelationEntityService;
 
-@Path("rest/stores")
-public class StoreRestService {
+@Path("rest/terminals")
+public class TerminalRelationRestService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(StoreRestService.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TerminalRelationRestService.class);
 
 	@Inject
-	private StoreEntityService entityService;
+	private TerminalRelationEntityService entityService;
 	@Inject
 	private I18nService i18nService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/id/{id}")
-	public Store findById(@PathParam("id") Long primaryKey) {
+	public TerminalRelation findById(@PathParam("id") Long primaryKey) {
 		return entityService.findById(primaryKey);
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<Store> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
+	public SearchResults<TerminalRelation> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
 		params.setCurrentPage(page);
@@ -53,13 +52,12 @@ public class StoreRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
-	@ClearCache
-	public Message<Store> merge(Store entity) {
+	public Message<TerminalRelation> merge(TerminalRelation entity) {
 		try {
 			return entityService.merge(entity);
 		} catch (Exception ex) {
-			LOG.error("Error al actualizar el establecimiento", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("store.error.merge"));
+			LOG.error("Error al actualizar el terminal", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("terminal.error.merge"));
 		}
 	}
 
@@ -67,13 +65,12 @@ public class StoreRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/remove/{id}")
-	@ClearCache
-	public Message<Store> remove(@PathParam("id") Long id) {
+	public Message<TerminalRelation> remove(@PathParam("id") Long id) {
 		try {
 			return entityService.remove(id);
 		} catch (Exception ex) {
-			LOG.error("Error al eliminar el establecimiento", ex);
-			return new Message<Store>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("store.error.remove"));
+			LOG.error("Error al eliminar el terminal", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("terminal.error.remove"));
 		}
 	}
 }

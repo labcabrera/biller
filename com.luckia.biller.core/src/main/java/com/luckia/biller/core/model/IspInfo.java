@@ -30,6 +30,12 @@ public class IspInfo {
 
 	@Column(name = "STATUS", length = 64)
 	public String status;
+	
+	@Column(name = "PHONE_NUMBER", length = 64)
+	public String phoneNumber;
+	
+	@Column(name = "ISSUE_PHONE_NUMBER", length = 64)
+	public String issuePhoneNumber;
 
 	public Long getId() {
 		return id;

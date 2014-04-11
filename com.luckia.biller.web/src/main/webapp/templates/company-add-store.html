@@ -1,0 +1,60 @@
+<div class="modal fade" id="addStoreModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">A&ntilde;adir establecimiento</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">Nombre</label>
+						<div class="col-sm-8">
+							<input type='text' class="form-control" ng-model="newStore" typeahead="store as store.name for store in stores($viewValue)" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">Empresa actual</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control" ng-model="newStore.parent.name	" ng-readonly="true" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">CIF</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control" ng-model="newStore.idCard.number" ng-readonly="true" />
+						</div>
+						<label class="col-sm-2 control-label input-sm">Titular</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control" ng-model="newStore.owner.completeName" ng-readonly="true" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">Provincia</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control" ng-model="newStore.address.province.name" ng-readonly="true" />
+						</div>
+						<label class="col-sm-2 control-label input-sm">Localidad</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control" ng-model="newStore.address.region.name" ng-readonly="true" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">Direcci&oacute;n</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control" ng-model="newStore.address.road" ng-readonly="true" />
+						</div>
+						<label class="col-sm-2 control-label input-sm">N&uacte;mero</label>
+						<div class="col-sm-4">
+							<input type='text' class="form-control" ng-model="newStore.address.number" ng-readonly="true" />
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary btn-sm" ng-click="addStore()" >A&ntilde;adir</button>
+			</div>
+		</div>
+	</div>
+</div>

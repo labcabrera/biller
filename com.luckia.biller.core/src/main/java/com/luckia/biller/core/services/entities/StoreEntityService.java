@@ -4,12 +4,14 @@ import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 
+import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 
 public class StoreEntityService extends LegalEntityBaseService<Store> {
 
 	@Override
+	@ClearCache
 	public Message<Store> merge(Store entity) {
 		Message<Store> validationResult = validate(entity);
 		if (validationResult.hasErrors()) {
@@ -33,10 +35,11 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 			message = i18nService.getMessage("store.merge");
 		}
 		entityManager.getTransaction().commit();
-		return new Message<Store>(Message.CODE_SUCCESS, message, current);
+		return new Message<>(Message.CODE_SUCCESS, message, current);
 	}
 
 	@Override
+	@ClearCache
 	public Message<Store> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Store current = entityManager.find(Store.class, primaryKey);
@@ -44,7 +47,7 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 		auditService.processDeleted(current);
 		entityManager.merge(current);
 		entityManager.getTransaction().commit();
-		return new Message<Store>(Message.CODE_SUCCESS, i18nService.getMessage("store.remove"), current);
+		return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("store.remove"), current);
 	}
 
 	@Override

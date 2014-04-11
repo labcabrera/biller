@@ -49,16 +49,11 @@ public class UserRestService {
 		return values.isEmpty() ? null : values.iterator().next();
 	}
 
+	// TODO establecer la estructura del token de autenticacion
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/login")
 	public Object login(@QueryParam("name") String name, @QueryParam("password") String password, @Context SecurityContext securityContext) {
-		// System.out.println(httpContext.getRequest().getCookies().size());
-		// httpContext.getRequest().getCookies().put("x-test", new Cookie("x-name", "luis"));
-		// httpResponseContext.getResponse().getMetadata().add("xxxx", "yyyy");
-		System.out.println("principal: " + securityContext.getUserPrincipal());
-		System.out.println(securityContext);
 		return "true";
-
 	}
 }

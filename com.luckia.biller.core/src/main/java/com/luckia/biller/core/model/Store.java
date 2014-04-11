@@ -13,12 +13,14 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 /**
@@ -50,7 +52,8 @@ public class Store extends LegalEntity {
 	@Column(name = "BILL_SEQUENCE_PREFIX", length = 32)
 	private String billSequencePrefix;
 
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "store")
+	@OneToMany(cascade = CascadeType.PERSIST, fetch=FetchType.LAZY, mappedBy = "store")
+	@OrderBy("code")
 	private List<TerminalRelation> terminalRelations;
 
 	/**

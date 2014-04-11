@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 
+import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.model.Owner;
 import com.luckia.biller.core.model.common.Message;
 
@@ -13,6 +14,7 @@ import com.luckia.biller.core.model.common.Message;
 public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 
 	@Override
+	@ClearCache
 	public Message<Owner> merge(Owner entity) {
 		Message<Owner> validationResult = validate(entity);
 		if (validationResult.hasErrors()) {
@@ -40,6 +42,7 @@ public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 	}
 
 	@Override
+	@ClearCache
 	public Message<Owner> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Owner current = entityManager.find(Owner.class, primaryKey);

@@ -87,14 +87,15 @@ billerControllers.controller('GroupNewCtrl', [ '$scope', '$routeParams', '$http'
  * EMPRESAS
  * ----------------------------------------------------------------------------
  */
+
 billerControllers.controller('CompanyListCtrl', [ '$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
 	$scope.currentPage = 1;
 	$scope.itemsPerPage = 15;
 	$scope.reset = function() {
 		$scope.searchOptions = {
-				'name': '',
-				'province': { "id": null, "name": ''},
-				'showDeleted': false
+			'name': '',
+			'province': { "id": null, "name": ''},
+			'showDeleted': false
 		};
 	};
 	$scope.getSearchUrl = function() {
@@ -113,7 +114,6 @@ billerControllers.controller('CompanyListCtrl', [ '$scope', '$http', '$routePara
 	$scope.search();
 } ]);
 
-/** Detalle de empresa */
 billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
 	$scope.regions = function(name) {
 		var url = "/rest/regions/find/" + name + (angular.isDefined($scope.entity.address.province.id) ? '?province=' + $scope.entity.address.province.id : '');
@@ -158,7 +158,6 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 	$scope.load();
 } ]);
 
-/** Nueva empresa */
 billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
 	$scope.isReadOnly = false;
 	$scope.reset = function() { };
@@ -174,8 +173,9 @@ billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$htt
 	$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
 	$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
 } ]);
+
 /* ----------------------------------------------------------------------------
- * LOCALES
+ * ESTABLECIMIENTOS
  * ----------------------------------------------------------------------------
  */
 billerControllers.controller('StoreListCtrl', [ '$scope', '$routeParams', '$http', function($scope, $routeParams, $http) {
@@ -212,7 +212,6 @@ billerControllers.controller('StoreListCtrl', [ '$scope', '$routeParams', '$http
 	$scope.search();
 } ]);
 
-/** Detalle de establecimiento */
 billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
 	$scope.load = function() {
 		$http.get('rest/stores/id/' + $routeParams.id).success(function(data) { $scope.entity = data; });
@@ -230,6 +229,17 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 	$scope.remove = function() {
 		$http.post('rest/stores/remove/' + $scope.entity.id).success(function(data) {
 			if(data.code == 200) { $location.path("stores"); } else { $scope.displayAlert(data); }
+		});
+	};
+	$scope.addTerminal = function() {
+		$scope.newTerminal.store = $scope.entity;
+		$http.post('rest/terminals/merge', $scope.newStore).success(function(data) {
+			$rootScope.displayAlert(data);
+			if(data.code == 200) {
+				$scope.load();
+				$scope.newTerminal = null;
+				$("#addTerminalModal").modal('hide');
+			}
 		});
 	};
 	$scope.$watch('entity.parent', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.parent = null; } });
@@ -402,6 +412,71 @@ billerControllers.controller('CostCenterNewCtrl', [ '$scope', '$routeParams', '$
 	};
 	$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
 } ]);
+
+/* ----------------------------------------------------------------------------
+ * TERMINALES
+ * ----------------------------------------------------------------------------
+ */
+billerControllers.controller('TerminalListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+	$scope.currentPage = 1;
+	$scope.searchName = '';
+	$scope.reset = function() {
+		$scope.searchOptions = {
+				'code': '',
+				'showDeleted': false,
+		};
+	};
+	$scope.getSearchUrl = function() {
+		var predicateBuilder = new PredicateBuilder('');
+		predicateBuilder.append("code=lk=", $scope.searchOptions.code);			
+		if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
+		return 'rest/terminals/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
+	};
+	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+	$scope.setPage = function(page) {
+	    $scope.currentPage = page;
+		$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
+	};
+	$scope.reset();
+	$scope.search();
+} ]);
+
+billerControllers.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', function($scope, $rootScope, $location, $routeParams, $http) {
+	$scope.load = function() {
+		$http.get('rest/terminals/id/' + $routeParams.id).success(function(data) {
+			$scope.entity = data;
+	});};
+	$scope.update = function() {
+		$http.post('rest/terminals/merge/', $scope.entity).success(function(data) {
+			$scope.displayAlert(data);
+			if(data.code == 200) {
+				$scope.entity = data.payload;
+				$rootScope.isReadOnly = true;				
+			}
+		});
+	};
+	$scope.remove = function() {
+		$http.post('rest/terminals/remove/' + $scope.entity.id).success(function(data) {
+			if(data.code == 200) { $location.path("terminals"); } else { $scope.displayAlert(data); }
+		});
+	};
+	$scope.load();
+} ]);
+
+billerControllers.controller('TerminalNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+	$scope.isReadOnly = false;
+	$scope.update = function() {
+		$http.post('rest/groups/merge/', $scope.entity).success(function(data) {
+			if(data.code == 200) {
+				$location.path("groups/id/" + data.payload.id);				
+			} else {
+				$scope.displayAlert(data);
+			}
+		});
+	};
+	$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
+} ]);
+
 
 /* ----------------------------------------------------------------------------
  * MODELOS DE FACTURACION
