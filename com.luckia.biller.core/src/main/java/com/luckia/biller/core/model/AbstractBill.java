@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -16,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -95,9 +93,7 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 	@Column(name = "AMOUNT", precision = 18, scale = 2)
 	protected BigDecimal amount;
 
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "COMMENTS", columnDefinition = "BLOB")
+	@Column(name = "COMMENTS", columnDefinition = "TEXT")
 	protected String comments;
 
 	@OneToOne(cascade = CascadeType.DETACH)

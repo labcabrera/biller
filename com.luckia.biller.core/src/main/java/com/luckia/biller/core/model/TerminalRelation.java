@@ -7,16 +7,13 @@ package com.luckia.biller.core.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -50,9 +47,7 @@ public class TerminalRelation implements Serializable, Auditable, Mergeable<Term
 	@NotSerializable
 	private Store store;
 
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "COMMENTS", columnDefinition = "BLOB")
+	@Column(name = "COMMENTS", columnDefinition = "TEXT")
 	protected String comments;
 
 	@Embedded
@@ -108,7 +103,7 @@ public class TerminalRelation implements Serializable, Auditable, Mergeable<Term
 
 	@Override
 	public void merge(TerminalRelation entity) {
-		if(entity != null) {
+		if (entity != null) {
 			this.code = entity.code;
 			this.comments = entity.comments;
 			this.isMaster = entity.isMaster;

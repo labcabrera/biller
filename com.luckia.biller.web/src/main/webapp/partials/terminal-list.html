@@ -36,7 +36,12 @@
 				</div>
 				<div class="form-group">
 					<div class="checkbox">
-						<label><input type="checkbox" ng-model="searchOptions.showDeleted">Mostrar terminales eliminadas</label>
+						<label><input type="checkbox" ng-model="searchOptions.showOrphan">Mostrar hu&eacute;rfanos</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="checkbox">
+						<label><input type="checkbox" ng-model="searchOptions.showDeleted">Mostrar terminales eliminados</label>
 					</div>
 				</div>
 				<button ng-click="search()" class='btn btn-primary btn-sm '>Buscar</button></li>

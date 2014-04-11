@@ -49,6 +49,7 @@ billerControllers.controller('GroupDetailCtrl', [ '$scope', '$rootScope', '$loca
 		$http.get('rest/groups/id/' + $routeParams.id).success(function(data) {
 			$scope.entity = data;
 			$http.get('rest/companies/find?q=parent.id==' + $routeParams.id).success(function(data) { $scope.childs = data.results; });
+		$rootScope.isReadOnly = true;
 	});};
 	$scope.update = function() {
 		$http.post('rest/groups/merge/', $scope.entity).success(function(data) {
@@ -432,13 +433,15 @@ billerControllers.controller('TerminalListCtrl', [ '$scope', '$rootScope', '$rou
 	$scope.searchName = '';
 	$scope.reset = function() {
 		$scope.searchOptions = {
-				'terminal': { 'code': ''},
-				'showDeleted': false,
+			'terminal': { 'code': ''},
+			'showOrphan' : false,
+			'showDeleted': false,
 		};
 	};
 	$scope.getSearchUrl = function() {
 		var predicateBuilder = new PredicateBuilder('');
 		predicateBuilder.append("code=lk=", $scope.searchOptions.terminal.code);			
+		if($scope.searchOptions.showOrphan) { predicateBuilder.appendKey("store=n="); }
 		if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
 		return 'rest/terminals/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 	};
