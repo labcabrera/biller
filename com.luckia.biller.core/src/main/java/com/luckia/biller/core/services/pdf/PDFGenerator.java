@@ -2,6 +2,8 @@ package com.luckia.biller.core.services.pdf;
 
 import java.awt.Color;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +66,17 @@ public abstract class PDFGenerator<T> {
 	public abstract void generate(T entity, OutputStream out);
 
 	protected abstract float getLineHeight();
+
+	protected String formatAmount(BigDecimal value) {
+		return formatAmount(value, true);
+	}
+
+	protected String formatAmount(BigDecimal value, boolean includeCurrency) {
+		NumberFormat nf = NumberFormat.getInstance(new Locale("es", "ES"));
+		nf.setMinimumFractionDigits(2);
+		nf.setMaximumFractionDigits(2);
+		return nf.format(value) + (includeCurrency ? " €" : "");
+	}
 
 	protected void printTitle(Document document, AbstractBill abstractBill) throws DocumentException {
 		String dateFormated = new SimpleDateFormat(dateFormat).format(abstractBill.getBillDate());

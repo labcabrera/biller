@@ -52,16 +52,7 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 			printTitle(document, bill);
 			printDetails(document, bill);
 
-			// Linea a mitad de pagina para separar la segunda copia
-			PdfContentByte cb = writer.getDirectContent();
-			cb.setLineWidth(1.0f);
-			cb.setColorFill(Color.RED);
-			cb.setLineDash(new float[] { 2f, 3f }, 1f);
-			float x = 0f;
-			float y = halfTop;
-			cb.moveTo(x, y);
-			cb.lineTo(document.getPageSize().getRight(), halfTop);
-			cb.stroke();
+			printLineSeparator(document, writer, halfTop);
 
 			printCanvas(document, writer, smallFont, 370f, halfTop + 10f, 1000f, Arrays.asList("Ejemplar para el establecimiento"));
 			printCanvas(document, writer, smallFont, 370f, 10f, 1000f, Arrays.asList("Ejemplar para el operador"));
@@ -129,7 +120,7 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 			} else if (row == 1) {
 				cell.setBorderWidthBottom(0.5f);
 				cell.setPaddingBottom(8f);
-			} else if ((row == (cells.size() / cols) - 4) /* && (col == 3 || col == 4) */) {
+			} else if ((row == (cells.size() / cols) - 4)) {
 				cell.setBorderWidthBottom(0.5f);
 			} else if (row == (cells.size() / cols) - 2) {
 				cell.setBorderWidthBottom(0.5f);
@@ -145,6 +136,18 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 		paragraph.setSpacingBefore(25f);
 		paragraph.add(table);
 		document.add(paragraph);
+	}
+
+	private void printLineSeparator(Document document, PdfWriter writer, float height) {
+		PdfContentByte cb = writer.getDirectContent();
+		cb.setLineWidth(1.0f);
+		cb.setColorFill(Color.RED);
+		cb.setLineDash(new float[] { 2f, 3f }, 1f);
+		float x = 0f;
+		float y = height;
+		cb.moveTo(x, y);
+		cb.lineTo(document.getPageSize().getRight(), height);
+		cb.stroke();
 	}
 
 	@Override
