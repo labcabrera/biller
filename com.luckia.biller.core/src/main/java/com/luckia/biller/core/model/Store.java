@@ -23,6 +23,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import com.luckia.biller.core.serialization.NotSerializable;
+
 /**
  * Representa un establecimiento.
  */
@@ -52,8 +54,9 @@ public class Store extends LegalEntity {
 	@Column(name = "BILL_SEQUENCE_PREFIX", length = 32)
 	private String billSequencePrefix;
 
-	@OneToMany(cascade = CascadeType.PERSIST, fetch=FetchType.LAZY, mappedBy = "store")
+	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, mappedBy = "store")
 	@OrderBy("code")
+	@NotSerializable
 	private List<TerminalRelation> terminalRelations;
 
 	/**

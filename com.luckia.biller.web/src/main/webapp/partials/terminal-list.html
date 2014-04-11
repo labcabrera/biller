@@ -27,7 +27,7 @@
 			<form role="form">
 				<div class="form-group">
 					<label>C&oacute;digo</label>
-					<input type='text' class="form-control input-sm" ng-model="searchOptions.code" />
+					<input type='text' class="form-control input-sm" ng-model="searchOptions.terminal" typeahead="terminal as terminal.code for terminal in terminals($viewValue)" />
 				</div>
 				<div class="form-group">
 					<label for="entityIdCardNumber">Establecimiento</label>

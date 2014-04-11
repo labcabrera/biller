@@ -50,9 +50,10 @@ public abstract class EntityService<I> {
 
 	protected abstract Class<I> getEntityClass();
 
-	@ClearCache
 	public I findById(Serializable primaryKey) {
-		return entityManagerProvider.get().find(getEntityClass(), primaryKey);
+		EntityManager entityManager = entityManagerProvider.get();
+		entityManager.clear();
+		return entityManager.find(getEntityClass(), primaryKey);
 	}
 
 	/**

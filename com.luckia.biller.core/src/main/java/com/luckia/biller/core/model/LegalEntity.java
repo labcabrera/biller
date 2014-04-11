@@ -65,7 +65,7 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 	@JoinColumn(name = "ADDRESS_ID")
 	protected Address address;
 
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "PARENT_ID")
 	protected LegalEntity parent;
 
@@ -173,27 +173,19 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 		if (this.idCard == null && entity.idCard != null) {
 			this.idCard = new IdCard();
 		}
-		if (this.parent == null && entity.parent != null) {
-			this.parent = entity.parent;
-		}
 		if (this.idCard == null && entity.idCard != null) {
 			this.idCard = new IdCard();
-		}
-		if (entity.parent == null) {
-			this.parent = null;
 		}
 		this.name = entity.name;
 		this.email = entity.email;
 		this.comments = entity.comments;
 		this.phoneNumber = entity.phoneNumber;
+		this.parent = entity.parent;
 		if (this.address != null) {
 			this.address.merge(entity.getAddress());
 		}
 		if (this.idCard != null) {
 			this.idCard.merge(entity.getIdCard());
-		}
-		if (this.parent != null) {
-			this.parent.merge(entity.parent);
 		}
 	}
 }

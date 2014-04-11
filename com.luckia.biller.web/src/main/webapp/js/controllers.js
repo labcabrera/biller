@@ -145,7 +145,7 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 		$http.post('rest/stores/merge', $scope.newStore).success(function(data) {
 			$rootScope.displayAlert(data);
 			if(data.code == 200) {
-				$scope.loadChilds();
+				$scope.load();
 				$scope.newStore = null;
 				$("#addStoreModal").modal('hide');
 			}
@@ -214,7 +214,10 @@ billerControllers.controller('StoreListCtrl', [ '$scope', '$routeParams', '$http
 
 billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
 	$scope.load = function() {
-		$http.get('rest/stores/id/' + $routeParams.id).success(function(data) { $scope.entity = data; });
+		$http.get('rest/stores/id/' + $routeParams.id).success(function(data) {
+			$scope.entity = data;
+			$http.get('rest/terminals/find?q=store.id==' + $routeParams.id).success(function(data) { $scope.childTerminals = data.results; });
+		});
 		$rootScope.isReadOnly = true;
 	};
 	$scope.update = function() {
@@ -233,12 +236,21 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 	};
 	$scope.addTerminal = function() {
 		$scope.newTerminal.store = $scope.entity;
-		$http.post('rest/terminals/merge', $scope.newStore).success(function(data) {
+		$http.post('rest/terminals/merge', $scope.newTerminal).success(function(data) {
 			$rootScope.displayAlert(data);
 			if(data.code == 200) {
 				$scope.load();
 				$scope.newTerminal = null;
 				$("#addTerminalModal").modal('hide');
+			}
+		});
+	};
+	$scope.removeTerminal = function(data) {
+		data.store = null;
+		$http.post('rest/terminals/merge', data).success(function(data) {
+			$rootScope.displayAlert(data);
+			if(data.code == 200) {
+				$scope.load();
 			}
 		});
 	};
@@ -248,7 +260,6 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 	$scope.load();
 } ]);
 
-/** Nuevo establecimiento */
 billerControllers.controller('StoreNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
 	$scope.isReadOnly = false;
 	$scope.reset = function() { };
@@ -325,7 +336,6 @@ billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$rout
 	$scope.load();
 } ]);
 
-/** Nuevo titular */
 billerControllers.controller('OwnerNewCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
 	$scope.isReadOnly = false;
 	$scope.reset = function() {};
@@ -422,13 +432,13 @@ billerControllers.controller('TerminalListCtrl', [ '$scope', '$rootScope', '$rou
 	$scope.searchName = '';
 	$scope.reset = function() {
 		$scope.searchOptions = {
-				'code': '',
+				'terminal': { 'code': ''},
 				'showDeleted': false,
 		};
 	};
 	$scope.getSearchUrl = function() {
 		var predicateBuilder = new PredicateBuilder('');
-		predicateBuilder.append("code=lk=", $scope.searchOptions.code);			
+		predicateBuilder.append("code=lk=", $scope.searchOptions.terminal.code);			
 		if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
 		return 'rest/terminals/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 	};
