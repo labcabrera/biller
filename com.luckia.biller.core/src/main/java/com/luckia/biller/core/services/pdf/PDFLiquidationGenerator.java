@@ -60,10 +60,10 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			printGeneralDetails(document, liquidation);
 
 			// Desglose en conceptos
-			printDetails(document, liquidation, "Honorarios por apuestas", betDetails);
-			printDetails(document, liquidation, "Honorarios para bares", storeDetails);
-			printDetails(document, liquidation, "Honorarios SAT", satDetails);
-			printDetails(document, liquidation, "Ajustes operativos", otherDetails);
+			printDetails(document, liquidation, "Honorarios por apuestas", betDetails, totalBetAmount);
+			printDetails(document, liquidation, "Honorarios para bares", storeDetails, totalStoreAmount);
+			printDetails(document, liquidation, "Honorarios SAT", satDetails, totalSatAmount);
+			printDetails(document, liquidation, "Ajustes operativos", otherDetails, totalOtherAmount);
 
 			document.close();
 		} catch (Exception ex) {
@@ -239,7 +239,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		document.add(paragraph);
 	}
 
-	protected void printDetails(Document document, Liquidation liquidation, String title, List<Map<String, String>> details) throws DocumentException {
+	protected void printDetails(Document document, Liquidation liquidation, String title, List<Map<String, String>> details, BigDecimal totalAmount) throws DocumentException {
 		if (details.isEmpty()) {
 			return;
 		}
@@ -267,7 +267,8 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		}
 
 		cells.add(createCell("TOTAL", Element.ALIGN_LEFT, boldFont));
-		cells.addAll(createEmptyCells(4));
+		cells.addAll(createEmptyCells(3));
+		cells.add(createCell(formatAmount(totalAmount), Element.ALIGN_RIGHT, boldFont));
 
 		int cols = 5;
 		for (int i = 0; i < cells.size(); i++) {
