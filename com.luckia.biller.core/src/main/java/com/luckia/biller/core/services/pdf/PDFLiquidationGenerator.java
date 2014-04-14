@@ -261,8 +261,8 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		for (Map<String, String> map : details) {
 			cells.add(createCell(map.get("name"), Element.ALIGN_LEFT, documentFont));
 			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(map.get("value"), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
 			cells.add(createCell(map.get("value"), Element.ALIGN_RIGHT, documentFont));
 		}
 
