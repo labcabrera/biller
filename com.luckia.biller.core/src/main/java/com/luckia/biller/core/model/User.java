@@ -12,6 +12,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.eclipse.persistence.annotations.Index;
 
@@ -38,6 +39,9 @@ public class User implements Serializable {
 	@Column(name = "EMAIL", unique = true, length = 128, nullable = false)
 	@Index(name = "IX_S_USER_EMAIL")
 	private String email;
+
+	@Transient
+	private String password;
 
 	@Column(name = "PASSWORD_DIGEST", length = 256, nullable = false)
 	@NotSerializable
@@ -95,5 +99,13 @@ public class User implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

@@ -4,7 +4,7 @@
 
 var billerApp = angular.module('billerApp', [ 'ngRoute', 'billerControllers', 'ui.bootstrap']);
 
-billerApp.config([ '$routeProvider', function($routeProvider, $rootScope) {
+billerApp.config([ '$routeProvider', function($routeProvider, $rootScope, $location) {
 	$routeProvider.when('/users', { templateUrl : 'partials/user-list.html', controller : 'UserListCtrl'
 	}).when('/users/:id', { templateUrl : 'partials/user-detail.html', controller : 'UserDetailCtrl'
 	}).when('/groups', { templateUrl : 'partials/group-list.html', controller : 'GroupListCtrl'
@@ -37,6 +37,8 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope) {
 	}).when('/admin/console', { templateUrl : 'partials/admin-console.html'
 	}).when('/admin/settings', { templateUrl : 'partials/admin-settings.html', controller: 'SettingsCtrl'
 	}).when('/admin/jobs', { templateUrl : 'partials/admin-jobs.html', controller: 'SettingsCtrl'
+	}).when('/login', { templateUrl : 'partials/login.html', controller: 'LoginCtrl'
+	}).when('/index', { templateUrl : 'static/index.html'
 	}).when('/', { templateUrl : 'static/index.html'
 	}).otherwise({ templateUrl : 'partials/404.html'
 	});
@@ -76,6 +78,10 @@ billerApp.run(function($rootScope, $http) {
 		t.append(d);
 	};
 	
+	$rootScope.logout = function() {
+		$rootScope.user = { "name": ""};
+	};
+
 	$rootScope.todo = function() {
 		$rootScope.displayAlert({
 			"code": 500,
@@ -86,7 +92,7 @@ billerApp.run(function($rootScope, $http) {
 	/*
 	 * Muestra elementos de debug en el front como popups con el json de las entidades
 	 */
-	$rootScope.debug = true;
+	$rootScope.debug = false;
 	
 	/*
 	 * En caso de establecer esta variable a true no se muestran los popups de confirmacion
@@ -153,3 +159,6 @@ function PredicateBuilder(expression) {
 		this.expression += key;
 	};
 }
+
+
+

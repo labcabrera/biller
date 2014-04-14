@@ -56,9 +56,12 @@
 						</li>
 						-->
 					</ul>
-					<ul class="nav navbar-nav navbar-right">
-						<li><a href="#">lab.cabrera@gmail.com</a></li>
-						<li><a href="/login.html">Cerrar sesi&oacute;n</a></li>
+					<ul ng-if="user != null" class="nav navbar-nav navbar-right">
+						<li><a href="">{{user.name}}</a></li>
+						<li><a ng-click="logout()" href="">Cerrar sesi&oacute;n</a></li>
+					</ul>
+					<ul ng-if="user == null" class="nav navbar-nav navbar-right">
+						<li><a href="#/login">Ingresar</a></li>
 					</ul>
 				</div>
 			</div>
