@@ -673,9 +673,7 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 			});
 		}
 	};
-	$scope.editSendMail = function() {
-		$('#sendMailModal').modal('show');
-	};
+	$scope.editSendMail = function() { $('#sendMailModal').modal('show'); };
 	$scope.sendMail = function() {
 		$http.post('rest/bills/send/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {
 			$scope.displayAlert(data);
@@ -773,6 +771,13 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 			if(data.code == 200) {
 				$scope.entity = data.payload;
 			}
+		});
+	};
+	$scope.editSendMail = function() { $('#sendMailModal').modal('show'); };
+	$scope.sendMail = function() {
+		$http.post('rest/liquidations/send/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {
+			$scope.displayAlert(data);
+			$('#sendMailModal').modal('hide');
 		});
 	};
 	$scope.load();

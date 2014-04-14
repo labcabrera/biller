@@ -106,6 +106,10 @@ public class FileService {
 		return settingsService.getSystemSettings().getValue("repositoryPath", String.class);
 	}
 
+	public String normalizeFileName(String name) {
+		return name != null ? name.replaceAll(INVALID_FILE_CHARACTERS, INVALID_FILE_CHARACTERS_REPLACEMENT) : null;
+	}
+
 	/**
 	 * Obtiene la ruta absoluta del fichero a partir de su descriptor {@link AppFile}
 	 * 
@@ -118,7 +122,7 @@ public class FileService {
 
 	private File generateFileTarget(String name, Date date) {
 		String basePath = getBasePath();
-		name = name.replaceAll(INVALID_FILE_CHARACTERS, INVALID_FILE_CHARACTERS_REPLACEMENT);
+		name = normalizeFileName(name);
 		File folderBase = new File(basePath);
 		if (!folderBase.exists() && !folderBase.mkdirs()) {
 			throw new RuntimeException("Error al crear el directorio " + folderBase.getAbsolutePath());

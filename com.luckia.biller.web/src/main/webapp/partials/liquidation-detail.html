@@ -113,7 +113,7 @@
 									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft'" href="rest/liquidations/draft/{{entity.id}}" role="button">Consultar borrador</a>
 									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button">Descargar</a>
 									<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right'>Aceptar borrador</button>
-									<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-success  pull-right'>Enviar</button>
+									<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-success pull-right'>Enviar</button>
 								</div>
 							</div>
 						</div>
@@ -171,6 +171,8 @@
 			</div>
 		</div>
 	</div>
+
+	<div ng-include src="'templates/bill-modal-email.html'"></div>
 
 </body>
 </html>

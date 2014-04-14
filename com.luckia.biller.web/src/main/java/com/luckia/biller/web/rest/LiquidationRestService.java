@@ -7,6 +7,10 @@ package com.luckia.biller.web.rest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
@@ -32,8 +36,11 @@ import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
+import com.luckia.biller.core.services.ZipFileService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.LiquidationEntityService;
+import com.luckia.biller.core.services.mail.MailService;
+import com.luckia.biller.core.services.mail.SendLocalFileMailTask;
 import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
 
 /**
@@ -54,6 +61,10 @@ public class LiquidationRestService {
 	private I18nService i18nService;
 	@Inject
 	private PDFLiquidationGenerator pdfLiquidationGenerator;
+	@Inject
+	private ZipFileService zipFileService;
+	@Inject
+	private MailService mailService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -135,9 +146,9 @@ public class LiquidationRestService {
 	public Response getArtifactBinaryContent(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
-			Liquidation bill = entityManager.find(Liquidation.class, id);
+			Liquidation liquidation = entityManager.find(Liquidation.class, id);
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			pdfLiquidationGenerator.generate(bill, out);
+			pdfLiquidationGenerator.generate(liquidation, out);
 			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 			ResponseBuilder response = Response.ok(in);
 			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "borrador.pdf"));
@@ -146,6 +157,37 @@ public class LiquidationRestService {
 		} catch (Exception ex) {
 			LOG.error("Error al generar el borrador", ex);
 			throw new RuntimeException("Error la generar el borrador");
+		}
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/send/{id}")
+	@ClearCache
+	public Message<Liquidation> sendEmail(@PathParam("id") String id, String emailAddress) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			entityManager.clear();
+			Liquidation liquidation = entityManager.find(Liquidation.class, id);
+			String title = "liquidacion.zip";
+			DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			String sender = liquidation.getSender().getName();
+			String body = String.format(i18nService.getMessage("mail.liquidation.body"), sender, df.format(liquidation.getDateFrom()), df.format(liquidation.getDateTo()));
+			Boolean deleteOnExit = true;
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			zipFileService.generate(liquidation, out);
+			File tmpFile = File.createTempFile("biller-liquidation-", ".tmp");
+			tmpFile.deleteOnExit();
+			FileOutputStream fileOut = new FileOutputStream(tmpFile);
+			fileOut.write(out.toByteArray());
+			fileOut.flush();
+			fileOut.close();
+			SendLocalFileMailTask task = new SendLocalFileMailTask(emailAddress, tmpFile.getAbsolutePath(), title, title, body, mailService, deleteOnExit);
+			new Thread(task).start();
+			return new Message<>(Message.CODE_SUCCESS, String.format(i18nService.getMessage("liquidation.send.email.success"), emailAddress), liquidation);
+		} catch (Exception ex) {
+			LOG.error("Error al enviar la factura", ex);
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.send.email.error"));
 		}
 	}
 }

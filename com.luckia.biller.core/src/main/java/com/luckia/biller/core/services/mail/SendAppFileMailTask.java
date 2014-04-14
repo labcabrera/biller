@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.services.FileService;
 
-public class SendMailTask implements Runnable {
+public class SendAppFileMailTask implements Runnable {
 
-	private final Logger LOG = LoggerFactory.getLogger(SendMailTask.class);
+	private final Logger LOG = LoggerFactory.getLogger(SendAppFileMailTask.class);
 
 	private final String emailAddress;
 	private final AppFile appFile;
@@ -21,7 +21,7 @@ public class SendMailTask implements Runnable {
 	private final FileService fileService;
 	private final MailService mailService;
 
-	public SendMailTask(String emailAddress, AppFile appFile, String title, String body, FileService fileService, MailService mailService) {
+	public SendAppFileMailTask(String emailAddress, AppFile appFile, String title, String body, FileService fileService, MailService mailService) {
 		this.emailAddress = emailAddress;
 		this.appFile = appFile;
 		this.title = title;

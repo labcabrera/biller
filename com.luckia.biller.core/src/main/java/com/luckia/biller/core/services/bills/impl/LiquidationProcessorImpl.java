@@ -16,11 +16,13 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
@@ -55,6 +57,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private LiquidationCodeGenerator liquidationCodeGenerator;
 	@Inject
 	private AuditService auditService;
+	@Inject
+	private I18nService i18nService;
 
 	/*
 	 * (non-Javadoc)
@@ -135,6 +139,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 */
 	@Override
 	public void confirm(Liquidation liquidation) {
+		preValidateConfirmLiquidation(liquidation);
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.getTransaction().begin();
@@ -197,6 +202,20 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		entityManager.remove(detail);
 		entityManager.getTransaction().commit();
 		return updateResults(liquidation);
+	}
+
+	/**
+	 * Comprobamos que todas las facturas de la liquidacion han sido aceptadas. En caso de que alguna factura no esté aceptada eleva un
+	 * {@link ValidationException}
+	 * 
+	 * @param liquidation
+	 */
+	private void preValidateConfirmLiquidation(Liquidation liquidation) {
+		for (Bill i : liquidation.getBills()) {
+			if (CommonState.Draft.name().equals(i.getCurrentState().getStateDefinition().getId())) {
+				throw new ValidationException(i18nService.getMessage("liquidation.confirm.error.unconfirmedBills"));
+			}
+		}
 	}
 
 	/**

@@ -36,7 +36,7 @@ import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.bills.impl.BillProcessorImpl;
 import com.luckia.biller.core.services.entities.BillEntityService;
 import com.luckia.biller.core.services.mail.MailService;
-import com.luckia.biller.core.services.mail.SendMailTask;
+import com.luckia.biller.core.services.mail.SendAppFileMailTask;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
 /**
@@ -181,7 +181,7 @@ public class BillRestService {
 			AppFile appFile = bill.getPdfFile();
 			String title = "Factura " + bill.getCode();
 			String body = "Adjunto PDF";
-			SendMailTask task = new SendMailTask(emailAddress, appFile, title, body, fileService, mailService);
+			SendAppFileMailTask task = new SendAppFileMailTask(emailAddress, appFile, title, body, fileService, mailService);
 			new Thread(task).start();
 			return new Message<Bill>(Message.CODE_SUCCESS, "Factura enviada por correo a " + emailAddress, bill);
 		} catch (Exception ex) {
