@@ -538,7 +538,7 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 		$rootScope.isReadOnly = true;
 		$http.get('rest/models/id/' + $routeParams.id).success(function(data) {
 			$scope.entity = data;
-			$http.get('rest/stores/find?model=' + $routeParams.id).success(function(data) {
+			$http.get('rest/stores/find?q=billingModel.id==' + $routeParams.id).success(function(data) {
 				$scope.childs = data;
 			});
 		});
