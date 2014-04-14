@@ -493,9 +493,9 @@ billerControllers.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$l
 billerControllers.controller('TerminalNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
 	$scope.isReadOnly = false;
 	$scope.update = function() {
-		$http.post('rest/groups/merge/', $scope.entity).success(function(data) {
+		$http.post('rest/terminals/merge/', $scope.entity).success(function(data) {
 			if(data.code == 200) {
-				$location.path("groups/id/" + data.payload.id);				
+				$location.path("terminals/id/" + data.payload.id);				
 			} else {
 				$scope.displayAlert(data);
 			}
