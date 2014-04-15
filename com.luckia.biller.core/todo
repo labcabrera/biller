@@ -1,8 +1,10 @@
 2014-04-07
 
 	Maquetación de PDF
+	Ordenar los conceptos del PDF de liquidación
+	Importes en la PDF de liquidación
+	Revisar modelo Videomani
 	Inclusión de facturas en la liquidación (ahora esta definido dentro del billingModel, lo mismo es mas sencillo establecerlo por empresa)
-	Importes en la liquidación
 	Seguridad
 	Liquidación de rappel
 	Prorateo de rappel
@@ -56,4 +58,23 @@ DEPLOYMENT
  	Si no funciona probamos con alguno de los siguientes:
  		exec ssh-agent bash
  		eval 'ssh-agent'
+ 		
+Buenas
+
+Hoy dejo montado en el entorno de pre la versión.
+
+Aun faltarían varias cosas para poder denominarla 1.0:
+
+- Resumen del PDF de liquidación
+- Activar la gestión de usuarios (he dejado el login [admin/luckia] pero de momento todas las funcionalidades están disponibles)
+- Modificaciones de los tramos de rappel en el CRUD de modelos de facturación
+- Envío automático de ZIPs (ahora solo se envían bajo demanda)
+- Aplicar prorateo anual de rappel
+
+Una vez tengamos feedback de los cálculos de facturación, cerrar estas tareas y congelar la primera versión no debiera tomarme apenas tiempo.
+
+Esta semana preparo la documentación sobre el proyecto.
+
+Un saludo 
+ 
  
