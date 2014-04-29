@@ -149,14 +149,25 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 		this.liquidationAmount = liquidationAmount;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return String.format("Bill(code: %s, state: %s, amount: %s)", code, currentState, amount);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.luckia.biller.core.jpa.Mergeable#merge(java.lang.Object)
+	 */
 	@Override
 	public void merge(Bill entity) {
 		this.billDate = entity.billDate;
 		this.comments = entity.comments;
+		this.commentsPdf = entity.commentsPdf;
 	}
 }

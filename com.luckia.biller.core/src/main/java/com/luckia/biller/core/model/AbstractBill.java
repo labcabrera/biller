@@ -96,6 +96,9 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 	@Column(name = "COMMENTS", columnDefinition = "TEXT")
 	protected String comments;
 
+	@Column(name = "COMMENTS_PDF", columnDefinition = "TEXT")
+	protected String commentsPdf;
+
 	@OneToOne(cascade = CascadeType.DETACH)
 	protected AppFile pdfFile;
 
@@ -194,6 +197,14 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 
 	public AppFile getPdfFile() {
 		return pdfFile;
+	}
+
+	public String getCommentsPdf() {
+		return commentsPdf;
+	}
+
+	public void setCommentsPdf(String commentsPdf) {
+		this.commentsPdf = commentsPdf;
 	}
 
 	public void setPdfFile(AppFile pdfFile) {
