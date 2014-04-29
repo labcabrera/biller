@@ -825,22 +825,10 @@ billerControllers.controller('RappelStoreListCtrl', [ '$scope', '$rootScope', '$
 	$scope.itemsPerPage = 15;
 	$scope.reset = function() {
 		$scope.searchOptions = {
-//			'code': $routeParams.code,
-//			'company': { "id": $routeParams.company, "name": '' },
-//			'costCenter': { "id": $routeParams.costcenter, "name": '' },
-//			'state': $routeParams.state,
-//			'from': '',
-//			'to':  ''
 		};
 	};
 	$scope.getSearchUrl = function() {
 		var predicateBuilder = new PredicateBuilder('');
-//		predicateBuilder.append("code==", $scope.searchOptions.code);
-//		predicateBuilder.append("sender.id==", $scope.searchOptions.company != null ? $scope.searchOptions.company.id : null);
-//		predicateBuilder.append("receiver.id==", $scope.searchOptions.costCenter != null ? $scope.searchOptions.costCenter.id : null);
-//		predicateBuilder.append("dateFrom=ge=", $scope.searchOptions.from != null ? $filter('date')($scope.searchOptions.from, "yyyy-MM-dd") : null);
-//		predicateBuilder.append("dateTo=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
-//		predicateBuilder.append("currentState.stateDefinition.id==", $scope.searchOptions.state);
 		return 'rest/rappel/stores/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 	};
 	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
@@ -883,5 +871,20 @@ billerControllers.controller('SettingsCtrl', [ '$scope', '$rootScope', '$routePa
 		$http.get('rest/settings/id/BILLING').success(function(data) { $scope.billingSettings = data; });
 	};
 	$scope.load();
+}]);
+
+billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+	$scope.load = function() {
+	};
+	$scope.recalculateBill = function() {
+		if($rootScope.autoconfirm || window.confirm('Se van a recalcular las facturas')) {
+			var year = $scope.year;
+			var month = $scope.month;
+			$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
+			$http.post('rest/admin/recalculate/bills/' + year + "/" + month).success(function(data) {
+				$scope.displayAlert(data);
+			});
+		}
+	};
 }]);
 

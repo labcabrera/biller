@@ -35,6 +35,11 @@ public class BillTask implements Runnable {
 		this.injector = injector;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		try {

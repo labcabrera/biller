@@ -7,6 +7,7 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.web.json.GsonMessageBodyHandler;
+import com.luckia.biller.web.rest.AdminRestService;
 import com.luckia.biller.web.rest.BillRestService;
 import com.luckia.biller.web.rest.BillingModelRestService;
 import com.luckia.biller.web.rest.BinaryRestService;
@@ -23,14 +24,24 @@ import com.luckia.biller.web.rest.StoreRestService;
 import com.luckia.biller.web.rest.TerminalRelationRestService;
 import com.luckia.biller.web.rest.UserRestService;
 
+/**
+ * Modulo de Guice encargado de registrar los servicios REST que expone la aplicacion.
+ */
 public class RestModule implements Module {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RestModule.class);
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.google.inject.Module#configure(com.google.inject.Binder)
+	 */
+	@Override
 	public void configure(final Binder binder) {
 		LOG.debug("Configuring Guice Module");
 		binder.install(new LuckiaCoreModule());
 		binder.bind(GsonMessageBodyHandler.class);
+		binder.bind(AdminRestService.class);
 		binder.bind(BillingModelRestService.class);
 		binder.bind(BillRestService.class);
 		binder.bind(BinaryRestService.class);
@@ -49,5 +60,4 @@ public class RestModule implements Module {
 		// Deshabilitamos la seguridad
 		// binder.bind(SecurityInterceptor.class);
 	}
-
 }

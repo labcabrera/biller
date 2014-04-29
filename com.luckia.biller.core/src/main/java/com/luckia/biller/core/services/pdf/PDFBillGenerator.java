@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,6 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
@@ -140,15 +138,6 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 		paragraph.setSpacingBefore(25f);
 		paragraph.add(table);
 		document.add(paragraph);
-	}
-
-	private void printCommentsPdf(Document document, Bill bill) throws DocumentException {
-		if (StringUtils.isNotEmpty(bill.getCommentsPdf())) {
-			Paragraph paragraph = new Paragraph();
-			paragraph.setSpacingBefore(25f);
-			paragraph.add(new Phrase(bill.getComments(), documentFont));
-			document.add(paragraph);
-		}
 	}
 
 	private void printLineSeparator(Document document, PdfWriter writer, float height) {

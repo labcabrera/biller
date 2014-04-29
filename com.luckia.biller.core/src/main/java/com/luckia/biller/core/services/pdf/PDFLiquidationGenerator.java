@@ -58,6 +58,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			printLegalEntities(document, liquidation.getSender(), liquidation.getReceiver());
 			printTitle(document, liquidation);
 			printGeneralDetails(document, liquidation);
+			printCommentsPdf(document, liquidation);
 
 			// Desglose en conceptos
 			printDetails(document, liquidation, "Honorarios por apuestas", betDetails, totalBetAmount);

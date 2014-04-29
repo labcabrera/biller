@@ -288,6 +288,15 @@ public abstract class PDFGenerator<T> {
 		}
 	}
 
+	protected void printCommentsPdf(Document document, AbstractBill bill) throws DocumentException {
+		if (StringUtils.isNotEmpty(bill.getCommentsPdf())) {
+			Paragraph paragraph = new Paragraph();
+			paragraph.setSpacingBefore(25f);
+			paragraph.add(new Phrase(bill.getCommentsPdf(), documentFont));
+			document.add(paragraph);
+		}
+	}
+
 	protected void addMetaData(Document document, Object entity) {
 		document.addKeywords("Factura, Luckia");
 		document.addAuthor("Luckia");
