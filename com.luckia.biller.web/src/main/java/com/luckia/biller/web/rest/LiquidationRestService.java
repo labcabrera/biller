@@ -87,6 +87,26 @@ public class LiquidationRestService {
 	}
 
 	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/merge")
+	@ClearCache
+	public Message<Liquidation> merge(Liquidation bill) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Liquidation current = entityManager.find(Liquidation.class, bill.getId());
+			current.merge(bill);
+			entityManager.getTransaction().begin();
+			entityManager.merge(current);
+			entityManager.getTransaction().commit();
+			return new Message<>(Message.CODE_SUCCESS, "Liquidación actualizada", bill);
+		} catch (Exception ex) {
+			LOG.error("Error al actualizar la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al actualizar la liquidación");
+		}
+	}
+
+	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("confirm/{id}")
 	@ClearCache

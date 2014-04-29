@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.luckia.biller.core.jpa.Mergeable;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 /**
@@ -31,7 +32,7 @@ import com.luckia.biller.core.serialization.NotSerializable;
 @Table(name = "B_LIQUIDATION")
 @DiscriminatorValue("L")
 @SuppressWarnings("serial")
-public class Liquidation extends AbstractBill {
+public class Liquidation extends AbstractBill implements Mergeable<Liquidation> {
 
 	/**
 	 * Lista de facturas que componen la liquidación.
@@ -60,5 +61,12 @@ public class Liquidation extends AbstractBill {
 
 	public void setDetails(List<LiquidationDetail> details) {
 		this.details = details;
+	}
+
+	@Override
+	public void merge(Liquidation entity) {
+		this.billDate = entity.billDate;
+		this.comments = entity.comments;
+		this.commentsPdf = entity.commentsPdf;
 	}
 }

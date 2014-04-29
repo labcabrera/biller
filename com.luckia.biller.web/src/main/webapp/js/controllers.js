@@ -767,6 +767,15 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 			});
 		}
 	};
+	$scope.update = function() {
+		$http.post('rest/liquidations/merge/', $scope.entity).success(function(data) {
+			$scope.displayAlert(data);
+			if(data.code == 200) {
+				$rootScope.isReadOnly = true;				
+				$scope.entity = data.payload;
+			}
+		});
+	};
 	$scope.editDetail = function(data) {
 		if(data != null && !(typeof data === 'undefined') ) {
 			$http.get('rest/liquidations/detail/id/' + data).success(function(data) {
