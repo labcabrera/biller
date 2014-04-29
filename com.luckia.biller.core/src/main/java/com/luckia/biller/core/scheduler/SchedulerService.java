@@ -5,6 +5,8 @@
  ******************************************************************************/
 package com.luckia.biller.core.scheduler;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -65,9 +67,14 @@ public class SchedulerService {
 		LOG.debug("Registrando tareas programadas");
 		try {
 			AppSettings systemSettings = settingsService.getSystemSettings();
-			registerJob("Billing job", systemSettings.getValue("job.biller.cron", String.class), BillingJob.class);
-			registerJob("System check job", "0 0/1 * 1/1 * ? *", SystemCheckJob.class);
-			registerJob("Rappel liquidation job", "0 0/1 * 1/1 * ? *", RappelLiquidationJob.class);
+			Map<String, Class<? extends Job>> map = new LinkedHashMap<>();
+			map.put(systemSettings.getValue("job.biller.cron", String.class), BillingJob.class);
+			map.put(systemSettings.getValue("job.rappel.cron", String.class), RappelLiquidationJob.class);
+			map.put(systemSettings.getValue("job.system.check.cron", String.class), SystemCheckJob.class);
+			for (String cron : map.keySet()) {
+				Class<? extends Job> jobClass = map.get(cron);
+				registerJob(jobClass.getSimpleName(), cron, jobClass);
+			}
 		} catch (Exception ex) {
 			throw new RuntimeException("Error al registrar las tareas programadas", ex);
 		}

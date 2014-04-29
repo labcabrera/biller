@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,17 +35,15 @@ public class RegionFeeder implements Feeder<Region> {
 	@Override
 	public void loadEntities(InputStream source) {
 		EntityManager entityManager = entityManagerProvider.get();
-
 		Map<String, Province> provinces = new HashMap<String, Province>();
 		for (Province province : entityManager.createQuery("select p from Province p", Province.class).getResultList()) {
 			provinces.put(province.getId(), province);
 		}
-
 		Reader reader = null;
 		long t0 = System.currentTimeMillis();
 		try {
 			int count = 0;
-			reader = new InputStreamReader(source);
+			reader = new InputStreamReader(source, Charsets.UTF_8);
 			BufferedReader bufferedReader = new BufferedReader(reader);
 			String line;
 			while ((line = bufferedReader.readLine()) != null) {

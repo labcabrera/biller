@@ -13,6 +13,7 @@ import java.util.Iterator;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import org.apache.commons.io.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public class ProvinceFeeder implements Feeder<Province> {
 	public void loadEntities(InputStream source) {
 		Long t0 = System.currentTimeMillis();
 		Long count = 0L;
-		Reader reader = new InputStreamReader(source);
+		Reader reader = new InputStreamReader(source, Charsets.UTF_8);
 		JsonParser parser = new JsonParser();
 		JsonArray json = parser.parse(reader).getAsJsonArray();
 		EntityManager entityManager = entityManagerProvider.get();

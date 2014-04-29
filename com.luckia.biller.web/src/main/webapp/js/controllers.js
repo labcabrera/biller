@@ -687,6 +687,16 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 			});
 		}
 	};
+	$scope.recalculate = function() {
+		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la factura')) {
+			$http.post('rest/bills/recalculate/' + $scope.entity.id).success(function(data) {
+				$scope.displayAlert(data);
+				if(data.code == 200) {
+					$scope.entity = data.payload;
+				}
+			});
+		}
+	};
 	$scope.editSendMail = function() { $('#sendMailModal').modal('show'); };
 	$scope.sendMail = function() {
 		$http.post('rest/bills/send/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {

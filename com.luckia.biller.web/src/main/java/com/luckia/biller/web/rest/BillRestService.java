@@ -100,10 +100,10 @@ public class BillRestService {
 			entityManager.getTransaction().begin();
 			entityManager.merge(current);
 			entityManager.getTransaction().commit();
-			return new Message<Bill>(Message.CODE_SUCCESS, "Factura actualizada", bill);
+			return new Message<>(Message.CODE_SUCCESS, "Factura actualizada", bill);
 		} catch (Exception ex) {
 			LOG.error("Error al actualizar la factura", ex);
-			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al actualizar la factura");
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al actualizar la factura");
 		}
 	}
 
@@ -115,10 +115,10 @@ public class BillRestService {
 		try {
 			Bill bill = entityManagerProvider.get().find(Bill.class, id);
 			billProcessor.confirmBill(bill);
-			return new Message<Bill>(Message.CODE_SUCCESS, "Factura confirmada", bill);
+			return new Message<>(Message.CODE_SUCCESS, "Factura confirmada", bill);
 		} catch (Exception ex) {
 			LOG.error("Error al confirmar la factura", ex);
-			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al confirmar la factura");
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al confirmar la factura");
 		}
 	}
 
@@ -138,10 +138,10 @@ public class BillRestService {
 	public Message<Bill> merge(BillDetail detail) {
 		try {
 			Bill bill = billProcessor.mergeDetail(detail);
-			return new Message<Bill>(Message.CODE_SUCCESS, "Detalle actualizado", bill);
+			return new Message<>(Message.CODE_SUCCESS, "Detalle actualizado", bill);
 		} catch (Exception ex) {
 			LOG.error("Error al actualizar el detalle", ex);
-			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al actualizar el detalle");
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al actualizar el detalle");
 		}
 	}
 
@@ -154,10 +154,10 @@ public class BillRestService {
 			EntityManager entityManager = entityManagerProvider.get();
 			BillDetail detail = entityManager.find(BillDetail.class, id);
 			Bill bill = billProcessor.removeDetail(detail);
-			return new Message<Bill>(Message.CODE_SUCCESS, "Detalle eliminado", bill);
+			return new Message<>(Message.CODE_SUCCESS, "Detalle eliminado", bill);
 		} catch (Exception ex) {
 			LOG.error("Error al eliminar el detalle", ex);
-			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al eliminar el detalle", null);
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al eliminar el detalle", null);
 		}
 	}
 
@@ -183,10 +183,10 @@ public class BillRestService {
 			String body = "Adjunto PDF";
 			SendAppFileMailTask task = new SendAppFileMailTask(emailAddress, appFile, title, body, fileService, mailService);
 			new Thread(task).start();
-			return new Message<Bill>(Message.CODE_SUCCESS, "Factura enviada por correo a " + emailAddress, bill);
+			return new Message<>(Message.CODE_SUCCESS, "Factura enviada por correo a " + emailAddress, bill);
 		} catch (Exception ex) {
 			LOG.error("Error al enviar la factura", ex);
-			return new Message<Bill>(Message.CODE_SUCCESS, "Error al enviar la factura por correo");
+			return new Message<>(Message.CODE_SUCCESS, "Error al enviar la factura por correo");
 		}
 	}
 
@@ -200,10 +200,29 @@ public class BillRestService {
 			entityManager.clear();
 			Bill bill = entityManager.find(Bill.class, id);
 			Bill rectified = billProcessor.rectifyBill(bill);
-			return new Message<Bill>(Message.CODE_SUCCESS, "Factura enviada por correo", rectified);
+			return new Message<>(Message.CODE_SUCCESS, "Factura enviada por correo", rectified);
 		} catch (Exception ex) {
 			LOG.error("Error al generar la rectificación", ex);
-			return new Message<Bill>(Message.CODE_GENERIC_ERROR, "Error al generar la rectificación", null);
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al generar la rectificación", null);
+		}
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/recalculate/{id}")
+	@ClearCache
+	public Message<Bill> recalculate(@PathParam("id") String id) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Bill bill = entityManager.find(Bill.class, id);
+			bill.getDetails().clear();
+			bill.getLiquidationDetails().clear();
+			billProcessor.processDetails(bill);
+			billProcessor.processResults(bill);
+			return new Message<>(Message.CODE_SUCCESS, "Factura actualizada", bill);
+		} catch (Exception ex) {
+			LOG.error("Error al recalcular la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al generar la rectificación", null);
 		}
 	}
 
