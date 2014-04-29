@@ -1,4 +1,23 @@
+2014-04-29
+
+OK	·En cuanto a las pruebas que hicimos Iván y yo, las facturaciones de salones estarían mal,
+		porque no se resta el gasto de co-explotación. Por lo demás los bares que yo vi, estaban
+		correctas al céntimo. En cuanto solucionemos esto de la co-explotación seguiré probando.
+OK	·Que se pueda regenerar la factura de un local concreto.
+OK	·Que se puedan regenerar todas las facturas de todos los locales de un mes concreto.
+	·Que si un terminal ya está asignado y se le intenta asignar a un local, aparezca un mensaje
+		diciendo que el terminal ya está asignado.
+		[Avisar con un pop-up ya que el sistema esta funcionando correctamente]
+	·Que cuando se vaya a hacer un borrado, se muestre un mensaje de confirmación de que se desea
+		borrar realmente.
+		[Pendiente]
+OK	·Que en el pdf de la factura haya un campo observaciones que lo pueda rellenar el
+		administrativo de turno y se vea su contenido en la factura.[
+	·Finalmente, si una factura o liquidación no se ha podido enviar a un email de una empresa o
+		grupo de empresa por no estar dado de alta el email, que se envíe a pagos@luckia.es. 
+
 2014-04-07
+
 
 	Maquetación de PDF
 	Ordenar los conceptos del PDF de liquidación

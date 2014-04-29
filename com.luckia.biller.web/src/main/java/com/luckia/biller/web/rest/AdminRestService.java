@@ -1,5 +1,6 @@
 package com.luckia.biller.web.rest;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
+import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
@@ -44,10 +46,11 @@ public class AdminRestService {
 		DateTime from = new DateTime(year, month, 1, 0, 0, 0, 0);
 		DateTime to = from.dayOfMonth().withMaximumValue();
 		EntityManager entityManager = entityManagerProvider.get();
-		String qlString = "select b.id from Bill b where b.billDate >= :from and b.billDate <= :to";
+		String qlString = "select b.id from Bill b where b.billDate >= :from and b.billDate <= :to and b.currentState.stateDefinition.id in :states";
 		TypedQuery<String> query = entityManager.createQuery(qlString, String.class);
 		query.setParameter("from", from.toDate());
 		query.setParameter("to", to.toDate());
+		query.setParameter("states", Arrays.asList(CommonState.Initial, CommonState.Draft, CommonState.Empty));
 		List<String> billIds = query.getResultList();
 
 		ExecutorService executorService = Executors.newFixedThreadPool(RECALCULATE_BILLS_THREAD_COUNT);
