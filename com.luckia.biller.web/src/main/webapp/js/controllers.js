@@ -75,9 +75,11 @@ billerControllers.controller('GroupDetailCtrl', [ '$scope', '$rootScope', '$loca
 		});
 	};
 	$scope.remove = function() {
-		$http.post('rest/groups/remove/' + $scope.entity.id).success(function(data) {
-			if(data.code == 200) { $location.path("groups"); } else { $scope.displayAlert(data); }
-		});
+		if($rootScope.autoconfirm || window.confirm('Se va a eliminar el grupo')) {
+			$http.post('rest/groups/remove/' + $scope.entity.id).success(function(data) {
+				if(data.code == 200) { $location.path("groups"); } else { $scope.displayAlert(data); }
+			});
+		}
 	};
 	$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
 	$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
@@ -151,9 +153,11 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 		});
 	};
 	$scope.remove = function() {
-		$http.post('rest/companies/remove/' + $scope.entity.id).success(function(data) {
-			if(data.code == 200) { $location.path("companies"); } else { $scope.displayAlert(data); }
-		});
+		if($rootScope.autoconfirm || window.confirm('Se va a eliminar la empresa')) {
+			$http.post('rest/companies/remove/' + $scope.entity.id).success(function(data) {
+				if(data.code == 200) { $location.path("companies"); } else { $scope.displayAlert(data); }
+			});
+		}
 	};
 	$scope.addStore = function() {
 		$scope.newStore.parent = $scope.entity;
@@ -245,9 +249,11 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 		});
 	};
 	$scope.remove = function() {
-		$http.post('rest/stores/remove/' + $scope.entity.id).success(function(data) {
-			if(data.code == 200) { $location.path("stores"); } else { $scope.displayAlert(data); }
-		});
+		if($rootScope.autoconfirm || window.confirm('Se va a eliminar el establecimiento')) {
+			$http.post('rest/stores/remove/' + $scope.entity.id).success(function(data) {
+				if(data.code == 200) { $location.path("stores"); } else { $scope.displayAlert(data); }
+			});
+		}
 	};
 	$scope.addTerminal = function() {
 		$scope.newTerminal.store = $scope.entity;
@@ -413,9 +419,11 @@ billerControllers.controller('CostCenterDetailCtrl', [ '$scope', '$rootScope', '
 		});
 	};
 	$scope.remove = function() {
-		$http.post('rest/costcenters/remove/' + $scope.entity.id).success(function(data) {
-			if(data.code == 200) { $location.path("costcenters"); } else { $scope.displayAlert(data); }
-		});
+		if($rootScope.autoconfirm || window.confirm('Se va a eliminar el centro de coste')) {
+			$http.post('rest/costcenters/remove/' + $scope.entity.id).success(function(data) {
+				if(data.code == 200) { $location.path("costcenters"); } else { $scope.displayAlert(data); }
+			});
+		}
 	};
 	$scope.setStorePage = function(page) {
 	    $scope.currentPage = page;
@@ -483,9 +491,11 @@ billerControllers.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$l
 		});
 	};
 	$scope.remove = function() {
-		$http.post('rest/terminals/remove/' + $scope.entity.id).success(function(data) {
-			if(data.code == 200) { $location.path("terminals"); } else { $scope.displayAlert(data); }
-		});
+		if($rootScope.autoconfirm || window.confirm('Se va a eliminar el terminal')) {
+			$http.post('rest/terminals/remove/' + $scope.entity.id).success(function(data) {
+				if(data.code == 200) { $location.path("terminals"); } else { $scope.displayAlert(data); }
+			});
+		}
 	};
 	$scope.load();
 } ]);
