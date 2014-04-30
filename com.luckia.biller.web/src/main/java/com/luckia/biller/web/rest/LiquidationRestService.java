@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import javax.persistence.EntityManager;
+import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -115,6 +116,8 @@ public class LiquidationRestService {
 			Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, id);
 			liquidationProcessor.confirm(liquidation);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.confirm.success"), liquidation);
+		} catch (ValidationException ex) {
+			return new Message<>(Message.CODE_GENERIC_ERROR, ex.getMessage());
 		} catch (Exception ex) {
 			LOG.error("Error al confirmar la liquidacion", ex);
 			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("liquidation.confirm.error"));
