@@ -112,7 +112,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 						map.put("name", bill.getSender().getName() + ": " + desc);
 						map.put("value", formatAmount(value));
 						otherDetails.add(map);
-						totalOtherAmount.add(value);
+						totalOtherAmount = totalOtherAmount.add(value);
 						break;
 					}
 				}
@@ -123,7 +123,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 					map.put("name", bill.getSender().getName() + ": " + detail.getName());
 					map.put("value", formatAmount(detail.getValue()));
 					otherDetails.add(map);
-					totalOtherAmount.add(detail.getValue());
+					totalOtherAmount = totalOtherAmount.add(detail.getValue());
 				}
 			}
 		}
