@@ -18,7 +18,6 @@ import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.IdCard;
 import com.luckia.biller.core.scheduler.BillingJob;
-import com.luckia.biller.deploy.poi.MasterWorkbookProcessor;
 
 /**
  * Clase encargada de generar el esquema de base de datos y realizar la carga inicial.
@@ -40,12 +39,12 @@ public class Main implements Runnable {
 	public void run() {
 		try {
 			System.out.println("Biller deployment module");
-			Bootstrap.main();
-			MasterWorkbookProcessor.main();
+			// Bootstrap.main();
+			// MasterWorkbookProcessor.main();
 			injector = Guice.createInjector(new LuckiaCoreModule());
 			injector.getInstance(BillSequencePrefixGenerator.class).run();
 			updateEgasaInfo();
-			// generateBills();
+			 generateBills();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
