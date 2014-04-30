@@ -24,6 +24,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.services.bills.impl.BillDetailNameProvider;
@@ -116,7 +117,17 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 					}
 				}
 			}
+			for (BillDetail detail : bill.getDetails()) {
+				if (detail.getPropagate() != null && detail.getPropagate()) {
+					map = new HashMap<String, String>();
+					map.put("name", bill.getSender().getName() + ": " + detail.getName());
+					map.put("value", formatAmount(detail.getValue()));
+					otherDetails.add(map);
+					totalOtherAmount.add(detail.getValue());
+				}
+			}
 		}
+
 	}
 
 	private void printGeneralDetails(Document document, Liquidation liquidation) throws DocumentException {
