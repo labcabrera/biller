@@ -256,9 +256,9 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 		}
 	};
 	$scope.addTerminal = function() {
-		var current = $scope.newTerminal.store;
-		$scope.newTerminal.store = $scope.entity;
-		if(current != null && ($rootScope.autoconfirm || window.confirm('El terminal esta actualmente asociado con la empresa xxx'))) {
+		var current = $scope.newTerminal.store != null ? $scope.newTerminal.store.name : null;
+		if(current == null || ($rootScope.autoconfirm || window.confirm('El terminal esta actualmente asociado con la empresa ' + current))) {
+			$scope.newTerminal.store = $scope.entity;
 			$http.post('rest/terminals/merge', $scope.newTerminal).success(function(data) {
 				$rootScope.displayAlert(data);
 				if(data.code == 200) {
