@@ -107,7 +107,7 @@ public abstract class PDFGenerator<T> {
 		}
 
 		Paragraph paragraph = new Paragraph();
-		paragraph.setSpacingBefore(0f);
+		paragraph.setSpacingBefore(20f);
 		paragraph.setSpacingAfter(0f);
 		paragraph.add(new Phrase(billTitleLabel, titleFont));
 		paragraph.add(table);

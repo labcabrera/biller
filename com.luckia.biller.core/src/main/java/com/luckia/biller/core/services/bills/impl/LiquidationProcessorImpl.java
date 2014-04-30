@@ -78,6 +78,12 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		if (!entityManager.getTransaction().isActive()) {
 			entityManager.getTransaction().begin();
 		}
+		
+		// TODO fix liquidacion manual
+		TypedQuery<Company> queryEgasa = entityManager.createQuery("select e from Company e where e.name like :name", Company.class);
+		List<Company> list = queryEgasa.setParameter("name", "%Egasa%").getResultList();
+		Company egasa = list.iterator().next();
+		
 		List<Liquidation> result = new ArrayList<Liquidation>();
 		LOG.info("Centros de coste asociados a la liquidacion:");
 		for (CostCenter costCenter : costCenterMap.keySet()) {
@@ -86,7 +92,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			Liquidation liquidation = new Liquidation();
 			liquidation.setId(UUID.randomUUID().toString());
 			liquidation.setSender(company);
-			liquidation.setReceiver(costCenter);
+			liquidation.setReceiver(egasa);
 			liquidation.setBills(billList);
 			liquidation.setDateFrom(range.getMinimum());
 			liquidation.setDateTo(range.getMaximum());

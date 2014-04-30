@@ -29,7 +29,7 @@ public class LegalEntityValidator implements ConstraintValidator<ValidLegalEntit
 		Boolean valid = true;
 		if (StringUtils.isBlank(entity.getName())) {
 			context.buildConstraintViolationWithTemplate("legalEntity.name.required").addConstraintViolation();
-			valid = false;
+			// valid = false;
 		}
 		if (entity.getIdCard() == null || StringUtils.isBlank(entity.getIdCard().getNumber())) {
 			LOG.trace("La entidad carece de numero de identificacion fiscal");

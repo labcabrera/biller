@@ -44,8 +44,8 @@ public class Main implements Runnable {
 			MasterWorkbookProcessor.main();
 			injector = Guice.createInjector(new LuckiaCoreModule());
 			injector.getInstance(BillSequencePrefixGenerator.class).run();
-			generateBills();
 			updateEgasaInfo();
+			// generateBills();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -88,7 +88,7 @@ public class Main implements Runnable {
 		from = new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate();
 		to = new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate();
 		job.execute(Range.between(from, to), 10);
-		
+
 		from = new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate();
 		to = new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate();
 		job.execute(Range.between(from, to), 10);

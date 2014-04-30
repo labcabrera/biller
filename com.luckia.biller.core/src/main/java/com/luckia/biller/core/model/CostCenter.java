@@ -21,7 +21,7 @@ public class CostCenter extends LegalEntity {
 	/**
 	 * Codigo del centro de coste
 	 */
-	@Column(name = "CODE", length = 8, nullable = false)
+	@Column(name = "CODE", length = 8)
 	private String code;
 
 	public String getCode() {

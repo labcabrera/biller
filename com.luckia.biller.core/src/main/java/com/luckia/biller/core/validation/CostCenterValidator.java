@@ -24,7 +24,7 @@ public class CostCenterValidator implements ConstraintValidator<ValidCostCenter,
 		Boolean valid = true;
 		if (StringUtils.isBlank(entity.getCode())) {
 			context.buildConstraintViolationWithTemplate("costCenter.code.required").addConstraintViolation();
-			valid = false;
+			// valid = false;
 		}
 		return valid;
 	}

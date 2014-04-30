@@ -81,11 +81,14 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 
 	public void process(InputStream in, boolean persist) {
 		Validate.notNull(in, "Missing InputStream");
+		LOG.info("Cargando hoja maestra de facturacion");
 		try {
 			Workbook wb = WorkbookFactory.create(in);
 			sheetCompanies = wb.getSheet("Empresas operadoras");
 			sheetStores = wb.getSheet("Locales");
+			LOG.debug("Obteniendo empresas operadoras");
 			loadCompanies();
+			LOG.debug("Obteniendo establecimientos");
 			loadStores();
 			LOG.debug("Numero de modelos registrados: {}", billingModelResolver.getNewModels().size());
 			if (persist) {
@@ -126,22 +129,28 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 		companies = new HashMap<Long, Company>();
 		int rowNumber = 1;
 		Row row;
-		while ((row = sheetCompanies.getRow(rowNumber++)) != null) {
-			String name = readCellAsString(row.getCell(1));
-			Long id = readCellAsBigDecimal(row.getCell(0)).longValue();
-			String cif = readCellAsString(row.getCell(2));
-			String road = readCellAsString(row.getCell(3));
-			Region region = entityResolver.resolveRegion(readCellAsString(row.getCell(4)));
-			Province province = entityResolver.resolveProvince(readCellAsString(row.getCell(5)));
-			LOG.debug(String.format("%-2s %-30s %-12s %-30s", id, name, cif, road));
-			Company company = new Company();
-			company.setName(name);
-			company.setIdCard(new IdCard(IdCardType.CIF, cif));
-			company.setAddress(new Address());
-			company.getAddress().setRoad(road);
-			company.getAddress().setProvince(province);
-			company.getAddress().setRegion(region);
-			companies.put(id, company);
+		while ((row = sheetCompanies.getRow(rowNumber++)) != null && rowNumber < 1000) {
+			try {
+				if (row.getCell(1) != null) {
+					String name = readCellAsString(row.getCell(1));
+					Long id = readCellAsBigDecimal(row.getCell(0)).longValue();
+					String cif = readCellAsString(row.getCell(2));
+					String road = readCellAsString(row.getCell(3));
+					Region region = entityResolver.resolveRegion(readCellAsString(row.getCell(4)));
+					Province province = entityResolver.resolveProvince(readCellAsString(row.getCell(5)));
+					LOG.debug(String.format("%-2s %-30s %-12s %-30s", id, name, cif, road));
+					Company company = new Company();
+					company.setName(name);
+					company.setIdCard(new IdCard(IdCardType.CIF, cif));
+					company.setAddress(new Address());
+					company.getAddress().setRoad(road);
+					company.getAddress().setProvince(province);
+					company.getAddress().setRegion(region);
+					companies.put(id, company);
+				}
+			} catch (Exception ex) {
+				LOG.error("Error al leer la fila " + rowNumber, ex);
+			}
 		}
 		LOG.info("Obtenidas {} companias", companies.size());
 	}
@@ -151,63 +160,67 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 		int rowNumber = 1;
 		Row row;
 		while ((row = sheetStores.getRow(rowNumber++)) != null) {
-			String name = readCellAsString(row.getCell(5));
-			String idCompanyString = readCellAsString(row.getCell(0));
-			idCompanyString = idCompanyString.replaceAll(".0", "");
-			if (!StringUtils.isEmpty(name) && !"TBC".equals(idCompanyString)) {
-				Long idCompany = idCompanyString.matches("\\d+") ? Long.parseLong(idCompanyString) : null;
-				String ownerCompleteName = readCellAsString(row.getCell(6));
-				String ownerIdCardNumber = readCellAsString(row.getCell(7));
-				String type = readCellAsString(row.getCell(2));
-				String road = readCellAsString(row.getCell(8));
-				String regionName = readCellAsString(row.getCell(9));
-				String provinceName = readCellAsString(row.getCell(10));
-				Region region = entityResolver.resolveRegion(regionName);
-				Province province = entityResolver.resolveProvince(provinceName);
+			try {
+				String name = readCellAsString(row.getCell(5));
+				String idCompanyString = readCellAsString(row.getCell(0));
+				idCompanyString = idCompanyString.replaceAll(".0", "");
+				if (!StringUtils.isEmpty(name) && !"TBC".equals(idCompanyString)) {
+					Long idCompany = idCompanyString.matches("\\d+") ? Long.parseLong(idCompanyString) : null;
+					String ownerCompleteName = readCellAsString(row.getCell(6));
+					String ownerIdCardNumber = readCellAsString(row.getCell(7));
+					String type = readCellAsString(row.getCell(2));
+					String road = readCellAsString(row.getCell(8));
+					String regionName = readCellAsString(row.getCell(9));
+					String provinceName = readCellAsString(row.getCell(10));
+					Region region = entityResolver.resolveRegion(regionName);
+					Province province = entityResolver.resolveProvince(provinceName);
 
-				Mutable<String> ownerName = new MutableObject<String>();
-				Mutable<String> ownerFirstSurname = new MutableObject<String>();
-				Mutable<String> ownerSecondSurname = new MutableObject<String>();
-				personNameResolver.resolve(ownerCompleteName, ownerName, ownerFirstSurname, ownerSecondSurname);
-				LOG.debug(String.format("%-30s %-40s %-30s %-30s %-30s", name, ownerName, road, province, region));
+					Mutable<String> ownerName = new MutableObject<String>();
+					Mutable<String> ownerFirstSurname = new MutableObject<String>();
+					Mutable<String> ownerSecondSurname = new MutableObject<String>();
+					personNameResolver.resolve(ownerCompleteName, ownerName, ownerFirstSurname, ownerSecondSurname);
+					LOG.debug(String.format("%-30s %-40s %-30s %-30s %-30s", name, ownerName, road, province, region));
 
-				StringBuffer comments = new StringBuffer();
+					StringBuffer comments = new StringBuffer();
 
-				// TODO en algunos casos aparece como titular una empresa
-				Owner owner = null;
-				if (!"tbd".equals(ownerCompleteName) && !"?".equals(ownerCompleteName)) {
-					owner = new Owner();
-					owner.setName(ownerName.getValue());
-					owner.setFirstSurname(ownerFirstSurname.getValue());
-					owner.setSecondSurname(ownerSecondSurname.getValue());
-					owner.setIdCard(new IdCard(IdCardType.NIF, ownerIdCardNumber));
-				} else {
-					comments.append("No se ha definido el titular. En el campo aparece '" + ownerCompleteName + "'\n");
-				}
+					// TODO en algunos casos aparece como titular una empresa
+					Owner owner = null;
+					if (!"tbd".equals(ownerCompleteName) && !"?".equals(ownerCompleteName)) {
+						owner = new Owner();
+						owner.setName(ownerName.getValue());
+						owner.setFirstSurname(ownerFirstSurname.getValue());
+						owner.setSecondSurname(ownerSecondSurname.getValue());
+						owner.setIdCard(new IdCard(IdCardType.NIF, ownerIdCardNumber));
+					} else {
+						comments.append("No se ha definido el titular. En el campo aparece '" + ownerCompleteName + "'\n");
+					}
 
-				Store store = new Store();
-				store.setName(name);
-				store.setOwner(owner);
-				store.setType(entityResolver.resolveStoreType(type));
-				store.setAddress(new Address());
-				store.getAddress().setRoad(road);
-				store.getAddress().setProvince(province);
-				store.getAddress().setRegion(region);
-				if (idCompany != null) {
-					store.setParent(companies.get(idCompany));
+					Store store = new Store();
+					store.setName(name);
+					store.setOwner(owner);
+					store.setType(entityResolver.resolveStoreType(type));
+					store.setAddress(new Address());
+					store.getAddress().setRoad(road);
+					store.getAddress().setProvince(province);
+					store.getAddress().setRegion(region);
+					if (idCompany != null) {
+						store.setParent(companies.get(idCompany));
+					}
+					if (region == null) {
+						comments.append("No se encuentra la region: " + regionName + "\n");
+					}
+					if (province == null) {
+						comments.append("No se encuentra la provincia: " + regionName + "\n");
+					}
+					store.setComments(comments.toString());
+					store.setTerminalRelations(new ArrayList<TerminalRelation>());
+					appendStoreTerminals(store, readCellAsString(row.getCell(3)).replaceAll(",", ""), true, store.getTerminalRelations());
+					appendStoreTerminals(store, readCellAsString(row.getCell(4)), false, store.getTerminalRelations());
+					store.setBillingModel(billingModelResolver.resolveBillingModel(row));
+					stores.add(store);
 				}
-				if (region == null) {
-					comments.append("No se encuentra la region: " + regionName + "\n");
-				}
-				if (province == null) {
-					comments.append("No se encuentra la provincia: " + regionName + "\n");
-				}
-				store.setComments(comments.toString());
-				store.setTerminalRelations(new ArrayList<TerminalRelation>());
-				appendStoreTerminals(store, readCellAsString(row.getCell(3)).replaceAll(",", ""), true, store.getTerminalRelations());
-				appendStoreTerminals(store, readCellAsString(row.getCell(4)), false, store.getTerminalRelations());
-				store.setBillingModel(billingModelResolver.resolveBillingModel(row));
-				stores.add(store);
+			} catch (Exception ex) {
+				LOG.error("Error al procesar el establecimiento", ex);
 			}
 		}
 		LOG.info("Obtenidos {} establecimientos", stores.size());
