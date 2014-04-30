@@ -256,15 +256,18 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 		}
 	};
 	$scope.addTerminal = function() {
+		var current = $scope.newTerminal.store;
 		$scope.newTerminal.store = $scope.entity;
-		$http.post('rest/terminals/merge', $scope.newTerminal).success(function(data) {
-			$rootScope.displayAlert(data);
-			if(data.code == 200) {
-				$scope.load();
-				$scope.newTerminal = null;
-				$("#addTerminalModal").modal('hide');
-			}
-		});
+		if(current != null && ($rootScope.autoconfirm || window.confirm('El terminal esta actualmente asociado con la empresa xxx'))) {
+			$http.post('rest/terminals/merge', $scope.newTerminal).success(function(data) {
+				$rootScope.displayAlert(data);
+				if(data.code == 200) {
+					$scope.load();
+					$scope.newTerminal = null;
+					$("#addTerminalModal").modal('hide');
+				}
+			});
+		}
 	};
 	$scope.removeTerminal = function(data) {
 		data.store = null;
@@ -497,6 +500,7 @@ billerControllers.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$l
 			});
 		}
 	};
+	$scope.$watch('entity.store', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.store = null; } });
 	$scope.load();
 } ]);
 
