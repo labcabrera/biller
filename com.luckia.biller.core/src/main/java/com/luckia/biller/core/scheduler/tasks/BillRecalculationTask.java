@@ -30,9 +30,29 @@ public class BillRecalculationTask implements Runnable {
 	public void run() {
 		EntityManager entityManager = entityManagerProvider.get();
 		Bill bill = entityManager.find(Bill.class, billId);
-		bill.getDetails().clear();
-		bill.getLiquidationDetails().clear();
+		cleanPreviousResults(bill, entityManager);
 		billProcessor.processDetails(bill);
 		billProcessor.processResults(bill);
+	}
+
+	/**
+	 * Elimina de base de datos los detalles generados anteriormente para volver a recalcular los resultados de la factura.
+	 * 
+	 * @param bill
+	 * @param entityManager
+	 */
+	private void cleanPreviousResults(Bill bill, EntityManager entityManager) {
+		if (bill.getDetails() != null) {
+			for (Object i : bill.getDetails()) {
+				entityManager.remove(i);
+			}
+			bill.getDetails().clear();
+		}
+		if (bill.getLiquidationDetails() != null) {
+			for (Object i : bill.getLiquidationDetails()) {
+				entityManager.remove(i);
+			}
+			bill.getLiquidationDetails().clear();
+		}
 	}
 }
