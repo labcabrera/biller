@@ -52,6 +52,8 @@ public class AppSettings {
 				result = Long.parseLong(value);
 			} else if (type == BigDecimal.class) {
 				result = new BigDecimal(value);
+			} else if (type == Boolean.class) {
+				result = Boolean.parseBoolean(value);
 			} else {
 				throw new RuntimeException("Invalid type " + type);
 			}

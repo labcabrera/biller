@@ -46,7 +46,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 
 	@Override
 	public void generate(Liquidation liquidation, OutputStream out) {
-		LOG.debug("Generando PDF de la liquidacion {}", liquidation.getCode());
+		LOG.debug("Generando PDF de la liquidacion");
 		try {
 			init(liquidation);
 			Rectangle rectangle = PageSize.A3;
