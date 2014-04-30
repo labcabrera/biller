@@ -42,6 +42,7 @@ public class BillRecalculationTask implements Runnable {
 	 * @param entityManager
 	 */
 	private void cleanPreviousResults(Bill bill, EntityManager entityManager) {
+		entityManager.getTransaction().begin();
 		if (bill.getDetails() != null) {
 			for (Object i : bill.getDetails()) {
 				entityManager.remove(i);
@@ -54,5 +55,6 @@ public class BillRecalculationTask implements Runnable {
 			}
 			bill.getLiquidationDetails().clear();
 		}
+		entityManager.getTransaction().commit();
 	}
 }

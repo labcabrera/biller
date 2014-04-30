@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.luckia.biller.core.ClearCache;
+import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
@@ -32,6 +33,7 @@ import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
+import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.bills.impl.BillProcessorImpl;
 import com.luckia.biller.core.services.entities.BillEntityService;
@@ -66,6 +68,8 @@ public class BillRestService {
 	private MailService mailService;
 	@Inject
 	private FileService fileService;
+	@Inject
+	private I18nService i18nService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -100,10 +104,10 @@ public class BillRestService {
 			entityManager.getTransaction().begin();
 			entityManager.merge(current);
 			entityManager.getTransaction().commit();
-			return new Message<>(Message.CODE_SUCCESS, "Factura actualizada", bill);
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.merge"), bill);
 		} catch (Exception ex) {
 			LOG.error("Error al actualizar la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al actualizar la factura");
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.merge.error"));
 		}
 	}
 
@@ -115,10 +119,10 @@ public class BillRestService {
 		try {
 			Bill bill = entityManagerProvider.get().find(Bill.class, id);
 			billProcessor.confirmBill(bill);
-			return new Message<>(Message.CODE_SUCCESS, "Factura confirmada", bill);
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.confirm.success"), bill);
 		} catch (Exception ex) {
 			LOG.error("Error al confirmar la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al confirmar la factura");
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.confirm.error"));
 		}
 	}
 
@@ -138,10 +142,10 @@ public class BillRestService {
 	public Message<Bill> merge(BillDetail detail) {
 		try {
 			Bill bill = billProcessor.mergeDetail(detail);
-			return new Message<>(Message.CODE_SUCCESS, "Detalle actualizado", bill);
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.merge"), bill);
 		} catch (Exception ex) {
 			LOG.error("Error al actualizar el detalle", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al actualizar el detalle");
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.detail.merge.error"));
 		}
 	}
 
@@ -154,10 +158,10 @@ public class BillRestService {
 			EntityManager entityManager = entityManagerProvider.get();
 			BillDetail detail = entityManager.find(BillDetail.class, id);
 			Bill bill = billProcessor.removeDetail(detail);
-			return new Message<>(Message.CODE_SUCCESS, "Detalle eliminado", bill);
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.remove"), bill);
 		} catch (Exception ex) {
 			LOG.error("Error al eliminar el detalle", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al eliminar el detalle", null);
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.detail.remove.error"), null);
 		}
 	}
 
@@ -183,10 +187,10 @@ public class BillRestService {
 			String body = "Adjunto PDF";
 			SendAppFileMailTask task = new SendAppFileMailTask(emailAddress, appFile, title, body, fileService, mailService);
 			new Thread(task).start();
-			return new Message<>(Message.CODE_SUCCESS, "Factura enviada por correo a " + emailAddress, bill);
+			return new Message<>(Message.CODE_SUCCESS, String.format(i18nService.getMessage("bill.send.email"), emailAddress), bill);
 		} catch (Exception ex) {
 			LOG.error("Error al enviar la factura", ex);
-			return new Message<>(Message.CODE_SUCCESS, "Error al enviar la factura por correo");
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.send.email.error"));
 		}
 	}
 
@@ -200,10 +204,10 @@ public class BillRestService {
 			entityManager.clear();
 			Bill bill = entityManager.find(Bill.class, id);
 			Bill rectified = billProcessor.rectifyBill(bill);
-			return new Message<>(Message.CODE_SUCCESS, "Factura enviada por correo", rectified);
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.rectify"), rectified);
 		} catch (Exception ex) {
 			LOG.error("Error al generar la rectificación", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al generar la rectificación", null);
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.rectify.error"), null);
 		}
 	}
 
@@ -215,14 +219,12 @@ public class BillRestService {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			Bill bill = entityManager.find(Bill.class, id);
-			bill.getDetails().clear();
-			bill.getLiquidationDetails().clear();
-			billProcessor.processDetails(bill);
-			billProcessor.processResults(bill);
-			return new Message<>(Message.CODE_SUCCESS, "Factura actualizada", bill);
+			BillRecalculationTask task = new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor);
+			task.run();
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.recalculate"), bill);
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al generar la rectificación", null);
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.recalculate.error"), null);
 		}
 	}
 
