@@ -38,6 +38,9 @@ import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
+/**
+ * Implementacion de {@link BillProcessor}
+ */
 public class BillProcessorImpl implements BillProcessor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BillProcessorImpl.class);

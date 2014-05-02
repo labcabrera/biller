@@ -41,6 +41,9 @@ public enum BillConcept {
 	/** Gastos mensuales de servicio de atencion al cliente */
 	SatMonthlyFees,
 
+	/** Saldo de caja */
+	StoreCash,
+
 	/** Cualquier otro concepto de facturacion que no este incluido en el modelo */
 	Other
 }

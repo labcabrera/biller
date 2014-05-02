@@ -93,7 +93,7 @@ billerApp.run(function($rootScope, $http) {
 	/*
 	 * Muestra elementos de debug en el front como popups con el json de las entidades
 	 */
-	$rootScope.debug = false;
+	$rootScope.debug = true;
 	
 	/*
 	 * En caso de establecer esta variable a true no se muestran los popups de confirmacion

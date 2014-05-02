@@ -37,7 +37,6 @@ public class LISBillDataProvider implements BillDataProvider {
 	@Inject
 	@Named(Constants.LIS)
 	private EntityManagerProvider entityManagerProvider;
-
 	@Inject
 	private BillFeesService billFeesService;
 
@@ -82,10 +81,12 @@ public class LISBillDataProvider implements BillDataProvider {
 			BigDecimal ngr = ggr.subtract(tasaDeJuego);
 			BigDecimal gastosOperativos = bill != null ? bill.getModel().getCompanyModel().getCoOperatingMonthlyFees() : BigDecimal.ZERO;
 			BigDecimal nr = ngr.subtract(gastosOperativos);
+			BigDecimal storeCash = stakes.subtract(totalWinAmount);
 			map.put(BillConcept.Stakes, stakes);
 			map.put(BillConcept.GGR, ggr);
 			map.put(BillConcept.NGR, ngr);
 			map.put(BillConcept.NR, nr);
+			map.put(BillConcept.StoreCash, storeCash);
 		}
 		return map;
 	}

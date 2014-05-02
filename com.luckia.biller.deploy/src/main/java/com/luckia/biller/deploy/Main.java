@@ -18,33 +18,40 @@ import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.IdCard;
 import com.luckia.biller.core.scheduler.BillingJob;
+import com.luckia.biller.deploy.poi.MasterWorkbookProcessor;
 
 /**
  * Clase encargada de generar el esquema de base de datos y realizar la carga inicial.
  */
-public class Main implements Runnable {
+public class Main {
 
 	public static void main(String[] args) {
-		new Main().run();
+		if (args.length != 2) {
+			System.out.println("Usage Main {generateBootstrap} {generateBills}");
+		} else {
+			boolean generateBootstrap = Boolean.parseBoolean(args[0]);
+			boolean generateBills = Boolean.parseBoolean(args[1]);
+			new Main().run(generateBootstrap, generateBills);
+		}
 	}
 
 	private Injector injector;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Runnable#run()
-	 */
-	@Override
-	public void run() {
+	public void run(boolean generateBootstrap, boolean generateBills) {
 		try {
 			System.out.println("Biller deployment module");
-			// Bootstrap.main();
-			// MasterWorkbookProcessor.main();
 			injector = Guice.createInjector(new LuckiaCoreModule());
-			injector.getInstance(BillSequencePrefixGenerator.class).run();
-			updateEgasaInfo();
-			 generateBills();
+			if (generateBootstrap) {
+				System.out.println("Executing bootstrap");
+				Bootstrap.main();
+				MasterWorkbookProcessor.main();
+				injector.getInstance(BillSequencePrefixGenerator.class).run();
+				updateEgasaInfo();
+			}
+			if (generateBills) {
+				System.out.println("Loading bills");
+				generateBills();
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

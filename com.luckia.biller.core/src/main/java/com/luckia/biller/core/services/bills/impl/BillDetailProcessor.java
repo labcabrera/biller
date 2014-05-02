@@ -20,10 +20,11 @@ import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillDetail;
-import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.BillLiquidationDetail;
+import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
+import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.bills.BillDataProvider;
 
 /**
@@ -45,7 +46,14 @@ public class BillDetailProcessor {
 	private I18nService i18nService;
 	@Inject
 	private BillDetailNameProvider billDetailNameProvider;
+	@Inject
+	private SettingsService settingsService;
 
+	/**
+	 * CUIDADO: los importes que provienen de LIS tienen IVA, de modo que para hacer el calculo debemos volver a calcular la base
+	 * 
+	 * @param bill
+	 */
 	public void process(Bill bill) {
 		Store store = bill.getSender(Store.class);
 		BillingModel model = bill.getModel();
@@ -55,13 +63,14 @@ public class BillDetailProcessor {
 		} else {
 			Range<Date> range = Range.between(bill.getDateFrom(), bill.getDateTo());
 			Map<BillConcept, BigDecimal> billingData = billingDataProvider.retreive(bill, range, terminals);
+			BigDecimal vatPercent = settingsService.getBillingSettings().getValue("vat", BigDecimal.class);
+			BigDecimal vatDivisor = BigDecimal.ONE.add(vatPercent.divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN));
+			System.out.println(vatDivisor + " == 1.21");
 
-			// Calculamos los conceptos de la facturacion. CUIDADO: los importes que provienen de LIS tienen IVA, de modo que para hacer el
-			// calculo debemos volver a calcular la base
-			// TODO tener en cuanta todos los conceptos que pudieran haberse definido
+			// Calculamos los conceptos de la facturacion.
 			if (MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {
 				BigDecimal percent = model.getStoreModel().getStakesPercent();
-				BigDecimal stakes = billingData.get(BillConcept.Stakes).divide(new BigDecimal("1.21"), 2, RoundingMode.HALF_EVEN);
+				BigDecimal stakes = billingData.get(BillConcept.Stakes).divide(vatDivisor, 2, RoundingMode.HALF_EVEN);
 				BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 				addBillingConcept(bill, BillConcept.Stakes, value, stakes, percent);
 			}
@@ -78,9 +87,10 @@ public class BillDetailProcessor {
 					addLiquidationConcept(bill, concept, percent, billingData);
 				}
 			}
-
 			// Calculamos los conceptos fijos
 			processLiquidationFixedConcepts(bill, model, range, terminals);
+			// Almacenamos el saldo de caja
+			bill.setStoreCash(billingData.containsKey(BillConcept.StoreCash) ? billingData.get(BillConcept.StoreCash) : BigDecimal.ZERO);
 		}
 	}
 

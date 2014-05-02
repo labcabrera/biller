@@ -77,6 +77,12 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	@JoinColumn(name = "LIQUIDATION_ID")
 	protected Liquidation liquidation;
 
+	/**
+	 * Representa el saldo de caja del establecimiento (pagos - cancelaciones - premios)
+	 */
+	@Column(name = "STORE_CASH", precision = 18, scale = 2)
+	protected BigDecimal storeCash;
+
 	public Bill getParent() {
 		return parent;
 	}
@@ -147,6 +153,14 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	public void setLiquidationAmount(BigDecimal liquidationAmount) {
 		this.liquidationAmount = liquidationAmount;
+	}
+
+	public BigDecimal getStoreCash() {
+		return storeCash;
+	}
+
+	public void setStoreCash(BigDecimal storeCash) {
+		this.storeCash = storeCash;
 	}
 
 	/*
