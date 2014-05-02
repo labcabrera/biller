@@ -820,6 +820,16 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 			}
 		});
 	};
+	$scope.recalculate = function() {
+		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la liquidacion')) {
+			$http.post('rest/liquidations/recalculate/' + $scope.entity.id).success(function(data) {
+				$scope.displayAlert(data);
+				if(data.code == 200) {
+					$scope.entity = data.payload;
+				}
+			});
+		}
+	};
 	$scope.editSendMail = function() { $('#sendMailModal').modal('show'); };
 	$scope.sendMail = function() {
 		$http.post('rest/liquidations/send/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {

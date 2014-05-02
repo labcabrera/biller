@@ -28,11 +28,13 @@ import com.google.inject.Inject;
 import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
+import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
+import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.services.LiquidationMailService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.LiquidationEntityService;
@@ -189,6 +191,22 @@ public class LiquidationRestService {
 		} catch (Exception ex) {
 			LOG.error("Error al enviar la factura", ex);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.send.email.error"));
+		}
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/recalculate/{id}")
+	@ClearCache
+	public Message<Liquidation> recalculate(@PathParam("id") String id) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Liquidation liquidation = entityManager.find(Liquidation.class, id);
+			liquidationProcessor.updateResults(liquidation);
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.recalculate"), liquidation);
+		} catch (Exception ex) {
+			LOG.error("Error al recalcular la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("liquidation.recalculate.error"), null);
 		}
 	}
 }
