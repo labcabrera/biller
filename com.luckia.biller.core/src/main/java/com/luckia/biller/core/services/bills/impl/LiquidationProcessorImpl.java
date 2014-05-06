@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,6 @@ import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
-import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CostCenter;
@@ -115,30 +115,29 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	}
 
 	private void internalProcessResults(Liquidation liquidation) {
-		// Calculamos el importe total y el total de ajustes operativos de todas las facturas
-
 		BigDecimal betAmount = BigDecimal.ZERO;
 		BigDecimal satAmount = BigDecimal.ZERO;
 		BigDecimal otherBillAmount = BigDecimal.ZERO;
-
-		BigDecimal storeAmount = BigDecimal.ZERO; // NOTA solo es para los modelos en los que se incluyen los resultados de las facturas
+		BigDecimal storeAmount = BigDecimal.ZERO;
 		BigDecimal adjustmentsAmount = BigDecimal.ZERO;
 		BigDecimal cashStore = BigDecimal.ZERO;
-
 		for (Bill bill : liquidation.getBills()) {
 			betAmount = betAmount.add(bill.getLiquidationBetAmount() != null ? bill.getLiquidationBetAmount() : BigDecimal.ZERO);
 			satAmount = satAmount.add(bill.getLiquidationSatAmount() != null ? bill.getLiquidationSatAmount() : BigDecimal.ZERO);
 			otherBillAmount = otherBillAmount.add(bill.getLiquidationOtherAmount() != null ? bill.getLiquidationOtherAmount() : BigDecimal.ZERO);
 			adjustmentsAmount = adjustmentsAmount.add(bill.getAdjustmentAmount() != null ? bill.getAdjustmentAmount() : BigDecimal.ZERO);
 			cashStore = cashStore.add(bill.getStoreCash() != null ? bill.getStoreCash() : BigDecimal.ZERO);
+			if (BooleanUtils.isTrue(bill.getModel().getIncludeStores())) {
+				storeAmount = storeAmount.add(bill.getAmount());
+			}
 		}
-
 		LiquidationResults results = liquidation.getLiquidationResults();
 		if (results == null) {
 			results = new LiquidationResults();
 			liquidation.setLiquidationResults(results);
 		}
 		results.setBetAmount(betAmount);
+		results.setStoreAmount(storeAmount);
 		results.setSatAmount(satAmount);
 		results.setOtherAmount(otherBillAmount);
 		results.setAdjustmentAmount(adjustmentsAmount);

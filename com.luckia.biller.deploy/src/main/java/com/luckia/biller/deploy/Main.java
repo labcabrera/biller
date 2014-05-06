@@ -77,7 +77,7 @@ public class Main {
 				egasa.setIdCard(new IdCard());
 			}
 			egasa.getIdCard().setNumber("A98359169");
-			egasa.setAccountNumber("ES29 0182 6205 16 02001501686");
+			egasa.setAccountNumber("ES29 0182 6205 16 0201501686");
 			entityManager.getTransaction().begin();
 			entityManager.merge(egasa);
 			entityManager.getTransaction().commit();

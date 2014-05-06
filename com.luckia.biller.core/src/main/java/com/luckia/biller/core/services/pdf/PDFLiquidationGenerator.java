@@ -37,11 +37,11 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 	@Inject
 	private BillDetailNameProvider billDetailNameProvider;
 
-	private List<Map<String, String>> betDetails;
-	private List<Map<String, String>> storeDetails;
-	private List<Map<String, String>> satDetails;
-	private List<Map<String, String>> adjustmentDetails;
-	private List<Map<String, String>> otherDetails;
+	private List<Map<String, Object>> betDetails;
+	private List<Map<String, Object>> storeDetails;
+	private List<Map<String, Object>> satDetails;
+	private List<Map<String, Object>> adjustmentDetails;
+	private List<Map<String, Object>> otherDetails;
 
 	@Override
 	public void generate(Liquidation liquidation, OutputStream out) {
@@ -60,11 +60,11 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			printCommentsPdf(document, liquidation);
 
 			// Desglose en conceptos
-			printDetails(document, liquidation, "Honorarios por apuestas", betDetails, liquidation.getLiquidationResults().getBetAmount());
-			printDetails(document, liquidation, "Honorarios para bares", storeDetails, liquidation.getLiquidationResults().getStoreAmount());
-			printDetails(document, liquidation, "Honorarios SAT", satDetails, liquidation.getLiquidationResults().getSatAmount());
-			printDetails(document, liquidation, "Ajustes operativos", adjustmentDetails, liquidation.getLiquidationResults().getAdjustmentAmount());
-			printDetails(document, liquidation, "Otros", otherDetails, liquidation.getLiquidationResults().getOtherAmount());
+			printDetails(document, liquidation, "Honorarios por apuestas", betDetails);
+			printDetails(document, liquidation, "Honorarios para bares", storeDetails);
+			printDetails(document, liquidation, "Honorarios SAT", satDetails);
+			printDetails(document, liquidation, "Ajustes operativos", adjustmentDetails);
+			printDetails(document, liquidation, "Otros", otherDetails);
 
 			document.close();
 		} catch (Exception ex) {
@@ -78,11 +78,11 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		satDetails = new ArrayList<>();
 		adjustmentDetails = new ArrayList<>();
 		otherDetails = new ArrayList<>();
-		Map<String, String> map;
+		Map<String, Object> map;
 		for (LiquidationDetail detail : liquidation.getDetails()) {
-			map = new HashMap<String, String>();
+			map = new HashMap<>();
 			map.put("name", detail.getName());
-			map.put("value", formatAmount(detail.getValue()));
+			map.put("value", detail.getValue());
 			otherDetails.add(map);
 			break;
 		}
@@ -91,22 +91,22 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
 				String desc = billDetailNameProvider.getName(i);
 				BigDecimal value = i.getValue();
-				if (MathUtils.isNotZero(value)) {
+				if (MathUtils.isNotZero(value) && i.getConcept() != null) {
 					switch (i.getConcept()) {
 					case GGR:
 					case NGR:
 					case NR:
 					case Stakes:
-						map = new HashMap<String, String>();
+						map = new HashMap<>();
 						map.put("name", bill.getSender().getName() + ": " + desc);
-						map.put("value", formatAmount(value));
+						map.put("value", value);
 						betDetails.add(map);
 						break;
 					case SatMonthlyFees:
 					case CommercialMonthlyFees:
-						map = new HashMap<String, String>();
+						map = new HashMap<>();
 						map.put("name", bill.getSender().getName() + ": " + desc);
-						map.put("value", formatAmount(value));
+						map.put("value", value);
 						satDetails.add(map);
 						break;
 					default:
@@ -119,15 +119,15 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 				if (detail.getConcept() != null) {
 					switch (detail.getConcept()) {
 					case Adjustment:
-						map = new HashMap<String, String>();
+						map = new HashMap<>();
 						map.put("name", bill.getSender().getName() + ": " + detail.getName());
-						map.put("value", formatAmount(detail.getValue()));
+						map.put("value", detail.getValue());
 						adjustmentDetails.add(map);
 						break;
 					case ManualWithLiquidation:
-						map = new HashMap<String, String>();
+						map = new HashMap<>();
 						map.put("name", bill.getSender().getName() + ": " + detail.getName());
-						map.put("value", formatAmount(detail.getValue()));
+						map.put("value", detail.getValue());
 						otherDetails.add(map);
 						break;
 					default:
@@ -278,7 +278,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		document.add(paragraph);
 	}
 
-	protected void printDetails(Document document, Liquidation liquidation, String title, List<Map<String, String>> details, BigDecimal totalAmount) throws DocumentException {
+	protected void printDetails(Document document, Liquidation liquidation, String title, List<Map<String, Object>> details) throws DocumentException {
 		if (details.isEmpty()) {
 			return;
 		}
@@ -297,17 +297,20 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		cells.add(createCell("Desc. (%)", Element.ALIGN_RIGHT, boldFont));
 		cells.add(createCell("Importe", Element.ALIGN_RIGHT, boldFont));
 
-		for (Map<String, String> map : details) {
-			cells.add(createCell(map.get("name"), Element.ALIGN_LEFT, documentFont));
+		BigDecimal total = BigDecimal.ZERO;
+		for (Map<String, Object> map : details) {
+			BigDecimal partial = (BigDecimal) map.get("value");
+			cells.add(createCell((String) map.get("name"), Element.ALIGN_LEFT, documentFont));
 			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(map.get("value"), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(partial), Element.ALIGN_RIGHT, documentFont));
 			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(map.get("value"), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(partial), Element.ALIGN_RIGHT, documentFont));
+			total = total.add(partial);
 		}
 
 		cells.add(createCell("TOTAL", Element.ALIGN_LEFT, boldFont));
 		cells.addAll(createEmptyCells(3));
-		cells.add(createCell(formatAmount(totalAmount), Element.ALIGN_RIGHT, boldFont));
+		cells.add(createCell(formatAmount(total), Element.ALIGN_RIGHT, boldFont));
 
 		int cols = 5;
 		for (int i = 0; i < cells.size(); i++) {

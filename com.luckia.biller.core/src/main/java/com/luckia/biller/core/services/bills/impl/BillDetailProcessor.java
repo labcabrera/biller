@@ -157,8 +157,10 @@ public class BillDetailProcessor {
 
 	private List<String> resolveTerminals(Store store) {
 		List<String> result = new ArrayList<String>();
-		for (TerminalRelation i : store.getTerminalRelations()) {
-			result.add(i.getCode());
+		if (store.getTerminalRelations() != null) {
+			for (TerminalRelation i : store.getTerminalRelations()) {
+				result.add(i.getCode());
+			}
 		}
 		return result;
 	}

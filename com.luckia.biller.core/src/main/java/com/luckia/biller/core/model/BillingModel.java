@@ -69,6 +69,12 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	@Embedded
 	private AuditData auditData;
 
+	/**
+	 * Flag que determina si las facturas se incluyen dentro de la liquidacion de un operador.
+	 */
+	@Column(name = "INCLUDE_STORES")
+	private Boolean includeStores;
+
 	public Long getId() {
 		return id;
 	}
@@ -117,6 +123,14 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	@Override
 	public void setAuditData(AuditData auditData) {
 		this.auditData = auditData;
+	}
+
+	public Boolean getIncludeStores() {
+		return includeStores;
+	}
+
+	public void setIncludeStores(Boolean includeStores) {
+		this.includeStores = includeStores;
 	}
 
 	@Override
