@@ -44,6 +44,19 @@ public enum BillConcept {
 	/** Saldo de caja */
 	StoreCash,
 
+	/** Ajuste operativo */
+	Adjustment,
+
+	/**
+	 * Ajuste manual incluído en la liquidación
+	 */
+	ManualWithLiquidation,
+
+	/**
+	 * Ajuste manual no incluído en la liquidación
+	 */
+	ManualWithoutLiquidation,
+
 	/** Cualquier otro concepto de facturacion que no este incluido en el modelo */
 	Other
 }

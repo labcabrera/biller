@@ -74,17 +74,8 @@
 										<td>{{bill.billDate.substr(0,10)}}</td>
 										<td>{{bill.currentState.stateDefinition.desc}}</td>
 										<td class="data-amount">{{bill.amount}}</td>
-										<td class="data-amount">{{bill.liquidationAmount}}</td>
+										<td class="data-amount">{{bill.liquidationTotalAmount}}</td>
 										<td><a href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
-									</tr>
-									<tr ng-if="entity.details != null && entity.details.length > 0">
-										<th>Ajustes operativos</th>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
 									</tr>
 									<tr ng-repeat="detail in entity.details">
 										<td>{{detail.name}}</td>
@@ -96,12 +87,57 @@
 										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
 									</tr>
 									<tr>
-										<td><b>Total</b></td>
+										<td>Ajustes operativos (50%)</td>
 										<td></td>
 										<td></td>
 										<td></td>
 										<td></td>
-										<td class="data-amount"><b>{{entity.amount}}</b></td>
+										<td class="data-amount">{{entity.liquidationResults.adjustmentSharedAmount}}</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td><b>Total {{entity.sender.name}}</b></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount"><b>{{entity.liquidationResults.senderAmount}}</b></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Saldo de caja</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount">{{entity.liquidationResults.cashStoreAmount}}</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Ajustes operativos (100%)</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount">{{entity.liquidationResults.adjustmentAmount}}</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Saldo de caja ajustado</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount">{{entity.liquidationResults.cashStoreAdjustmentAmount}}</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td><b>Resultado a percibir por {{entity.receiver.name}}</b></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount">{{entity.liquidationResults.receiverAmount}}</td>
 										<td></td>
 									</tr>
 								</table>

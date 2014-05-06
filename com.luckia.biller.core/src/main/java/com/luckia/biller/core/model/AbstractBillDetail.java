@@ -124,5 +124,6 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 		this.name = entity.name;
 		this.units = entity.units != null ? entity.units.setScale(2, RoundingMode.HALF_EVEN) : null;
 		this.value = entity.value != null ? entity.value.setScale(2, RoundingMode.HALF_EVEN) : null;
+		this.concept = entity.concept;
 	}
 }

@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
@@ -42,6 +43,9 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 	@NotSerializable
 	private List<Bill> bills;
 
+	@Embedded
+	private LiquidationResults liquidationResults;
+
 	/**
 	 * Lista de detalles (ajustes operativos) de la liquidación.
 	 */
@@ -63,10 +67,26 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 		this.details = details;
 	}
 
+	public LiquidationResults getLiquidationResults() {
+		return liquidationResults;
+	}
+
+	public void setLiquidationResults(LiquidationResults liquidationResults) {
+		this.liquidationResults = liquidationResults;
+	}
+
 	@Override
 	public void merge(Liquidation entity) {
 		this.billDate = entity.billDate;
 		this.comments = entity.comments;
 		this.commentsPdf = entity.commentsPdf;
+		if (entity.liquidationResults != null) {
+			if (this.liquidationResults == null) {
+				this.liquidationResults = new LiquidationResults();
+			}
+			this.liquidationResults.merge(entity.liquidationResults);
+		} else {
+			this.liquidationResults = null;
+		}
 	}
 }

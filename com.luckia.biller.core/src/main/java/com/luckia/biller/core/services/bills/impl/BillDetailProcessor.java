@@ -65,7 +65,6 @@ public class BillDetailProcessor {
 			Map<BillConcept, BigDecimal> billingData = billingDataProvider.retreive(bill, range, terminals);
 			BigDecimal vatPercent = settingsService.getBillingSettings().getValue("vat", BigDecimal.class);
 			BigDecimal vatDivisor = BigDecimal.ONE.add(vatPercent.divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN));
-			System.out.println(vatDivisor + " == 1.21");
 
 			// Calculamos los conceptos de la facturacion.
 			if (MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {

@@ -26,11 +26,14 @@ import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CostCenter;
+import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
+import com.luckia.biller.core.model.LiquidationResults;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
@@ -59,6 +62,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private AuditService auditService;
 	@Inject
 	private I18nService i18nService;
+	@Inject
+	private LiquidationReceiverProvider liquidationReceiverProvider;
 
 	/*
 	 * (non-Javadoc)
@@ -78,12 +83,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		if (!entityManager.getTransaction().isActive()) {
 			entityManager.getTransaction().begin();
 		}
-		
-		// TODO fix liquidacion manual
-		TypedQuery<Company> queryEgasa = entityManager.createQuery("select e from Company e where e.name like :name", Company.class);
-		List<Company> list = queryEgasa.setParameter("name", "%Egasa%").getResultList();
-		Company egasa = list.iterator().next();
-		
+		LegalEntity egasa = liquidationReceiverProvider.getReceiver();
 		List<Liquidation> result = new ArrayList<Liquidation>();
 		LOG.info("Centros de coste asociados a la liquidacion:");
 		for (CostCenter costCenter : costCenterMap.keySet()) {
@@ -99,14 +99,12 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			liquidation.setBillDate(range.getMaximum());
 			liquidation.setModel(company.getBillingModel());
 
-			BigDecimal totalAmount = BigDecimal.ZERO;
+			internalProcessResults(liquidation);
 			for (Bill bill : liquidation.getBills()) {
-				totalAmount = totalAmount.add(bill.getLiquidationAmount());
 				bill.setLiquidation(liquidation);
 				entityManager.merge(bill);
 			}
-			liquidation.setAmount(totalAmount);
-			LOG.debug("Resultado de la liquidacion: {}", totalAmount);
+
 			entityManager.merge(liquidation);
 			auditService.processCreated(liquidation);
 			result.add(liquidation);
@@ -116,24 +114,57 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		return result;
 	}
 
+	private void internalProcessResults(Liquidation liquidation) {
+		// Calculamos el importe total y el total de ajustes operativos de todas las facturas
+
+		BigDecimal betAmount = BigDecimal.ZERO;
+		BigDecimal satAmount = BigDecimal.ZERO;
+		BigDecimal otherBillAmount = BigDecimal.ZERO;
+
+		BigDecimal storeAmount = BigDecimal.ZERO; // NOTA solo es para los modelos en los que se incluyen los resultados de las facturas
+		BigDecimal adjustmentsAmount = BigDecimal.ZERO;
+		BigDecimal cashStore = BigDecimal.ZERO;
+
+		for (Bill bill : liquidation.getBills()) {
+			betAmount = betAmount.add(bill.getLiquidationBetAmount() != null ? bill.getLiquidationBetAmount() : BigDecimal.ZERO);
+			satAmount = satAmount.add(bill.getLiquidationSatAmount() != null ? bill.getLiquidationSatAmount() : BigDecimal.ZERO);
+			otherBillAmount = otherBillAmount.add(bill.getLiquidationOtherAmount() != null ? bill.getLiquidationOtherAmount() : BigDecimal.ZERO);
+			adjustmentsAmount = adjustmentsAmount.add(bill.getAdjustmentAmount() != null ? bill.getAdjustmentAmount() : BigDecimal.ZERO);
+			cashStore = cashStore.add(bill.getStoreCash() != null ? bill.getStoreCash() : BigDecimal.ZERO);
+		}
+
+		LiquidationResults results = liquidation.getLiquidationResults();
+		if (results == null) {
+			results = new LiquidationResults();
+			liquidation.setLiquidationResults(results);
+		}
+		results.setBetAmount(betAmount);
+		results.setSatAmount(satAmount);
+		results.setOtherAmount(otherBillAmount);
+		results.setAdjustmentAmount(adjustmentsAmount);
+		results.setAdjustmentSharedAmount(adjustmentsAmount.divide(new BigDecimal("2"), 2, RoundingMode.HALF_EVEN));
+		results.setCashStoreAmount(cashStore);
+		results.setCashStoreAdjustmentAmount(cashStore.add(adjustmentsAmount));
+
+		BigDecimal senderAmount = betAmount.add(satAmount).add(otherBillAmount).add(results.getAdjustmentSharedAmount());
+		if (liquidation.getDetails() != null) {
+			for (LiquidationDetail detail : liquidation.getDetails()) {
+				senderAmount = senderAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
+			}
+		}
+		results.setSenderAmount(senderAmount);
+		results.setReceiverAmount(results.getCashStoreAdjustmentAmount().subtract(senderAmount));
+	}
+
 	@Override
 	public Liquidation updateResults(Liquidation liquidation) {
+		LOG.debug("Actualizando resultados de liquidacion");
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.clear();
 		Liquidation current = entityManager.find(Liquidation.class, liquidation.getId());
 		entityManager.getTransaction().begin();
-		BigDecimal totalAmount = BigDecimal.ZERO;
-		if (current.getBills() != null) {
-			for (Bill i : current.getBills()) {
-				totalAmount = totalAmount.add(i.getLiquidationAmount() != null ? i.getLiquidationAmount() : BigDecimal.ZERO);
-			}
-		}
-		if (current.getDetails() != null) {
-			for (LiquidationDetail i : current.getDetails()) {
-				totalAmount = totalAmount.add(i.getValue() != null ? i.getValue() : BigDecimal.ZERO);
-			}
-		}
-		current.setAmount(totalAmount);
+		internalProcessResults(liquidation);
+		entityManager.merge(liquidation);
 		entityManager.getTransaction().commit();
 		return current;
 	}

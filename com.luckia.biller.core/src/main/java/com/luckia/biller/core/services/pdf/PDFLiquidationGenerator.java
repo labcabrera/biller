@@ -27,6 +27,7 @@ import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.services.bills.impl.BillDetailNameProvider;
 
 public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
@@ -39,12 +40,8 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 	private List<Map<String, String>> betDetails;
 	private List<Map<String, String>> storeDetails;
 	private List<Map<String, String>> satDetails;
+	private List<Map<String, String>> adjustmentDetails;
 	private List<Map<String, String>> otherDetails;
-	private BigDecimal totalBetAmount;
-	private BigDecimal totalStoreAmount;
-	private BigDecimal totalSatAmount;
-	private BigDecimal totalOtherAmount;
-	private BigDecimal storeCash;
 
 	@Override
 	public void generate(Liquidation liquidation, OutputStream out) {
@@ -63,10 +60,11 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			printCommentsPdf(document, liquidation);
 
 			// Desglose en conceptos
-			printDetails(document, liquidation, "Honorarios por apuestas", betDetails, totalBetAmount);
-			printDetails(document, liquidation, "Honorarios para bares", storeDetails, totalStoreAmount);
-			printDetails(document, liquidation, "Honorarios SAT", satDetails, totalSatAmount);
-			printDetails(document, liquidation, "Ajustes operativos", otherDetails, totalOtherAmount);
+			printDetails(document, liquidation, "Honorarios por apuestas", betDetails, liquidation.getLiquidationResults().getBetAmount());
+			printDetails(document, liquidation, "Honorarios para bares", storeDetails, liquidation.getLiquidationResults().getStoreAmount());
+			printDetails(document, liquidation, "Honorarios SAT", satDetails, liquidation.getLiquidationResults().getSatAmount());
+			printDetails(document, liquidation, "Ajustes operativos", adjustmentDetails, liquidation.getLiquidationResults().getAdjustmentAmount());
+			printDetails(document, liquidation, "Otros", otherDetails, liquidation.getLiquidationResults().getOtherAmount());
 
 			document.close();
 		} catch (Exception ex) {
@@ -75,17 +73,21 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 	}
 
 	protected void init(Liquidation liquidation) {
-		betDetails = new ArrayList<Map<String, String>>();
-		storeDetails = new ArrayList<Map<String, String>>();
-		satDetails = new ArrayList<Map<String, String>>();
-		otherDetails = new ArrayList<Map<String, String>>();
-		totalBetAmount = BigDecimal.ZERO;
-		totalStoreAmount = BigDecimal.ZERO;
-		totalSatAmount = BigDecimal.ZERO;
-		totalOtherAmount = BigDecimal.ZERO;
-		storeCash = BigDecimal.ZERO;
+		betDetails = new ArrayList<>();
+		storeDetails = new ArrayList<>();
+		satDetails = new ArrayList<>();
+		adjustmentDetails = new ArrayList<>();
+		otherDetails = new ArrayList<>();
 		Map<String, String> map;
+		for (LiquidationDetail detail : liquidation.getDetails()) {
+			map = new HashMap<String, String>();
+			map.put("name", detail.getName());
+			map.put("value", formatAmount(detail.getValue()));
+			otherDetails.add(map);
+			break;
+		}
 		for (Bill bill : liquidation.getBills()) {
+			// En primer lugar computamos los detalles de liquidacion de la factura
 			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
 				String desc = billDetailNameProvider.getName(i);
 				BigDecimal value = i.getValue();
@@ -99,7 +101,6 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 						map.put("name", bill.getSender().getName() + ": " + desc);
 						map.put("value", formatAmount(value));
 						betDetails.add(map);
-						totalBetAmount = totalBetAmount.add(value);
 						break;
 					case SatMonthlyFees:
 					case CommercialMonthlyFees:
@@ -107,28 +108,33 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 						map.put("name", bill.getSender().getName() + ": " + desc);
 						map.put("value", formatAmount(value));
 						satDetails.add(map);
-						totalSatAmount = totalSatAmount.add(value);
 						break;
 					default:
-						map = new HashMap<String, String>();
-						map.put("name", bill.getSender().getName() + ": " + desc);
-						map.put("value", formatAmount(value));
-						otherDetails.add(map);
-						totalOtherAmount = totalOtherAmount.add(value);
 						break;
 					}
 				}
 			}
+			// En segundo lugar computamos los detalles de la factura que aplican a la liquidacion (ajustes operativos y ajustes manuales)
 			for (BillDetail detail : bill.getDetails()) {
-				if (detail.getPropagate() != null && detail.getPropagate()) {
-					map = new HashMap<String, String>();
-					map.put("name", bill.getSender().getName() + ": " + detail.getName());
-					map.put("value", formatAmount(detail.getValue()));
-					otherDetails.add(map);
-					totalOtherAmount = totalOtherAmount.add(detail.getValue());
+				if (detail.getConcept() != null) {
+					switch (detail.getConcept()) {
+					case Adjustment:
+						map = new HashMap<String, String>();
+						map.put("name", bill.getSender().getName() + ": " + detail.getName());
+						map.put("value", formatAmount(detail.getValue()));
+						adjustmentDetails.add(map);
+						break;
+					case ManualWithLiquidation:
+						map = new HashMap<String, String>();
+						map.put("name", bill.getSender().getName() + ": " + detail.getName());
+						map.put("value", formatAmount(detail.getValue()));
+						otherDetails.add(map);
+						break;
+					default:
+						break;
+					}
 				}
 			}
-			storeCash = storeCash.add(bill.getStoreCash() != null ? bill.getStoreCash() : BigDecimal.ZERO);
 		}
 	}
 
@@ -138,7 +144,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		PdfPTable table = new PdfPTable(new float[] { 30f, 10f, 10f, 10f, 10f });
 		table.setWidthPercentage(100f);
 
-		List<PdfPCell> cells = new ArrayList<PdfPCell>();
+		List<PdfPCell> cells = new ArrayList<>();
 
 		cells.add(createCell("Liquidación", Element.ALIGN_LEFT, documentFont));
 		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
@@ -152,58 +158,77 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		cells.add(createCell("Desc. (%)", Element.ALIGN_RIGHT, boldFont));
 		cells.add(createCell("Importe", Element.ALIGN_RIGHT, boldFont));
 
-		if (MathUtils.isNotZero(totalBetAmount)) {
+		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getBetAmount())) {
 			cells.add(createCell("Honorarios por apuestas", Element.ALIGN_LEFT, documentFont));
 			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(totalBetAmount), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getBetAmount()), Element.ALIGN_RIGHT, documentFont));
 			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(totalBetAmount), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getBetAmount()), Element.ALIGN_RIGHT, documentFont));
 		}
 
-		if (MathUtils.isNotZero(totalStoreAmount)) {
+		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getStoreAmount())) {
 			cells.add(createCell("Honorarios para bares", Element.ALIGN_LEFT, documentFont));
 			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(totalStoreAmount), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getStoreAmount()), Element.ALIGN_RIGHT, documentFont));
 			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(totalStoreAmount), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getStoreAmount()), Element.ALIGN_RIGHT, documentFont));
 		}
 
-		if (MathUtils.isNotZero(totalSatAmount)) {
+		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getStoreAmount())) {
 			cells.add(createCell("Honorarios SAT", Element.ALIGN_LEFT, documentFont));
 			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(totalSatAmount), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getStoreAmount()), Element.ALIGN_RIGHT, documentFont));
 			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(totalSatAmount), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getStoreAmount()), Element.ALIGN_RIGHT, documentFont));
 		}
 
-		if (MathUtils.isNotZero(totalOtherAmount)) {
+		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getAdjustmentSharedAmount())) {
 			cells.add(createCell("Ajustes operativos", Element.ALIGN_LEFT, documentFont));
 			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(totalOtherAmount), Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(totalOtherAmount), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getAdjustmentAmount()), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell("50%", Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getAdjustmentSharedAmount()), Element.ALIGN_RIGHT, documentFont));
 		}
+
+		if (liquidation.getDetails() != null) {
+			for (LiquidationDetail detail : liquidation.getDetails()) {
+				cells.add(createCell(detail.getName(), Element.ALIGN_LEFT, documentFont));
+				cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
+				cells.add(createCell(formatAmount(detail.getValue()), Element.ALIGN_RIGHT, documentFont));
+				cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
+				cells.add(createCell(formatAmount(detail.getValue()), Element.ALIGN_RIGHT, documentFont));
+			}
+		}
+
+		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getOtherAmount())) {
+			cells.add(createCell("Otros conceptos", Element.ALIGN_LEFT, documentFont));
+			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getOtherAmount()), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getOtherAmount()), Element.ALIGN_RIGHT, documentFont));
+		}
+
 		cells.add(createCell("TOTAL LIQUIDACIÓN", Element.ALIGN_LEFT, boldFont));
 		cells.addAll(createEmptyCells(3));
-		cells.add(createCell(formatAmount(liquidation.getAmount()), Element.ALIGN_RIGHT, boldFont));
+		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getSenderAmount()), Element.ALIGN_RIGHT, boldFont));
 
 		cells.addAll(createEmptyCells(5));
 
-		cells.add(createCell("Recaudación en posesión de " + senderName, Element.ALIGN_LEFT, documentFont));
+		cells.add(createCell("Saldo de caja de " + senderName, Element.ALIGN_LEFT, documentFont));
 		cells.addAll(createEmptyCells(3));
-		cells.add(createCell(formatAmount(storeCash), Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreAmount()), Element.ALIGN_RIGHT, documentFont));
 
 		cells.add(createCell("Ajustes operativos (100%)", Element.ALIGN_LEFT, documentFont));
 		cells.addAll(createEmptyCells(3));
-		cells.add(createCell(formatAmount(BigDecimal.ZERO), Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getAdjustmentAmount()), Element.ALIGN_RIGHT, documentFont));
 
 		cells.add(createCell("Recaudación en posesión de " + senderName, Element.ALIGN_LEFT, documentFont));
 		cells.addAll(createEmptyCells(3));
-		cells.add(createCell(formatAmount(storeCash), Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreAdjustmentAmount()), Element.ALIGN_RIGHT, documentFont));
 
 		cells.add(createCell("Total liquidación a percibir por " + senderName, Element.ALIGN_LEFT, documentFont));
 		cells.addAll(createEmptyCells(3));
-		cells.add(createCell(formatAmount(liquidation.getAmount()), Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getSenderAmount()), Element.ALIGN_RIGHT, documentFont));
 
 		String message;
 		if (StringUtils.isBlank(liquidation.getReceiver().getAccountNumber())) {
@@ -213,7 +238,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		}
 		cells.add(createCell(message, Element.ALIGN_LEFT, boldFont));
 		cells.addAll(createEmptyCells(3));
-		cells.add(createCell(formatAmount(storeCash.subtract(liquidation.getAmount())), Element.ALIGN_RIGHT, boldFont));
+		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getReceiverAmount()), Element.ALIGN_RIGHT, boldFont));
 
 		int cols = 5;
 		for (int i = 0; i < cells.size(); i++) {

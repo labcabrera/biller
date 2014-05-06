@@ -29,7 +29,15 @@ import com.luckia.biller.core.jpa.Mergeable;
  * <ul>
  * <li>En emisor de la factura será el titular del establecimiento.</li>
  * <li>El receptor de la factura será la empresa a la que está asociada el establecimiento</li>
- * <li>El código de la factura se generará secuencialmente a partir de la secuencia de cada uno de los clientes</li>
+ * <li>El código de la factura se generará secuencialmente a partir de la secuencia de cada uno de los clientes. El código solo se generará
+ * una vez se aprueba la factura</li>
+ * </ul>
+ * Los detalles de las facturas tienen tres posibilidades:
+ * <ul>
+ * <li><b>Ajustes operativos</b> (incluidos en la liquidacion): los ajustes operativos representan robos o descuadres que practicamente
+ * siempre serán negativos.</li>
+ * <li><b>Ajustes manuales incluídos en la liquidación</b></li>
+ * <li><b>Ajustes manuales NO incluídos en la liquidación</b></li>
  * </ul>
  */
 @Entity
@@ -70,8 +78,32 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	@Column(name = "VAT_PERCENT", precision = 18, scale = 2)
 	private BigDecimal vatPercent;
 
-	@Column(name = "LIQUIDATION_AMOUNT", precision = 18, scale = 2)
-	private BigDecimal liquidationAmount;
+	/**
+	 * Resultado total de la liquidacion:
+	 * 
+	 * <pre>
+	 * 
+	 * resultado = sum(liquidationDetail) + sum(billDetails|type:manual)
+	 * 
+	 * </pre>
+	 */
+	@Column(name = "LIQUIDATION_TOTAL_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal liquidationTotalAmount;
+
+	@Column(name = "LIQUIDATION_BET_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal liquidationBetAmount;
+
+	@Column(name = "LIQUIDATION_SAT_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal liquidationSatAmount;
+
+	@Column(name = "LIQUIDATION_OTHER_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal liquidationOtherAmount;
+
+	/**
+	 * Total de ajustes operativos de la liquidación
+	 */
+	@Column(name = "ADJUSTMENT_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal adjustmentAmount;
 
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "LIQUIDATION_ID")
@@ -147,12 +179,12 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 		this.liquidationDetails = liquidationDetails;
 	}
 
-	public BigDecimal getLiquidationAmount() {
-		return liquidationAmount;
+	public BigDecimal getLiquidationTotalAmount() {
+		return liquidationTotalAmount;
 	}
 
-	public void setLiquidationAmount(BigDecimal liquidationAmount) {
-		this.liquidationAmount = liquidationAmount;
+	public void setLiquidationTotalAmount(BigDecimal liquidationAmount) {
+		this.liquidationTotalAmount = liquidationAmount;
 	}
 
 	public BigDecimal getStoreCash() {
@@ -161,6 +193,38 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	public void setStoreCash(BigDecimal storeCash) {
 		this.storeCash = storeCash;
+	}
+
+	public BigDecimal getAdjustmentAmount() {
+		return adjustmentAmount;
+	}
+
+	public void setAdjustmentAmount(BigDecimal adjustmentAmount) {
+		this.adjustmentAmount = adjustmentAmount;
+	}
+
+	public BigDecimal getLiquidationBetAmount() {
+		return liquidationBetAmount;
+	}
+
+	public void setLiquidationBetAmount(BigDecimal liquidationBetAmount) {
+		this.liquidationBetAmount = liquidationBetAmount;
+	}
+
+	public BigDecimal getLiquidationSatAmount() {
+		return liquidationSatAmount;
+	}
+
+	public void setLiquidationSatAmount(BigDecimal liquidationSatAmount) {
+		this.liquidationSatAmount = liquidationSatAmount;
+	}
+
+	public BigDecimal getLiquidationOtherAmount() {
+		return liquidationOtherAmount;
+	}
+
+	public void setLiquidationOtherAmount(BigDecimal liquidationOtherAmount) {
+		this.liquidationOtherAmount = liquidationOtherAmount;
 	}
 
 	/*

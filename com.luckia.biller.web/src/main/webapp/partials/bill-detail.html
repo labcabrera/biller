@@ -78,7 +78,7 @@
 					<li class="active"><a data-target="#detailTab" data-toggle="tab">Detalles</a></li>
 					<li><a data-target="#ownerTab" data-toggle="tab">Titular</a></li>
 					<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
-					<li><a data-target="#liquidationDetailTab" data-toggle="tab">Detalles de liquidacion ({{entity.liquidationAmount}})</a></li>
+					<li><a data-target="#liquidationDetailTab" data-toggle="tab">Detalles de liquidacion ({{entity.liquidationTotalAmount}})</a></li>
 					<li><a data-target="#commentsPdfTab" data-toggle="tab">Comentarios PDF</a></li>
 				</ul> 				
 				<div class="tab-content">
@@ -90,12 +90,14 @@
 								<table class="table">
 									<tr>
 										<th>Concepto</th>
+										<th class="data-amount" title="Ajuste operativo">Ajuste Op.</th>
 										<th class="data-amount">Unidades</th>
 										<th class="data-amount">Importe</th>
 										<th></th>
 									</tr>
 									<tr ng-repeat="detail in entity.details">
 										<td>{{detail.name}}</td>
+										<td class="data-amount"><span ng-if="detail.type == Adjustment">Si</span></td>
 										<td class="data-amount">{{detail.units}}</td>
 										<td class="data-amount">{{detail.value}}</td>
 										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
@@ -103,17 +105,20 @@
 									<tr>
 										<td><b>Base</b></td>
 										<td></td>
+										<td></td>
 										<td class="data-amount"><b>{{entity.netAmount}}</b></td>
 										<td></td>
 									</tr>
 									<tr>
 										<td><b>IVA ({{entity.vatPercent}} %)</b></td>
 										<td></td>
+										<td></td>
 										<td class="data-amount"><b>{{entity.vatAmount}}</b></td>
 										<td></td>
 									</tr>
 									<tr>
 										<td><b>Total</b></td>
+										<td></td>
 										<td></td>
 										<td class="data-amount"><b>{{entity.amount}}</b></td>
 										<td></td>
@@ -162,7 +167,7 @@
 									<td class="data-amount">{{detail.value}}</td>
 									<td></td>
 								</tr>
-								<tr ng-repeat="detail in entity.details" ng-if="detail.propagate">
+								<tr ng-repeat="detail in entity.details" ng-if="detail.concept == 'ManualWithLiquidation'">
 									<td>{{detail.name}}</td>
 									<td class="data-amount">{{detail.units}}</td>
 									<td class="data-amount">{{detail.value}}</td>
@@ -171,14 +176,17 @@
 								<tr>
 									<td><b>Total</b></td>
 									<td></td>
-									<td class="data-amount"><b>{{entity.liquidationAmount}}</b></td>
+									<td class="data-amount"><b>{{entity.liquidationTotalAmount}}</b></td>
 									<td></td>
 								</tr>
 								<tr>
-									<td colspan="4">&nbsp;</td>
+									<td><b>Ajustes operativos</b></td>
+									<td></td>
+									<td class="data-amount"><b>{{entity.adjustmentAmount}}</b></td>
+									<td></td>
 								</tr>
 								<tr>
-									<td>Saldo de caja</td>
+									<td><b>Saldo de caja</b></td>
 									<td></td>
 									<td class="data-amount"><b>{{entity.storeCash}}</b></td>
 									<td></td>

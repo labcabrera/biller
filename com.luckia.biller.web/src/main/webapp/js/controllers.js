@@ -702,7 +702,7 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		}
 	};
 	$scope.recalculate = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la factura')) {
+		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la factura. Los ajustes manuales se perderan')) {
 			$http.post('rest/bills/recalculate/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {

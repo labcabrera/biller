@@ -36,6 +36,7 @@ import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.BillProcessor;
+import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
 /**
@@ -61,6 +62,8 @@ public class BillProcessorImpl implements BillProcessor {
 	private PDFBillGenerator pdfBillGenerator;
 	@Inject
 	private AuditService auditService;
+	@Inject
+	private LiquidationProcessor liquidationProcessor;
 
 	/*
 	 * (non-Javadoc)
@@ -130,18 +133,57 @@ public class BillProcessorImpl implements BillProcessor {
 		bill.setVatPercent(vatPercent);
 		bill.setVatAmount(vatAmount);
 
-		// Sumamos todos los conceptos de liquidacion y los ajustes operativos que han de propagarse a la liquidacion para obtener el valor
-		BigDecimal liquidationAmount = BigDecimal.ZERO;
+		// Procesamos la liquidacion
+		BigDecimal betAmount = BigDecimal.ZERO;
+		BigDecimal satAmount = BigDecimal.ZERO;
+		BigDecimal otherAmount = BigDecimal.ZERO;
+		BigDecimal adjustmentAmount = BigDecimal.ZERO;
+
+		// Primero calculamos los conceptos de liquidacion
 		for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
-			liquidationAmount = liquidationAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
-		}
-		for (BillDetail detail : bill.getDetails()) {
-			if (detail.getPropagate() != null && detail.getPropagate()) {
-				liquidationAmount = liquidationAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
+			if (detail.getConcept() != null) {
+				BigDecimal partial = detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO;
+				switch (detail.getConcept()) {
+				case Stakes:
+				case GGR:
+				case NGR:
+				case NR:
+					betAmount = betAmount.add(partial);
+					break;
+				case SatMonthlyFees:
+				case CommercialMonthlyFees:
+					satAmount = satAmount.add(partial);
+					break;
+				default:
+					LOG.warn("Ignorando concepto no esperado en la liquidacion: {}", detail.getConcept());
+					break;
+				}
 			}
 		}
-		LOG.debug("Bill liquidation amount: {}", liquidationAmount);
-		bill.setLiquidationAmount(liquidationAmount);
+		// Despues comprobamos los conceptos de facturacion que aplican a la liquidacion
+		for (BillDetail detail : bill.getDetails()) {
+			if (detail.getConcept() != null) {
+				BigDecimal partial = detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO;
+				switch (detail.getConcept()) {
+				case ManualWithLiquidation:
+					otherAmount = otherAmount.add(partial);
+					break;
+				case Adjustment:
+					adjustmentAmount = adjustmentAmount.add(partial);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		BigDecimal totalLiquidationAmount = betAmount.add(satAmount).add(otherAmount);
+		LOG.debug("Bill liquidation amount: {}; Adjustment amount: {}", totalLiquidationAmount, adjustmentAmount);
+		bill.setLiquidationBetAmount(betAmount);
+		bill.setLiquidationSatAmount(satAmount);
+		bill.setLiquidationOtherAmount(otherAmount);
+		bill.setLiquidationTotalAmount(totalLiquidationAmount);
+		bill.setAdjustmentAmount(adjustmentAmount);
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.getTransaction().begin();
 		entityManager.merge(bill);
@@ -150,10 +192,13 @@ public class BillProcessorImpl implements BillProcessor {
 			entityManager.clear();
 			Liquidation liquidation = entityManager.find(Liquidation.class, bill.getLiquidation().getId());
 			LOG.debug("Actualizando resultados de la liquidacion {}", liquidation);
+			
+			
+			
 			BigDecimal totalAmount = BigDecimal.ZERO;
 			for (Bill i : liquidation.getBills()) {
-				LOG.debug("Liquidacion de {}: {}", i.getSender(), i.getLiquidationAmount());
-				totalAmount = totalAmount.add(i.getLiquidationAmount());
+				LOG.debug("Liquidacion de {}: {}", i.getSender(), i.getLiquidationTotalAmount());
+				totalAmount = totalAmount.add(i.getLiquidationTotalAmount());
 			}
 			liquidation.setAmount(totalAmount);
 			LOG.debug("Resultado de la liquidacion: {}", totalAmount);
@@ -253,6 +298,7 @@ public class BillProcessorImpl implements BillProcessor {
 		}
 		entityManager.getTransaction().commit();
 		entityManager.clear();
+		bill = entityManager.find(Bill.class, bill.getId());
 		processResults(bill);
 		entityManager.clear();
 		bill = entityManager.find(Bill.class, detail.getBill().getId());
