@@ -1,34 +1,35 @@
 2014-04-29
 
-OK	·En cuanto a las pruebas que hicimos Iván y yo, las facturaciones de salones estarían mal,
+DONE
+	En cuanto a las pruebas que hicimos Iván y yo, las facturaciones de salones estarían mal,
 		porque no se resta el gasto de co-explotación. Por lo demás los bares que yo vi, estaban
 		correctas al céntimo. En cuanto solucionemos esto de la co-explotación seguiré probando.
-OK	·Que se pueda regenerar la factura de un local concreto.
-OK	·Que se puedan regenerar todas las facturas de todos los locales de un mes concreto.
-	·Que si un terminal ya está asignado y se le intenta asignar a un local, aparezca un mensaje
-		diciendo que el terminal ya está asignado.
-		[Avisar con un pop-up ya que el sistema esta funcionando correctamente]
-	·Que cuando se vaya a hacer un borrado, se muestre un mensaje de confirmación de que se desea
-		borrar realmente.
-		[Pendiente]
-OK	·Que en el pdf de la factura haya un campo observaciones que lo pueda rellenar el
+	Que se pueda regenerar la factura de un local concreto.
+	Que se puedan regenerar todas las facturas de todos los locales de un mes concreto.
+	Que en el pdf de la factura haya un campo observaciones que lo pueda rellenar el
 		administrativo de turno y se vea su contenido en la factura.[
-	·Finalmente, si una factura o liquidación no se ha podido enviar a un email de una empresa o
-		grupo de empresa por no estar dado de alta el email, que se envíe a pagos@luckia.es. 
+	Que si un terminal ya está asignado y se le intenta asignar a un local, aparezca un mensaje
+		diciendo que el terminal ya está asignado.
+	Finalmente, si una factura o liquidación no se ha podido enviar a un email de una empresa o
+		grupo de empresa por no estar dado de alta el email, que se envíe a pagos@luckia.es.
 
-2014-04-07
+TODO
 
+	Posibilidad de generar liquidacion para una empresa en concreto (por ejemplo una empresa nueva)
 
-	Maquetación de PDF
-	Ordenar los conceptos del PDF de liquidación
+	Que cuando se vaya a hacer un borrado, se muestre un mensaje de confirmación de que se desea
+		borrar realmente.
+	Control de alertas cuando detectamos un cambio de localizacion de un terminal usando la tabla
+		localizacion_terminales (fecha, terminal, localizacion). Tambien debe informar cuando se
+		ha creado un nuevo terminal 
 	Importes en la PDF de liquidación
 	Revisar modelo Videomani
-	Inclusión de facturas en la liquidación (ahora esta definido dentro del billingModel, lo mismo es mas sencillo establecerlo por empresa)
 	Seguridad
 	Liquidación de rappel
 	Prorateo de rappel
 	Aceptar de forma automatica las facturas si se ha marcado el flag de autoliquidacion
 
+2014-04-07
 
 	TODO
 	
@@ -78,22 +79,9 @@ DEPLOYMENT
  		exec ssh-agent bash
  		eval 'ssh-agent'
  		
-Buenas
 
-Hoy dejo montado en el entorno de pre la versión.
+HTTP: auth + angularjs
 
-Aun faltarían varias cosas para poder denominarla 1.0:
-
-- Resumen del PDF de liquidación
-- Activar la gestión de usuarios (he dejado el login [admin/luckia] pero de momento todas las funcionalidades están disponibles)
-- Modificaciones de los tramos de rappel en el CRUD de modelos de facturación
-- Envío automático de ZIPs (ahora solo se envían bajo demanda)
-- Aplicar prorateo anual de rappel
-
-Una vez tengamos feedback de los cálculos de facturación, cerrar estas tareas y congelar la primera versión no debiera tomarme apenas tiempo.
-
-Esta semana preparo la documentación sobre el proyecto.
-
-Un saludo 
+http://witoldsz.github.io/angular-http-auth/
  
  
