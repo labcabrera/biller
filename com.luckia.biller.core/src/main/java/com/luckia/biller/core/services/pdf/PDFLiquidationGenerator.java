@@ -60,11 +60,11 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			printCommentsPdf(document, liquidation);
 
 			// Desglose en conceptos
-			printDetails(document, liquidation, "Honorarios por apuestas", betDetails);
-			printDetails(document, liquidation, "Honorarios para bares", storeDetails);
-			printDetails(document, liquidation, "Honorarios SAT", satDetails);
-			printDetails(document, liquidation, "Ajustes operativos", adjustmentDetails);
-			printDetails(document, liquidation, "Otros", otherDetails);
+			printDetails("Local", document, liquidation, "Honorarios por apuestas", betDetails);
+			printDetails("Local", document, liquidation, "Honorarios para bares", storeDetails);
+			printDetails("Local", document, liquidation, "Honorarios SAT", satDetails);
+			printDetails("Local", document, liquidation, "Ajustes operativos", adjustmentDetails);
+			printDetails("Concepto", document, liquidation, "Otros", otherDetails);
 
 			document.close();
 		} catch (Exception ex) {
@@ -278,7 +278,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		document.add(paragraph);
 	}
 
-	protected void printDetails(Document document, Liquidation liquidation, String title, List<Map<String, Object>> details) throws DocumentException {
+	protected void printDetails(String title, Document document, Liquidation liquidation, String conceptName, List<Map<String, Object>> details) throws DocumentException {
 		if (details.isEmpty()) {
 			return;
 		}
@@ -291,7 +291,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		cells.add(createCell(title, Element.ALIGN_LEFT, boldFont));
 		cells.addAll(createEmptyCells(4));
 
-		cells.add(createCell("Local", Element.ALIGN_LEFT, boldFont));
+		cells.add(createCell(conceptName, Element.ALIGN_LEFT, boldFont));
 		cells.add(createCell("Cantidad", Element.ALIGN_RIGHT, boldFont));
 		cells.add(createCell("Precio unidad", Element.ALIGN_RIGHT, boldFont));
 		cells.add(createCell("Desc. (%)", Element.ALIGN_RIGHT, boldFont));
