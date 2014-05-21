@@ -101,11 +101,11 @@ public class AdminRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/patch/replay/2014/21")
 	@ClearCache
-	public Message<String> execute() {
+	public synchronized Message<String> execute() {
 		List<Range<Date>> ranges = new ArrayList<>();
-		// ranges.add(Range.between(new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate()));
-		// ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
-		// ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
+		ranges.add(Range.between(new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate()));
+		ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
+		ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
 		ranges.add(Range.between(new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate()));
 
 		EntityManager entityManager = entityManagerProvider.get();
