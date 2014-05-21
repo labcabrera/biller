@@ -21,8 +21,8 @@ public class LiquidationReceiverProvider {
 	// TODO estaria mejor leerlo de configuracion
 	public LegalEntity getReceiver() {
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Company> queryEgasa = entityManager.createQuery("select e from Company e where e.name like :name", Company.class);
-		List<Company> list = queryEgasa.setParameter("name", "%Egasa%").getResultList();
+		TypedQuery<Company> queryEgasa = entityManager.createQuery("select e from Company e where e.name = :name", Company.class);
+		List<Company> list = queryEgasa.setParameter("name", "'EGASA HATTRICK S.A.'").getResultList();
 		return list.iterator().next();
 	}
 }
