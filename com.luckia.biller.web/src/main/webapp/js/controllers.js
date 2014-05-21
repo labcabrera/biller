@@ -703,6 +703,16 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 			});
 		}
 	};
+	$scope.draft = function() {
+		if($rootScope.autoconfirm || window.confirm('Se va a revertir el estado de la factura')) {
+			$http.post('rest/bills/draft/' + $scope.entity.id).success(function(data) {
+				$scope.displayAlert(data);
+				if(data.code == 200) {
+					$scope.entity = data.payload;
+				}
+			});
+		}
+	};
 	$scope.recalculate = function() {
 		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la factura. Los ajustes manuales se perderan')) {
 			$http.post('rest/bills/recalculate/' + $scope.entity.id).success(function(data) {

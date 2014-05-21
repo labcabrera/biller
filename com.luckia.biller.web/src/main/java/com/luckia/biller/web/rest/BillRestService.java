@@ -30,11 +30,13 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
+import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.services.FileService;
+import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.impl.BillProcessorImpl;
 import com.luckia.biller.core.services.entities.BillEntityService;
 import com.luckia.biller.core.services.mail.MailService;
@@ -70,6 +72,8 @@ public class BillRestService {
 	private FileService fileService;
 	@Inject
 	private I18nService i18nService;
+	@Inject
+	private StateMachineService stateMachineService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -146,6 +150,22 @@ public class BillRestService {
 		} catch (Exception ex) {
 			LOG.error("Error al actualizar el detalle", ex);
 			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.detail.merge.error"));
+		}
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/draft/{id}")
+	@ClearCache
+	public Message<Bill> draft(@PathParam("id") String id) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Bill bill = entityManager.find(Bill.class, id);
+			stateMachineService.createTransition(bill, CommonState.Draft.name());
+			return new Message<>(Message.CODE_SUCCESS, "Estado actualizado", bill);
+		} catch (Exception ex) {
+			LOG.error("Error al revertir el estado de la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al revertir el estado de la factura");
 		}
 	}
 

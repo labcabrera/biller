@@ -22,8 +22,9 @@
 						<label class="col-sm-1 control-label input-sm">Destinatario</label>
 						<div class="col-sm-4">
 							<div class=" input-group">
-								<input type='text' class="form-control" ng-model="entity.receiver.name" ng-readonly="true" /> <span class="input-group-addon input-sm"> <a
-									href="#/companies/id/{{entity.receiver.id}}"> <span class="glyphicon glyphicon-search"></span>
+								<input type='text' class="form-control" ng-model="entity.receiver" ng-readonly="isReadOnly" typeahead="company as company.name for company in companies($viewValue)" />
+								<span class="input-group-addon input-sm">
+									<a href="#/companies/id/{{entity.receiver.id}}"> <span class="glyphicon glyphicon-search"></span>
 								</a>
 								</span>
 							</div>
@@ -130,9 +131,10 @@
 									<button ng-click="rectify()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-primary'>Rectificar</button>
 									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft'" href="rest/bills/draft/{{entity.id}}" role="button">Consultar borrador</a>
 									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button">Descargar</a>
+									<button ng-click="draft()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-primary'>Draft</button>
 									<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right'>Aceptar borrador</button>
 									<button ng-click="recalculate()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right'>Recalcular</button>
-									<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-success pull-right'>Enviar</button>
+									<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-success pull-right'>Enviar</button>
 									<!-- button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'Cancelled'" class="btn btn-sm btn-success pull-right">Rectificar</button -->
 								</div>
 							</div>

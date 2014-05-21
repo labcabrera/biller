@@ -67,6 +67,11 @@ public class AdminRestService {
 		} catch (InterruptedException ex) {
 			LOG.error("Error durante la ejecucion de las tareas", ex);
 		}
+		
+		// Paso 2 buscar las nuevas empresas que hayan sido creadas que carecen de facturas
+		// TypedQuery<Store> storeQuery = entityManager.create
+		
+		
 
 		return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s facturas", billIds.size()));
 	}
