@@ -105,7 +105,7 @@ public class AdminRestService {
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<Company> queryCompanies = entityManager.createQuery("select c from Company c where c.name like :name1 or c.name like :name2", Company.class);
 		// List<Company> companies = queryCompanies.setParameter("name1", "%Replay%").setParameter("name2", "%Videomani%").getResultList();
-		List<Company> companies = queryCompanies.setParameter("name2", "%Videomani%").getResultList();
+		List<Company> companies = queryCompanies.setParameter("name1", "%XXXXXXXXXXXXXXXXXXXXXXx%").setParameter("name2", "%Videomani%").getResultList();
 		LOG.debug("Encontradas {} empresas", companies.size());
 
 		List<Range<Date>> ranges = new ArrayList<>();
