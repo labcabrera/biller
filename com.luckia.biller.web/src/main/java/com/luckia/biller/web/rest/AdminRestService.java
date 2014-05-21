@@ -1,6 +1,8 @@
 package com.luckia.biller.web.rest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,16 +17,24 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.Range;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
+import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.CommonState;
+import com.luckia.biller.core.model.Company;
+import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
+import com.luckia.biller.core.scheduler.tasks.BillTask;
+import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
+import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 @Path("rest/admin")
 public class AdminRestService {
@@ -36,6 +46,8 @@ public class AdminRestService {
 	private EntityManagerProvider entityManagerProvider;
 	@Inject
 	private BillProcessor billProcessor;
+	@Inject
+	private LiquidationProcessor liquidationProcessor;
 
 	// TODO filtrar por el estado
 	@POST
@@ -43,6 +55,7 @@ public class AdminRestService {
 	@Path("/recalculate/bills/{year}/{month}")
 	@ClearCache
 	public Message<String> find(@PathParam("year") Integer year, @PathParam("month") Integer month) {
+		LOG.info("Recalculando facturacion de {}/{}", year, month);
 		DateTime from = new DateTime(year, month, 1, 0, 0, 0, 0);
 		DateTime to = from.dayOfMonth().withMaximumValue();
 		EntityManager entityManager = entityManagerProvider.get();
@@ -67,12 +80,86 @@ public class AdminRestService {
 		} catch (InterruptedException ex) {
 			LOG.error("Error durante la ejecucion de las tareas", ex);
 		}
-		
-		// Paso 2 buscar las nuevas empresas que hayan sido creadas que carecen de facturas
-		// TypedQuery<Store> storeQuery = entityManager.create
-		
-		
 
+		// Paso 2 buscar las nuevas empresas que hayan sido creadas que carecen de facturas
+		LOG.info("Buscando nuevos establecimientos para los que hay que generar las facturas");
+		TypedQuery<Store> storeQuery = entityManager.createQuery("select s from Store s order by s.name", Store.class);
+		TypedQuery<Bill> queryBills = entityManager.createQuery("select b from Bill b where b.sender = :store and b.billDate >= :from and b.billDate <= :to", Bill.class);
+		List<Store> stores = storeQuery.getResultList();
+		for (Store store : stores) {
+			queryBills.setParameter("store", store);
+			queryBills.setParameter("from", from.toDate());
+			queryBills.setParameter("to", to.toDate());
+			if (queryBills.getResultList().isEmpty()) {
+				LOG.debug("Detectado establecimiento sin facturas: " + store.getName());
+				// TODO
+			}
+		}
 		return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s facturas", billIds.size()));
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/patch/replay/2014/21")
+	@ClearCache
+	public Message<String> execute() {
+		EntityManager entityManager = entityManagerProvider.get();
+		TypedQuery<Company> queryCompanies = entityManager.createQuery("select c from Company c where c.name like :name1 or c.name like :name2", Company.class);
+		List<Company> companies = queryCompanies.setParameter("name1", "%Replay%").setParameter("name2", "%Videomani%").getResultList();
+		for (Company company : companies) {
+			LOG.info("Recalculando liquidaciones de " + company.getName());
+			TypedQuery<Liquidation> queryLiquidations = entityManager.createQuery("select e from Liquidation e where e.sender = :sender", Liquidation.class);
+			List<Liquidation> liquidations = queryLiquidations.setParameter("sender", company).getResultList();
+			LOG.debug("Encontradas {} liquidaciones", liquidations.size());
+			// Step 1: borrar liquidaciones
+			for (Liquidation liquidation : liquidations) {
+				// TODO borrar liquidacion
+			}
+			// Step 2: recalculamos las facturas
+			int threadCount = 10;
+			long t0 = System.currentTimeMillis();
+			TypedQuery<Long> query = entityManager.createQuery("select s.id from Store s where s.parent in :companies", Long.class);
+			query.setParameter("companies", companies);
+			List<Long> storeIds = query.getResultList();
+			List<Range<Date>> ranges = new ArrayList<>();
+			ranges.add(Range.between(new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate()));
+			ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
+			ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
+			ranges.add(Range.between(new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate()));
+			ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+			for (Range<Date> range : ranges) {
+				// Procesamos de forma asincrona las facturas
+				for (Long storeId : storeIds) {
+					BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
+					executorService.submit(task);
+				}
+			}
+			LOG.debug("Esperando a la finalizacion de {} tareas de facturacion (hilos: {})", storeIds.size(), threadCount);
+			executorService.shutdown();
+			try {
+				executorService.awaitTermination(5, TimeUnit.HOURS);
+				LOG.debug("Finalizadas {} tareas en {} ms", storeIds.size(), (System.currentTimeMillis() - t0));
+			} catch (InterruptedException ex) {
+				LOG.error("Error durante la ejecucion de las tareas", ex);
+			}
+			// Step 3 : regeneramos las liquidaciones
+			// Procesamos de forma asincrona las liquidaciones
+			t0 = System.currentTimeMillis();
+			executorService = Executors.newFixedThreadPool(threadCount);
+			for (Range<Date> range : ranges) {
+				LiquidationTask task = new LiquidationTask(company.getId(), range, entityManagerProvider, liquidationProcessor);
+				executorService.submit(task);
+			}
+			LOG.debug("Esperando a la finalizacion de {} tareas de liquidacion (hilos: {})", storeIds.size(), threadCount);
+			executorService.shutdown();
+			try {
+				executorService.awaitTermination(4, TimeUnit.HOURS);
+				LOG.debug("Finalizadas {} tareas en {} ms", storeIds.size(), (System.currentTimeMillis() - t0));
+			} catch (InterruptedException ex) {
+				LOG.error("Error durante la ejecucion de las tareas", ex);
+			}
+
+		}
+		return new Message<String>(Message.CODE_SUCCESS, "Ejecutado patch");
 	}
 }

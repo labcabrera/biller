@@ -1,9 +1,13 @@
 package com.luckia.biller.core.scheduler.tasks;
 
+import java.util.Iterator;
+
 import javax.persistence.EntityManager;
 
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.BillConcept;
+import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
 /**
@@ -44,10 +48,14 @@ public class BillRecalculationTask implements Runnable {
 	private void cleanPreviousResults(Bill bill, EntityManager entityManager) {
 		entityManager.getTransaction().begin();
 		if (bill.getDetails() != null) {
-			for (Object i : bill.getDetails()) {
-				entityManager.remove(i);
+			Iterator<BillDetail> iterator = bill.getDetails().iterator();
+			while (iterator.hasNext()) {
+				BillDetail detail = iterator.next();
+				if (detail.getConcept() != BillConcept.Adjustment) {
+					iterator.remove();
+					entityManager.remove(detail);
+				}
 			}
-			bill.getDetails().clear();
 		}
 		if (bill.getLiquidationDetails() != null) {
 			for (Object i : bill.getLiquidationDetails()) {

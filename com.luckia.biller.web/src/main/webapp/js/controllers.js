@@ -922,5 +922,15 @@ billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParam
 			});
 		}
 	};
+	$scope.patchReplay = function() {
+		if($rootScope.autoconfirm || window.confirm('Ejecutar patch de replay')) {
+			var year = $scope.year;
+			var month = $scope.month;
+			$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
+			$http.post('rest/admin/patch/replay/2014/21').success(function(data) {
+				$scope.displayAlert(data);
+			});
+		}
+	};
 }]);
 

@@ -26,6 +26,8 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
+import com.luckia.biller.core.services.bills.BillProcessor;
+import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 /**
  * Job encargado de generar las facturas mensualmente. Recibe los siguientes parametros:
@@ -90,8 +92,9 @@ public class BillingJob extends BaseJob {
 		// Procesamos de forma asincrona las facturas
 		ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 		Long t0 = System.currentTimeMillis();
+		BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
 		for (Long storeId : storeIds) {
-			BillTask task = new BillTask(storeId, range, injector);
+			BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
 			executorService.submit(task);
 		}
 		LOG.debug("Esperando a la finalizacion de {} tareas de facturacion (hilos: {})", storeIds.size(), threadCount);
@@ -107,8 +110,9 @@ public class BillingJob extends BaseJob {
 		t0 = System.currentTimeMillis();
 		executorService = Executors.newFixedThreadPool(threadCount);
 		List<Company> companies = entityManager.createQuery("select c from Company c order by c.name", Company.class).getResultList();
+		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
 		for (Company company : companies) {
-			LiquidationTask task = new LiquidationTask(company.getId(), range, injector);
+			LiquidationTask task = new LiquidationTask(company.getId(), range, entityManagerProvider, liquidationProcessor);
 			executorService.submit(task);
 		}
 		LOG.debug("Esperando a la finalizacion de {} tareas de liquidacion (hilos: {})", storeIds.size(), threadCount);

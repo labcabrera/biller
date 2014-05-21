@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AbstractBillDetail;
+import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 
 /**
@@ -24,14 +25,18 @@ public class BillDetailNameProvider {
 			conceptName = i18nService.getMessage("bill.concept.name." + detail.getConcept().name());
 		}
 		StringBuffer sb = new StringBuffer(conceptName);
-		if (MathUtils.isNotZero(detail.getBaseValue()) && MathUtils.isNotZero(detail.getPercent())) {
+		// if (MathUtils.isNotZero(detail.getBaseValue()) && MathUtils.isNotZero(detail.getPercent())) {
+		// sb.append(" (");
+		// sb.append(detail.getPercent());
+		// sb.append("% sobre un total de ");
+		// sb.append(detail.getBaseValue());
+		// sb.append(" €)");
+		// }
+		if (MathUtils.isNotZero(detail.getBaseValue()) && detail.getConcept() == BillConcept.Stakes) {
 			sb.append(" (");
 			sb.append(detail.getPercent());
-			sb.append("% sobre un total de ");
-			sb.append(detail.getBaseValue());
-			sb.append(" €)");
+			sb.append("% de la cantidad jugada)");
 		}
 		return sb.toString();
 	}
-
 }
