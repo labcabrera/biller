@@ -49,53 +49,54 @@ public class GuiceServletListener extends GuiceResteasyBootstrapServletContextLi
 		// }
 	}
 
-	public synchronized Message<String> execute(Injector injector) {
-		LOG.info("--------------------------- EJECUTANDO PATCH ---------------------------");
-		EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
-		BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
-		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
-		List<Range<Date>> ranges = new ArrayList<>();
-		ranges.add(Range.between(new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate()));
-		ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
-		ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
-		ranges.add(Range.between(new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate()));
-
-		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Company> queryCompanies = entityManager.createQuery("select c from Company c where c.name like :name1 or c.name like :name2", Company.class);
-		List<Company> companies = queryCompanies.setParameter("name1", "%Replay%").setParameter("name2", "%Videomani%").getResultList();
-		LOG.debug("Encontradas {} empresas", companies.size());
-
-		TypedQuery<Long> query = entityManager.createQuery("select s.id from Store s where s.parent in :companies", Long.class);
-		query.setParameter("companies", companies);
-		List<Long> storeIds = query.getResultList();
-		LOG.debug("Encontrados {} establecimientos", storeIds.size());
-
-		LOG.debug("------------------------- regenerando facturas ------------------------");
-
-		for (Range<Date> range : ranges) {
-			LOG.debug("------------------------- rango {} {} ------------------------", range.getMinimum(), range.getMaximum());
-			// Procesamos de forma asincrona las facturas
-			for (Long storeId : storeIds) {
-				BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
-				task.run();
-			}
-		}
-
-		LOG.debug("------------------------- regenerando liquidaciones ------------------------");
-		try {
-			Thread.sleep(30000);
-		} catch (InterruptedException ex) {
-		}
-
-		for (Company company : companies) {
-			// Step 3 : regeneramos las liquidaciones
-			for (Range<Date> range : ranges) {
-				LOG.debug("------------------------- rango {} {} ------------------------", range.getMinimum(), range.getMaximum());
-				LiquidationTask task = new LiquidationTask(company.getId(), range, entityManagerProvider, liquidationProcessor);
-				task.run();
-			}
-		}
-
-		return new Message<String>(Message.CODE_SUCCESS, "Ejecutado patch");
-	}
+	// public synchronized Message<String> execute(Injector injector) {
+	// LOG.info("--------------------------- EJECUTANDO PATCH ---------------------------");
+	// EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
+	// BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
+	// LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
+	// List<Range<Date>> ranges = new ArrayList<>();
+	// ranges.add(Range.between(new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate()));
+	// ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
+	// ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
+	// ranges.add(Range.between(new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate()));
+	//
+	// EntityManager entityManager = entityManagerProvider.get();
+	// TypedQuery<Company> queryCompanies =
+	// entityManager.createQuery("select c from Company c where c.name like :name1 or c.name like :name2", Company.class);
+	// List<Company> companies = queryCompanies.setParameter("name1", "%Replay%").setParameter("name2", "%Videomani%").getResultList();
+	// LOG.debug("Encontradas {} empresas", companies.size());
+	//
+	// TypedQuery<Long> query = entityManager.createQuery("select s.id from Store s where s.parent in :companies", Long.class);
+	// query.setParameter("companies", companies);
+	// List<Long> storeIds = query.getResultList();
+	// LOG.debug("Encontrados {} establecimientos", storeIds.size());
+	//
+	// LOG.debug("------------------------- regenerando facturas ------------------------");
+	//
+	// for (Range<Date> range : ranges) {
+	// LOG.debug("------------------------- rango {} {} ------------------------", range.getMinimum(), range.getMaximum());
+	// // Procesamos de forma asincrona las facturas
+	// for (Long storeId : storeIds) {
+	// BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
+	// task.run();
+	// }
+	// }
+	//
+	// LOG.debug("------------------------- regenerando liquidaciones ------------------------");
+	// try {
+	// Thread.sleep(30000);
+	// } catch (InterruptedException ex) {
+	// }
+	//
+	// for (Company company : companies) {
+	// // Step 3 : regeneramos las liquidaciones
+	// for (Range<Date> range : ranges) {
+	// LOG.debug("------------------------- rango {} {} ------------------------", range.getMinimum(), range.getMaximum());
+	// LiquidationTask task = new LiquidationTask(company.getId(), range, entityManagerProvider, liquidationProcessor);
+	// task.run();
+	// }
+	// }
+	//
+	// return new Message<String>(Message.CODE_SUCCESS, "Ejecutado patch");
+	// }
 }
