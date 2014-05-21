@@ -248,5 +248,6 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 		this.comments = entity.comments;
 		this.commentsPdf = entity.commentsPdf;
 		this.receiver = entity.receiver;
+		this.code = entity.code;
 	}
 }
