@@ -102,60 +102,47 @@ public class AdminRestService {
 	@Path("/patch/replay/2014/21")
 	@ClearCache
 	public Message<String> execute() {
-		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Company> queryCompanies = entityManager.createQuery("select c from Company c where c.name like :name1 or c.name like :name2", Company.class);
-		// List<Company> companies = queryCompanies.setParameter("name1", "%Replay%").setParameter("name2", "%Videomani%").getResultList();
-		List<Company> companies = queryCompanies.setParameter("name1", "%XXXXXXXXXXXXXXXXXXXXXXx%").setParameter("name2", "%Videomani%").getResultList();
-		LOG.debug("Encontradas {} empresas", companies.size());
-
 		List<Range<Date>> ranges = new ArrayList<>();
 		ranges.add(Range.between(new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate()));
-		// ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
-		// ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
-		// ranges.add(Range.between(new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate()));
+		ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
+		ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
+		ranges.add(Range.between(new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate()));
+
+		EntityManager entityManager = entityManagerProvider.get();
+		TypedQuery<Company> queryCompanies = entityManager.createQuery("select c from Company c where c.name like :name1 or c.name like :name2", Company.class);
+		List<Company> companies = queryCompanies.setParameter("name1", "%Replay%").setParameter("name2", "%Videomani%").getResultList();
+		LOG.debug("Encontradas {} empresas", companies.size());
+
+		TypedQuery<Long> query = entityManager.createQuery("select s.id from Store s where s.parent in :companies", Long.class);
+		query.setParameter("companies", companies);
+		List<Long> storeIds = query.getResultList();
+		LOG.debug("Encontrados {} establecimientos", storeIds.size());
 
 		LOG.debug("------------------------- regenerando facturas ------------------------");
-		for (Company company : companies) {
-			LOG.info("Recalculando liquidaciones de " + company.getName());
-			// TypedQuery<Liquidation> queryLiquidations = entityManager.createQuery("select e from Liquidation e where e.sender = :sender",
-			// Liquidation.class);
-			// List<Liquidation> liquidations = queryLiquidations.setParameter("sender", company).getResultList();
-			// LOG.debug("Encontradas {} liquidaciones", liquidations.size());
-			// // Step 1: borrar liquidaciones
-			// for (Liquidation liquidation : liquidations) {
-			// // TODO borrar liquidacion
-			// }
 
-			// Step 2: recalculamos las facturas
-			TypedQuery<Long> query = entityManager.createQuery("select s.id from Store s where s.parent = :company", Long.class);
-			query.setParameter("company", company);
-			List<Long> storeIds = query.getResultList();
-			LOG.debug("Encontrados {} establecimientos de {}", storeIds.size(), company.getName());
-
-			for (Range<Date> range : ranges) {
-				LOG.debug("------------------------- rango {} {} ------------------------", range.getMinimum(), range.getMaximum());
-				// Procesamos de forma asincrona las facturas
-				for (Long storeId : storeIds) {
-					BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
-					task.run();
-				}
+		for (Range<Date> range : ranges) {
+			LOG.debug("------------------------- rango {} {} ------------------------", range.getMinimum(), range.getMaximum());
+			// Procesamos de forma asincrona las facturas
+			for (Long storeId : storeIds) {
+				BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
+				task.run();
 			}
 		}
 
-		// LOG.debug("------------------------- regenerando liquidaciones ------------------------");
-		// try {
-		// Thread.sleep(30000);
-		// } catch (InterruptedException ex) {
-		// }
-		//
-		// for (Company company : companies) {
-		// // Step 3 : regeneramos las liquidaciones
-		// for (Range<Date> range : ranges) {
-		// LOG.debug("------------------------- rango {} {} ------------------------", range.getMinimum(), range.getMaximum());
-		// LiquidationTask task = new LiquidationTask(company.getId(), range, entityManagerProvider, liquidationProcessor);
-		// task.run();
-		// }
-		// }
+		LOG.debug("------------------------- regenerando liquidaciones ------------------------");
+		try {
+			Thread.sleep(30000);
+		} catch (InterruptedException ex) {
+		}
+
+		for (Company company : companies) {
+			// Step 3 : regeneramos las liquidaciones
+			for (Range<Date> range : ranges) {
+				LOG.debug("------------------------- rango {} {} ------------------------", range.getMinimum(), range.getMaximum());
+				LiquidationTask task = new LiquidationTask(company.getId(), range, entityManagerProvider, liquidationProcessor);
+				task.run();
+			}
+		}
 
 		return new Message<String>(Message.CODE_SUCCESS, "Ejecutado patch");
 	}
