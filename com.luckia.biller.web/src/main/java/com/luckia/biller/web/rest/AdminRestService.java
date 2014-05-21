@@ -112,41 +112,30 @@ public class AdminRestService {
 		ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
 		ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
 		ranges.add(Range.between(new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate()));
-		int threadCount = 1;
-		long t0;
 
 		for (Company company : companies) {
 			LOG.info("Recalculando liquidaciones de " + company.getName());
-			TypedQuery<Liquidation> queryLiquidations = entityManager.createQuery("select e from Liquidation e where e.sender = :sender", Liquidation.class);
-			List<Liquidation> liquidations = queryLiquidations.setParameter("sender", company).getResultList();
-			LOG.debug("Encontradas {} liquidaciones", liquidations.size());
-			// Step 1: borrar liquidaciones
-			for (Liquidation liquidation : liquidations) {
-				// TODO borrar liquidacion
-			}
+			// TypedQuery<Liquidation> queryLiquidations = entityManager.createQuery("select e from Liquidation e where e.sender = :sender",
+			// Liquidation.class);
+			// List<Liquidation> liquidations = queryLiquidations.setParameter("sender", company).getResultList();
+			// LOG.debug("Encontradas {} liquidaciones", liquidations.size());
+			// // Step 1: borrar liquidaciones
+			// for (Liquidation liquidation : liquidations) {
+			// // TODO borrar liquidacion
+			// }
 
 			// Step 2: recalculamos las facturas
-			t0 = System.currentTimeMillis();
 			TypedQuery<Long> query = entityManager.createQuery("select s.id from Store s where s.parent = :company", Long.class);
 			query.setParameter("company", company);
 			List<Long> storeIds = query.getResultList();
 			LOG.debug("Encontrados {} establecimientos de {}", storeIds.size(), company.getName());
 
-			ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 			for (Range<Date> range : ranges) {
 				// Procesamos de forma asincrona las facturas
 				for (Long storeId : storeIds) {
 					BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
-					executorService.submit(task);
+					task.run();
 				}
-			}
-			LOG.debug("Esperando a la finalizacion de {} tareas de facturacion (hilos: {})", storeIds.size(), threadCount);
-			executorService.shutdown();
-			try {
-				executorService.awaitTermination(5, TimeUnit.HOURS);
-				LOG.debug("Finalizadas {} tareas en {} ms", storeIds.size(), (System.currentTimeMillis() - t0));
-			} catch (InterruptedException ex) {
-				LOG.error("Error durante la ejecucion de las tareas", ex);
 			}
 		}
 
@@ -158,20 +147,9 @@ public class AdminRestService {
 
 		for (Company company : companies) {
 			// Step 3 : regeneramos las liquidaciones
-			// Procesamos de forma asincrona las liquidaciones
-			t0 = System.currentTimeMillis();
-			ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 			for (Range<Date> range : ranges) {
 				LiquidationTask task = new LiquidationTask(company.getId(), range, entityManagerProvider, liquidationProcessor);
-				executorService.submit(task);
-			}
-			LOG.debug("Esperando a la finalizacion de tareas de liquidacion");
-			executorService.shutdown();
-			try {
-				executorService.awaitTermination(4, TimeUnit.HOURS);
-				LOG.debug("Finalizadas tareas de liquidacion");
-			} catch (InterruptedException ex) {
-				LOG.error("Error durante la ejecucion de las tareas", ex);
+				task.run();
 			}
 		}
 
