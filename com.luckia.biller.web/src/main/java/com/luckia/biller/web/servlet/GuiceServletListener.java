@@ -42,11 +42,11 @@ public class GuiceServletListener extends GuiceResteasyBootstrapServletContextLi
 		} catch (SchedulerException ex) {
 			LOG.error("Scheduler initialization error", ex);
 		}
-		try {
-			execute(injector);
-		} catch (Exception ex) {
-			LOG.error(ex.getMessage(), ex);
-		}
+		// try {
+		// execute(injector);
+		// } catch (Exception ex) {
+		// LOG.error(ex.getMessage(), ex);
+		// }
 	}
 
 	public synchronized Message<String> execute(Injector injector) {
