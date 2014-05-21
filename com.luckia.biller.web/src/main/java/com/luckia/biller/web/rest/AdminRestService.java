@@ -113,6 +113,7 @@ public class AdminRestService {
 		ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
 		ranges.add(Range.between(new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate()));
 
+		LOG.debug("------------------------- regenerando facturas ------------------------");
 		for (Company company : companies) {
 			LOG.info("Recalculando liquidaciones de " + company.getName());
 			// TypedQuery<Liquidation> queryLiquidations = entityManager.createQuery("select e from Liquidation e where e.sender = :sender",
@@ -131,6 +132,7 @@ public class AdminRestService {
 			LOG.debug("Encontrados {} establecimientos de {}", storeIds.size(), company.getName());
 
 			for (Range<Date> range : ranges) {
+				LOG.debug("------------------------- rango {} {} ------------------------", range.getMinimum(), range.getMaximum());
 				// Procesamos de forma asincrona las facturas
 				for (Long storeId : storeIds) {
 					BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
@@ -139,7 +141,7 @@ public class AdminRestService {
 			}
 		}
 
-		LOG.debug("------------------------- regenerando liquidaciones {} ------------------------");
+		LOG.debug("------------------------- regenerando liquidaciones ------------------------");
 		try {
 			Thread.sleep(30000);
 		} catch (InterruptedException ex) {
@@ -148,6 +150,7 @@ public class AdminRestService {
 		for (Company company : companies) {
 			// Step 3 : regeneramos las liquidaciones
 			for (Range<Date> range : ranges) {
+				LOG.debug("------------------------- rango {} {} ------------------------", range.getMinimum(), range.getMaximum());
 				LiquidationTask task = new LiquidationTask(company.getId(), range, entityManagerProvider, liquidationProcessor);
 				task.run();
 			}
