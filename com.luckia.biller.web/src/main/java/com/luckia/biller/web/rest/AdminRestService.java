@@ -106,18 +106,13 @@ public class AdminRestService {
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<Company> queryCompanies = entityManager.createQuery("select c from Company c where c.name like :name1 or c.name like :name2", Company.class);
 		List<Company> companies = queryCompanies.setParameter("name1", "%Replay%").setParameter("name2", "%Videomani%").getResultList();
-		LOG.debug("Encontradas {} empresas", companies.size());
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException ignore) {
-		}
 
 		List<Range<Date>> ranges = new ArrayList<>();
 		ranges.add(Range.between(new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate()));
 		ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
 		ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
 		ranges.add(Range.between(new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate()));
-		int threadCount = 10;
+		int threadCount = 1;
 		long t0;
 
 		for (Company company : companies) {
@@ -153,6 +148,12 @@ public class AdminRestService {
 			} catch (InterruptedException ex) {
 				LOG.error("Error durante la ejecucion de las tareas", ex);
 			}
+		}
+
+		LOG.debug("------------------------- regenerando liquidaciones {} ------------------------");
+		try {
+			Thread.sleep(30000);
+		} catch (InterruptedException ex) {
 		}
 
 		for (Company company : companies) {
