@@ -5,6 +5,7 @@
 			<pattern>%-5level [%-30logger{0}] - %msg%n</pattern>
 		</encoder>
 	</appender>
+	<!--
 	<appender name="FILE" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
 			<key>context</key>
@@ -24,10 +25,11 @@
 			</appender>
 		</sift>
 	</appender>
+	-->
 	<logger name="com.luckia" level="DEBUG" />
 	<root>
 		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
+		<!--appender-ref ref="FILE" / -->
 	</root>
 </configuration>
