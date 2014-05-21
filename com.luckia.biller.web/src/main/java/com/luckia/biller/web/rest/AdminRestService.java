@@ -130,6 +130,7 @@ public class AdminRestService {
 			TypedQuery<Long> query = entityManager.createQuery("select s.id from Store s where s.parent = :company", Long.class);
 			query.setParameter("company", company);
 			List<Long> storeIds = query.getResultList();
+			LOG.debug("Encontrados {} establecimientos de {}", storeIds.size(), company.getName());
 
 			ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 			for (Range<Date> range : ranges) {
