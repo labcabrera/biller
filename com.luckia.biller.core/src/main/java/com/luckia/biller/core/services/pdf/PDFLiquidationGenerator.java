@@ -174,12 +174,12 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getStoreAmount()), Element.ALIGN_RIGHT, documentFont));
 		}
 
-		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getStoreAmount())) {
+		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getSatAmount())) {
 			cells.add(createCell("Honorarios SAT", Element.ALIGN_LEFT, documentFont));
 			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getStoreAmount()), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getSatAmount()), Element.ALIGN_RIGHT, documentFont));
 			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getStoreAmount()), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getSatAmount()), Element.ALIGN_RIGHT, documentFont));
 		}
 
 		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getAdjustmentSharedAmount())) {
