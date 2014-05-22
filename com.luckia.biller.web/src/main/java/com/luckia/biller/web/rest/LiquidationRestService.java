@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Date;
 
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +34,7 @@ import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
+import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.common.Message;
@@ -234,6 +237,10 @@ public class LiquidationRestService {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
+			Date from = liquidation.getDateFrom();
+			Date to = liquidation.getDateTo();
+			Range<Date> range = Range.between(from, to);
+			liquidationProcessor.processBills((Company) liquidation.getSender(), range);
 			liquidationProcessor.updateResults(liquidation);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.recalculate"), liquidation);
 		} catch (Exception ex) {
