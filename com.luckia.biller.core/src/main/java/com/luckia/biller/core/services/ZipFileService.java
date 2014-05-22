@@ -12,6 +12,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
@@ -22,6 +24,7 @@ import com.luckia.biller.core.model.Liquidation;
  */
 public class ZipFileService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ZipFileService.class);
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final String[] REPLACEMENTS_KEYS = { "á", "é", "í", "ó", "ú", "ñ", " ", "." };
 	private static final String[] REPLACEMENTS_VALUES = { "a", "e", "i", "o", "u", "n", "_", "" };
@@ -44,10 +47,14 @@ public class ZipFileService {
 			in = fileService.getInputStream(liquidation.getPdfFile());
 			addZipEntry(in, zipOutputStream, name);
 			for (Bill bill : liquidation.getBills()) {
-				sender = normalizeName(bill.getSender().getName());
-				name = fileService.normalizeFileName(String.format(FORMAT_BILL_NAME, sender, formatDate(liquidation.getBillDate())));
-				in = fileService.getInputStream(bill.getPdfFile());
-				addZipEntry(in, zipOutputStream, FORMAT_BILL_FOLDER + name);
+				if (bill.getPdfFile() != null) {
+					sender = normalizeName(bill.getSender().getName());
+					name = fileService.normalizeFileName(String.format(FORMAT_BILL_NAME, sender, formatDate(liquidation.getBillDate())));
+					in = fileService.getInputStream(bill.getPdfFile());
+					addZipEntry(in, zipOutputStream, FORMAT_BILL_FOLDER + name);
+				} else {
+					LOG.debug("No se incluye la factura de {}: carece de fichero asociado", bill.getSender().getName());
+				}
 			}
 			zipOutputStream.flush();
 			zipOutputStream.close();

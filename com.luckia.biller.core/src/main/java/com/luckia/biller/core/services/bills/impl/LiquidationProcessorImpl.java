@@ -185,7 +185,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			pdfLiquidationGenerator.generate(liquidation, out);
 			out.close();
 			FileInputStream in = new FileInputStream(tempFile);
-			String name = String.format("bill-%s.pdf", liquidation.getCode());
+			String name = String.format("bill-%s.pdf", liquidation.getId());
 			AppFile pdfFile = fileService.save(name, "application/pdf", in);
 			liquidation.setPdfFile(pdfFile);
 			entityManager.merge(liquidation);
