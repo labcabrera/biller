@@ -51,8 +51,8 @@ public class Patch20140522B {
 			entityManager.remove(liquidation);
 			entityManager.getTransaction().commit();
 		}
-		long companyId = 168;
-		LiquidationTask task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
-		task.run();
+		// long companyId = 168;
+		// LiquidationTask task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
+		// task.run();
 	}
 }
