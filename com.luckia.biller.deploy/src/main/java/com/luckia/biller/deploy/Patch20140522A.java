@@ -20,7 +20,7 @@ public class Patch20140522A {
 
 	public static void main(String[] args) {
 		LOG.info("Ejecutando patch");
-		long[] storeIds = { 10162, 10172, 10166, 10168, 10164, 10167, 10169 };
+		long[] storeIds = { 2205, 2207, 2209, 2211, 2213, 2215, 2217 };
 		Date from = new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate();
 		Date to = new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate();
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
