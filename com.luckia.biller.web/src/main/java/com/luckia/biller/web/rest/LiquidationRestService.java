@@ -7,6 +7,9 @@ package com.luckia.biller.web.rest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
@@ -28,13 +31,13 @@ import com.google.inject.Inject;
 import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
-import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
-import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
+import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.LiquidationMailService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.LiquidationEntityService;
@@ -60,6 +63,8 @@ public class LiquidationRestService {
 	private I18nService i18nService;
 	@Inject
 	private PDFLiquidationGenerator pdfLiquidationGenerator;
+	@Inject
+	private FileService fileService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -191,6 +196,33 @@ public class LiquidationRestService {
 		} catch (Exception ex) {
 			LOG.error("Error al enviar la factura", ex);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.send.email.error"));
+		}
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/pdf/recreate/{id}")
+	@ClearCache
+	public Message<Liquidation> recreatePdf(@PathParam("id") String id) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Liquidation liquidation = entityManager.find(Liquidation.class, id);
+			entityManager.getTransaction().begin();
+
+			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
+			FileOutputStream out = new FileOutputStream(tempFile);
+			pdfLiquidationGenerator.generate(liquidation, out);
+			out.close();
+			FileInputStream in = new FileInputStream(tempFile);
+			String name = String.format("bill-%s.pdf", liquidation.getId());
+			AppFile pdfFile = fileService.save(name, "application/pdf", in);
+			liquidation.setPdfFile(pdfFile);
+
+			entityManager.getTransaction().commit();
+			return new Message<>(Message.CODE_SUCCESS, "Se ha recreado el PDF de la liquidación", liquidation);
+		} catch (Exception ex) {
+			LOG.error("Error al recalcular la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al recrear el PDF de la liquidación", null);
 		}
 	}
 
