@@ -45,7 +45,7 @@
 						<label class="col-sm-1 control-label input-sm">Modelo</label>
 						<div class="col-sm-4">
 							<div class="input-group">
-								<input type='text' class="form-control" ng-model="entity.model.name" ng-readonly="true" />
+								<input type='text' class="form-control" ng-model="entity.model" ng-readonly="isReadOnly" typeahead="model as model.name for model in models($viewValue)" />								 
 								<span class="input-group-addon">
 									<a href="#/models/id/{{entity.model.id}}"><span class="glyphicon glyphicon-search"></span></a>
 								</span>
