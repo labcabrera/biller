@@ -180,6 +180,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.getTransaction().begin();
 			stateMachineService.createTransition(liquidation, CommonState.Confirmed.name());
+			liquidationCodeGenerator.generateCode(liquidation);
 			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
 			FileOutputStream out = new FileOutputStream(tempFile);
 			pdfLiquidationGenerator.generate(liquidation, out);
@@ -189,7 +190,6 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			AppFile pdfFile = fileService.save(name, "application/pdf", in);
 			liquidation.setPdfFile(pdfFile);
 			entityManager.merge(liquidation);
-			liquidationCodeGenerator.generateCode(liquidation);
 			entityManager.getTransaction().commit();
 		} catch (IOException ex) {
 			throw new RuntimeException("Error al confirmar la factura", ex);
