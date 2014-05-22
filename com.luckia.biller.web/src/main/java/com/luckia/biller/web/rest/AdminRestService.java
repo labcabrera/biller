@@ -1,8 +1,6 @@
 package com.luckia.biller.web.rest;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,7 +15,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.Range;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +23,10 @@ import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.CommonState;
-import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
-import com.luckia.biller.core.scheduler.tasks.BillTask;
-import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
-import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 @Path("rest/admin")
 public class AdminRestService {
@@ -45,8 +38,6 @@ public class AdminRestService {
 	private EntityManagerProvider entityManagerProvider;
 	@Inject
 	private BillProcessor billProcessor;
-	@Inject
-	private LiquidationProcessor liquidationProcessor;
 
 	// TODO filtrar por el estado
 	@POST

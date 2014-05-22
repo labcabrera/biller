@@ -1,5 +1,6 @@
 package com.luckia.biller.deploy;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.lang3.Range;
 import org.joda.time.DateTime;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -18,6 +21,10 @@ import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.IdCard;
 import com.luckia.biller.core.scheduler.BillingJob;
+import com.luckia.biller.core.scheduler.tasks.BillTask;
+import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
+import com.luckia.biller.core.services.bills.BillProcessor;
+import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.deploy.poi.MasterWorkbookProcessor;
 
 /**
@@ -25,13 +32,18 @@ import com.luckia.biller.deploy.poi.MasterWorkbookProcessor;
  */
 public class Main {
 
+	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+
 	public static void main(String[] args) {
-		if (args.length != 2) {
-			System.out.println("Usage Main {generateBootstrap} {generateBills}");
+		if (args.length != 3) {
+			System.out.println("Usage Main {generateBootstrap} {generateBills} {patch20140522}");
 		} else {
 			boolean generateBootstrap = Boolean.parseBoolean(args[0]);
 			boolean generateBills = Boolean.parseBoolean(args[1]);
 			new Main().run(generateBootstrap, generateBills);
+			if ("true".equals(args[2])) {
+				new Main().executePatch20140522();
+			}
 		}
 	}
 
@@ -102,9 +114,48 @@ public class Main {
 		from = new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate();
 		to = new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate();
 		job.execute(Range.between(from, to), 10);
-		
+
 		from = new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate();
 		to = new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate();
 		job.execute(Range.between(from, to), 10);
+	}
+
+	public void executePatch20140522() {
+		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		LOG.info("--------------------------- EJECUTANDO PATCH ---------------------------");
+		EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
+		BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
+		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
+		List<Range<Date>> ranges = new ArrayList<>();
+		ranges.add(Range.between(new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate()));
+		ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
+		ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
+		ranges.add(Range.between(new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate()));
+
+		EntityManager entityManager = entityManagerProvider.get();
+		TypedQuery<Company> queryCompanies = entityManager.createQuery("select c from Company c where c.name like :name1 or c.name like :name2", Company.class);
+		List<Company> companies = queryCompanies.setParameter("name1", "%Replay%").setParameter("name2", "%Videomani%").getResultList();
+		LOG.debug("Encontradas {} empresas", companies.size());
+
+		TypedQuery<Long> query = entityManager.createQuery("select s.id from Store s where s.parent in :companies", Long.class);
+		query.setParameter("companies", companies);
+		List<Long> storeIds = query.getResultList();
+		LOG.debug("Encontrados {} establecimientos", storeIds.size());
+
+		LOG.debug("-- Regenerando facturas --");
+		for (Range<Date> range : ranges) {
+			for (Long storeId : storeIds) {
+				BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
+				task.run();
+			}
+		}
+
+		LOG.debug("-- Regenerando liquidaciones --");
+		for (Company company : companies) {
+			for (Range<Date> range : ranges) {
+				LiquidationTask task = new LiquidationTask(company.getId(), range, entityManagerProvider, liquidationProcessor);
+				task.run();
+			}
+		}
 	}
 }

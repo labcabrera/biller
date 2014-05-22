@@ -72,22 +72,22 @@ public class BillDetailProcessor {
 				BigDecimal stakes = billingData.get(BillConcept.Stakes).divide(vatDivisor, 2, RoundingMode.HALF_EVEN);
 				BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 				addBillingConcept(bill, BillConcept.Stakes, value, stakes, percent);
-			}
 
-			// Calculamos los conceptos de la liquidacion definidos a nivel de los porcentajes de las variables del terminal:
-			Map<BillConcept, BigDecimal> percentConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
-			percentConcepts.put(BillConcept.NGR, model.getCompanyModel().getNgrPercent());
-			percentConcepts.put(BillConcept.GGR, model.getCompanyModel().getGgrPercent());
-			percentConcepts.put(BillConcept.NR, model.getCompanyModel().getNrPercent());
-			percentConcepts.put(BillConcept.Stakes, model.getCompanyModel().getStakesPercent());
-			for (BillConcept concept : percentConcepts.keySet()) {
-				BigDecimal percent = percentConcepts.get(concept);
-				if (MathUtils.isNotZero(percent)) {
-					addLiquidationConcept(bill, concept, percent, billingData);
+				// Calculamos los conceptos de la liquidacion definidos a nivel de los porcentajes de las variables del terminal:
+				Map<BillConcept, BigDecimal> percentConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
+				percentConcepts.put(BillConcept.NGR, model.getCompanyModel().getNgrPercent());
+				percentConcepts.put(BillConcept.GGR, model.getCompanyModel().getGgrPercent());
+				percentConcepts.put(BillConcept.NR, model.getCompanyModel().getNrPercent());
+				percentConcepts.put(BillConcept.Stakes, model.getCompanyModel().getStakesPercent());
+				for (BillConcept concept : percentConcepts.keySet()) {
+					BigDecimal detailPercent = percentConcepts.get(concept);
+					if (MathUtils.isNotZero(detailPercent)) {
+						addLiquidationConcept(bill, concept, detailPercent, billingData);
+					}
 				}
+				// Calculamos los conceptos fijos
+				processLiquidationFixedConcepts(bill, model, range, terminals);
 			}
-			// Calculamos los conceptos fijos
-			processLiquidationFixedConcepts(bill, model, range, terminals);
 			// Almacenamos el saldo de caja
 			bill.setStoreCash(billingData.containsKey(BillConcept.StoreCash) ? billingData.get(BillConcept.StoreCash) : BigDecimal.ZERO);
 		}
