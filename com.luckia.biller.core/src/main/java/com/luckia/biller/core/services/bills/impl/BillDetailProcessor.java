@@ -67,11 +67,14 @@ public class BillDetailProcessor {
 			BigDecimal vatDivisor = BigDecimal.ONE.add(vatPercent.divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN));
 
 			// Calculamos los conceptos de la facturacion.
-			if (MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {
-				BigDecimal percent = model.getStoreModel().getStakesPercent();
-				BigDecimal stakes = billingData.get(BillConcept.Stakes).divide(vatDivisor, 2, RoundingMode.HALF_EVEN);
-				BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
-				addBillingConcept(bill, BillConcept.Stakes, value, stakes, percent);
+			BigDecimal stakes = billingData.get(BillConcept.Stakes).divide(vatDivisor, 2, RoundingMode.HALF_EVEN);
+			if (MathUtils.isNotZero(stakes)) {
+				// En las ventas hay que quitar el IVA
+				if (MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {
+					BigDecimal percent = model.getStoreModel().getStakesPercent();
+					BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+					addBillingConcept(bill, BillConcept.Stakes, value, stakes, percent);
+				}
 
 				// Calculamos los conceptos de la liquidacion definidos a nivel de los porcentajes de las variables del terminal:
 				Map<BillConcept, BigDecimal> percentConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
@@ -87,6 +90,8 @@ public class BillDetailProcessor {
 				}
 				// Calculamos los conceptos fijos
 				processLiquidationFixedConcepts(bill, model, range, terminals);
+			} else {
+				LOG.debug("No generamos resultados de liquidacion de {}: carece de operaciones en el rango de facturacion", store.getName());
 			}
 			// Almacenamos el saldo de caja
 			bill.setStoreCash(billingData.containsKey(BillConcept.StoreCash) ? billingData.get(BillConcept.StoreCash) : BigDecimal.ZERO);
