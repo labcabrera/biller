@@ -39,12 +39,14 @@ public class Patch20140523A {
 		ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
 
 		// Generamos las facturas
-		long[] storeIds = { 2179, 2181, 2183 };
+		if (false) {
+			long[] storeIds = { 2179, 2181, 2183 };
 
-		for (long storeId : storeIds) {
-			for (Range<Date> range : ranges) {
-				BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
-				task.run();
+			for (long storeId : storeIds) {
+				for (Range<Date> range : ranges) {
+					BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
+					task.run();
+				}
 			}
 		}
 		// Regeneramos la liquidaciones (replay bares)
@@ -58,6 +60,7 @@ public class Patch20140523A {
 				entityManager.merge(bill);
 			}
 			entityManager.getTransaction().commit();
+			entityManager.clear();
 
 			LOG.info("Eliminando liquidacion");
 			entityManager.getTransaction().begin();
