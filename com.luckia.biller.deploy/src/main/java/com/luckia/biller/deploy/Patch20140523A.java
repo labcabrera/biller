@@ -51,26 +51,26 @@ public class Patch20140523A {
 			}
 		}
 		// Regeneramos la liquidaciones (replay bares)
-		String[] ids = { "7c19142e-cf69-46e4-a4c3-278bc97767f4" };
-		for (String liquidationId : ids) {
-			Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, liquidationId);
-			entityManager.getTransaction().begin();
-			LOG.info("Eliminando relacion de facturas con la liquidacion");
-			for (Bill bill : liquidation.getBills()) {
-				bill.setLiquidation(null);
-				entityManager.merge(bill);
-			}
-			entityManager.getTransaction().commit();
-			LOG.info("Eliminando liquidacion");
-			entityManager.getTransaction().begin();
-			entityManager.remove(liquidation);
-			entityManager.getTransaction().commit();
-		}
-
-		// long companyId = 168;
-		// for (Range<Date> range : ranges) {
-		// LiquidationTask task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
-		// task.run();
+		// String[] ids = { "7c19142e-cf69-46e4-a4c3-278bc97767f4" };
+		// for (String liquidationId : ids) {
+		// Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, liquidationId);
+		// entityManager.getTransaction().begin();
+		// LOG.info("Eliminando relacion de facturas con la liquidacion");
+		// for (Bill bill : liquidation.getBills()) {
+		// bill.setLiquidation(null);
+		// entityManager.merge(bill);
 		// }
+		// entityManager.getTransaction().commit();
+		// LOG.info("Eliminando liquidacion");
+		// entityManager.getTransaction().begin();
+		// entityManager.remove(liquidation);
+		// entityManager.getTransaction().commit();
+		// }
+
+		long companyId = 168;
+		for (Range<Date> range : ranges) {
+			LiquidationTask task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
+			task.run();
+		}
 	}
 }
