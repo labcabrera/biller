@@ -54,7 +54,7 @@
 					<archive>
 						<manifest>
 							<!-- mainClass>com.luckia.biller.deploy.Main</mainClass -->
-							<mainClass>com.luckia.biller.deploy.Patch20140522B</mainClass>
+							<mainClass>com.luckia.biller.deploy.Patch20140523A</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
