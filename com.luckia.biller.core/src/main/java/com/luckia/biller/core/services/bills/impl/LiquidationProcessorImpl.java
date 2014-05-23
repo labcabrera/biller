@@ -17,6 +17,7 @@ import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.Range;
+import static org.apache.commons.lang3.time.DateFormatUtils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 */
 	@Override
 	public Liquidation processBills(Company company, Range<Date> range) {
-		LOG.debug("Procesando liquidacion de {} en {}", company.getName(), range.getMaximum());
+		LOG.debug("Procesando liquidacion de {} en {}", company.getName(), ISO_DATE_FORMAT.format(range.getMinimum()), ISO_DATE_FORMAT.format(range.getMaximum()));
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<Bill> query = entityManager.createNamedQuery("Bill.selectPendingByReceiverInRange", Bill.class);
 		query.setParameter("receiver", company);

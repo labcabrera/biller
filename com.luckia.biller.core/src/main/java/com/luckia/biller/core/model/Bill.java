@@ -44,7 +44,7 @@ import com.luckia.biller.core.jpa.Mergeable;
 @Table(name = "B_BILL")
 @DiscriminatorValue("B")
 @SuppressWarnings("serial")
-@NamedQueries({ @NamedQuery(name = "Bill.selectPendingByReceiverInRange", query = "select b from Bill b where b.receiver = :receiver and b.billDate >= :from and b.billDate <= :to and b.liquidation is null") })
+@NamedQueries({ @NamedQuery(name = "Bill.selectPendingByReceiverInRange", query = "select b from Bill b where b.receiver = :receiver and b.dateFrom >= :from and b.dateTo <= :to and b.liquidation is null") })
 public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	/**
