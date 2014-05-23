@@ -25,6 +25,7 @@ import com.luckia.biller.core.services.bills.LiquidationProcessor;
 public class Patch20140523A {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Patch20140523A.class);
+	private static final boolean GENERATE_BILLS = false;
 
 	public static void main(String[] args) {
 		LOG.info("Ejecutando patch");
@@ -39,7 +40,7 @@ public class Patch20140523A {
 		ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
 
 		// Generamos las facturas
-		if (false) {
+		if (GENERATE_BILLS) {
 			long[] storeIds = { 2179, 2181, 2183 };
 
 			for (long storeId : storeIds) {
@@ -50,7 +51,7 @@ public class Patch20140523A {
 			}
 		}
 		// Regeneramos la liquidaciones (replay bares)
-		String[] ids = { "53881266-7386-4a98-8b8f-de894b508152", "9a38f489-d6a5-466c-8cf3-1f168130194d" };
+		String[] ids = { "ec10fa9c-51ee-45dc-8ef0-11e8e9178466", "ec10fa9c-51ee-45dc-8ef0-11e8e9178466" };
 		for (String liquidationId : ids) {
 			Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, liquidationId);
 			entityManager.getTransaction().begin();
