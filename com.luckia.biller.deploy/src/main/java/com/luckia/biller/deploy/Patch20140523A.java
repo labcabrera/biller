@@ -51,7 +51,7 @@ public class Patch20140523A {
 			}
 		}
 		// Regeneramos la liquidaciones (replay bares)
-		String[] ids = { "ec10fa9c-51ee-45dc-8ef0-11e8e9178466", "ec10fa9c-51ee-45dc-8ef0-11e8e9178466" };
+		String[] ids = { "7c19142e-cf69-46e4-a4c3-278bc97767f4" };
 		for (String liquidationId : ids) {
 			Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, liquidationId);
 			entityManager.getTransaction().begin();
@@ -66,12 +66,11 @@ public class Patch20140523A {
 			entityManager.remove(liquidation);
 			entityManager.getTransaction().commit();
 		}
-		entityManager.clear();
 
-		long companyId = 168;
-		for (Range<Date> range : ranges) {
-			LiquidationTask task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
-			task.run();
-		}
+		// long companyId = 168;
+		// for (Range<Date> range : ranges) {
+		// LiquidationTask task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
+		// task.run();
+		// }
 	}
 }
