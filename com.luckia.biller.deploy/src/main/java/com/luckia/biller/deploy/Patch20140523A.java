@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.Range;
 import org.joda.time.DateTime;
@@ -15,61 +16,41 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
-import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
-import com.luckia.biller.core.scheduler.tasks.BillTask;
-import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
+import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 public class Patch20140523A {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Patch20140523A.class);
-	private static final boolean GENERATE_BILLS = false;
 
 	public static void main(String[] args) {
 		LOG.info("Ejecutando patch");
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
-		List<Range<Date>> ranges = new ArrayList<>();
 		EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
-		BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
 		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
 		EntityManager entityManager = entityManagerProvider.get();
 
-		ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
-		ranges.add(Range.between(new DateTime(2014, 3, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate()));
+		Date from = new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate();
+		Date to = new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate();
+		String companyName = "Replay, S.L. (bares)";
 
-		// Generamos las facturas
-		if (GENERATE_BILLS) {
-			long[] storeIds = { 2179, 2181, 2183 };
+		String qlStringCompany = "select e from Company e where e.name = :name";
+		String qlStringLiquidation = "select e from Liquidation e where e.sender = :company and e.billDate >= :from and e.billDate <= :to";
 
-			for (long storeId : storeIds) {
-				for (Range<Date> range : ranges) {
-					BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
-					task.run();
-				}
-			}
-		}
-		// Regeneramos la liquidaciones (replay bares)
-		// String[] ids = { "7c19142e-cf69-46e4-a4c3-278bc97767f4" };
-		// for (String liquidationId : ids) {
-		// Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, liquidationId);
-		// entityManager.getTransaction().begin();
-		// LOG.info("Eliminando relacion de facturas con la liquidacion");
-		// for (Bill bill : liquidation.getBills()) {
-		// bill.setLiquidation(null);
-		// entityManager.merge(bill);
-		// }
-		// entityManager.getTransaction().commit();
-		// LOG.info("Eliminando liquidacion");
-		// entityManager.getTransaction().begin();
-		// entityManager.remove(liquidation);
-		// entityManager.getTransaction().commit();
-		// }
+		Company company = entityManager.createQuery(qlStringCompany, Company.class).setParameter("name", companyName).getSingleResult();
+		TypedQuery<Liquidation> query = entityManager.createQuery(qlStringLiquidation, Liquidation.class);
+		query.setParameter("from", from);
+		query.setParameter("to", to);
+		query.setParameter("company", company);
 
-		long companyId = 168;
-		for (Range<Date> range : ranges) {
-			LiquidationTask task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
+		List<Liquidation> liquidations = query.getResultList();
+		LOG.debug("Encontradas {} liquidaciones");
+		for (Liquidation liquidation : liquidations) {
+			String liquidationId = liquidation.getId();
+			LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidationId, entityManagerProvider, liquidationProcessor);
 			task.run();
 		}
 	}
