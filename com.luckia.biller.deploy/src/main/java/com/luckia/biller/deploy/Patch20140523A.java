@@ -1,13 +1,11 @@
 package com.luckia.biller.deploy;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.lang3.Range;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +17,6 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
-import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 public class Patch20140523A {
@@ -47,7 +44,7 @@ public class Patch20140523A {
 		query.setParameter("company", company);
 
 		List<Liquidation> liquidations = query.getResultList();
-		LOG.debug("Encontradas {} liquidaciones");
+		LOG.debug("Encontradas {} liquidaciones", liquidations.size());
 		for (Liquidation liquidation : liquidations) {
 			String liquidationId = liquidation.getId();
 			LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidationId, entityManagerProvider, liquidationProcessor);
