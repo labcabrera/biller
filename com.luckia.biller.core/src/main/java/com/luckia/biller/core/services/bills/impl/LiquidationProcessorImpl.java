@@ -6,11 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -29,12 +26,10 @@ import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Company;
-import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.LiquidationResults;
-import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.StateMachineService;
@@ -72,46 +67,39 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 * org.apache.commons.lang3.Range)
 	 */
 	@Override
-	public List<Liquidation> processBills(Company company, Range<Date> range) {
+	public Liquidation processBills(Company company, Range<Date> range) {
+		LOG.debug("Procesando liquidacion de {} en {}", company.getName(), range.getMaximum());
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<Bill> query = entityManager.createNamedQuery("Bill.selectPendingByReceiverInRange", Bill.class);
 		query.setParameter("receiver", company);
 		query.setParameter("from", range.getMinimum());
 		query.setParameter("to", range.getMaximum());
 		List<Bill> bills = query.getResultList();
-		Map<CostCenter, List<Bill>> costCenterMap = getCostCenterMapping(bills);
+		LOG.debug("Encontradas {} facturas pendientes asociadas a la liquidacion");
 		if (!entityManager.getTransaction().isActive()) {
 			entityManager.getTransaction().begin();
 		}
 		LegalEntity egasa = liquidationReceiverProvider.getReceiver();
-		List<Liquidation> result = new ArrayList<Liquidation>();
-		LOG.info("Centros de coste asociados a la liquidacion:");
-		for (CostCenter costCenter : costCenterMap.keySet()) {
-			LOG.info("Generando liquidacion asociada al centro de coste {}", costCenter.getName());
-			List<Bill> billList = costCenterMap.get(costCenter);
-			Liquidation liquidation = new Liquidation();
-			liquidation.setId(UUID.randomUUID().toString());
-			liquidation.setSender(company);
-			liquidation.setReceiver(egasa);
-			liquidation.setBills(billList);
-			liquidation.setDateFrom(range.getMinimum());
-			liquidation.setDateTo(range.getMaximum());
-			liquidation.setBillDate(range.getMaximum());
-			liquidation.setModel(company.getBillingModel());
-
-			internalProcessResults(liquidation);
-			for (Bill bill : liquidation.getBills()) {
-				bill.setLiquidation(liquidation);
-				entityManager.merge(bill);
-			}
-
-			entityManager.merge(liquidation);
-			auditService.processCreated(liquidation);
-			result.add(liquidation);
-			stateMachineService.createTransition(liquidation, CommonState.Draft.name());
+		Liquidation liquidation = new Liquidation();
+		liquidation.setId(UUID.randomUUID().toString());
+		liquidation.setSender(company);
+		liquidation.setReceiver(egasa);
+		liquidation.setBills(bills);
+		liquidation.setDateFrom(range.getMinimum());
+		liquidation.setDateTo(range.getMaximum());
+		liquidation.setBillDate(range.getMaximum());
+		liquidation.setModel(company.getBillingModel());
+		internalProcessResults(liquidation);
+		for (Bill bill : liquidation.getBills()) {
+			bill.setLiquidation(liquidation);
+			entityManager.merge(bill);
 		}
+
+		entityManager.merge(liquidation);
+		auditService.processCreated(liquidation);
+		stateMachineService.createTransition(liquidation, CommonState.Draft.name());
 		entityManager.getTransaction().commit();
-		return result;
+		return liquidation;
 	}
 
 	private void internalProcessResults(Liquidation liquidation) {
@@ -253,30 +241,4 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			}
 		}
 	}
-
-	/**
-	 * Desglosa las facturas por centro de coste asociadas a una empresa.
-	 * 
-	 * @param bills
-	 * @return
-	 */
-	private Map<CostCenter, List<Bill>> getCostCenterMapping(List<Bill> bills) {
-		Map<CostCenter, List<Bill>> costCenterMap = new LinkedHashMap<CostCenter, List<Bill>>();
-		for (Bill bill : bills) {
-			if (!CommonState.Empty.equals(bill.getCurrentState().getStateDefinition().getId())) {
-				Store store = bill.getSender(Store.class);
-				CostCenter costCenter = store.getCostCenter();
-				if (costCenter == null) {
-					LOG.warn("El local {} de la factura {} carece de centro de coste. No se puede realizar la liquidacion", store, bill);
-				} else {
-					if (!costCenterMap.containsKey(store.getCostCenter())) {
-						costCenterMap.put(costCenter, new ArrayList<Bill>());
-					}
-					costCenterMap.get(costCenter).add(bill);
-				}
-			}
-		}
-		return costCenterMap;
-	}
-
 }
