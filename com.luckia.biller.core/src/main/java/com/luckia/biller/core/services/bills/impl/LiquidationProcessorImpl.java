@@ -75,7 +75,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		query.setParameter("from", range.getMinimum());
 		query.setParameter("to", range.getMaximum());
 		List<Bill> bills = query.getResultList();
-		LOG.debug("Encontradas {} facturas pendientes asociadas a la liquidacion");
+		LOG.debug("Encontradas {} facturas pendientes asociadas a la liquidacion", bills.size());
 		if (!entityManager.getTransaction().isActive()) {
 			entityManager.getTransaction().begin();
 		}
