@@ -233,10 +233,9 @@ public class LiquidationRestService {
 	@ClearCache
 	public Message<Liquidation> recalculate(@PathParam("id") String id) {
 		try {
-			EntityManager entityManager = entityManagerProvider.get();
 			LiquidationRecalculationTask task = new LiquidationRecalculationTask(id, entityManagerProvider, liquidationProcessor);
 			task.run();
-			Liquidation liquidation = entityManager.find(Liquidation.class, id);
+			Liquidation liquidation = task.getLiquidationResult();
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.recalculate"), liquidation);
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);

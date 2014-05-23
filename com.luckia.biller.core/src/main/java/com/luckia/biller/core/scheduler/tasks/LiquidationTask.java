@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Company;
+import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 /**
@@ -20,10 +21,10 @@ public class LiquidationTask implements Runnable {
 	private static final Logger LOG = LoggerFactory.getLogger(LiquidationTask.class);
 
 	private final long companyId;
-	// private final Injector injector;
 	private final Range<Date> range;
 	private final EntityManagerProvider entityManagerProvider;
 	private final LiquidationProcessor liquidationProcessor;
+	private Liquidation liquidationResult;
 
 	public LiquidationTask(long companyId, Range<Date> range, EntityManagerProvider entityManagerProvider, LiquidationProcessor liquidationProcessor) {
 		this.companyId = companyId;
@@ -43,11 +44,20 @@ public class LiquidationTask implements Runnable {
 			long t0 = System.currentTimeMillis();
 			EntityManager entityManager = entityManagerProvider.get();
 			Company company = entityManager.find(Company.class, companyId);
-			liquidationProcessor.processBills(company, range);
+			liquidationResult = liquidationProcessor.processBills(company, range);
 			long ms = System.currentTimeMillis() - t0;
 			LOG.debug("Procesada liquidacion de la empresa {} en {} ms", company.getName(), ms);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.error("Error al procesar la liquidacion", ex);
 		}
+	}
+
+	/**
+	 * Guarda la liquidacion generada una vez se ha ejecutado el proceso.
+	 * 
+	 * @return
+	 */
+	public Liquidation getLiquidationResult() {
+		return liquidationResult;
 	}
 }

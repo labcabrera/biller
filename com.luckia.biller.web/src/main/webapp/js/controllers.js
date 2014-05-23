@@ -769,7 +769,7 @@ billerControllers.controller('LiquidationListCtrl', [ '$scope', '$rootScope', '$
 	$scope.search();
 } ]);
 
-billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
 	$scope.load = function() {
 		$http.get('rest/liquidations/id/' + $routeParams.id).success(function(data) {
 			$scope.entity = data;
@@ -837,7 +837,7 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 			$http.post('rest/liquidations/recalculate/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
-					$scope.entity = data.payload;
+					$location.path("liquidations/id/" + data.payload.id);
 				}
 			});
 		}

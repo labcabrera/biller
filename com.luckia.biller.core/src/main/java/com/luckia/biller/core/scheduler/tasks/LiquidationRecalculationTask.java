@@ -20,6 +20,7 @@ public class LiquidationRecalculationTask implements Runnable {
 	private final String liquidationId;
 	private final EntityManagerProvider entityManagerProvider;
 	private final LiquidationProcessor liquidationProcessor;
+	private Liquidation liquidationResult;
 
 	public LiquidationRecalculationTask(String liquidationId, EntityManagerProvider entityManagerProvider, LiquidationProcessor liquidationProcessor) {
 		this.liquidationId = liquidationId;
@@ -52,5 +53,15 @@ public class LiquidationRecalculationTask implements Runnable {
 		entityManager.getTransaction().commit();
 		LiquidationTask task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
 		task.run();
+		liquidationResult = task.getLiquidationResult();
+	}
+
+	/**
+	 * Guarda la liquidacion generada una vez se ha ejecutado el proceso.
+	 * 
+	 * @return
+	 */
+	public Liquidation getLiquidationResult() {
+		return liquidationResult;
 	}
 }

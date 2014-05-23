@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.time.DateFormatUtils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,7 @@ public class SendLiquidationsTask implements Runnable {
 				for (Liquidation liquidation : liquidations) {
 					String emailAddress = resolveMailAddress(liquidation);
 					liquidationMailService.sendEmail(liquidation, emailAddress, true);
-					LOG.info("Enviada liquidacion a {}", emailAddress);
+					LOG.info("Enviada liquidacion de {}/{} a {}", liquidation.getSender().getName(), ISO_DATE_FORMAT.format(liquidation.getDateTo()), emailAddress);
 				}
 			}
 		} catch (Exception ex) {
