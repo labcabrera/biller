@@ -61,13 +61,12 @@ public class Patch20140523A {
 				entityManager.merge(bill);
 			}
 			entityManager.getTransaction().commit();
-			entityManager.clear();
-
 			LOG.info("Eliminando liquidacion");
 			entityManager.getTransaction().begin();
 			entityManager.remove(liquidation);
 			entityManager.getTransaction().commit();
 		}
+		entityManager.clear();
 
 		long companyId = 168;
 		for (Range<Date> range : ranges) {
