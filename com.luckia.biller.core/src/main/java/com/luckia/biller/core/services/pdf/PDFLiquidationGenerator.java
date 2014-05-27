@@ -88,6 +88,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		}
 		for (Bill bill : liquidation.getBills()) {
 			// En primer lugar computamos los detalles de liquidacion de la factura
+			LOG.debug("Inspeccionando detalles de la factura {}", bill.getSender().getName());
 			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
 				String desc = billDetailNameProvider.getName(i);
 				BigDecimal value = i.getValue();
@@ -97,6 +98,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 					case NGR:
 					case NR:
 					case Stakes:
+						LOG.debug("Honorario por apuestas: {} ({})", i.getConcept(), value);
 						map = new HashMap<>();
 						map.put("name", bill.getSender().getName() + ": " + desc);
 						map.put("value", value);
@@ -104,12 +106,14 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 						break;
 					case SatMonthlyFees:
 					case CommercialMonthlyFees:
+						LOG.debug("Honorario SAT: {} ({})", i.getConcept(), value);
 						map = new HashMap<>();
 						map.put("name", bill.getSender().getName() + ": " + desc);
 						map.put("value", value);
 						satDetails.add(map);
 						break;
 					default:
+						LOG.debug("Ignorando concepto {}", i.getConcept());
 						break;
 					}
 				}
