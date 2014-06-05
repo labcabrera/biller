@@ -6,38 +6,86 @@
 	<div class="row">
 		<div class="col-sm-9">
 			<div id="alertContainer"></div>
-			<h4>Recalcular facturaci&oacute;n</h4>
-			<p>
-				Esta funcionalidad nos permite volver a generar los resultados de la facturaci&oacute;n de un determinado mes. Hay que tener presente que solo se recalculan las facturas que
-				est&aacute;n en estado <b>borrador</b>. Para corregir los resultados de una factura que ya ha sido aceptada es necesario rectificar la factura.
-			</p>
-			<form class="form-horizontal" role="form">
-				<div class="form-group">
-					<label class="col-sm-2 control-label">A&ntilde;o</label>
-					<div class="col-sm-2 data-code">
-						<input ng-model="year" class="form-control">
+			
+			<!--
+			<div>
+				<h4>Recalcular facturaci&oacute;n</h4>
+				<p>
+					Esta funcionalidad nos permite volver a generar los resultados de la facturaci&oacute;n de un determinado mes. Hay que tener presente que solo se recalculan las facturas que
+					est&aacute;n en estado <b>borrador</b>. Para corregir los resultados de una factura que ya ha sido aceptada es necesario rectificar la factura.
+				</p>
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">A&ntilde;o</label>
+						<div class="col-sm-2 data-code">
+							<input ng-model="year" class="form-control">
+						</div>
+						<label class="col-sm-1 control-label">Mes</label>
+						<div class="col-sm-3">
+							<select ng-model="month" class="form-control">
+								<option value="1">Enero</option>
+								<option value="2">Febrero</option>
+								<option value="3">Marzo</option>
+								<option value="4">Abril</option>
+								<option value="5">Mayo</option>
+								<option value="6">Junio</option>
+								<option value="7">Julio</option>
+								<option value="8">Agosto</option>
+								<option value="9">Septiembre</option>
+								<option value="10">Octubre</option>
+								<option value="11">Noviembre</option>
+								<option value="12">Diciembre</option>
+							</select>
+						</div>
+						<button type="submit" class="btn btn-primary btn-sm" ng-click="recalculateBill()">Ejecutar</button>
 					</div>
-					<label class="col-sm-1 control-label">Mes</label>
-					<div class="col-sm-3">
-						<select ng-model="month" class="form-control">
-							<option value="1">Enero</option>
-							<option value="2">Febrero</option>
-							<option value="3">Marzo</option>
-							<option value="4">Abril</option>
-							<option value="5">Mayo</option>
-							<option value="6">Junio</option>
-							<option value="7">Julio</option>
-							<option value="8">Agosto</option>
-							<option value="9">Septiembre</option>
-							<option value="10">Octubre</option>
-							<option value="11">Noviembre</option>
-							<option value="12">Diciembre</option>
-						</select>
+				</form>
+			</div>
+			-->
+
+			<div>
+				<h4>Recalcular facturaci&oacute;n</h4>
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">Establecimiento</label>
+						<div class="col-sm-5">
+							<input type="text" class="form-control input-sm" typeahead="store as store.name for store in stores($viewValue)" ng-model="store" />
+						</div>
 					</div>
-					<button type="submit" class="btn btn-primary btn-sm" ng-click="_recalculateBill()">Ejecutar</button>
-					<pre>Opci&oacute;n deshabilitada temporalmente</pre>
-				</div>
-			</form>
+					<div class="form-group">	
+						<label class="col-sm-2 control-label">A&ntilde;o</label>
+						<div class="col-sm-5 data-code">
+							<input ng-model="year" class="form-control">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">Mes</label>
+						<div class="col-sm-3">
+							<select ng-model="month" class="form-control">
+								<option value="1">Enero</option>
+								<option value="2">Febrero</option>
+								<option value="3">Marzo</option>
+								<option value="4">Abril</option>
+								<option value="5">Mayo</option>
+								<option value="6">Junio</option>
+								<option value="7">Julio</option>
+								<option value="8">Agosto</option>
+								<option value="9">Septiembre</option>
+								<option value="10">Octubre</option>
+								<option value="11">Noviembre</option>
+								<option value="12">Diciembre</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-3 col-sm-offset-2">
+							<button type="submit" class="btn btn-primary btn-sm" ng-click="recalculateBill()">Ejecutar</button>
+						</div>
+					</div>
+				</form>
+				<pre>{{store}}</pre>
+			</div>
+		
 		</div>
 	</div>
 </body>

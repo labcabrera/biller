@@ -6,7 +6,7 @@
 <div class="row">
 
 	<div class="col-sm-9">
-		<h4>Parámetros de configuraci&oacute;n</h4>
+		<h4>Par&aacute;metros de configuraci&oacute;n</h4>
 		<div class="m-top-15">
 		
 			<ul class="nav nav-tabs">
@@ -45,7 +45,7 @@
 					<div class="m-top-15">
 						<form class="form-horizontal" role="form">
 							<div class="form-group">
-								<label class="col-sm-2 control-label">Usuario de correo</label>
+								<label class="col-sm-2 control-label">Usuario</label>
 								<div class="col-sm-4">
 									<div class="input-group">
 										<input type='text' class="form-control input-sm" ng-model="entity.x" ng-readonly="isReadOnly" typeahead="owner as owner.completeName for owner in owners($viewValue)" />
@@ -54,7 +54,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label input-sm">Contraseña de correo</label>
+								<label class="col-sm-2 control-label">Password</label>
 								<div class="col-sm-4">
 									<div class="input-group">
 										<input type='text' class="form-control input-sm" ng-model="entity.y" ng-readonly="isReadOnly" typeahead="owner as owner.completeName for owner in owners($viewValue)" />
@@ -76,7 +76,7 @@
 								<div class="col-sm-4">
 									<div class="input-group">
 										<input type='text' class="form-control input-sm" ng-model="entity.y" ng-readonly="isReadOnly" typeahead="owner as owner.completeName for owner in owners($viewValue)" />
-										<span class="help-block">Valor que aparecerá como texto del emisor</span>
+										<span class="help-block">Valor que aparecer&aacute; como texto del emisor</span>
 									</div>
 								</div>
 							</div>
@@ -85,7 +85,7 @@
 								<div class="col-sm-4">
 									<div class="input-group">
 										<input type='text' class="form-control input-sm" ng-model="entity.y" ng-readonly="isReadOnly" typeahead="owner as owner.completeName for owner in owners($viewValue)" />
-										<span class="help-block">Valor que aparecerá como texto del emisor</span>
+										<span class="help-block">Valor que aparecer&aacute; como texto del emisor</span>
 									</div>
 								</div>
 							</div>
@@ -94,12 +94,11 @@
 				</div>
 				<div class="tab-pane" id="repoTab">
 					<div class="m-top-15">
-						[repositorio]
 					</div>
 				</div>
 			</div>
 			
-			
+			<h3>DEBUG</h3>
 			<pre>MAIL:{{mailSettings|json}}</pre>
 			<pre>SYSTEM:{{systemSettings|json}}</pre>
 			<pre>BILLING:{{billingSettings|json}}</pre>

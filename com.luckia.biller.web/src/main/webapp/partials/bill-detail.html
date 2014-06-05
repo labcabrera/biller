@@ -93,6 +93,7 @@
 					<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
 					<li><a data-target="#liquidationDetailTab" data-toggle="tab">Detalles de liquidacion ({{entity.liquidationTotalAmount}})</a></li>
 					<li><a data-target="#commentsPdfTab" data-toggle="tab">Comentarios PDF</a></li>
+					<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
 				</ul> 				
 				<div class="tab-content">
 				
@@ -215,6 +216,11 @@
 							<textarea class="form-control" rows="5" ng-model="entity.commentsPdf" ng-readonly="isReadOnly"></textarea>
 						</div>
 					</div>
+					
+					<div class="tab-pane" id="auditTab">
+						<div ng-include src="'templates/entity-audit-info.html'"></div>
+					</div>
+					
 				</div>
 			</div>
 		</div>

@@ -1,6 +1,8 @@
 package com.luckia.biller.web.rest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,6 +17,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,7 @@ import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
+import com.luckia.biller.core.scheduler.tasks.BillTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
 @Path("rest/admin")
@@ -40,6 +45,40 @@ public class AdminRestService {
 	@Inject
 	private BillProcessor billProcessor;
 
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/recalculate/bills/{storeId}/{year}/{month}")
+	@ClearCache
+	public Message<String> recalculate(@PathParam("storeId") Long storeId, @PathParam("year") Integer year, @PathParam("month") Integer month) {
+		return internalRecalculate(storeId, year, month);
+	}
+
+	public Message<String> calculateNewStores(@PathParam("year") Integer year, @PathParam("month") Integer month) {
+		try {
+			Range<Date> range = getEffectiveRange(year, month);
+			EntityManager entityManager = entityManagerProvider.get();
+			LOG.info("Buscando nuevos establecimientos para los que hay que generar las facturas");
+			TypedQuery<Store> storeQuery = entityManager.createQuery("select s from Store s order by s.name", Store.class);
+			TypedQuery<Bill> queryBills = entityManager.createQuery("select b from Bill b where b.sender = :store and b.billDate >= :from and b.billDate <= :to", Bill.class);
+			List<Store> stores = storeQuery.getResultList();
+			List<Store> targets = new ArrayList<>();
+			for (Store store : stores) {
+				queryBills.setParameter("store", store);
+				queryBills.setParameter("from", range.getMinimum());
+				queryBills.setParameter("to", range.getMaximum());
+				if (queryBills.getResultList().isEmpty()) {
+					LOG.debug("Detectado establecimiento sin facturas: " + store.getName());
+					targets.add(store);
+				}
+			}
+			// TODO Procesar esos establecimientos
+			return new Message<String>(Message.CODE_SUCCESS, String.format("Encontrados %s establecimientos sin facturacion", targets.size()));
+		} catch (Exception ex) {
+			LOG.error("Error al recalcular la factura", ex);
+			return new Message<String>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());
+		}
+	}
+
 	// TODO filtrar por el estado
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -50,13 +89,13 @@ public class AdminRestService {
 			return new Message<String>(Message.CODE_GENERIC_ERROR, "Opción deshabilitada temporalmente");
 		} else {
 			LOG.info("Recalculando facturacion de {}/{}", year, month);
-			DateTime from = new DateTime(year, month, 1, 0, 0, 0, 0);
-			DateTime to = from.dayOfMonth().withMaximumValue();
 			EntityManager entityManager = entityManagerProvider.get();
+			Range<Date> range = getEffectiveRange(year, month);
+
 			String qlString = "select b.id from Bill b where b.billDate >= :from and b.billDate <= :to and b.currentState.stateDefinition.id in :states";
 			TypedQuery<String> query = entityManager.createQuery(qlString, String.class);
-			query.setParameter("from", from.toDate());
-			query.setParameter("to", to.toDate());
+			query.setParameter("from", range.getMinimum());
+			query.setParameter("to", range.getMaximum());
 			query.setParameter("states", Arrays.asList(CommonState.Initial, CommonState.Draft, CommonState.Empty));
 			List<String> billIds = query.getResultList();
 
@@ -75,21 +114,46 @@ public class AdminRestService {
 				LOG.error("Error durante la ejecucion de las tareas", ex);
 			}
 
-			// Paso 2 buscar las nuevas empresas que hayan sido creadas que carecen de facturas
-			LOG.info("Buscando nuevos establecimientos para los que hay que generar las facturas");
-			TypedQuery<Store> storeQuery = entityManager.createQuery("select s from Store s order by s.name", Store.class);
-			TypedQuery<Bill> queryBills = entityManager.createQuery("select b from Bill b where b.sender = :store and b.billDate >= :from and b.billDate <= :to", Bill.class);
-			List<Store> stores = storeQuery.getResultList();
-			for (Store store : stores) {
-				queryBills.setParameter("store", store);
-				queryBills.setParameter("from", from.toDate());
-				queryBills.setParameter("to", to.toDate());
-				if (queryBills.getResultList().isEmpty()) {
-					LOG.debug("Detectado establecimiento sin facturas: " + store.getName());
-					// TODO
-				}
-			}
 			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s facturas", billIds.size()));
 		}
+	}
+
+	private Message<String> internalRecalculate(Long storeId, Integer year, Integer month) {
+		try {
+			Range<Date> range = getEffectiveRange(year, month);
+			EntityManager entityManager = entityManagerProvider.get();
+			Store store = entityManager.find(Store.class, storeId);
+			Validate.notNull(store, "No se encuentra el establecimiento");
+			TypedQuery<Bill> query = entityManager.createNamedQuery("Bill.selectByStoreInRange", Bill.class);
+			query.setParameter("sender", store);
+			query.setParameter("from", range.getMinimum());
+			query.setParameter("to", range.getMaximum());
+			List<Bill> bills = query.getResultList();
+			String message;
+			Runnable task = null;
+			if (bills.isEmpty()) {
+				task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
+				message = "Factura generada";
+			} else if (bills.size() > 1) {
+				message = "Se han encontrado varias facturas. Utilice la opcion de recalcular desde la vista de facturas.";
+			} else {
+				String billId = bills.iterator().next().getId();
+				task = new BillRecalculationTask(billId, entityManagerProvider, billProcessor);
+				message = "Factura recalculada";
+			}
+			if (task != null) {
+				new Thread(task).start();
+			}
+			return new Message<String>(Message.CODE_SUCCESS, message);
+		} catch (Exception ex) {
+			LOG.error("Error al recalcular la factura", ex);
+			return new Message<String>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());
+		}
+	}
+
+	private Range<Date> getEffectiveRange(Integer year, Integer month) {
+		DateTime from = new DateTime(year, month, 1, 0, 0, 0, 0);
+		DateTime to = from.dayOfMonth().withMaximumValue();
+		return Range.between(from.toDate(), to.toDate());
 	}
 }
