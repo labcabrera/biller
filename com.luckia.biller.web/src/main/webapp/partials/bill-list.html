@@ -17,6 +17,7 @@
 					<th>Estado</th>
 					<th>Fecha</th>
 					<th>Tipo</th>
+					<th>Importe</th>
 					<th></th>
 				</tr>
 				<tr ng-repeat="result in results.results">
@@ -29,6 +30,7 @@
 					</td>
 					<td>{{result.billDate.substr(0,10)}}</td>
 					<td>{{result.billType.desc}}</td>
+					<td class="data-amount">{{result.amount}}</td>
 					<td><a href="#/bills/id/{{result.id}}"><span class="glyphicon glyphicon-search"></span></a></td>
 				</tr>
 			</table>
