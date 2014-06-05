@@ -927,9 +927,9 @@ billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParam
 	};
 	$scope.recalculateBill = function() {
 		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la factura')) {
-			var billYear = $scope.year;
-			var billMonth = $scope.month;
-			var billStore = $scope.store != null ? $scope.store.id : '';
+			var billYear = $scope.billYear;
+			var billMonth = $scope.billMonth;
+			var billStore = $scope.billStore != null ? $scope.billStore.id : '';
 			$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
 			$http.post('rest/admin/recalculate/bill/' + billStore + '/' + billYear + "/" + billMonth).success(function(data) {
 				$scope.displayAlert(data);
