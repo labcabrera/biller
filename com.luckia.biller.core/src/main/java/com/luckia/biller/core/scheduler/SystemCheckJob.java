@@ -16,7 +16,7 @@ public class SystemCheckJob extends BaseJob {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		LOG.debug("Checking system status");
+		LOG.trace("Checking system status");
 		init(context);
 		EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
 		LiquidationMailService liquidationMailService = injector.getInstance(LiquidationMailService.class);
