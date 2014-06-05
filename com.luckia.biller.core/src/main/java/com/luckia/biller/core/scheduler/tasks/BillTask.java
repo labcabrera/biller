@@ -47,11 +47,15 @@ public class BillTask implements Runnable {
 			long t0 = System.currentTimeMillis();
 			EntityManager entityManager = entityManagerProvider.get();
 			Store store = entityManager.find(Store.class, storeId);
-			Bill bill = billProcessor.generateBill(store, range);
-			billProcessor.processDetails(bill);
-			billProcessor.processResults(bill);
-			long ms = System.currentTimeMillis() - t0;
-			LOG.debug("Procesada factura del local {} ({}) en {} ms", storeId, store.getName(), ms);
+			if (store.getBillingModel() == null) {
+				LOG.warn("El establecimiento {} carece de modelo de facturacion. No se puede generar la factura", store.getName());
+			} else {
+				Bill bill = billProcessor.generateBill(store, range);
+				billProcessor.processDetails(bill);
+				billProcessor.processResults(bill);
+				long ms = System.currentTimeMillis() - t0;
+				LOG.debug("Procesada factura del local {} ({}) en {} ms", storeId, store.getName(), ms);
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
