@@ -619,10 +619,13 @@ billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routePa
 		predicateBuilder.append("dateTo=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
 		return 'rest/bills/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 	};
-	$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+	$scope.search = function() {
+		$scope.currentPage = 1;
+		$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
+	};
 	$scope.setPage = function(page) {
 	    $scope.currentPage = page;
-	    $scope.search();
+	    $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
 	};
 	$scope.reset();
 	$scope.search();
