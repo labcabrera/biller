@@ -43,7 +43,7 @@
 						<label>C&oacute;digo</label> <input type="text" class="form-control input-sm" ng-model="searchOptions.code" />
 					</div>
 					<div class="form-group">
-						<label>Empresa</label> <input type="text" class="form-control input-sm" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchOptions.company" />
+						<label>Empresa</label><input type="text" class="form-control input-sm" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchOptions.company" />
 					</div>
 					<div class="form-group">
 						<label>Centro de coste</label> <input type="text" class="form-control input-sm" typeahead="center as center.name for center in costcenters($viewValue)" ng-model="searchOptions.costCenter" />

@@ -926,22 +926,23 @@ billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParam
 	$scope.load = function() {
 	};
 	$scope.recalculateBill = function() {
-		if($rootScope.autoconfirm || window.confirm('Se van a recalcular las facturas')) {
-			var year = $scope.year;
-			var month = $scope.month;
-			var store = $scope.store != null ? $scope.store.id : '';
+		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la factura')) {
+			var billYear = $scope.year;
+			var billMonth = $scope.month;
+			var billStore = $scope.store != null ? $scope.store.id : '';
 			$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
-			$http.post('rest/admin/recalculate/bills/' + store + '/' + year + "/" + month).success(function(data) {
+			$http.post('rest/admin/recalculate/bill/' + billStore + '/' + billYear + "/" + billMonth).success(function(data) {
 				$scope.displayAlert(data);
 			});
 		}
 	};
-	$scope.patchReplay = function() {
-		if($rootScope.autoconfirm || window.confirm('Ejecutar patch de replay')) {
-			var year = $scope.year;
-			var month = $scope.month;
+	$scope.recalculateLiquidation = function() {
+		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la liquidacion')) {
+			var liquidationYear = $scope.liquidationYear;
+			var liquidationMonth = $scope.liquidationMonth;
+			var liquidationCompany = $scope.liquidationCompany != null ? $scope.liquidationCompany.id : '';
 			$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
-			$http.post('rest/admin/patch/replay/2014/21').success(function(data) {
+			$http.post('rest/admin/recalculate/liquidation/' + liquidationCompany + '/' + liquidationYear + "/" + liquidationMonth).success(function(data) {
 				$scope.displayAlert(data);
 			});
 		}

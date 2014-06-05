@@ -12,6 +12,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -33,6 +35,7 @@ import com.luckia.biller.core.serialization.NotSerializable;
 @Table(name = "B_LIQUIDATION")
 @DiscriminatorValue("L")
 @SuppressWarnings("serial")
+@NamedQueries({ @NamedQuery(name = "Liquidation.selectByCompanyInRange", query = "select e from Liquidation e where e.sender = :sender and e.dateFrom >= :from and e.dateTo <= :to") })
 public class Liquidation extends AbstractBill implements Mergeable<Liquidation> {
 
 	/**

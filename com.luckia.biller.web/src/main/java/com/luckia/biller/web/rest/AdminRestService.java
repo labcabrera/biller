@@ -27,11 +27,16 @@ import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.CommonState;
+import com.luckia.biller.core.model.Company;
+import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
+import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
+import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
+import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 @Path("rest/admin")
 public class AdminRestService {
@@ -44,13 +49,60 @@ public class AdminRestService {
 	private EntityManagerProvider entityManagerProvider;
 	@Inject
 	private BillProcessor billProcessor;
+	@Inject
+	private LiquidationProcessor liquidationProcessor;
+
+	/**
+	 * Genera una nueva factura o la regenera si ya existe a partir del establecimiento y la fecha.
+	 * 
+	 * @param storeId
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/recalculate/bill/{storeId}/{year}/{month}")
+	@ClearCache
+	public Message<String> recalculateBill(@PathParam("storeId") Long storeId, @PathParam("year") Integer year, @PathParam("month") Integer month) {
+		return internalRecalculateBill(storeId, year, month);
+	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/recalculate/bills/{storeId}/{year}/{month}")
+	@Path("/recalculate/liquidation/{companyId}/{year}/{month}")
 	@ClearCache
-	public Message<String> recalculate(@PathParam("storeId") Long storeId, @PathParam("year") Integer year, @PathParam("month") Integer month) {
-		return internalRecalculate(storeId, year, month);
+	public Message<String> recalculateLiquidation(@PathParam("companyId") Long companyId, @PathParam("year") Integer year, @PathParam("month") Integer month) {
+		try {
+			Range<Date> range = getEffectiveRange(year, month);
+			EntityManager entityManager = entityManagerProvider.get();
+			Company company = entityManager.find(Company.class, companyId);
+			Validate.notNull(company, "No se encuentra la empresa operadora");
+			TypedQuery<Liquidation> query = entityManager.createNamedQuery("Bill.selectByStoreInRange", Liquidation.class);
+			query.setParameter("sender", company);
+			query.setParameter("from", range.getMinimum());
+			query.setParameter("to", range.getMaximum());
+			List<Liquidation> liquidations = query.getResultList();
+			String message;
+			Runnable task = null;
+			if (liquidations.isEmpty()) {
+				task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
+				message = "Liquidación generada";
+			} else if (liquidations.size() > 1) {
+				message = "Se han encontrado varias facturas. Utilice la opcion de recalcular desde la vista de facturas.";
+			} else {
+				String liquidationId = liquidations.iterator().next().getId();
+				task = new LiquidationRecalculationTask(liquidationId, entityManagerProvider, liquidationProcessor);
+				message = "Liquidación recalculada";
+			}
+			if (task != null) {
+				new Thread(task).start();
+			}
+			return new Message<String>(Message.CODE_SUCCESS, message);
+		} catch (Exception ex) {
+			LOG.error("Error al recalcular la factura", ex);
+			return new Message<String>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());
+		}
 	}
 
 	public Message<String> calculateNewStores(@PathParam("year") Integer year, @PathParam("month") Integer month) {
@@ -118,7 +170,7 @@ public class AdminRestService {
 		}
 	}
 
-	private Message<String> internalRecalculate(Long storeId, Integer year, Integer month) {
+	private Message<String> internalRecalculateBill(Long storeId, Integer year, Integer month) {
 		try {
 			Range<Date> range = getEffectiveRange(year, month);
 			EntityManager entityManager = entityManagerProvider.get();
