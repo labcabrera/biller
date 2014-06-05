@@ -42,6 +42,18 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<label class="col-sm-1 control-label input-sm">Desde</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control data-date" datepicker-popup="{{dateFormat}}" ng-model="entity.dateFrom" ng-readonly="isReadOnly"
+								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
+						</div>
+						<label class="col-sm-1 control-label input-sm">Hasta</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control data-date" datepicker-popup="{{dateFormat}}" ng-model="entity.dateTo" ng-readonly="isReadOnly"
+								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="col-sm-1 control-label input-sm">Modelo</label>
 						<div class="col-sm-4">
 							<div class="input-group">
