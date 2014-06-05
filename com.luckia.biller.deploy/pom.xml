@@ -53,7 +53,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.luckia.biller.deploy.Patch20140528A</mainClass>
+							<mainClass>com.luckia.biller.deploy.Patch20140605A</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
