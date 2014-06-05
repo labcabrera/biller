@@ -22,6 +22,7 @@ import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.BillingModel;
+import com.luckia.biller.core.model.BillingModelAttributes;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.services.SettingsService;
@@ -66,11 +67,14 @@ public class BillDetailProcessor {
 			BigDecimal vatPercent = settingsService.getBillingSettings().getValue("vat", BigDecimal.class);
 			BigDecimal vatDivisor = BigDecimal.ONE.add(vatPercent.divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN));
 
+			if (model.getStoreModel() == null) {
+				model.setStoreModel(new BillingModelAttributes());
+			}
 			// Calculamos los conceptos de la facturacion.
 			BigDecimal stakes = billingData.get(BillConcept.Stakes).divide(vatDivisor, 2, RoundingMode.HALF_EVEN);
 			if (MathUtils.isNotZero(stakes)) {
 				// En las ventas hay que quitar el IVA
-				if (model.getStoreModel() != null && MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {
+				if (MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {
 					BigDecimal percent = model.getStoreModel().getStakesPercent();
 					BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 					addBillingConcept(bill, BillConcept.Stakes, value, stakes, percent);

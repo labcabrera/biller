@@ -50,9 +50,13 @@ public class Patch20140605A extends PatchSupport implements Runnable {
 			LOG.info("Encontradas {} facturas", list.size());
 
 			for (Bill bill : list) {
-				String billId = bill.getId();
-				BillRecalculationTask task = new BillRecalculationTask(billId, entityManagerProvider, billProcessor);
-				task.run();
+				try {
+					String billId = bill.getId();
+					BillRecalculationTask task = new BillRecalculationTask(billId, entityManagerProvider, billProcessor);
+					task.run();
+				} catch (Exception ex) {
+					LOG.error("Error en la factura " + bill.getSender().getName(), ex);
+				}
 			}
 
 		} catch (Exception ex) {
