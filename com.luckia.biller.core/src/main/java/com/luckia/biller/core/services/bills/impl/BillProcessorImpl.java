@@ -189,13 +189,14 @@ public class BillProcessorImpl implements BillProcessor {
 			entityManager.clear();
 			Liquidation liquidation = entityManager.find(Liquidation.class, bill.getLiquidation().getId());
 			LOG.debug("Actualizando resultados de la liquidacion {}", liquidation);
-			
-			
-			
 			BigDecimal totalAmount = BigDecimal.ZERO;
 			for (Bill i : liquidation.getBills()) {
 				LOG.debug("Liquidacion de {}: {}", i.getSender(), i.getLiquidationTotalAmount());
-				totalAmount = totalAmount.add(i.getLiquidationTotalAmount());
+				if (MathUtils.isNotZero(i.getLiquidationTotalAmount())) {
+					totalAmount = totalAmount.add(i.getLiquidationTotalAmount());
+				} else {
+					LOG.warn("La liquidacion de {} es nula", i.getSender());
+				}
 			}
 			liquidation.setAmount(totalAmount);
 			LOG.debug("Resultado de la liquidacion: {}", totalAmount);
