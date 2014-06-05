@@ -74,12 +74,16 @@ public class LISBillDataProvider implements BillDataProvider {
 				totalCancelledAmount = totalCancelledAmount.add(i.getCancelledAmount());
 				totalAttributable = totalAttributable.add(i.getAttributable());
 			}
+			BigDecimal coOperatingMonthlyFees = BigDecimal.ZERO;
+			if (bill != null && bill.getModel() != null && bill.getModel().getCompanyModel() != null && bill.getModel().getCompanyModel().getCoOperatingMonthlyFees() != null) {
+				coOperatingMonthlyFees = bill.getModel().getCompanyModel().getCoOperatingMonthlyFees();
+			}
 			BigDecimal gameFeesPercent = bill != null ? billFeesService.getGameFeesPercent(bill) : BigDecimal.ZERO;
 			BigDecimal stakes = totalBetAmount.subtract(totalCancelledAmount);
 			BigDecimal ggr = stakes.subtract(totalAttributable);
 			BigDecimal tasaDeJuego = ggr.multiply(gameFeesPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 			BigDecimal ngr = ggr.subtract(tasaDeJuego);
-			BigDecimal gastosOperativos = bill != null ? bill.getModel().getCompanyModel().getCoOperatingMonthlyFees() : BigDecimal.ZERO;
+			BigDecimal gastosOperativos = coOperatingMonthlyFees;
 			BigDecimal nr = ngr.subtract(gastosOperativos);
 			BigDecimal storeCash = stakes.subtract(totalWinAmount);
 			map.put(BillConcept.Stakes, stakes);
