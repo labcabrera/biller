@@ -337,7 +337,7 @@ billerControllers.controller('OwnerListCtrl', [ '$scope', '$http', function($sco
 	$scope.search();
 } ]);
 
-billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
 	$scope.load = function() {
 		$http.get('rest/owners/id/' + $routeParams.id).success(function(data) { $scope.entity = data; });
 		$rootScope.isReadOnly = true;
@@ -352,6 +352,13 @@ billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$rout
 				$scope.message = data.payload;
 			}
 		});
+	};
+	$scope.remove = function() {
+		if($rootScope.autoconfirm || window.confirm('Se va a eliminar el titular')) {
+			$http.post('rest/owners/remove/' + $scope.entity.id).success(function(data) {
+				if(data.code == 200) { $location.path("owners"); } else { $scope.displayAlert(data); }
+			});
+		}
 	};
 	$scope.setStorePage = function(page) {
 	    $scope.currentPage = page;
