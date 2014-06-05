@@ -111,12 +111,16 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		BigDecimal adjustmentsAmount = BigDecimal.ZERO;
 		BigDecimal cashStore = BigDecimal.ZERO;
 		for (Bill bill : liquidation.getBills()) {
+			if (bill.getModel() == null) {
+				LOG.warn("Ignorando factura sin modelo de facturacion asociado (posiblemente no este definida a nivel de establecimiento)");
+				continue;
+			}
 			betAmount = betAmount.add(bill.getLiquidationBetAmount() != null ? bill.getLiquidationBetAmount() : BigDecimal.ZERO);
 			satAmount = satAmount.add(bill.getLiquidationSatAmount() != null ? bill.getLiquidationSatAmount() : BigDecimal.ZERO);
 			otherBillAmount = otherBillAmount.add(bill.getLiquidationOtherAmount() != null ? bill.getLiquidationOtherAmount() : BigDecimal.ZERO);
 			adjustmentsAmount = adjustmentsAmount.add(bill.getAdjustmentAmount() != null ? bill.getAdjustmentAmount() : BigDecimal.ZERO);
 			cashStore = cashStore.add(bill.getStoreCash() != null ? bill.getStoreCash() : BigDecimal.ZERO);
-			if (BooleanUtils.isTrue(bill.getModel().getIncludeStores())) {
+			if (bill.getModel() != null && BooleanUtils.isTrue(bill.getModel().getIncludeStores())) {
 				storeAmount = storeAmount.add(bill.getAmount());
 			}
 		}
