@@ -70,7 +70,7 @@ public class BillDetailProcessor {
 			BigDecimal stakes = billingData.get(BillConcept.Stakes).divide(vatDivisor, 2, RoundingMode.HALF_EVEN);
 			if (MathUtils.isNotZero(stakes)) {
 				// En las ventas hay que quitar el IVA
-				if (MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {
+				if (model.getStoreModel() != null && MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {
 					BigDecimal percent = model.getStoreModel().getStakesPercent();
 					BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 					addBillingConcept(bill, BillConcept.Stakes, value, stakes, percent);
