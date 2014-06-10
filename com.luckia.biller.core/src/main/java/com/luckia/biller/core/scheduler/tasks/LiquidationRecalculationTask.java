@@ -1,6 +1,7 @@
 package com.luckia.biller.core.scheduler.tasks;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.persistence.EntityManager;
 
@@ -50,9 +51,10 @@ public class LiquidationRecalculationTask implements Runnable {
 		entityManager.getTransaction().commit();
 		entityManager.getTransaction().begin();
 		LOG.info("Eliminando LiquidationDetails asociados");
-		for (LiquidationDetail i : liquidation.getDetails()) {
-			i.setLiquidation(null);
+		for (Iterator<LiquidationDetail> iterator = liquidation.getDetails().iterator(); iterator.hasNext();) {
+			LiquidationDetail i = iterator.next();
 			entityManager.remove(i);
+			iterator.remove();
 		}
 		entityManager.getTransaction().commit();
 		LOG.info("Eliminando liquidacion");
