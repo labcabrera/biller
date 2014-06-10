@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 public class LiquidationRecalculationTask implements Runnable {
@@ -45,6 +46,9 @@ public class LiquidationRecalculationTask implements Runnable {
 		for (Bill bill : liquidation.getBills()) {
 			bill.setLiquidation(null);
 			entityManager.merge(bill);
+		}
+		for (LiquidationDetail i : liquidation.getDetails()) {
+			entityManager.remove(i);
 		}
 		entityManager.getTransaction().commit();
 		LOG.info("Eliminando liquidacion");
