@@ -47,9 +47,9 @@ public class LiquidationRecalculationTask implements Runnable {
 			bill.setLiquidation(null);
 			entityManager.merge(bill);
 		}
+		LOG.info("Eliminando LiquidationDetails asociados");
 		for (LiquidationDetail i : liquidation.getDetails()) {
-			i.setLiquidation(null);
-			entityManager.merge(i);
+			entityManager.remove(i);
 		}
 		entityManager.getTransaction().commit();
 		LOG.info("Eliminando liquidacion");
