@@ -4,16 +4,23 @@ import java.util.Iterator;
 
 import javax.persistence.EntityManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillDetail;
+import com.luckia.biller.core.model.BillingModel;
+import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
 /**
  * Representa una tarea que recalcula los detalles de una factura.
  */
 public class BillRecalculationTask implements Runnable {
+
+	private static final Logger LOG = LoggerFactory.getLogger(BillRecalculationTask.class);
 
 	private final String billId;
 	private final EntityManagerProvider entityManagerProvider;
@@ -34,6 +41,7 @@ public class BillRecalculationTask implements Runnable {
 	public void run() {
 		EntityManager entityManager = entityManagerProvider.get();
 		Bill bill = entityManager.find(Bill.class, billId);
+		checkModel(bill, entityManager);
 		cleanPreviousResults(bill, entityManager);
 		billProcessor.processDetails(bill);
 		billProcessor.processResults(bill);
@@ -64,5 +72,27 @@ public class BillRecalculationTask implements Runnable {
 			bill.getLiquidationDetails().clear();
 		}
 		entityManager.getTransaction().commit();
+	}
+
+	private void checkModel(Bill bill, EntityManager entityManager) {
+		BillingModel model = bill.getSender(Store.class).getBillingModel();
+		boolean update = false;
+		if (bill.getModel() == null) {
+			LOG.warn("La factura no esta asociada a ningun modelo de facturacion");
+			if (model == null) {
+				LOG.error("No se puede generar la factura. El establecimiento carece de modelo de facturacion");
+			} else {
+				update = true;
+			}
+		} else if (model != null && model.getId() != bill.getModel().getId()) {
+			update = true;
+		}
+		if (update) {
+			LOG.info("Actualizando el modelo de la factura");
+			entityManager.getTransaction().begin();
+			bill.setModel(model);
+			entityManager.merge(bill);
+			entityManager.getTransaction().commit();
+		}
 	}
 }
