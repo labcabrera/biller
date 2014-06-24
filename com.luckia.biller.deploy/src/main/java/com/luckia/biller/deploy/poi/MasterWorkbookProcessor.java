@@ -110,6 +110,9 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 					auditService.processCreated(store);
 					if (store.getOwner() != null) {
 						auditService.processCreated(store.getOwner());
+						if (store.getOwner().getId() == null) {
+							entityManager.persist(store.getOwner());
+						}
 					}
 					entityManager.persist(store);
 				}
@@ -119,6 +122,7 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 				updateCostCenters();
 				updateSettings();
 				entityManager.getTransaction().commit();
+				LOG.debug("Importacion finalizada");
 			}
 		} catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);

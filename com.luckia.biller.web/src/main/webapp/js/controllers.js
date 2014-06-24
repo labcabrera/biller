@@ -579,6 +579,29 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 	    $scope.currentPage = page;
 	    $http.get('rest/stores/find?model=' + $routeParams.id + "&n=10" + "&p=" + page).success(function(data) { $scope.childs = data; });
 	};
+	$scope.mergeRappel = function() {
+		console.log('Modificando rappel');
+		$http.post('rest/models/rappel/merge', $scope.newRappel).success(function(data) {
+			$scope.displayAlert(data);
+			if(data.code == 200) {
+				$rootScope.isReadOnly = true;
+				$scope.entity = data.payload;
+			}
+		});
+		
+	};  
+	$scope.removeRappel = function() {
+		alert("TODO: pendiente de eliminar");
+		
+	};
+	$scope.editRappel = function(rappelId) {
+		if(rappelId > 0) {
+			$http.get('rest/models/rappel/id/' + rappelId).success(function(data) { $scope.newRappel = data; });
+		} else {
+			$scope.newRappel = { amount: '0', bonusAmount: '0', model: { 'id': $scope.entity.id } };
+		}
+		$('#addRappelModal').modal('show');
+	};
 	$scope.load();
 } ]);
 

@@ -40,7 +40,7 @@ public abstract class BaseWoorbookProcessor {
 	}
 
 	protected String readCellAsString(Cell cell) {
-		return readCellAsString(cell, cell.getCellType());
+		return cell != null ? readCellAsString(cell, cell.getCellType()) : null;
 	}
 
 	protected String readCellAsString(Cell cell, int type) {

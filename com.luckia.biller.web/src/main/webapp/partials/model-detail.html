@@ -6,6 +6,7 @@
 <div class="row">
 
 	<div class="col-sm-9">
+		<div id="alertContainer"></div>
 		<h4>Modelo de facturaci&oacute;n</h4>
 		<div class="m-top-15">
 			<form class="form-horizontal" role="form">
@@ -142,18 +143,18 @@
 						<table class="table table-condensedbordered">
 							<tr>
 								<th style="border-top: none;">Importe</th>
-								<th style="border-top: none;">Porcentaje</th>
 								<th style="border-top: none;">Bonus</th>
 								<th style="border-top: none;"></th>
 							</tr>
 							<tr ng-repeat="rappel in entity.rappel">
 								<td class="data-amount">{{rappel.amount}}</td>
-								<td class="data-amount">{{rappel.bonusPercent}}</td>
 								<td class="data-amount">{{rappel.bonusAmount}}</td>
 								<td><a ng-click="editRappel(rappel.id)" href=""><span class="glyphicon glyphicon-pencil"></span></a></td>
 							</tr>
 						</table>
 					</div>
+					<div class="clearfix"></div>
+					<button class="btn btn-primary btn-sm" ng-click="editRappel()">Nuevo</button>
 				</div>
 			</div>
 		</div>
@@ -170,6 +171,40 @@
 		</div>
 		<div ng-include src="'templates/entity-json-popup.html'"></div>
 	</div>
+	
+	<!-- Ventana modal para editar tramos de rappel -->
+	<div class="modal fade" id="addRappelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Editar tramo de rappel</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Importe</label>
+							<div class="col-sm-4">
+								<input type='text' class="form-control numeric-field" ng-model="newRappel.amount" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Bonus</label>
+							<div class="col-sm-4">
+								<input type='text' class="form-control numeric-field" ng-model="newRappel.bonusAmount" />
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>
+					<button type="button" class="btn btn-primary btn-sm" ng-click="deleteRappel()" >Eliminar</button>
+					<button type="button" class="btn btn-primary btn-sm" ng-click="mergeRappel()" >Guardar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </div>
 </body>
 </html>

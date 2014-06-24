@@ -11,11 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.luckia.biller.core.jpa.Mergeable;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 @Entity
 @Table(name = "B_RAPPEL")
-public class Rappel {
+public class Rappel implements Mergeable<Rappel> {
 
 	@Id
 	@GeneratedValue
@@ -82,5 +83,13 @@ public class Rappel {
 
 	public void setBonusAmount(BigDecimal bonusAmount) {
 		this.bonusAmount = bonusAmount;
+	}
+
+	@Override
+	public void merge(Rappel entity) {
+		if (entity != null) {
+			this.amount = entity.amount;
+			this.bonusAmount = entity.bonusAmount;
+		}
 	}
 }
