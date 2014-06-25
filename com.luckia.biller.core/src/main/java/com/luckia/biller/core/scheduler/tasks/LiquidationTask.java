@@ -15,6 +15,8 @@ import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 /**
  * Tarea encargada de realizar la liquidación (o liquidaciones en el caso de que hubiera más de un centro de coste) de un operador.
+ * 
+ * @see LiquidationProcessor
  */
 public class LiquidationTask implements Runnable {
 

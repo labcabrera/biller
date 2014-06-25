@@ -15,6 +15,17 @@ import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
+/**
+ * Representa la tarea de recalcular una determinada liquidacion. El proceso que sigue es:
+ * <ul>
+ * <li>Elimina la relacion de las facturas con la liquidacion</li>
+ * <li>Elimina los liquidationDetails asociados a la liquidacion</li>
+ * <li>Elimina la liquidacion</li>
+ * <li>Genera una nueva liquidacion a partir de @{link LiquidationTask}</li>
+ * </ul>
+ * 
+ * @see LiquidationTask
+ */
 public class LiquidationRecalculationTask implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LiquidationRecalculationTask.class);

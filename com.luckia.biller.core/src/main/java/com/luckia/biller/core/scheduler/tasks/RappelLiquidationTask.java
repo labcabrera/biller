@@ -13,6 +13,9 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.bills.RappelStoreProcessor;
 
+/**
+ * Representa la tarea de calcular la factura de bonus de rappel para un establecimiento
+ */
 public class RappelLiquidationTask implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RappelLiquidationTask.class);

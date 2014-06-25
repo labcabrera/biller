@@ -8,6 +8,9 @@ import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 
+/**
+ * Componente encargado de realizar las tareas de generacion, confirmacion, eliminacion y actualizacion de liquidaciones.
+ */
 public interface LiquidationProcessor {
 
 	Liquidation processBills(Company company, Range<Date> range);
@@ -21,8 +24,7 @@ public interface LiquidationProcessor {
 	void confirm(Liquidation liquidation);
 
 	/**
-	 * Actualiza el resultado de la liquidación (por ejemplo en el caso en el que hayamos modificado una factura o añadido un ajuste
-	 * operativo).
+	 * Actualiza el resultado de la liquidación (por ejemplo en el caso en el que hayamos modificado una factura o añadido un ajuste operativo).
 	 * 
 	 * @param liquidation
 	 * @return
