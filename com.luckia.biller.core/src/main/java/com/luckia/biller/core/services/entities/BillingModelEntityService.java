@@ -1,8 +1,12 @@
 package com.luckia.biller.core.services.entities;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.validation.ConstraintViolation;
+
+import org.apache.commons.lang3.Validate;
 
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Rappel;
@@ -46,14 +50,17 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 
 	public Message<BillingModel> mergeRappelDetail(Rappel entity) {
 		try {
-			if (entity.getModel() == null || entity.getModel().getId() == null) {
-				return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("billingModel.rappel.error.missingModel"));
+			// TODO deberiamos tener un constructor de mensajes a partir de errores de validacion en lugar de tomar solo el primer mensaje
+			Set<ConstraintViolation<Rappel>> violations = validator.validate(entity);
+			if (!violations.isEmpty()) {
+				String messageKey = violations.iterator().next().getMessage();
+				return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage(messageKey));
 			}
 			EntityManager entityManager = entityManagerProvider.get();
-			entityManager.getTransaction().begin();
 			BillingModel model = entityManager.find(BillingModel.class, entity.getModel().getId());
 			Rappel current;
 			String message;
+			entityManager.getTransaction().begin();
 			if (entity.getId() == null) {
 				current = new Rappel();
 				current.merge(entity);
@@ -66,12 +73,11 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 				entityManager.merge(current);
 				message = i18nService.getMessage("billingModel.rappel.merge");
 			}
+			entityManager.getTransaction().commit();
+			entityManager.refresh(model);
+			entityManager.getTransaction().begin();
 			auditService.processModified(model);
 			entityManager.getTransaction().commit();
-			// TODO no esta funcionando de modo que no refresca los cambios
-			entityManager.detach(model);
-			entityManager.clear();
-			model = entityManager.find(BillingModel.class, entity.getModel().getId());
 			return new Message<>(Message.CODE_SUCCESS, message, model);
 		} catch (Exception ex) {
 			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("billingModel.rappel.merge"));
@@ -79,7 +85,25 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 	}
 
 	public Message<BillingModel> removeRappelDetail(Long primaryKey) {
-		throw new RuntimeException("NOT (YET) IMPLEMENTED!");
+		try {
+			Validate.notNull(primaryKey);
+			EntityManager entityManager = entityManagerProvider.get();
+			Rappel rappel = entityManager.find(Rappel.class, primaryKey);
+			Validate.notNull(rappel);
+			BillingModel model = rappel.getModel();
+			entityManager.getTransaction().begin();
+			entityManager.remove(rappel);
+			entityManager.getTransaction().commit();
+			entityManager.refresh(model);
+			entityManager.getTransaction().begin();
+			auditService.processModified(model);
+			entityManager.merge(model);
+			entityManager.getTransaction().commit();
+			String message = i18nService.getMessage("billingModel.rappel.remove");
+			return new Message<>(Message.CODE_SUCCESS, message, model);
+		} catch (Exception ex) {
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("billingModel.rappel.error.remove"));
+		}
 	}
 
 	@Override

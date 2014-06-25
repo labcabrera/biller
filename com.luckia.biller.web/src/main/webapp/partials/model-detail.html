@@ -8,138 +8,138 @@
 	<div class="col-sm-9">
 		<div id="alertContainer"></div>
 		<h4>Modelo de facturaci&oacute;n</h4>
-		<div class="m-top-15">
-			<form class="form-horizontal" role="form">
-				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Nombre</label>
-					<div class="col-sm-10">
-						<input type='text' class="form-control" ng-model="entity.name" ng-readonly="isReadOnly" />
-					</div>
-				</div>
-				<div class="m-top-15">
-					<h5 class="col-sm-offset-2">Operador</h5>
-					<div class="form-group">
-	 					<label class="col-sm-2 control-label input-sm">Ventas</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.stakesPercent" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre las ventas" popover-trigger="mouseenter" />
-								<span class="input-group-addon">%</span>
-							</div>
-						</div>
-						<label class="col-sm-1 control-label input-sm">GGR</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.ggrPercent" ng-readonly="isReadOnly" popover="Porcentaje sobre ingresos brutos del luego (ventas - premios)" popover-trigger="mouseenter"/>
-								<span class="input-group-addon">%</span>
-							</div>
-						</div>
-						<label class="col-sm-2 control-label input-sm">Atenci&oacute;n Comercial</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.commercialMonthlyFees" ng-readonly="isReadOnly" popover="Honorarios mensuales de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
-								<span class="input-group-addon">&euro;</span>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">NGR</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.ngrPercent" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre los ingresos netos de juego: GGR - tasa de juego" popover-trigger="mouseenter"/>
-								<span class="input-group-addon">%</span>
-							</div>
-						</div>
-						<label class="col-sm-1 control-label input-sm">NR</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.nrPercent" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre el resultado neto: NGR - gastos operativos" popover-trigger="mouseenter" />
-								<span class="input-group-addon">%</span>
-							</div>
-						</div>
-						<label class="col-sm-2 control-label input-sm">SAT</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.satMonthlyFees" ng-readonly="isReadOnly" popover="Importe mensual del servicio de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
-								<span class="input-group-addon">&euro;</span>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-2 col-sm-offset-7 control-label input-sm">Co-explotaci&oacute;n</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.coOperatingMonthlyFees" ng-readonly="isReadOnly" popover="Gastos mensuales de co-explotaci&oacute;n. Este valor se utiliza como gastos operativos para calcular el NR" popover-trigger="mouseenter"/>
-								<span class="input-group-addon">&euro;</span>
-							</div>
-							<span style="display:none" class="help-block">Importe mensual</span>
-						</div>	
-					</div>
-
-					<hr class="col-sm-offset-2"/>
-					<h5 class="col-sm-offset-2">Establecimiento</h5>
-					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Ventas</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.stakesPercent" ng-readonly="isReadOnly" />
-								<span class="input-group-addon">%</span>
-							</div>
-						</div>
-						<label class="col-sm-1 control-label input-sm">GGR</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.ggrPercent" ng-readonly="isReadOnly" />
-								<span class="input-group-addon">%</span>
-							</div>
-						</div>
-						<label class="col-sm-2 control-label input-sm">Atenci&oacute;n Comercial</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.commercialMonthlyFees" ng-readonly="isReadOnly" />
-								<span class="input-group-addon">&euro;</span>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">NGR</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.ngrPercent" ng-readonly="isReadOnly" />
-								<span class="input-group-addon">%</span>
-							</div>
-						</div>
-						<label class="col-sm-1 control-label input-sm">NR</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" readonly="true" value="N / D" />
-								<span class="input-group-addon">%</span>
-							</div>
-						</div>
-						<label class="col-sm-2 control-label input-sm">SAT</label>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.satMonthlyFees" ng-readonly="isReadOnly" />
-								<span class="input-group-addon">&euro;</span>
-							</div>
-						</div>
-						
-					</div>
-				</div>
-			</form>
-		</div>
 		
-		<div class="col-sm-offset-2 m-top-40">
+		<div class="m-top-15">
 			<ul class="nav nav-tabs">
-				<li class="active"><a data-target="#storesTab" data-toggle="tab">Locales</a></li>
+				<li class="active"><a data-target="#modelTab" data-toggle="tab">Modelo</a></li>
 				<li><a data-target="#rappelTab" data-toggle="tab">Rappel</a></li>
+				<li><a data-target="#storesTab" data-toggle="tab">Locales</a></li>
 			</ul>
 	
-			<div class="tab-content">
-				<div class="tab-pane active" id="storesTab">
-					<div ng-include src="'templates/store-list.html'"></div>
+			<div class="tab-content m-top-15">
+			
+				<!-- Modelo -->
+				<div class="tab-pane active" id="modelTab">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label class="col-sm-2 control-label input-sm">Nombre</label>
+							<div class="col-sm-10">
+								<input type='text' class="form-control" ng-model="entity.name" ng-readonly="isReadOnly" />
+							</div>
+						</div>
+						<div class="m-top-15">
+							<h5 class="col-sm-offset-2">Operador</h5>
+							<div class="form-group">
+			 					<label class="col-sm-2 control-label input-sm">Ventas</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.stakesPercent" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre las ventas" popover-trigger="mouseenter" />
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-1 control-label input-sm">GGR</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.ggrPercent" ng-readonly="isReadOnly" popover="Porcentaje sobre ingresos brutos del luego (ventas - premios)" popover-trigger="mouseenter"/>
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-2 control-label input-sm">Atenci&oacute;n Comercial</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.commercialMonthlyFees" ng-readonly="isReadOnly" popover="Honorarios mensuales de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
+										<span class="input-group-addon">&euro;</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">NGR</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.ngrPercent" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre los ingresos netos de juego: GGR - tasa de juego" popover-trigger="mouseenter"/>
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-1 control-label input-sm">NR</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.nrPercent" ng-readonly="isReadOnly" popover="Porcentaje mensual sobre el resultado neto: NGR - gastos operativos" popover-trigger="mouseenter" />
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-2 control-label input-sm">SAT</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.satMonthlyFees" ng-readonly="isReadOnly" popover="Importe mensual del servicio de atenci&oacute;n al cliente" popover-trigger="mouseenter" />
+										<span class="input-group-addon">&euro;</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 col-sm-offset-7 control-label input-sm">Co-explotaci&oacute;n</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.coOperatingMonthlyFees" ng-readonly="isReadOnly" popover="Gastos mensuales de co-explotaci&oacute;n. Este valor se utiliza como gastos operativos para calcular el NR" popover-trigger="mouseenter"/>
+										<span class="input-group-addon">&euro;</span>
+									</div>
+									<span style="display:none" class="help-block">Importe mensual</span>
+								</div>	
+							</div>
+							<hr class="col-sm-offset-2"/>
+							<h5 class="col-sm-offset-2">Establecimiento</h5>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">Ventas</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.stakesPercent" ng-readonly="isReadOnly" />
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-1 control-label input-sm">GGR</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.ggrPercent" ng-readonly="isReadOnly" />
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-2 control-label input-sm">Atenci&oacute;n Comercial</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.commercialMonthlyFees" ng-readonly="isReadOnly" />
+										<span class="input-group-addon">&euro;</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label input-sm">NGR</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.ngrPercent" ng-readonly="isReadOnly" />
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-1 control-label input-sm">NR</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" readonly="true" value="N / D" />
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+								<label class="col-sm-2 control-label input-sm">SAT</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.satMonthlyFees" ng-readonly="isReadOnly" />
+										<span class="input-group-addon">&euro;</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
 				</div>
+				
+				<!-- Rappel -->
 				<div class="tab-pane" id="rappelTab">
-					<div class="col-sm-5 m-top-15">
+					<div class="col-sm-5">
 						<table class="table table-condensedbordered">
 							<tr>
 								<th style="border-top: none;">Importe</th>
@@ -156,6 +156,12 @@
 					<div class="clearfix"></div>
 					<button class="btn btn-primary btn-sm" ng-click="editRappel()">Nuevo</button>
 				</div>
+
+				<!-- Establecimientos -->
+				<div class="tab-pane" id="storesTab">
+					<div ng-include src="'templates/store-list.html'"></div>
+				</div>
+				
 			</div>
 		</div>
 	</div>
@@ -181,6 +187,7 @@
 					<h4 class="modal-title">Editar tramo de rappel</h4>
 				</div>
 				<div class="modal-body">
+					<div id="modalAlertContainer"></div>
 					<form class="form-horizontal" role="form">
 						<div class="form-group">
 							<label class="col-sm-2 control-label input-sm">Importe</label>
@@ -198,7 +205,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>
-					<button type="button" class="btn btn-primary btn-sm" ng-click="deleteRappel()" >Eliminar</button>
+					<button type="button" class="btn btn-primary btn-sm" ng-click="removeRappel()" >Eliminar</button>
 					<button type="button" class="btn btn-primary btn-sm" ng-click="mergeRappel()" >Guardar</button>
 				</div>
 			</div>

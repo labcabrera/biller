@@ -12,10 +12,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.luckia.biller.core.jpa.Mergeable;
+import com.luckia.biller.core.model.validation.ValidRappel;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 @Entity
 @Table(name = "B_RAPPEL")
+@ValidRappel
 public class Rappel implements Mergeable<Rappel> {
 
 	@Id
@@ -92,4 +94,10 @@ public class Rappel implements Mergeable<Rappel> {
 			this.bonusAmount = entity.bonusAmount;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Rappel [amount=" + amount + ", bonusAmount=" + bonusAmount + "]";
+	}
+
 }

@@ -155,4 +155,9 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 			this.name = entity.name;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "BillingModel [name=" + name + "]";
+	}
 }

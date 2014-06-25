@@ -79,6 +79,23 @@ billerApp.run(function($rootScope, $http) {
 		t.append(d);
 	};
 	
+	$rootScope.displayAlertModal = function(message, containerId) {
+		console.log("Display alert modal");
+		var t = $("#modalAlertContainer");
+		var d = $('<div/>').addClass('alert alert-dismissable').addClass(message.code == 200 ? 'alert-info' : 'alert-warning');
+		d.append($('<button/>').addClass("close").attr('type', 'button').attr('data-dismiss', 'alert').attr('aria-hiden', 'true').append('&times;'));
+		d.append($('<span>').append(message.message));
+		if(message.errors != null && message.errors.length > 0) {
+			var u = $('<ul>').addClass('style','unstyled');
+			for(var i = 0; i < message.errors.length; i++) {
+				u.append($('<li>').append(message.errors[i]));
+			}
+			d.append(u);
+		}
+		t.empty();
+		t.append(d);
+	};
+	
 	$rootScope.logout = function() {
 		$rootScope.user = { "name": ""};
 	};
