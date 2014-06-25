@@ -23,7 +23,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.model.validation.ValidLegalEntity;
 import com.luckia.biller.core.model.validation.ValidStore;
 import com.luckia.biller.core.serialization.NotSerializable;
 
@@ -36,7 +35,7 @@ import com.luckia.biller.core.serialization.NotSerializable;
 @SuppressWarnings("serial")
 @NamedQueries({ @NamedQuery(name = "Store.selectAll", query = "select s from Store s order by s.name") })
 @ValidStore
-@ValidLegalEntity
+//@ValidLegalEntity
 public class Store extends LegalEntity {
 
 	@Column(name = "TYPE", length = 32)

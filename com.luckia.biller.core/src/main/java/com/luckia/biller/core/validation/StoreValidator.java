@@ -23,9 +23,6 @@ public class StoreValidator implements ConstraintValidator<ValidStore, Store> {
 			context.buildConstraintViolationWithTemplate("store.missing.owner").addConstraintViolation();
 			hasErrors = true;
 		}
-		if(entity.getTerminalRelations() == null || entity.getTerminalRelations().isEmpty()) {
-			context.buildConstraintViolationWithTemplate("store.missing.terminals").addConstraintViolation();
-		}
 		return !hasErrors;
 	}
 

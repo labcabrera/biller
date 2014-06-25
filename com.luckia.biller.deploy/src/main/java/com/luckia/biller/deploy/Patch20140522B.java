@@ -16,7 +16,6 @@ import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
-import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 public class Patch20140522B {
@@ -32,7 +31,6 @@ public class Patch20140522B {
 		Range<Date> range = Range.between(from, to);
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
 		EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
-		BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
 		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
 		EntityManager entityManager = entityManagerProvider.get();
 		if (DELETE) {
