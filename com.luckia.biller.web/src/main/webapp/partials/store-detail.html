@@ -14,25 +14,25 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Nombre</label>
 					<div class="col-sm-9">
-						<input type='text' class="form-control input-sm" ng-model="entity.name" ng-readonly="isReadOnly" required />
+						<input type='text' class="form-control" ng-model="entity.name" ng-readonly="isReadOnly" required />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Empresa</label>
 					<div class="col-sm-4">
 						<div class="input-group">
-							<input type="text" class="form-control input-sm" ng-model="entity.parent"  ng-readonly="isReadOnly" typeahead="company as company.name for company in companies($viewValue)" typeahead-editable="false" />
-							<span  class="input-group-addon input-sm">
+							<input type="text" class="form-control" ng-model="entity.parent"  ng-readonly="isReadOnly" typeahead="company as company.name for company in companies($viewValue)" typeahead-editable="false" />
+							<span  class="input-group-addon">
 								<a ng-if="entity.parent != null" href="#/companies/id/{{entity.parent.id}}"><span class="glyphicon glyphicon-search"></span></a>
 								<span ng-if="entity.parent == null" class="glyphicon glyphicon-search"></span>
 							</span>
 						</div>
 					</div>
-					<label class="col-sm-1 control-label input-sm">Centro de coste</label>
+					<label class="col-sm-1 control-label input-sm">C. Coste</label>
 					<div class="col-sm-4">
 						<div class="input-group">
-							<input type="text" class="form-control input-sm" ng-model="entity.costCenter" ng-readonly="isReadOnly" typeahead="costCenter as costCenter.name for costCenter in costcenters($viewValue)" typeahead-editable="false" />
-							<span  class="input-group-addon input-sm">
+							<input type="text" class="form-control" ng-model="entity.costCenter" ng-readonly="isReadOnly" typeahead="costCenter as costCenter.name for costCenter in costcenters($viewValue)" typeahead-editable="false" />
+							<span  class="input-group-addon">
 								<a ng-if="entity.costCenter != null" href="#/costcenters/id/{{entity.costCenter.id}}"><span class="glyphicon glyphicon-search"></span></a>
 								<span ng-if="entity.costCenter == null" class="glyphicon glyphicon-search"></span>
 							</span>
@@ -42,11 +42,11 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">CIF</label>
 					<div class="col-sm-4">
-						<input type='text' class="form-control input-sm" ng-model="entity.idCard.number" ng-readonly="isReadOnly"  />
+						<input type='text' class="form-control" ng-model="entity.idCard.number" ng-readonly="isReadOnly"  />
 					</div>
 					<label class="col-sm-1 control-label input-sm">Tipo</label>
 					<div class="col-sm-4">
-						<select class="form-control input-sm" ng-model="entity.type" ng-readonly="isReadOnly">
+						<select class="form-control" ng-model="entity.type" ng-readonly="isReadOnly">
 							<option value="Bar">Bar</option>
 							<option value="BingoCorner">C&oacute;rner en Bingo</option>
 							<option value="SalonCorner">C&oacute;rner en Sal&oacute;n</option>
@@ -60,49 +60,48 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Provincia</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly"  />
+						<input type="text" class="form-control" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly"  />
 					</div>
 					<label class="col-sm-1 control-label input-sm">Localidad</label>
 					<div class="col-sm-4">
-						<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly"  />
+						<input type='text' class="form-control" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly"  />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Direcci&oacute;n</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.address.road" ng-readonly="isReadOnly"  />
+						<input type="text" class="form-control" ng-model="entity.address.road" ng-readonly="isReadOnly"  />
 					</div>
 					<label class="col-sm-1 control-label input-sm">N&uacute;mero</label>
 					<div class="col-sm-4">
-						<input type='text' class="form-control input-sm" ng-model="entity.address.number" ng-readonly="isReadOnly"  />
+						<input type='text' class="form-control" ng-model="entity.address.number" ng-readonly="isReadOnly"  />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Email</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.email" ng-readonly="isReadOnly" />
+						<input type="text" class="form-control" ng-model="entity.email" ng-readonly="isReadOnly" />
 					</div>
 					<label class="col-sm-1 control-label input-sm">Serie</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.billSequencePrefix" ng-readonly="isReadOnly" />
+						<input type="text" class="form-control" ng-model="entity.billSequencePrefix" ng-readonly="isReadOnly" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Inicio</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.startDate" ng-readonly="true" />
+						<input type="text" class="form-control" ng-model="entity.startDate" ng-readonly="true" />
 					</div>
 					<label class="col-sm-1 control-label input-sm">Fin</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control input-sm" ng-model="entity.endDate" ng-readonly="true" />
+						<input type="text" class="form-control" ng-model="entity.endDate" ng-readonly="true" />
 					</div>
 				</div>
 				<div class="form-group">
-					<div class="col-sm-4 col-sm-offset-2">
-						<div class="checkbox">
-							<label><input type="checkbox" ng-model="entity.autoConfirm" ng-readonly=isReadOnly> Facturaci&oacute;n autom&aacute;tica</label>
-						</div>
-					</div>
+					<div class="col-sm-6 col-sm-offset-2">
+						<input type="checkbox" id="labelAutoliquidation" ng-model="entity.autoConfirm" ng-readonly="isReadOnly" class="checkbox" />
+	    				<label for="labelAutoliquidation">Autoliquidaci&oacute;n</label>
+	    			</div>
 				</div>
 			</form>
 		</div>
@@ -192,13 +191,13 @@
 			<div class="modal-body">
 				<form class="form-horizontal" role="form">
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">C&oacute;digo</label>
+						<label class="col-sm-2 control-label">C&oacute;digo</label>
 						<div class="col-sm-8">
 							<input type='text' class="form-control" ng-model="newTerminal" typeahead="terminal as terminal.code for terminal in terminals($viewValue)" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Establecimiento</label>
+						<label class="col-sm-2 control-label">Establecimiento</label>
 						<div class="col-sm-8">
 							<input type='text' class="form-control" ng-model="newTerminal.store.name" ng-readonly="true" />
 						</div>

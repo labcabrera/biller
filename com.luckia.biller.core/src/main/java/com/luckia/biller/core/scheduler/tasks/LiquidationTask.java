@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,9 @@ public class LiquidationTask implements Runnable {
 			EntityManager entityManager = entityManagerProvider.get();
 			Company company = entityManager.find(Company.class, companyId);
 			liquidationResult = liquidationProcessor.processBills(company, range);
+			if (BooleanUtils.isTrue(company.getAutoConfirm())) {
+				liquidationProcessor.confirm(liquidationResult);
+			}
 			long ms = System.currentTimeMillis() - t0;
 			LOG.debug("Procesada liquidacion de la empresa {} en {} ms", company.getName(), ms);
 		} catch (Exception ex) {

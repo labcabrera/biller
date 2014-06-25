@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,9 @@ public class BillTask implements Runnable {
 				Bill bill = billProcessor.generateBill(store, range);
 				billProcessor.processDetails(bill);
 				billProcessor.processResults(bill);
+				if (BooleanUtils.isTrue(store.getAutoConfirm())) {
+					billProcessor.confirmBill(bill);
+				}
 				long ms = System.currentTimeMillis() - t0;
 				LOG.debug("Procesada factura del local {} ({}) en {} ms", storeId, store.getName(), ms);
 			}
