@@ -11,7 +11,7 @@ var billerControllers = angular.module('billerControllers', []);
 
 billerControllers.controller('LoginCtrl', [ '$scope', '$rootScope', '$location', '$http', function($scope, $rootScope, $location, $http) {
 	$scope.login = function(user, password) {
-		var request = { "name": $scope.user.name, "password": $scope.user.password};
+		var request = { "name": $scope.username, "password": $scope.password};
 		$http.post('rest/users/login', request).success(function(data) {
 			if(data.code == 200) {
 				$rootScope.user = data.payload;
@@ -590,9 +590,8 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 				$scope.displayAlertModal(data);
 			}
 		});
-	};  
+	};
 	$scope.removeRappel = function() {
-		console.log("Eliminando rappel " + $scope.newRappel.id);
 		$http.post('rest/models/rappel/remove/' + $scope.newRappel.id).success(function(data) {
 			$scope.displayAlert(data);
 			if(data.code == 200) {

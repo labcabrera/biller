@@ -170,4 +170,25 @@ function PredicateBuilder(expression) {
 }
 
 
+// TODO revisar!
+billerApp.factory('sessionInjector', ['$rootScope', '$location', function($rootScope, $location, Session) {
+    var sessionInjector = {
+        request: function(config) {
+//        	console.log("Estableciendo cabeceras " + ($rootScope.user != null ? $rootScope.user.name : '<null>'));
+//        	if($rootScope.user == null) {
+//        		$location.path("groups");
+//        	} else {
+//        		config.headers['x-session-name'] = $rootScope.user.name;
+//        		config.headers['x-session-token'] = 'randomtoken';        		
+//        	}
+            return config;
+        }
+    };
+    return sessionInjector;
+}]);
+billerApp.config(['$httpProvider', function($httpProvider) {
+    $httpProvider.interceptors.push('sessionInjector');
+}]);
+
+
 

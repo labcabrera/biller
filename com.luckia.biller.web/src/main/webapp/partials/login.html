@@ -3,15 +3,17 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"></head>
 <body>
 	<div class="row">
-		<div class="container" ng-controller="LoginCtrl">
+		<div class="container" exclude-ng-controller="LoginCtrl">
 			<form role="form" class="col-sm-4 col-sm-offset-4">
 				<div class="form-group">
 					<label for="username">Usuario</label>
-					<input ng-model="user.name" id="username" type="text" class="form-control" required autofocus>
+					<input ng-model="username" id="username" type="text" class="form-control" required autofocus />
 				</div>
 				<div class="form-group">
 					<label for="password">Password</label>
-					<input ng-model="user.password" id="password" type="password" class="form-control" required> <label class="checkbox"> <input type="checkbox" value="remember-me"> Recordarme
+					<input ng-model="password" id="password" type="password" class="form-control" required />
+					<label class="checkbox"></label>
+					<input type="checkbox" value="remember-me" /> Recordarme
 				</div>
 				<div ng-if="loginResult!=null" class="alert alert-warning">{{loginResult}}</div>
 				<button ng-click="login()" class="btn btn-sm btn-primary">Ingresar</button>
