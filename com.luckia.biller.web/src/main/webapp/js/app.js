@@ -40,6 +40,7 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope, $locat
 	}).when('/admin/recalculate', { templateUrl : 'partials/admin/admin-recalculate-bills.html', controller: 'AdminCtrl'
 	}).when('/login', { templateUrl : 'partials/login.html', controller: 'LoginCtrl'
 	}).when('/index', { templateUrl : 'static/index.html'
+	}).when('/sequence-prefix', { templateUrl : 'static/sequence-prefix.html'
 	}).when('/', { templateUrl : 'static/index.html'
 	}).otherwise({ templateUrl : 'partials/404.html'
 	});

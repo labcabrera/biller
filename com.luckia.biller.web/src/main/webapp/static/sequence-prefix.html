@@ -1,0 +1,52 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+
+	<div class="row">
+		<div class="col-md-8">
+			<h2>Formato de n&uacute;meros de serie</h2>
+			<p>
+				Estos valores se utilizan para generar los n&uacute;meros tanto de facturas como de liquidaciones. A partir de este
+				valor podemos indicar el formato con el que se generar&aacute;n estos valores a partir de dos elementos:
+				<ul>
+					<li>Elementos fijos</li>
+					<li>Sustituciones</li>
+				</ul>
+			</p>
+			<p> 
+				Por ejemplo podemos indicar el formato del siguiente formato:
+				<pre>A00/<b>{year}</b>/1035/<b>{sequence, 4}</b></pre>
+				generaremos los siguientes valores:
+				<ul>
+					<li>A00/<b>2014</b>/1035/<b>0001</b></li>
+					<li>A00/<b>2014</b>/1035/<b>0002</b></li>
+					<li>A00/<b>2014</b>/1035/<b>0003</b></li>
+					<li>A00/<b>2014</b>/1035/<b>0004</b></li>
+				</ul>
+				Vemos que en este caso los elementos entre corchetes se reemplazan por los valores
+				de a&ntilde;o y n&uacute;mero de secuencia.
+			</p>
+			<h3>Sustituciones</h3>
+			<h4>Secuencia</h4>
+			<p>
+				Este elemento de define como <b>{sequence, size}</b> siendo 'size' un valor num&eacute;rico que indica el
+				n&uacute;mero total de cifras que se utilizar&aacute;n para componer el valor. Por ejemplo:
+				<ul>
+					<li>{sequence, 2}: 01</li>
+					<li>{sequence, 6}: 000001</li>
+				</ul>
+			</p>
+			<h4>A&ntilde;o</h4>
+			<p>
+				Este elemento se define como <b>{year}</b> y genera el valor del a&ntilde;o actual con 4 d&iacute;gitos.
+			</p>
+			<h4>Mes</h4>
+			<p>
+				Este elemento se define como <b>{month}</b> y genera el valor num&eacute;rico del mes actual con 2 d&iacute;gitos.
+			</p>
+		</div>
+	</div>
+</body>
+</html>

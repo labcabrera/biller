@@ -26,10 +26,10 @@ public class LegalEntityValidator implements ConstraintValidator<ValidLegalEntit
 
 	@Override
 	public boolean isValid(LegalEntity entity, ConstraintValidatorContext context) {
-		Boolean valid = true;
+		boolean hasErrors = false;
 		if (StringUtils.isBlank(entity.getName())) {
 			context.buildConstraintViolationWithTemplate("legalEntity.name.required").addConstraintViolation();
-			// valid = false;
+			hasErrors = true;
 		}
 		if (entity.getIdCard() == null || StringUtils.isBlank(entity.getIdCard().getNumber())) {
 			LOG.trace("La entidad carece de numero de identificacion fiscal");
@@ -46,10 +46,6 @@ public class LegalEntityValidator implements ConstraintValidator<ValidLegalEntit
 				// valid = false;
 			}
 		}
-		if (!valid) {
-			LOG.warn("Entidad con errores de validacion");
-		}
-
-		return valid;
+		return !hasErrors;
 	}
 }
