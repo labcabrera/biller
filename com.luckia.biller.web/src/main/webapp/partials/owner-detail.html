@@ -56,26 +56,34 @@
 				</div>
 				<label class="col-sm-2 control-label input-sm">N&uacute;mero</label>
 				<div class="col-sm-4">
-					<input type='text' class="form-control" ng-model="entity.address.floor" ng-readonly="isReadOnly" />
+					<input type='text' class="form-control" ng-model="entity.address.number" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label input-sm">C&oacute;digo postal</label>
 				<div class="col-sm-4">
-					<input type="text" class="form-control" ng-model="entity.zipCode" ng-readonly="isReadOnly" />
+					<input type="text" class="form-control" ng-model="entity.address.zipCode" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 		</form>
 		<div class="m-top-40">
 			<ul class="nav nav-tabs">
 				<li class="active"><a data-target="#storesTab" data-toggle="tab">Locales</a></li>
+				<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
 				<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
 			</ul>
 			<div class="tab-content">
-				<!-- Pestaña del titular del local -->
+				<!-- Tab de los locales asociados al titular -->
 				<div class="tab-pane active" id="storesTab">
 					<div ng-include src="'templates/store-list.html'"></div>
 				</div>
+				<!-- Tab de observaciones -->
+				<div class="tab-pane" id="commentsTab">
+					<div class="m-top-15">
+						<textarea class="form-control" rows="3" ng-model="entity.comments" ng-readonly="isReadOnly"></textarea>
+					</div>
+				</div>
+				<!-- Tab de auditoria -->
 				<div class="tab-pane" id="auditTab">
 					<div ng-include src="'templates/entity-audit-info.html'"></div>
 				</div>
