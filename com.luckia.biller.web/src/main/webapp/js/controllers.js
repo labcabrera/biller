@@ -604,7 +604,10 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 	};
 	$scope.editRappel = function(rappelId) {
 		if(rappelId > 0) {
-			$http.get('rest/models/rappel/id/' + rappelId).success(function(data) { $scope.newRappel = data; });
+			$http.get('rest/models/rappel/id/' + rappelId).success(function(data) {
+				$scope.newRappel = data;
+				$scope.newRappel.model = { 'id': $scope.entity.id};
+			});
 		} else {
 			$scope.newRappel = { amount: '0', bonusAmount: '0', model: { 'id': $scope.entity.id } };
 		}
