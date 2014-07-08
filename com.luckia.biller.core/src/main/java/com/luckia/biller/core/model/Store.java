@@ -42,7 +42,7 @@ public class Store extends LegalEntity {
 	@Enumerated(EnumType.STRING)
 	private StoreType type;
 
-	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "OWNER_ID")
 	private LegalEntity owner;
 

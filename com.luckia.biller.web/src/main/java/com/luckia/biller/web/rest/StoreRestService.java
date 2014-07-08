@@ -34,13 +34,19 @@ public class StoreRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/id/{id}")
+	@ClearCache
 	public Store findById(@PathParam("id") Long primaryKey) {
-		return entityService.findById(primaryKey);
+		Store result = entityService.findById(primaryKey);
+		if (result != null && result.getOwner() == null) {
+			LOG.warn("Missing owner in store {}", primaryKey);
+		}
+		return result;
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
+	@ClearCache
 	public SearchResults<Store> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
