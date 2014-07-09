@@ -100,8 +100,10 @@ public class BillProcessorImpl implements BillProcessor {
 	 */
 	@Override
 	public void processDetails(Bill bill) {
-		billDetailProcessor.process(bill);
 		EntityManager entityManager = entityManagerProvider.get();
+		// Forzamos un clear para evitar problemas con la cache si el terminal ha sido modificado en otro hilo de ejecucion
+		entityManager.clear();
+		billDetailProcessor.process(bill);
 		entityManager.getTransaction().begin();
 		for (BillDetail detail : bill.getDetails()) {
 			entityManager.merge(detail);
