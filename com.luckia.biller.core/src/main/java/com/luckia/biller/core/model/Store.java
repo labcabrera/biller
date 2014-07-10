@@ -70,7 +70,7 @@ public class Store extends LegalEntity {
 	/**
 	 * Posibilidades: usar un oneToOne, usar un ManyToOne y dejarlo a null cuando tenga la facturacion por defecto o cualquier otra alternativa
 	 */
-	@OneToOne(cascade = CascadeType.PERSIST, optional = false)
+	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "BILLING_MODEL_ID")
 	private BillingModel billingModel;
 
