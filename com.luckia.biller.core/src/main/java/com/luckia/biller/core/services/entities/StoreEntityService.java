@@ -4,11 +4,16 @@ import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 
 public class StoreEntityService extends LegalEntityBaseService<Store> {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(StoreEntityService.class);
 
 	@Override
 	@ClearCache
@@ -18,6 +23,14 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 			return validationResult;
 		}
 		EntityManager entityManager = entityManagerProvider.get();
+		if(entityManager.getTransaction().isActive()) {
+			try {
+				LOG.warn("Transaccion en curso no esperada: forzando commit");
+				entityManager.getTransaction().commit();
+			} catch (Exception ignore) {
+				LOG.warn("Error al realizar el commit de la transaccion no esperada");
+			}
+		}
 		entityManager.getTransaction().begin();
 		Store current;
 		String message;
