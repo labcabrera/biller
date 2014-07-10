@@ -20,12 +20,12 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 	@ClearCache
 	public Message<Store> merge(Store entity) {
 		Validate.notNull(entity);
-		LOG.info("Merge store {}", entity.getName());
-		if (entity.getBillingModel() == null) {
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Es necesario el modelo de facturación", entity);
-		} else if (entity.getOwner() == null) {
-			return new Message<>(Message.CODE_GENERIC_ERROR	, "Es necesario el titular", entity);
-		}
+		// LOG.info("Merge store {}", entity.getName());
+		// if (entity.getBillingModel() == null) {
+		// return new Message<>(Message.CODE_GENERIC_ERROR, "Es necesario el modelo de facturación", entity);
+		// } else if (entity.getOwner() == null) {
+		// return new Message<>(Message.CODE_GENERIC_ERROR , "Es necesario el titular", entity);
+		// }
 		EntityManager entityManager = entityManagerProvider.get();
 		if (entityManager.getTransaction().isActive()) {
 			try {
