@@ -25,7 +25,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.luckia.biller.core.jpa.Mergeable;
-import com.luckia.biller.core.model.validation.ValidLegalEntity;
 
 /**
  * Entidad abstracta que representa una entidad legal. Hay diferentes tipos de entidades legales: personas, establecimientos, empresas, etc.
@@ -35,7 +34,7 @@ import com.luckia.biller.core.model.validation.ValidLegalEntity;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.CHAR, length = 1)
 @SuppressWarnings("serial")
-@ValidLegalEntity
+// @ValidLegalEntity
 @NamedQueries({ @NamedQuery(name = "LegalEntity.selectByName", query = "select e from LegalEntity e where e.name = :name") })
 public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Auditable {
 
