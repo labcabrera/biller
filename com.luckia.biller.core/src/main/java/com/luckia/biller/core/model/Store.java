@@ -23,7 +23,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.model.validation.ValidStore;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 /**

@@ -21,9 +21,10 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 	public Message<Store> merge(Store entity) {
 		Validate.notNull(entity);
 		LOG.info("Merge store {}", entity.getName());
-		Message<Store> validationResult = validate(entity);
-		if (validationResult.hasErrors()) {
-			return validationResult;
+		if (entity.getBillingModel() == null) {
+			return new Message<>(Message.CODE_SUCCESS, "Es necesario el modelo de facturación", entity);
+		} else if (entity.getOwner() == null) {
+			return new Message<>(Message.CODE_SUCCESS, "Es necesario el titular", entity);
 		}
 		EntityManager entityManager = entityManagerProvider.get();
 		if (entityManager.getTransaction().isActive()) {
@@ -45,7 +46,7 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 			entityManager.persist(current);
 			message = i18nService.getMessage("store.persist");
 		} else {
-			LOG.info("Creating new store");
+			LOG.info("Updating current store");
 			current = entityManager.find(Store.class, entity.getId());
 			current.merge(entity);
 			auditService.processModified(current);
