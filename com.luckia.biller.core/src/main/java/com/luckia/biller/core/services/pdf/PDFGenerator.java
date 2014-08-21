@@ -115,8 +115,7 @@ public abstract class PDFGenerator<T> {
 	}
 
 	/**
-	 * En caso de que la factura o liquidacion esten en estado <code>BillDraft</code> muestra una marca de agua indicando que el documento
-	 * es un borrador.
+	 * En caso de que la factura o liquidacion esten en estado <code>BillDraft</code> muestra una marca de agua indicando que el documento es un borrador.
 	 * 
 	 * @param document
 	 * @param writer
@@ -135,14 +134,15 @@ public abstract class PDFGenerator<T> {
 	}
 
 	protected void printLegalEntities(Document document, LegalEntity sender, LegalEntity receiver, float spacingBefore) throws DocumentException {
+		LegalEntity owner = null;
 		if (Store.class.isAssignableFrom(sender.getClass()) && ((Store) sender).getOwner() != null) {
-			sender = ((Store) sender).getOwner();
+			owner = ((Store) sender).getOwner();
 		}
 		PdfPTable table = new PdfPTable(new float[] { 40, 40f, 40 });
 		table.setWidthPercentage(100f);
 		table.getDefaultCell().setBorder(0);
 		table.getDefaultCell().setBorderWidth(0f);
-		table.addCell(createLegalEntityCell("EMISOR", sender, sender));
+		table.addCell(createLegalEntityCell("EMISOR", sender, owner));
 		table.addCell(createCell("", Element.ALIGN_RIGHT, documentFont));
 		table.addCell(createLegalEntityCell("DESTINATARIO", receiver, null));
 		Paragraph paragraph = new Paragraph();
@@ -151,7 +151,7 @@ public abstract class PDFGenerator<T> {
 		document.add(paragraph);
 	}
 
-	protected PdfPCell createLegalEntityCell(String title, LegalEntity legalEntity, LegalEntity child) {
+	protected PdfPCell createLegalEntityCell(String title, LegalEntity legalEntity, LegalEntity owner) {
 		PdfPCell cell = new PdfPCell();
 		cell.setBorder(0);
 		cell.addElement(new Paragraph(new Phrase(title, boldFont)));
@@ -162,14 +162,14 @@ public abstract class PDFGenerator<T> {
 		if (legalEntity.getIdCard() != null && StringUtils.isNotBlank(legalEntity.getIdCard().getNumber())) {
 			cell.addElement(new Paragraph(new Phrase("NIF/CIF: " + legalEntity.getIdCard().getNumber(), documentFont)));
 		}
-		if (child != null && child.getId() != legalEntity.getId()) {
-			cell.addElement(new Paragraph(new Phrase("LOCAL:", boldFont)));
-			cell.addElement(new Paragraph(new Phrase(child.getName(), documentFont)));
-			if (child.getAddress() != null) {
-				cell.addElement(new Paragraph(new Phrase("Dirección: " + child.getAddress().getRoad(), documentFont)));
+		if (owner != null && owner.getId() != legalEntity.getId()) {
+			cell.addElement(new Paragraph(new Phrase("Titular:", documentFont)));
+			cell.addElement(new Paragraph(new Phrase(owner.getName(), documentFont)));
+			if (owner.getAddress() != null) {
+				cell.addElement(new Paragraph(new Phrase("Dirección: " + owner.getAddress().getRoad(), documentFont)));
 			}
-			if (child.getIdCard() != null && StringUtils.isNotBlank(child.getIdCard().getNumber())) {
-				cell.addElement(new Paragraph(new Phrase("NIF/CIF: " + child.getIdCard().getNumber(), documentFont)));
+			if (owner.getIdCard() != null && StringUtils.isNotBlank(owner.getIdCard().getNumber())) {
+				cell.addElement(new Paragraph(new Phrase("NIF/CIF: " + owner.getIdCard().getNumber(), documentFont)));
 			}
 		}
 		return cell;
