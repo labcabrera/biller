@@ -207,7 +207,7 @@ public abstract class PDFGenerator<T> {
 		}
 		sb.append("\n");
 		if (StringUtils.isNotEmpty(address.getZipCode())) {
-			sb.append(address.getZipCode());
+			sb.append(address.getZipCode()).append(" ");
 		}
 		if (address.getRegion() != null) {
 			sb.append(address.getRegion().getName()).append(" ");
