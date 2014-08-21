@@ -136,7 +136,10 @@ public abstract class PDFGenerator<T> {
 	protected void printLegalEntities(Document document, LegalEntity sender, LegalEntity receiver, float spacingBefore) throws DocumentException {
 		LegalEntity owner = null;
 		if (Store.class.isAssignableFrom(sender.getClass()) && ((Store) sender).getOwner() != null) {
+			LOG.info("Using owner in sender header");
 			owner = ((Store) sender).getOwner();
+		} else {
+			LOG.info("Missing owner in sender header");
 		}
 		PdfPTable table = new PdfPTable(new float[] { 40, 40f, 40 });
 		table.setWidthPercentage(100f);
