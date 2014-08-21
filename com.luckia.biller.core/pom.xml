@@ -9,7 +9,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>com.luckia.biller.core</artifactId>
-	<name>com.luckia.biller.web</name>
+	<name>com.luckia.biller.core</name>
 	<packaging>jar</packaging>
 
 	<dependencies>
