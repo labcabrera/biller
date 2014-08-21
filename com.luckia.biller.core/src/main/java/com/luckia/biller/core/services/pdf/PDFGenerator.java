@@ -34,6 +34,7 @@ import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.LegalEntity;
+import com.luckia.biller.core.model.Person;
 import com.luckia.biller.core.model.Store;
 
 public abstract class PDFGenerator<T> {
@@ -166,8 +167,9 @@ public abstract class PDFGenerator<T> {
 			cell.addElement(new Paragraph(new Phrase("NIF/CIF: " + legalEntity.getIdCard().getNumber(), documentFont)));
 		}
 		if (owner != null && owner.getId() != legalEntity.getId()) {
-			cell.addElement(new Paragraph(new Phrase("Titular:", documentFont)));
-			cell.addElement(new Paragraph(new Phrase(owner.getName(), documentFont)));
+
+			cell.addElement(new Paragraph(new Phrase("Titular:", boldFont)));
+			cell.addElement(new Paragraph(new Phrase(formatPersonName(owner), documentFont)));
 			if (owner.getAddress() != null) {
 				cell.addElement(new Paragraph(new Phrase("Dirección: " + owner.getAddress().getRoad(), documentFont)));
 			}
@@ -176,6 +178,23 @@ public abstract class PDFGenerator<T> {
 			}
 		}
 		return cell;
+	}
+
+	protected String formatPersonName(LegalEntity legalEntity) {
+		StringBuilder sb = new StringBuilder();
+		if (legalEntity != null) {
+			sb.append(legalEntity.getName());
+			if (Person.class.isAssignableFrom(legalEntity.getClass())) {
+				Person person = (Person) legalEntity;
+				if (StringUtils.isNotBlank(person.getFirstSurname())) {
+					sb.append(" ").append(person.getFirstSurname());
+				}
+				if (StringUtils.isNotBlank(person.getSecondSurname())) {
+					sb.append(" ").append(person.getSecondSurname());
+				}
+			}
+		}
+		return sb.toString();
 	}
 
 	protected String formatAddress(Address address) {
