@@ -29,8 +29,7 @@ import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.bills.BillDataProvider;
 
 /**
- * Servicio encargado de crear los detalles de una factura a partir de los datos obtenidos a traves de {@link BillDataProvider}. Esto genera
- * dos listas de conceptos:
+ * Servicio encargado de crear los detalles de una factura a partir de los datos obtenidos a traves de {@link BillDataProvider}. Esto genera dos listas de conceptos:
  * <ul>
  * <li>Conceptos de facturacion: en principio solo se facturara a los bares por un porcentaje de las ventas</li>
  * <li>Conceptos de liquidacion: en este punto se generan los conceptos a partir de los cuales se realizara la liquidacion conjunta.</li>
@@ -157,7 +156,7 @@ public class BillDetailProcessor {
 		detail.setValue(value);
 		detail.setBill(bill);
 		detail.setUnits(BigDecimal.ONE);
-		detail.setName(i18nService.getMessage("bill.concept.name." + concept.name()));
+		detail.setName(bill.getSender().getName() + ": " + i18nService.getMessage("bill.concept.name." + concept.name()));
 		if (bill.getLiquidationDetails() == null) {
 			bill.setLiquidationDetails(new ArrayList<BillLiquidationDetail>());
 		}
