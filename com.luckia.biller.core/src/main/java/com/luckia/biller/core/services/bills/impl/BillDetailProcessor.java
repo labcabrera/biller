@@ -156,7 +156,7 @@ public class BillDetailProcessor {
 		detail.setValue(value);
 		detail.setBill(bill);
 		detail.setUnits(BigDecimal.ONE);
-		detail.setName(bill.getSender().getName() + ": " + i18nService.getMessage("bill.concept.name." + concept.name()));
+		detail.setName(i18nService.getMessage("bill.concept.name." + concept.name()));
 		if (bill.getLiquidationDetails() == null) {
 			bill.setLiquidationDetails(new ArrayList<BillLiquidationDetail>());
 		}

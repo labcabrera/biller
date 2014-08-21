@@ -143,7 +143,7 @@
 									<button ng-click="cancel()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary'>Anular</button>
 									<button ng-click="rectify()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-primary'>Rectificar</button>
 									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" href="rest/bills/draft/{{entity.id}}" role="button">Consultar borrador</a>
-									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled' && && entity.currentState.stateDefinition.id != 'Initial'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button">Descargar</a>
+									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled' && entity.currentState.stateDefinition.id != 'Initial'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button">Descargar</a>
 									<button ng-click="draft()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent' || entity.currentState.stateDefinition.id == 'Rectified'" class='btn btn-sm btn-primary'>Draft</button>
 									<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right'>Aceptar borrador</button>
 									<button ng-click="recalculate()" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" class='btn btn-sm btn-success pull-right'>Recalcular</button>
