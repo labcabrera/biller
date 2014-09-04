@@ -15,6 +15,9 @@ import com.luckia.biller.core.model.LegalEntity;
  */
 public class LiquidationReceiverProvider {
 
+	// Asumimos que este nombre no va a cambiar, no obstante estaria bien tenerlo en la configuracion
+	private static final String RECEIVER_NAME = "EGASA HATTRICK S.A.";
+
 	@Inject
 	private EntityManagerProvider entityManagerProvider;
 
@@ -22,7 +25,15 @@ public class LiquidationReceiverProvider {
 	public LegalEntity getReceiver() {
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<Company> queryEgasa = entityManager.createQuery("select e from Company e where e.name = :name", Company.class);
-		List<Company> list = queryEgasa.setParameter("name", "EGASA HATTRICK S.A.").getResultList();
+		String receiverName = getReceiverName();
+		List<Company> list = queryEgasa.setParameter("name", receiverName).getResultList();
+		if (list.isEmpty()) {
+			throw new RuntimeException(String.format("No se encuentra la empresa %s", receiverName));
+		}
 		return list.iterator().next();
+	}
+
+	private String getReceiverName() {
+		return RECEIVER_NAME;
 	}
 }
