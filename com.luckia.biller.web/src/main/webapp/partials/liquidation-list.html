@@ -27,7 +27,7 @@
 							<span ng-if="result.currentState.stateDefinition.id == 'Rectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
 						</td>
 						<td>{{result.billDate.substr(0,10)}}</td>
-						<td class="data-amount">{{result.amount}}</td>
+						<td class="data-amount">{{result.liquidationResults.senderAmount}}</td>
 						<td>{{result.billType.desc}}</td>
 						<td><a href="#/liquidations/id/{{result.id}}"><span class="glyphicon glyphicon-search"></span></a></td>
 					</tr>
