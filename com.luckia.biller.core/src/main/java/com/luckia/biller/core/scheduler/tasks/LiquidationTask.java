@@ -1,5 +1,7 @@
 package com.luckia.biller.core.scheduler.tasks;
 
+import static org.apache.commons.lang3.time.DateFormatUtils.ISO_DATE_FORMAT;
+
 import java.util.Date;
 
 import javax.persistence.EntityManager;
@@ -52,7 +54,7 @@ public class LiquidationTask implements Runnable {
 				liquidationProcessor.confirm(liquidationResult);
 			}
 			long ms = System.currentTimeMillis() - t0;
-			LOG.debug("Procesada liquidacion de la empresa {} en {} ms", company.getName(), ms);
+			LOG.debug("Procesada liquidacion de la empresa {} de {} en {} ms", company.getName(), ISO_DATE_FORMAT.format(range.getMaximum()), ms);
 		} catch (Exception ex) {
 			LOG.error("Error al procesar la liquidacion", ex);
 		}
