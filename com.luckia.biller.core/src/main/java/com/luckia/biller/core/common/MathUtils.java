@@ -23,6 +23,16 @@ public final class MathUtils {
 		return !isZero(value);
 	}
 
+	/** Estrictamente menor que cero */
+	public static final boolean isNegative(BigDecimal value) {
+		return BigDecimal.ZERO.compareTo(value) > 0L;
+	}
+
+	/** Estrictamente mayor que cero */
+	public static final boolean isPositive(BigDecimal value) {
+		return BigDecimal.ZERO.compareTo(value) < 0L;
+	}
+
 	/**
 	 * Devuelve <code>true</code> cuando el valor recibido es superior a cero.
 	 * 

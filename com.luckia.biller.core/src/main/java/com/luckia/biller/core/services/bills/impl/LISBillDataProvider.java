@@ -47,8 +47,7 @@ public class LISBillDataProvider implements BillDataProvider {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.billing.BillingDataProvider#retreive(com.luckia.biller.core.model.Bill,
-	 * org.apache.commons.lang3.Range, java.util.List)
+	 * @see com.luckia.biller.core.services.billing.BillingDataProvider#retreive(com.luckia.biller.core.model.Bill, org.apache.commons.lang3.Range, java.util.List)
 	 */
 	@Override
 	public Map<BillConcept, BigDecimal> retreive(Bill bill, Range<Date> range, List<String> terminals) {
@@ -81,7 +80,7 @@ public class LISBillDataProvider implements BillDataProvider {
 			BigDecimal gameFeesPercent = bill != null ? billFeesService.getGameFeesPercent(bill) : BigDecimal.ZERO;
 			BigDecimal stakes = totalBetAmount.subtract(totalCancelledAmount);
 			BigDecimal ggr = stakes.subtract(totalAttributable);
-			BigDecimal tasaDeJuego = ggr.multiply(gameFeesPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+			BigDecimal tasaDeJuego = MathUtils.isPositive(ggr) ? ggr.multiply(gameFeesPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN) : BigDecimal.ZERO;
 			BigDecimal ngr = ggr.subtract(tasaDeJuego);
 			BigDecimal gastosOperativos = coOperatingMonthlyFees;
 			BigDecimal nr = ngr.subtract(gastosOperativos);
