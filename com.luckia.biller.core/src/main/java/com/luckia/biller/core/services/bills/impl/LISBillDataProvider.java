@@ -90,6 +90,8 @@ public class LISBillDataProvider implements BillDataProvider {
 			map.put(BillConcept.NGR, ngr);
 			map.put(BillConcept.NR, nr);
 			map.put(BillConcept.StoreCash, storeCash);
+			LOG.debug("Terminales: {}", Arrays.toString(terminals.toArray()));
+			LOG.debug("Stakes: {}; GGR: {}; NGR: {}; NR: {}; CoOpFees: {}; StoreCash: {}", stakes, ggr, ngr, nr, gastosOperativos, storeCash);
 		}
 		return map;
 	}
