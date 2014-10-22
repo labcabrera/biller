@@ -987,7 +987,7 @@ billerControllers.controller('SettingsCtrl', [ '$scope', '$rootScope', '$routePa
 	$scope.load();
 }]);
 
-billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', 'dialogs', function($scope, $rootScope, $routeParams, $http, dialogs) {
 	$scope.load = function() {
 	};
 	$scope.recalculateBill = function() {
