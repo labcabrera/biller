@@ -690,7 +690,7 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 	};
 	$scope.remove = function() {
 		if(!$rootScope.isReadOnly) {
-			var dlg = dialogs.confirm('Confirmación de borrado','¿Desea eliminar la factura?');
+			var dlg = dialogs.confirm('Confirmaci&oacute;n de borrado','Desea eliminar la factura?');
 			dlg.result.then(function(btn){
 				$http.post('rest/bills/remove/' + $scope.entity.id).success(function(data) {
 					if(data.code == 200) { $location.path("bills"); } else { $scope.displayAlert(data); }
@@ -770,7 +770,7 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		}
 	};
 	$scope.recalculate = function() {
-		var dlg = dialogs.confirm('Confirmación','¿Desea recalcular la factura? Los ajustes manuales se perderán');
+		var dlg = dialogs.confirm('Confirmaci&oacute;n','Desea recalcular la factura? Los ajustes manuales se perder&aacute;n');
 		dlg.result.then(function(btn){
 			$http.post('rest/bills/recalculate/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
@@ -861,7 +861,7 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	};
 	$scope.remove = function() {
 		if(!$rootScope.isReadOnly) {
-			var dlg = dialogs.confirm('Confirmación de borrado','¿Desea eliminar la liquidación?');
+			var dlg = dialogs.confirm('Confirmaci&oacute;n de borrado','Desea eliminar la liquidaci&oacute;n?');
 			dlg.result.then(function(btn){
 				$http.post('rest/liquidations/remove/' + $scope.entity.id).success(function(data) {
 					if(data.code == 200) { $location.path("liquidations"); } else { $scope.displayAlert(data); }
@@ -900,7 +900,7 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 		});
 	};
 	$scope.recalculate = function() {
-		var dlg = dialogs.confirm('Confirmación','¿Desea recalcular la liquidación? Los ajustes manuales se perderán');
+		var dlg = dialogs.confirm('Confirmaci&oacute;n','Desea recalcular la liquidaci&oacute;n? Los ajustes manuales se perder&aacute;n');
 		dlg.result.then(function(btn){
 			$http.post('rest/liquidations/recalculate/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
@@ -991,7 +991,7 @@ billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParam
 	$scope.load = function() {
 	};
 	$scope.recalculateBill = function() {
-		var dlg = dialogs.confirm('Confirmación','¿Desea recalcular la factura? Los ajustes manuales se perderán');
+		var dlg = dialogs.confirm('Confirmaci&oacute;n','Desea recalcular la factura? Los ajustes manuales se perder&aacute;n');
 		dlg.result.then(function(btn){
 			var billYear = $scope.billYear;
 			var billMonth = $scope.billMonth;
