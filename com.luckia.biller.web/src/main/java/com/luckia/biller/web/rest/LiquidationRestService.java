@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
@@ -28,9 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.i18n.I18nService;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
@@ -47,7 +46,7 @@ import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
 /**
  * Servio REST asociado a las liquidaciones.
  */
-@Path("rest/liquidations")
+@Path("/liquidations")
 public class LiquidationRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LiquidationRestService.class);
@@ -57,7 +56,7 @@ public class LiquidationRestService {
 	@Inject
 	private LiquidationProcessor liquidationProcessor;
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private LiquidationMailService liquidationMailService;
 	@Inject
@@ -70,7 +69,6 @@ public class LiquidationRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/id/{id}")
-	@ClearCache
 	public Liquidation findById(@PathParam("id") String primaryKey) {
 		return entityService.findById(primaryKey);
 	}
@@ -78,7 +76,6 @@ public class LiquidationRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	@ClearCache
 	public SearchResults<Liquidation> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
@@ -91,7 +88,6 @@ public class LiquidationRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
-	@ClearCache
 	public Message<Liquidation> merge(Liquidation bill) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -110,7 +106,6 @@ public class LiquidationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("confirm/{id}")
-	@ClearCache
 	public Message<Liquidation> confirm(@PathParam("id") String id) {
 		try {
 			Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, id);
@@ -127,7 +122,6 @@ public class LiquidationRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/id/{id}")
-	@ClearCache
 	public LiquidationDetail mergeDetail(@PathParam("id") String id) {
 		return entityManagerProvider.get().find(LiquidationDetail.class, id);
 	}
@@ -136,7 +130,6 @@ public class LiquidationRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/merge")
-	@ClearCache
 	public Message<Liquidation> mergeDetail(LiquidationDetail detail) {
 		try {
 			Liquidation liquidation = liquidationProcessor.mergeDetail(detail);
@@ -150,7 +143,6 @@ public class LiquidationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/remove/{id}")
-	@ClearCache
 	public Message<Liquidation> removeDetail(@PathParam("id") String id) {
 		try {
 			LiquidationDetail detail = entityManagerProvider.get().find(LiquidationDetail.class, id);
@@ -165,7 +157,6 @@ public class LiquidationRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("/draft/{id}")
-	@ClearCache
 	public Response getArtifactBinaryContent(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -186,7 +177,6 @@ public class LiquidationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/send/{id}")
-	@ClearCache
 	public Message<Liquidation> sendEmail(@PathParam("id") String id, String emailAddress) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -203,7 +193,6 @@ public class LiquidationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/pdf/recreate/{id}")
-	@ClearCache
 	public Message<Liquidation> recreatePdf(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -230,7 +219,6 @@ public class LiquidationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/{id}")
-	@ClearCache
 	public Message<Liquidation> recalculate(@PathParam("id") String id) {
 		try {
 			LiquidationRecalculationTask task = new LiquidationRecalculationTask(id, entityManagerProvider, liquidationProcessor);

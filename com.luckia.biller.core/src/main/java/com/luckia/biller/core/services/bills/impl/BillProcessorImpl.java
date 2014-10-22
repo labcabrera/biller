@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
@@ -22,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.common.MathUtils;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
@@ -46,7 +46,7 @@ public class BillProcessorImpl implements BillProcessor {
 	private static final Logger LOG = LoggerFactory.getLogger(BillProcessorImpl.class);
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private StateMachineService stateMachineService;
 	@Inject

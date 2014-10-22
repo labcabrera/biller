@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
+import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.scheduler.SchedulerService;
 
 /**
@@ -21,6 +22,7 @@ public class GuiceServletListener extends GuiceResteasyBootstrapServletContextLi
 	protected void withInjector(Injector injector) {
 		super.withInjector(injector);
 		try {
+			injector.getInstance(PersistService.class).start();
 			SchedulerService schedulerService = new SchedulerService(injector);
 			schedulerService.registerJobs();
 			schedulerService.getScheduler().start();

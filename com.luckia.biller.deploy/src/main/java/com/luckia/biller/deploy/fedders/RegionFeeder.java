@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.io.Charsets;
@@ -21,7 +22,6 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.Region;
 
@@ -30,7 +30,7 @@ public class RegionFeeder implements Feeder<Region> {
 	private static final Logger LOG = LoggerFactory.getLogger(RegionFeeder.class);
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	@Override
 	public void loadEntities(InputStream source) {

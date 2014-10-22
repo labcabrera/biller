@@ -8,6 +8,7 @@ package com.luckia.biller.web.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -23,15 +24,14 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.Region;
 
-@Path("rest/regions")
+@Path("/regions")
 public class RegionsRestService {
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

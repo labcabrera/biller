@@ -3,6 +3,7 @@ package com.luckia.biller.deploy;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.luckia.biller.core.LuckiaCoreModule;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Store;
 
 /**
@@ -27,7 +27,7 @@ public class BillSequencePrefixGenerator implements Runnable {
 	}
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	@Override
 	public void run() {

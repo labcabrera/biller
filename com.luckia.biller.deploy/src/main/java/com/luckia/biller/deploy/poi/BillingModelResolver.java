@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -16,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.common.MathUtils;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.BillingModelAttributes;
 
@@ -28,7 +28,7 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 	private List<BillingModel> newModels;
 
 	@Inject
-	public BillingModelResolver(EntityManagerProvider entityManagerProvider) {
+	public BillingModelResolver(Provider<EntityManager> entityManagerProvider) {
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<BillingModel> query = entityManager.createNamedQuery("BillingModel.selectAll", BillingModel.class);
 		existingModels = query.getResultList();

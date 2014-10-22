@@ -1,17 +1,18 @@
 package com.luckia.biller.core.scheduler.tasks;
 
+import static org.apache.commons.lang3.time.DateFormatUtils.ISO_DATE_FORMAT;
+
 import java.util.List;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import static org.apache.commons.lang3.time.DateFormatUtils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.services.LiquidationMailService;
@@ -24,11 +25,11 @@ public class SendLiquidationsTask implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SendLiquidationsTask.class);
 
-	private final EntityManagerProvider entityManagerProvider;
+	private final Provider<EntityManager> entityManagerProvider;
 	private final LiquidationMailService liquidationMailService;
 	private final SettingsService settingsService;
 
-	public SendLiquidationsTask(EntityManagerProvider entityManagerProvider, LiquidationMailService liquidationMailService, SettingsService settingsService) {
+	public SendLiquidationsTask(Provider<EntityManager> entityManagerProvider, LiquidationMailService liquidationMailService, SettingsService settingsService) {
 		this.entityManagerProvider = entityManagerProvider;
 		this.liquidationMailService = liquidationMailService;
 		this.settingsService = settingsService;

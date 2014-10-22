@@ -4,24 +4,24 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillingProvinceFees;
 import com.luckia.biller.core.model.Province;
 
 /**
- * Servicio encargado de obtener la tasa de juego asociado a una factura. En teoria este valor dependera de la comunidad autonoma, aunque de
- * momento aplicamos el 10% para todas las facturas.
+ * Servicio encargado de obtener la tasa de juego asociado a una factura. En teoria este valor dependera de la comunidad autonoma, aunque de momento aplicamos el 10% para todas las
+ * facturas.
  */
 public class BillFeesService {
 
 	private static final BigDecimal DEFAULT_VALUE = new BigDecimal("10.00");
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	// TODO
 	public BigDecimal getGameFeesPercent(Bill bill) {

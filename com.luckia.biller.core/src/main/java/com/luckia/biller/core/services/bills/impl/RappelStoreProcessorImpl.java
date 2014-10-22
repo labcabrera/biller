@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.CommonState;
@@ -33,7 +33,7 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	@Inject
 	private BillDataProvider billDataProvider;
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private AuditService auditService;
 	@Inject
@@ -42,8 +42,7 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#processRappel(com.luckia.biller.core.model.Store,
-	 * org.apache.commons.lang3.Range)
+	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#processRappel(com.luckia.biller.core.model.Store, org.apache.commons.lang3.Range)
 	 */
 	@Override
 	public void processRappel(Store store, Range<Date> range) {
@@ -76,8 +75,7 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#applyProrata(com.luckia.biller.core.model.RappelStoreBonus,
-	 * java.math.BigDecimal)
+	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#applyProrata(com.luckia.biller.core.model.RappelStoreBonus, java.math.BigDecimal)
 	 */
 	@Override
 	public RappelStoreBonus applyProrata(RappelStoreBonus bonus, BigDecimal prorata) {

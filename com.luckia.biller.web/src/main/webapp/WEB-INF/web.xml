@@ -8,6 +8,10 @@
         <param-name>resteasy.guice.modules</param-name>
         <param-value>com.luckia.biller.web.servlet.RestModule</param-value>
     </context-param>
+	<context-param>
+		<param-name>resteasy.servlet.mapping.prefix</param-name>
+		<param-value>/rest</param-value>
+	</context-param>
 
     <listener>
         <listener-class>com.luckia.biller.web.servlet.GuiceServletListener</listener-class>

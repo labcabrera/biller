@@ -20,7 +20,7 @@ import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.entities.TerminalRelationEntityService;
 
-@Path("rest/terminals")
+@Path("/terminals")
 public class TerminalRelationRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TerminalRelationRestService.class);

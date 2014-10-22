@@ -284,6 +284,7 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 	$scope.$watch('entity.parent', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.parent = null; } });
 	$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
 	$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
+	$scope.$watch('entity.billingModel', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.billingModel = null; } });
 	$scope.load();
 } ]);
 

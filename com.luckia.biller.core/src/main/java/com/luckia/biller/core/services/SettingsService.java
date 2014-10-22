@@ -1,8 +1,9 @@
 package com.luckia.biller.core.services;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppSettings;
 
 /**
@@ -20,7 +21,7 @@ public class SettingsService {
 	public static final String SYSTEM = "SYSTEM";
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	public AppSettings getMailSettings() {
 		return entityManagerProvider.get().find(AppSettings.class, MAIL);

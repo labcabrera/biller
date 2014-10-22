@@ -5,20 +5,20 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import net.sf.flatpack.DataSet;
 import net.sf.flatpack.DefaultParserFactory;
 import net.sf.flatpack.Parser;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.services.AuditService;
 
 public class CostCenterFeeder implements Feeder<CostCenter> {
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private AuditService auditService;
 

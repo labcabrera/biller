@@ -2,6 +2,7 @@ package com.luckia.biller.core.jpa;
 
 import java.util.List;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -13,6 +14,7 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.common.ASTNode;
 import com.luckia.biller.core.model.Bill;
@@ -22,7 +24,8 @@ public class TestFiqlParser {
 	@Test
 	public void test() {
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
-		EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
+		injector.getInstance(PersistService.class).start();
+		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 		Class<Bill> entityClass = Bill.class;
 		EntityManager entityManager = entityManagerProvider.get();
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();

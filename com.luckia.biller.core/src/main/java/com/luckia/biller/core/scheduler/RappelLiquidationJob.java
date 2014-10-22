@@ -17,7 +17,6 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.scheduler.tasks.RappelLiquidationTask;
 
 public class RappelLiquidationJob extends BaseJob {
@@ -54,7 +53,7 @@ public class RappelLiquidationJob extends BaseJob {
 	}
 
 	public void execute(Range<Date> range, int threadCount) {
-		EntityManager entityManager = injector.getInstance(EntityManagerProvider.class).get();
+		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 		long t0 = System.currentTimeMillis();
 		ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 		List<Long> storeIds = entityManager.createQuery("select s.id from Store s order by s.name", Long.class).getResultList();

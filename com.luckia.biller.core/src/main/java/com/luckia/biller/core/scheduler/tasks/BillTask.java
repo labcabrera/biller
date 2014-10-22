@@ -2,6 +2,7 @@ package com.luckia.biller.core.scheduler.tasks;
 
 import java.util.Date;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -9,7 +10,6 @@ import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.scheduler.BillingJob;
@@ -26,11 +26,11 @@ public class BillTask implements Runnable {
 	private static final Logger LOG = LoggerFactory.getLogger(BillTask.class);
 
 	private final long storeId;
-	private final EntityManagerProvider entityManagerProvider;
+	private final Provider<EntityManager> entityManagerProvider;
 	private final BillProcessor billProcessor;
 	private final Range<Date> range;
 
-	public BillTask(long storeId, Range<Date> range, EntityManagerProvider entityManagerProvider, BillProcessor billProcessor) {
+	public BillTask(long storeId, Range<Date> range, Provider<EntityManager> entityManagerProvider, BillProcessor billProcessor) {
 		this.storeId = storeId;
 		this.range = range;
 		this.entityManagerProvider = entityManagerProvider;

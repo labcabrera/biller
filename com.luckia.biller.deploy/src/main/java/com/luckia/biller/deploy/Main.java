@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -16,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.LuckiaCoreModule;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.IdCard;
@@ -73,7 +73,7 @@ public class Main {
 	 * DESTINATARIO: Egasa Hattrick S.A. Arzobispo Fabian y Fuero 17B 46009 Valencia España Tel: 961100793 NIF: A98359169
 	 */
 	private void updateEgasaInfo() {
-		EntityManager entityManager = injector.getInstance(EntityManagerProvider.class).get();
+		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 		TypedQuery<Company> query = entityManager.createQuery("select e from Company e where e.name like :name", Company.class);
 		List<Company> list = query.setParameter("name", "%Egasa%").getResultList();
 		if (!list.isEmpty()) {
@@ -123,7 +123,7 @@ public class Main {
 	public void executePatch20140522() {
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
 		LOG.info("--------------------------- EJECUTANDO PATCH ---------------------------");
-		EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
+		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 		BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
 		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
 		List<Range<Date>> ranges = new ArrayList<>();

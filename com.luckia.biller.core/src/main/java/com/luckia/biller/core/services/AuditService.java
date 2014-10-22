@@ -31,6 +31,12 @@ public class AuditService {
 
 	public void processModified(Auditable auditable) {
 		Date now = Calendar.getInstance().getTime();
+		if (auditable.getAuditData() == null) {
+			auditable.setAuditData(new AuditData());
+		}
+		if (auditable.getAuditData().getCreated() == null) {
+			auditable.getAuditData().setCreated(now);
+		}
 		auditable.getAuditData().setModified(now);
 		auditable.getAuditData().setModifiedBy(securityService.getCurrentUser());
 	}

@@ -1,6 +1,8 @@
 package com.luckia.biller.web.rest;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,8 +12,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import com.luckia.biller.core.ClearCache;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Rappel;
 import com.luckia.biller.core.model.common.Message;
@@ -19,18 +19,17 @@ import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.entities.BillingModelEntityService;
 
-@Path("rest/models")
+@Path("/models")
 public class BillingModelRestService {
 
 	@Inject
 	private BillingModelEntityService billingModelService;
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("id/{id}")
-	@ClearCache
 	public BillingModel findById(@PathParam("id") Long primaryKey) {
 		return billingModelService.findById(primaryKey);
 	}
@@ -38,7 +37,6 @@ public class BillingModelRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	@ClearCache
 	public SearchResults<BillingModel> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setCurrentPage(page);

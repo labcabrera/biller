@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.HasState;
 import com.luckia.biller.core.model.State;
 import com.luckia.biller.core.model.StateDefinition;
@@ -18,7 +18,7 @@ import com.luckia.biller.core.model.StateDefinition;
 public class StateMachineService {
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	public void createTransition(HasState hasState, String stateDefinitionId) {
 		EntityManager entityManager = entityManagerProvider.get();

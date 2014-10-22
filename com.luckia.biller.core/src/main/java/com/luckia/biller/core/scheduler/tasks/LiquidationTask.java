@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.time.DateFormatUtils.ISO_DATE_FORMAT;
 
 import java.util.Date;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -11,7 +12,6 @@ import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
@@ -27,11 +27,11 @@ public class LiquidationTask implements Runnable {
 
 	private final long companyId;
 	private final Range<Date> range;
-	private final EntityManagerProvider entityManagerProvider;
+	private final Provider<EntityManager> entityManagerProvider;
 	private final LiquidationProcessor liquidationProcessor;
 	private Liquidation liquidationResult;
 
-	public LiquidationTask(long companyId, Range<Date> range, EntityManagerProvider entityManagerProvider, LiquidationProcessor liquidationProcessor) {
+	public LiquidationTask(long companyId, Range<Date> range, Provider<EntityManager> entityManagerProvider, LiquidationProcessor liquidationProcessor) {
 		this.companyId = companyId;
 		this.range = range;
 		this.entityManagerProvider = entityManagerProvider;

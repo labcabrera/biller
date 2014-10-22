@@ -35,7 +35,7 @@ import com.luckia.biller.core.services.entities.CompanyGroupEntityService;
  * </ul>
  * 
  */
-@Path("rest/groups")
+@Path("/groups")
 public class CompanyGroupRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CompanyGroupRestService.class);

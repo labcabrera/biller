@@ -8,6 +8,7 @@ package com.luckia.biller.web.rest;
 import java.io.InputStream;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,17 +22,16 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.services.FileService;
 
-@Path("rest/binary")
+@Path("/binary")
 public class BinaryRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BinaryRestService.class);
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private FileService fileService;
 

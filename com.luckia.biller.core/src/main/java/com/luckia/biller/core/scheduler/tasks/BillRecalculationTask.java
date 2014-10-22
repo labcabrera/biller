@@ -2,12 +2,12 @@ package com.luckia.biller.core.scheduler.tasks;
 
 import java.util.Iterator;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillDetail;
@@ -23,10 +23,10 @@ public class BillRecalculationTask implements Runnable {
 	private static final Logger LOG = LoggerFactory.getLogger(BillRecalculationTask.class);
 
 	private final String billId;
-	private final EntityManagerProvider entityManagerProvider;
+	private final Provider<EntityManager> entityManagerProvider;
 	private final BillProcessor billProcessor;
 
-	public BillRecalculationTask(String billId, EntityManagerProvider entityManagerProvider, BillProcessor billProcessor) {
+	public BillRecalculationTask(String billId, Provider<EntityManager> entityManagerProvider, BillProcessor billProcessor) {
 		this.billId = billId;
 		this.entityManagerProvider = entityManagerProvider;
 		this.billProcessor = billProcessor;

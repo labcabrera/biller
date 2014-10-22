@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -28,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.LuckiaCoreModule;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.AppSettings;
 import com.luckia.biller.core.model.BillingModel;
@@ -51,7 +51,7 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 	private static final String DATABASE_FILE = "./src/main/resources/bootstrap/hoja-maestra-facturacion.xlsx";
 
 	@Inject
-	protected EntityManagerProvider entityManagerProvider;
+	protected Provider<EntityManager> entityManagerProvider;
 	@Inject
 	protected WorkbookEntityResolver entityResolver;
 	@Inject

@@ -7,7 +7,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
 
@@ -22,7 +21,6 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 	 * @see com.luckia.biller.core.services.entities.EntityService#merge(java.lang.Object)
 	 */
 	@Override
-	@ClearCache
 	public Message<TerminalRelation> merge(TerminalRelation entity) {
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.getTransaction().begin();
@@ -74,8 +72,8 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.entities.EntityService#buildOrderCriteria(javax.persistence.criteria.CriteriaQuery,
-	 * javax.persistence.criteria.CriteriaBuilder, javax.persistence.criteria.Root)
+	 * @see com.luckia.biller.core.services.entities.EntityService#buildOrderCriteria(javax.persistence.criteria.CriteriaQuery, javax.persistence.criteria.CriteriaBuilder,
+	 * javax.persistence.criteria.Root)
 	 */
 	@Override
 	protected void buildOrderCriteria(CriteriaQuery<TerminalRelation> criteria, CriteriaBuilder builder, Root<TerminalRelation> root) {

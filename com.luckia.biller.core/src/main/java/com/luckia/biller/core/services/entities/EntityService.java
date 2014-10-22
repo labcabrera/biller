@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -21,9 +22,7 @@ import javax.validation.Validator;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.i18n.I18nService;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.jpa.FiqlParser;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
@@ -38,7 +37,7 @@ import com.luckia.biller.core.services.AuditService;
 public abstract class EntityService<I> {
 
 	@Inject
-	protected EntityManagerProvider entityManagerProvider;
+	protected Provider<EntityManager> entityManagerProvider;
 	@Inject
 	protected Validator validator;
 	@Inject
@@ -62,7 +61,6 @@ public abstract class EntityService<I> {
 	 * @param params
 	 * @return
 	 */
-	@ClearCache
 	public SearchResults<I> find(SearchParams params) {
 		Class<I> entityClass = getEntityClass();
 		EntityManager entityManager = entityManagerProvider.get();

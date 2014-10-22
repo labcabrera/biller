@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.LuckiaCoreModule;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.deploy.fedders.AppSettingsFeeder;
 import com.luckia.biller.deploy.fedders.BillingModelFeeder;
 import com.luckia.biller.deploy.fedders.BillingProvinceFeesFeeder;
@@ -36,6 +36,7 @@ public class Bootstrap implements Runnable {
 
 	public static void main(String... args) {
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		injector.getInstance(PersistService.class).start();
 		Bootstrap bootstrap = injector.getInstance(Bootstrap.class);
 		bootstrap.run();
 	}
@@ -44,7 +45,7 @@ public class Bootstrap implements Runnable {
 	public void run() {
 		LOG.info("Starting Bootstrap");
 		Validate.notNull(injector);
-		EntityManager entityManager = injector.getInstance(EntityManagerProvider.class).get();
+		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 		entityManager.getTransaction().begin();
 		if (isDatabaseInitialized()) {
 			LOG.info("Database already initialized");
@@ -79,6 +80,6 @@ public class Bootstrap implements Runnable {
 	}
 
 	private EntityManager getEntityManager() {
-		return injector.getInstance(EntityManagerProvider.class).get();
+		return injector.getProvider(EntityManager.class).get();
 	}
 }

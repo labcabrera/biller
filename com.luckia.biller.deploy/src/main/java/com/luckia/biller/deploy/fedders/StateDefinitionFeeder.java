@@ -8,9 +8,9 @@ package com.luckia.biller.deploy.fedders;
 import java.io.InputStream;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.StateDefinition;
@@ -18,7 +18,7 @@ import com.luckia.biller.core.model.StateDefinition;
 public class StateDefinitionFeeder implements Feeder<StateDefinition> {
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	@Override
 	public void loadEntities(InputStream source) {

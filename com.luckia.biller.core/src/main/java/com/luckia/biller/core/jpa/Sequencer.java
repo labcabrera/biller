@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 
@@ -26,7 +27,7 @@ public class Sequencer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Sequencer.class);
 
-	private final EntityManagerProvider entityManagerProvider;
+	private final Provider<EntityManager> entityManagerProvider;
 
 	/** Para evitar que se generen dos secuencias iguales forzamos a que sea thread-safe a traves de este bloqueo */
 
@@ -42,7 +43,7 @@ public class Sequencer {
 	private final String fieldValue;
 
 	@Inject
-	public Sequencer(EntityManagerProvider entityManagerProvider) throws NoSuchFieldException, SecurityException {
+	public Sequencer(Provider<EntityManager> entityManagerProvider) throws NoSuchFieldException, SecurityException {
 		LOG.debug("Inicializando sequencer");
 		this.entityManagerProvider = entityManagerProvider;
 		Session session = entityManagerProvider.get().unwrap(Session.class);

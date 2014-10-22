@@ -3,10 +3,10 @@ package com.luckia.biller.core.services.bills.impl;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
 
@@ -19,7 +19,7 @@ public class LiquidationReceiverProvider {
 	private static final String RECEIVER_NAME = "EGASA HATTRICK S.A.";
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	// TODO estaria mejor leerlo de configuracion
 	public LegalEntity getReceiver() {

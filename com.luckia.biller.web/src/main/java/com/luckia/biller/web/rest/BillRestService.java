@@ -8,6 +8,7 @@ package com.luckia.biller.web.rest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -24,9 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.i18n.I18nService;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
@@ -53,13 +52,13 @@ import com.luckia.biller.core.services.pdf.PDFBillGenerator;
  * <li>Envío de la factura por email</li>
  * </ul>
  */
-@Path("rest/bills")
+@Path("/bills")
 public class BillRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BillRestService.class);
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private BillEntityService billService;
 	@Inject
@@ -78,7 +77,6 @@ public class BillRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
-	@ClearCache
 	public Bill findById(@PathParam("id") String primaryKey) {
 		return billService.findById(primaryKey);
 	}
@@ -86,7 +84,6 @@ public class BillRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	@ClearCache
 	public SearchResults<Bill> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
@@ -99,7 +96,6 @@ public class BillRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
-	@ClearCache
 	public Message<Bill> merge(Bill bill) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -118,7 +114,6 @@ public class BillRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("confirm/{id}")
-	@ClearCache
 	public Message<Bill> confirm(@PathParam("id") String id) {
 		try {
 			Bill bill = entityManagerProvider.get().find(Bill.class, id);
@@ -133,7 +128,6 @@ public class BillRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/id/{id}")
-	@ClearCache
 	public BillDetail find(@PathParam("id") String id) {
 		return entityManagerProvider.get().find(BillDetail.class, id);
 	}
@@ -142,7 +136,6 @@ public class BillRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/merge")
-	@ClearCache
 	public Message<Bill> merge(BillDetail detail) {
 		try {
 			Bill bill = billProcessor.mergeDetail(detail);
@@ -156,7 +149,6 @@ public class BillRestService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/draft/{id}")
-	@ClearCache
 	public Message<Bill> draft(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -172,7 +164,6 @@ public class BillRestService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/detail/remove/{id}")
-	@ClearCache
 	public Message<Bill> removeDetail(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -196,7 +187,6 @@ public class BillRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/send/{id}")
-	@ClearCache
 	public Message<Bill> sendEmail(@PathParam("id") String id, String emailAddress) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -217,7 +207,6 @@ public class BillRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/rectify/{id}")
-	@ClearCache
 	public Message<Bill> rectify(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -234,7 +223,6 @@ public class BillRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/{id}")
-	@ClearCache
 	public Message<Bill> recalculate(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -251,7 +239,6 @@ public class BillRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("/draft/{id}")
-	@ClearCache
 	public Response getArtifactBinaryContent(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();

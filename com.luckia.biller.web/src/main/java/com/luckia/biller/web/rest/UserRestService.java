@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
@@ -20,14 +21,13 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.User;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.services.entities.UserEntityService;
 
-@Path("rest/users")
+@Path("/users")
 public class UserRestService {
-	
+
 	public static void main(String[] args) {
 		System.out.println(new UserRestService().getBase64Digest("luckia"));
 	}
@@ -35,7 +35,7 @@ public class UserRestService {
 	@Inject
 	private UserEntityService userEntityService;
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

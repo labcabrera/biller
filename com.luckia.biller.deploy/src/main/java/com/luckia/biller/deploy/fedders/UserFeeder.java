@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import net.sf.flatpack.DataSet;
@@ -21,7 +22,6 @@ import net.sf.flatpack.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.User;
 
 public class UserFeeder implements Feeder<User> {
@@ -29,7 +29,7 @@ public class UserFeeder implements Feeder<User> {
 	private static final Logger LOG = LoggerFactory.getLogger(UserFeeder.class);
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	@Override
 	public void loadEntities(InputStream source) {

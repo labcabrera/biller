@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.Region;
 import com.luckia.biller.core.model.StoreType;
@@ -21,7 +21,7 @@ public class WorkbookEntityResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(WorkbookEntityResolver.class);
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	private Properties aliases;
 
 	public WorkbookEntityResolver() throws IOException {

@@ -3,13 +3,13 @@ package com.luckia.biller.core.scheduler.tasks;
 import java.util.Date;
 import java.util.Iterator;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
@@ -31,11 +31,11 @@ public class LiquidationRecalculationTask implements Runnable {
 	private static final Logger LOG = LoggerFactory.getLogger(LiquidationRecalculationTask.class);
 
 	private final String liquidationId;
-	private final EntityManagerProvider entityManagerProvider;
+	private final Provider<EntityManager> entityManagerProvider;
 	private final LiquidationProcessor liquidationProcessor;
 	private Liquidation liquidationResult;
 
-	public LiquidationRecalculationTask(String liquidationId, EntityManagerProvider entityManagerProvider, LiquidationProcessor liquidationProcessor) {
+	public LiquidationRecalculationTask(String liquidationId, Provider<EntityManager> entityManagerProvider, LiquidationProcessor liquidationProcessor) {
 		this.liquidationId = liquidationId;
 		this.entityManagerProvider = entityManagerProvider;
 		this.liquidationProcessor = liquidationProcessor;

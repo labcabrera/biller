@@ -2,6 +2,7 @@ package com.luckia.biller.core.scheduler.tasks;
 
 import java.util.Date;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.bills.RappelStoreProcessor;
 
@@ -39,7 +39,7 @@ public class RappelLiquidationTask implements Runnable {
 	public void run() {
 		try {
 			long t0 = System.currentTimeMillis();
-			EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
+			Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 			EntityManager entityManager = entityManagerProvider.get();
 			RappelStoreProcessor rappelProcessor = injector.getInstance(RappelStoreProcessor.class);
 			Store store = entityManager.find(Store.class, storeId);

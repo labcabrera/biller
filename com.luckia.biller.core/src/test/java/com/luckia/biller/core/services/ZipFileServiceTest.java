@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Liquidation;
@@ -21,7 +22,8 @@ public class ZipFileServiceTest {
 	@Test
 	public void test() throws FileNotFoundException {
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
-		EntityManager entityManager = injector.getInstance(EntityManagerProvider.class).get();
+		injector.getInstance(PersistService.class).start();
+		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 
 		TypedQuery<Liquidation> query = entityManager.createQuery("select e from Liquidation e where e.pdfFile is not null", Liquidation.class).setMaxResults(1);
 		List<Liquidation> list = query.getResultList();

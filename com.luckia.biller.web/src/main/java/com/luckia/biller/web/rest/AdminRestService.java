@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.POST;
@@ -23,8 +24,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.ClearCache;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Company;
@@ -38,7 +37,7 @@ import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
-@Path("rest/admin")
+@Path("/admin")
 public class AdminRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdminRestService.class);
@@ -46,7 +45,7 @@ public class AdminRestService {
 	private static final boolean DISABLE_RECALCULATE = true;
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private BillProcessor billProcessor;
 	@Inject
@@ -63,7 +62,6 @@ public class AdminRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/bill/{storeId}/{year}/{month}")
-	@ClearCache
 	public Message<String> recalculateBill(@PathParam("storeId") Long storeId, @PathParam("year") Integer year, @PathParam("month") Integer month) {
 		return internalRecalculateBill(storeId, year, month);
 	}
@@ -71,7 +69,6 @@ public class AdminRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/liquidation/{companyId}/{year}/{month}")
-	@ClearCache
 	public Message<String> recalculateLiquidation(@PathParam("companyId") Long companyId, @PathParam("year") Integer year, @PathParam("month") Integer month) {
 		try {
 			Range<Date> range = getEffectiveRange(year, month);
@@ -135,7 +132,6 @@ public class AdminRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/bills/{year}/{month}")
-	@ClearCache
 	public Message<String> find(@PathParam("year") Integer year, @PathParam("month") Integer month) {
 		if (DISABLE_RECALCULATE) {
 			return new Message<String>(Message.CODE_GENERIC_ERROR, "Opción deshabilitada temporalmente");

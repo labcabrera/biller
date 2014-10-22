@@ -18,6 +18,7 @@ public class RappelValidator implements ConstraintValidator<ValidRappel, Rappel>
 	@Override
 	public boolean isValid(Rappel entity, ConstraintValidatorContext context) {
 		boolean hasErrors = false;
+
 		if (entity.getModel() == null || entity.getModel().getId() == null) {
 			context.buildConstraintViolationWithTemplate("rappel.missing.model").addConstraintViolation();
 			hasErrors = true;

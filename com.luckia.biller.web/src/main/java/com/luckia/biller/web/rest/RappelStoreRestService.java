@@ -11,7 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import com.luckia.biller.core.ClearCache;
 import com.luckia.biller.core.model.RappelStoreBonus;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
@@ -19,7 +18,7 @@ import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.bills.RappelStoreProcessor;
 import com.luckia.biller.core.services.entities.RapelStoreBonusEntityService;
 
-@Path("rest/rappel/stores")
+@Path("/rappel/stores")
 public class RappelStoreRestService {
 
 	@Inject
@@ -48,7 +47,6 @@ public class RappelStoreRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/confirm/{id}")
-	@ClearCache
 	public Message<RappelStoreBonus> confirm(@PathParam("id") String primaryKey) {
 		try {
 			RappelStoreBonus bonus = entityService.findById(primaryKey);
@@ -62,7 +60,6 @@ public class RappelStoreRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/prorata")
-	@ClearCache
 	public Message<RappelStoreBonus> applyProrata(@PathParam("id") String primaryKey, BigDecimal prorata) {
 		try {
 			RappelStoreBonus bonus = entityService.findById(primaryKey);

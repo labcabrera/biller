@@ -3,6 +3,7 @@ package com.luckia.biller.deploy;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -12,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.LuckiaCoreModule;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
@@ -34,8 +35,8 @@ public class Patch20140605A extends PatchSupport implements Runnable {
 		try {
 			LOG.info("Ejecutando patch");
 			Injector injector = Guice.createInjector(new LuckiaCoreModule());
-
-			EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
+			injector.getInstance(PersistService.class).start();
+			Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 			EntityManager entityManager = entityManagerProvider.get();
 			BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
 

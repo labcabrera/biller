@@ -46,7 +46,7 @@
 					</div>
 					<label class="col-sm-1 control-label input-sm">Tipo</label>
 					<div class="col-sm-4">
-						<select class="form-control" ng-model="entity.type" ng-readonly="isReadOnly">
+						<select class="form-control" ng-model="entity.type" ng-readonly="isReadOnly" ng-disabled="isReadOnly">
 							<option value="Bar">Bar</option>
 							<option value="BingoCorner">C&oacute;rner en Bingo</option>
 							<option value="SalonCorner">C&oacute;rner en Sal&oacute;n</option>
@@ -196,14 +196,14 @@
 			<div class="modal-body">
 				<form class="form-horizontal" role="form">
 					<div class="form-group">
-						<label class="col-sm-2 control-label">C&oacute;digo</label>
-						<div class="col-sm-8">
+						<label class="col-sm-3 control-label">C&oacute;digo</label>
+						<div class="col-sm-6">
 							<input type='text' class="form-control" ng-model="newTerminal" typeahead="terminal as terminal.code for terminal in terminals($viewValue)" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label">Establecimiento</label>
-						<div class="col-sm-8">
+						<label class="col-sm-3 control-label">Establecimiento</label>
+						<div class="col-sm-6">
 							<input type='text' class="form-control" ng-model="newTerminal.store.name" ng-readonly="true" />
 						</div>
 					</div>

@@ -1,5 +1,7 @@
 package com.luckia.biller.core.services.bills.impl;
 
+import static org.apache.commons.lang3.time.DateFormatUtils.ISO_DATE_FORMAT;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,18 +13,18 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.Range;
-import static org.apache.commons.lang3.time.DateFormatUtils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.i18n.I18nService;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.CommonState;
@@ -45,7 +47,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private static final Logger LOG = LoggerFactory.getLogger(LiquidationProcessorImpl.class);
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private StateMachineService stateMachineService;
 	@Inject
@@ -64,10 +66,10 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.impl.LiquidationProcessor#process(com.luckia.biller.core.model.Company,
-	 * org.apache.commons.lang3.Range)
+	 * @see com.luckia.biller.core.services.bills.impl.LiquidationProcessor#process(com.luckia.biller.core.model.Company, org.apache.commons.lang3.Range)
 	 */
 	@Override
+	@Transactional
 	public Liquidation processBills(Company company, Range<Date> range) {
 		LOG.debug("Procesando liquidacion de {} en {}", company.getName(), ISO_DATE_FORMAT.format(range.getMinimum()), ISO_DATE_FORMAT.format(range.getMaximum()));
 		EntityManager entityManager = entityManagerProvider.get();
@@ -77,9 +79,6 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		query.setParameter("to", range.getMaximum());
 		List<Bill> bills = query.getResultList();
 		LOG.debug("Encontradas {} facturas pendientes asociadas a la liquidacion", bills.size());
-		if (!entityManager.getTransaction().isActive()) {
-			entityManager.getTransaction().begin();
-		}
 		LegalEntity egasa = liquidationReceiverProvider.getReceiver();
 		Liquidation liquidation = new Liquidation();
 		liquidation.setId(UUID.randomUUID().toString());
@@ -90,16 +89,14 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		liquidation.setDateTo(range.getMaximum());
 		liquidation.setBillDate(range.getMaximum());
 		liquidation.setModel(company.getBillingModel());
+		auditService.processCreated(liquidation);
 		internalProcessResults(liquidation);
 		for (Bill bill : liquidation.getBills()) {
 			bill.setLiquidation(liquidation);
 			entityManager.merge(bill);
 		}
-
 		entityManager.merge(liquidation);
-		auditService.processCreated(liquidation);
 		stateMachineService.createTransition(liquidation, CommonState.Draft.name());
-		entityManager.getTransaction().commit();
 		return liquidation;
 	}
 
@@ -234,8 +231,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	}
 
 	/**
-	 * Comprobamos que todas las facturas de la liquidacion han sido aceptadas. En caso de que alguna factura no esté aceptada eleva un
-	 * {@link ValidationException}
+	 * Comprobamos que todas las facturas de la liquidacion han sido aceptadas. En caso de que alguna factura no esté aceptada eleva un {@link ValidationException}
 	 * 
 	 * @param liquidation
 	 */

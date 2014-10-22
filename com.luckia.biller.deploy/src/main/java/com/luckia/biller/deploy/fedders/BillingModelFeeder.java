@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import net.sf.flatpack.DataSet;
@@ -17,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.BillingModelAttributes;
 import com.luckia.biller.core.model.Rappel;
@@ -28,7 +28,7 @@ public class BillingModelFeeder implements Feeder<BillingModel> {
 	private static final Logger LOG = LoggerFactory.getLogger(BillingModelFeeder.class);
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private AuditService auditService;
 

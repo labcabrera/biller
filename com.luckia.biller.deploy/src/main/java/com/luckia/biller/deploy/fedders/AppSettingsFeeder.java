@@ -3,21 +3,20 @@ package com.luckia.biller.deploy.fedders;
 import java.io.InputStream;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppSettings;
 import com.luckia.biller.core.services.SettingsService;
 
 public class AppSettingsFeeder implements Feeder<AppSettings> {
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	@Override
 	public void loadEntities(InputStream source) {
 		EntityManager entityManager = entityManagerProvider.get();
-
 		AppSettings mailSettings = new AppSettings();
 		mailSettings.setId(SettingsService.MAIL);
 		mailSettings.setValue("emailUser", "notificaciones@luckia.com");

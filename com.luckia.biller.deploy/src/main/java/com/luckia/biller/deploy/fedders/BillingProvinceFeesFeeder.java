@@ -10,16 +10,16 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.BillingProvinceFees;
 import com.luckia.biller.core.model.Province;
 
 public class BillingProvinceFeesFeeder implements Feeder<BillingProvinceFees> {
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	@Override
 	public void loadEntities(InputStream source) {

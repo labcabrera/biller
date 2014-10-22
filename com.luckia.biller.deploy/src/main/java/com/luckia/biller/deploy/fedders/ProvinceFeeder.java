@@ -11,6 +11,7 @@ import java.io.Reader;
 import java.util.Iterator;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.io.Charsets;
@@ -21,7 +22,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Province;
 
 public class ProvinceFeeder implements Feeder<Province> {
@@ -29,7 +29,7 @@ public class ProvinceFeeder implements Feeder<Province> {
 	private static final Logger LOG = LoggerFactory.getLogger(ProvinceFeeder.class);
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	@Override
 	public void loadEntities(InputStream source) {

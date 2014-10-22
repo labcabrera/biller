@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -22,7 +23,6 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
@@ -34,8 +34,8 @@ import com.luckia.biller.core.services.bills.LiquidationProcessor;
  * <ul>
  * <li><b>from</b>: fecha de inicio de facturacion</li>
  * <li><b>to</b>: fecha de final de la facturacion</li>
- * <li><b>thread.count</b>: numero de threads en los que se calcularan en paralelo las facturas. En caso de no establecerse este parametro
- * el job se ejecutara utilizando 10 threads.</li>
+ * <li><b>thread.count</b>: numero de threads en los que se calcularan en paralelo las facturas. En caso de no establecerse este parametro el job se ejecutara utilizando 10
+ * threads.</li>
  * </ul>
  */
 public class BillingJob extends BaseJob {
@@ -84,7 +84,7 @@ public class BillingJob extends BaseJob {
 	}
 
 	public void execute(Range<Date> range, Integer threadCount) throws JobExecutionException {
-		EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
+		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<Long> query = entityManager.createQuery("select s.id from Store s order by s.id", Long.class);
 		List<Long> storeIds = query.getResultList();

@@ -13,9 +13,8 @@ import org.quartz.SchedulerException;
 import com.google.inject.Injector;
 
 /**
- * Nota: al utilizar Quartz no tenemos control sobre como se generan las intancias de los objetos, de modo que no podemos utilizar el IoC de
- * Guice (recordar que estamos declarando los jobs a traves de las clases). Para solucionar esto estamos incluyendo directamente el
- * {@link Injector} de Guice en el contexto del scheduler.<br>
+ * Nota: al utilizar Quartz no tenemos control sobre como se generan las intancias de los objetos, de modo que no podemos utilizar el IoC de Guice (recordar que estamos declarando
+ * los jobs a traves de las clases). Para solucionar esto estamos incluyendo directamente el {@link Injector} de Guice en el contexto del scheduler.<br>
  * Para poder recuperar una instancia del IoC simplemente haremos:<br>
  * <b>MyClass myClass = injector.getInstance(MyClass.class)</b>
  */
@@ -36,8 +35,7 @@ public abstract class BaseJob implements Job {
 	}
 
 	/**
-	 * Obtiene el parametro pasado al {@link Job} a partir de su clave y tipo. En caso de no esté establecido en el contexto del job
-	 * devuelve su valor por defecto.
+	 * Obtiene el parametro pasado al {@link Job} a partir de su clave y tipo. En caso de no esté establecido en el contexto del job devuelve su valor por defecto.
 	 * 
 	 * @param context
 	 * @param key

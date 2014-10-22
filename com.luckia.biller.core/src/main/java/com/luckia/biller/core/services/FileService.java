@@ -17,12 +17,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.AppFile;
 
 /**
@@ -37,14 +37,13 @@ public class FileService {
 	@Inject
 	private SettingsService settingsService;
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 
 	/**
 	 * Guarda en base de datos el descriptor del fichero y almacena su contenido en el repositorio de la aplicación.
 	 * 
 	 * @param name
-	 *            Nombre identificativo del fichero (no tiene por que ser el nombre real del fichero, sólo indica el nombre que tiene dentro
-	 *            de la aplicación)
+	 *            Nombre identificativo del fichero (no tiene por que ser el nombre real del fichero, sólo indica el nombre que tiene dentro de la aplicación)
 	 * @param contentType
 	 *            Media type del fichero
 	 * @param inputStream

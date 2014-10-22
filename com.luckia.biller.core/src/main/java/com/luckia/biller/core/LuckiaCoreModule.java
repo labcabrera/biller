@@ -3,8 +3,8 @@ package com.luckia.biller.core;
 import org.apache.bval.guice.ValidationModule;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
+import com.google.inject.persist.jpa.JpaPersistModule;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.services.bills.BillDataProvider;
 import com.luckia.biller.core.services.bills.BillProcessor;
@@ -33,7 +33,7 @@ public class LuckiaCoreModule extends AbstractModule {
 	 */
 	@Override
 	public void configure() {
-		configureInterceptors();
+		install(new JpaPersistModule(Constants.PERSISTENCE_UNIT_NAME));
 		bindEntityManagers();
 		bind(BillProcessor.class).to(BillProcessorImpl.class);
 		bind(LiquidationProcessor.class).to(LiquidationProcessorImpl.class);
@@ -44,20 +44,13 @@ public class LuckiaCoreModule extends AbstractModule {
 	}
 
 	/**
-	 * Establece el {@link EntityManagerProvider} principal de la aplicacion y registra otro anotado como <code>@Named("LIS")</code> para
-	 * acceder a la base de datos de LIS.
+	 * Establece el {@link EntityManagerProvider} principal de la aplicacion y registra otro anotado como <code>@Named("LIS")</code> para acceder a la base de datos de LIS.
 	 */
 	protected void bindEntityManagers() {
 		EntityManagerProvider mainEntityManagerProvider = new EntityManagerProvider(Constants.PERSISTENCE_UNIT_NAME);
 		EntityManagerProvider lisEntityManagerProvider = new EntityManagerProvider(Constants.PERSISTENCE_UNIT_NAME_LIS);
 		bind(EntityManagerProvider.class).toInstance(mainEntityManagerProvider);
 		bind(EntityManagerProvider.class).annotatedWith(Names.named(Constants.LIS)).toInstance(lisEntityManagerProvider);
-	}
-
-	protected void configureInterceptors() {
-		ClearCacheInterceptor clearCacheInterceptor = new ClearCacheInterceptor();
-		requestInjection(clearCacheInterceptor);
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(ClearCache.class), clearCacheInterceptor);
 	}
 
 	protected ClassLoader getClassLoader() {

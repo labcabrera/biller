@@ -2,6 +2,7 @@ package com.luckia.biller.deploy;
 
 import java.util.Date;
 
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
@@ -11,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.LuckiaCoreModule;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
@@ -30,7 +31,8 @@ public class Patch20140522B {
 		Date to = new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate();
 		Range<Date> range = Range.between(from, to);
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
-		EntityManagerProvider entityManagerProvider = injector.getInstance(EntityManagerProvider.class);
+		injector.getInstance(PersistService.class).start();
+		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
 		EntityManager entityManager = entityManagerProvider.get();
 		if (DELETE) {

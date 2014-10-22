@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -20,7 +21,6 @@ import net.sf.flatpack.Parser;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.IdCard;
 import com.luckia.biller.core.model.IdCardType;
@@ -32,7 +32,7 @@ import com.luckia.biller.core.services.AuditService;
 public abstract class LegalEntityFeeder<T> implements Feeder<T> {
 
 	@Inject
-	protected EntityManagerProvider entityManagerProvider;
+	protected Provider<EntityManager> entityManagerProvider;
 	@Inject
 	protected AuditService auditService;
 

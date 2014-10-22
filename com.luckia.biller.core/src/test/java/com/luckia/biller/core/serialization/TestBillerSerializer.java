@@ -15,8 +15,8 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.LuckiaCoreModule;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 
 public class TestBillerSerializer {
@@ -24,7 +24,8 @@ public class TestBillerSerializer {
 	@Test
 	public void test() {
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
-		EntityManager entityManager = injector.getInstance(EntityManagerProvider.class).get();
+		injector.getInstance(PersistService.class).start();
+		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 		Serializer serializer = injector.getInstance(Serializer.class);
 
 		TypedQuery<Bill> query = entityManager.createQuery("select b from Bill b join fetch b.details order by b.code desc", Bill.class);
