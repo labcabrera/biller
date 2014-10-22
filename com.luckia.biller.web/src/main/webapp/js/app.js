@@ -2,7 +2,7 @@
 
 /* App Module */
 
-var billerApp = angular.module('billerApp', [ 'ngRoute', 'billerControllers', 'ui.bootstrap']);
+var billerApp = angular.module('billerApp', [ 'ngRoute', 'billerControllers', 'ui.bootstrap', 'dialogs.main']);
 
 billerApp.config([ '$routeProvider', function($routeProvider, $rootScope, $location) {
 	$routeProvider.when('/users', { templateUrl : 'partials/user-list.html', controller : 'UserListCtrl'

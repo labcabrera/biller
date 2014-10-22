@@ -674,7 +674,7 @@ billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routePa
 	$scope.search();
 } ]);
 
-billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', function($scope, $rootScope, $routeParams, $location, $http) {
+billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', 'dialogs', function($scope, $rootScope, $routeParams, $location, $http, dialogs) {
 	$scope.load = function() {
 		$http.get('rest/bills/' + $routeParams.id).success(function(data) { $scope.entity = data; });
 		$rootScope.isReadOnly = true;
@@ -689,9 +689,12 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		});
 	};
 	$scope.remove = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a eliminar eliminar la factura')) {
-			$http.post('rest/bills/remove/' + $scope.entity.id).success(function(data) {
-				if(data.code == 200) { $location.path("bills"); } else { $scope.displayAlert(data); }
+		if(!$rootScope.isReadOnly) {
+			var dlg = dialogs.confirm('Confirmación de borrado','¿Desea eliminar la factura?');
+			dlg.result.then(function(btn){
+				$http.post('rest/bills/remove/' + $scope.entity.id).success(function(data) {
+					if(data.code == 200) { $location.path("bills"); } else { $scope.displayAlert(data); }
+				});
 			});
 		}
 	};
@@ -822,7 +825,7 @@ billerControllers.controller('LiquidationListCtrl', [ '$scope', '$rootScope', '$
 	$scope.search();
 } ]);
 
-billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
+billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'dialogs', function($scope, $rootScope, $routeParams, $http, $location, dialogs) {
 	$scope.load = function() {
 		$http.get('rest/liquidations/id/' + $routeParams.id).success(function(data) {
 			$scope.entity = data;
@@ -856,9 +859,12 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 		});
 	};
 	$scope.remove = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a eliminar eliminar la factura')) {
-			$http.post('rest/liquidations/remove/' + $scope.entity.id).success(function(data) {
-				if(data.code == 200) { $location.path("liquidations"); } else { $scope.displayAlert(data); }
+		if(!$rootScope.isReadOnly) {
+			var dlg = dialogs.confirm('Confirmación de borrado','¿Desea eliminar la liquidación?');
+			dlg.result.then(function(btn){
+				$http.post('rest/liquidations/remove/' + $scope.entity.id).success(function(data) {
+					if(data.code == 200) { $location.path("liquidations"); } else { $scope.displayAlert(data); }
+				});
 			});
 		}
 	};
