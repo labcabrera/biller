@@ -79,6 +79,8 @@ DEPLOYMENT
  		exec ssh-agent bash
  		eval 'ssh-agent'
  		
+Cambios de los dialog de javascript
+	http://codepen.io/m-e-conroy/pen/ALsdF 		
 
 HTTP: auth + angularjs
 

@@ -11,7 +11,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.JoinTable;
+import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -21,10 +21,10 @@ import com.luckia.biller.core.jpa.Mergeable;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 /**
- * Representa una liquidación. A diferencia de las facturas las liquidaciones no devengan IVA. Las liquidaciones se realizan a las empresas
- * como un agregado de todas las facturas emitidas a los establecimientos pertenecientes a la empresa.<br>
- * Para cada empresa operadora se generan n facturas dependiendo de los centros de coste a los que estén asociados los establecimientos. Por
- * ejemplo, si una empresa opera en Galicia y Valencia, se generarán dos liquidaciones para esa empresa, una para cada comunidad autónoma.
+ * Representa una liquidación. A diferencia de las facturas las liquidaciones no devengan IVA. Las liquidaciones se realizan a las empresas como un agregado de todas las facturas
+ * emitidas a los establecimientos pertenecientes a la empresa.<br>
+ * Para cada empresa operadora se generan n facturas dependiendo de los centros de coste a los que estén asociados los establecimientos. Por ejemplo, si una empresa opera en
+ * Galicia y Valencia, se generarán dos liquidaciones para esa empresa, una para cada comunidad autónoma.
  * <ul>
  * <li>El emisor de la factura será la empresa operadora</li>
  * <li>El receptor de la factura será el centro de coste</li>
@@ -41,8 +41,7 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 	/**
 	 * Lista de facturas que componen la liquidación.
 	 */
-	@OneToMany(cascade = CascadeType.PERSIST)
-	@JoinTable(name = "B_LIQUIDATION_BILL")
+	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "liquidation")
 	@NotSerializable
 	private List<Bill> bills;
 
@@ -52,6 +51,7 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 	/**
 	 * Lista de detalles (ajustes operativos) de la liquidación.
 	 */
+	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "liquidation")
 	private List<LiquidationDetail> details;
 
 	public List<Bill> getBills() {

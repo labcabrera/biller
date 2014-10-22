@@ -55,4 +55,7 @@ public interface BillProcessor {
 	
 	Bill removeDetail(BillDetail detail);
 
+	/** Borrado fisico de facturas */
+	void remove(Bill bill);
+
 }

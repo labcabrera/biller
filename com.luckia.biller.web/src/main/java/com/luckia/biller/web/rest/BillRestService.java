@@ -112,6 +112,22 @@ public class BillRestService {
 	}
 
 	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/remove/{id}")
+	public Message<Bill> remove(@PathParam("id") String billId) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Bill bill = entityManager.find(Bill.class, billId);
+			billProcessor.remove(bill);
+			return new Message<>(Message.CODE_SUCCESS, "Factura eliminada");
+		} catch (Exception ex) {
+			LOG.error("Error al eliminar la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al eliminar la factura");
+		}
+	}
+
+	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("confirm/{id}")
 	public Message<Bill> confirm(@PathParam("id") String id) {

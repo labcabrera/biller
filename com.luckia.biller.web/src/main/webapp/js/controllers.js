@@ -688,6 +688,13 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 			}
 		});
 	};
+	$scope.remove = function() {
+		if($rootScope.autoconfirm || window.confirm('Se va a eliminar eliminar la factura')) {
+			$http.post('rest/bills/remove/' + $scope.entity.id).success(function(data) {
+				if(data.code == 200) { $location.path("bills"); } else { $scope.displayAlert(data); }
+			});
+		}
+	};
 	$scope.editDetail = function(data) {
 		if(data != null && !(typeof data === 'undefined') ) {	
 			$http.get('rest/bills/detail/id/' + data).success(function(data) {
@@ -847,6 +854,13 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 				$scope.entity = data.payload;
 			}
 		});
+	};
+	$scope.remove = function() {
+		if($rootScope.autoconfirm || window.confirm('Se va a eliminar eliminar la factura')) {
+			$http.post('rest/liquidations/remove/' + $scope.entity.id).success(function(data) {
+				if(data.code == 200) { $location.path("liquidations"); } else { $scope.displayAlert(data); }
+			});
+		}
 	};
 	$scope.editDetail = function(data) {
 		if(data != null && !(typeof data === 'undefined') ) {

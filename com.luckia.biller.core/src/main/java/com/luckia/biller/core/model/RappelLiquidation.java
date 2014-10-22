@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.JoinTable;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,8 +23,7 @@ public class RappelLiquidation extends AbstractBill {
 	/**
 	 * Lista de bonus de cada establecimiento.
 	 */
-	@OneToMany(cascade = CascadeType.PERSIST)
-	@JoinTable(name = "B_RAPPEL_LIQUIDATION_BONUS")
+	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "rappelLiquidation")
 	@NotSerializable
 	private List<RappelStoreBonus> storeBonus;
 

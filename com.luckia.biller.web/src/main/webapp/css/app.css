@@ -2,6 +2,10 @@ textarea {
 	resize: none;
 }
 
+a {
+	cursor: pointer;
+}
+
 .form-control[readonly] {
 	background-color: #F9F9F9;
 	cursor: default;

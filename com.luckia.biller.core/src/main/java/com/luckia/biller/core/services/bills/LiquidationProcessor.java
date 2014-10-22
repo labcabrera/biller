@@ -35,4 +35,7 @@ public interface LiquidationProcessor {
 
 	Liquidation removeDetail(LiquidationDetail detail);
 
+	/** Borrado fisico de la liquidacion */
+	void remove(Liquidation liquidation);
+
 }

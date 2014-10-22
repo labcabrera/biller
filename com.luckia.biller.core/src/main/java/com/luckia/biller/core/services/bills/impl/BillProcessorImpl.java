@@ -22,6 +22,7 @@ import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
@@ -31,11 +32,13 @@ import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.BillProcessor;
+import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
 /**
@@ -61,12 +64,13 @@ public class BillProcessorImpl implements BillProcessor {
 	private PDFBillGenerator pdfBillGenerator;
 	@Inject
 	private AuditService auditService;
+	@Inject
+	private LiquidationProcessor liquidationProcessor;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.billing.BillProcessor#generateBill(com.luckia.biller.core.model.Store,
-	 * org.apache.commons.lang3.Range)
+	 * @see com.luckia.biller.core.services.billing.BillProcessor#generateBill(com.luckia.biller.core.model.Store, org.apache.commons.lang3.Range)
 	 */
 	@Override
 	public Bill generateBill(Store store, Range<Date> range) {
@@ -306,16 +310,40 @@ public class BillProcessorImpl implements BillProcessor {
 	}
 
 	@Override
+	@Transactional
 	public Bill removeDetail(BillDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Bill bill = detail.getBill();
 		bill.getDetails().remove(detail);
-		entityManager.getTransaction().begin();
 		entityManager.remove(detail);
-		entityManager.getTransaction().commit();
 		entityManager.clear();
 		bill = entityManager.find(Bill.class, detail.getBill().getId());
 		processResults(bill);
 		return bill;
+	}
+
+	@Override
+	@Transactional
+	public void remove(Bill bill) {
+		LOG.info("Eliminando factura {}", bill);
+		// Eliminamos los detalles
+		EntityManager entityManager = entityManagerProvider.get();
+		for (Object i : bill.getDetails()) {
+			entityManager.remove(i);
+		}
+		for (Object i : bill.getLiquidationDetails()) {
+			entityManager.remove(i);
+		}
+		Liquidation liquidation = null;
+		if (bill.getLiquidation() != null) {
+			liquidation = bill.getLiquidation();
+		}
+		entityManager.remove(bill);
+		if (liquidation != null) {
+			LOG.debug("Actualizando los detalles de la liquidacion {}", liquidation);
+			entityManager.flush();
+			LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidation.getId(), entityManagerProvider, liquidationProcessor);
+			task.run();
+		}
 	}
 }

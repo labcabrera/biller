@@ -146,15 +146,14 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	}
 
 	@Override
+	@Transactional
 	public Liquidation updateResults(Liquidation liquidation) {
 		LOG.debug("Actualizando resultados de liquidacion");
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.clear();
 		Liquidation current = entityManager.find(Liquidation.class, liquidation.getId());
-		entityManager.getTransaction().begin();
 		internalProcessResults(liquidation);
 		entityManager.merge(liquidation);
-		entityManager.getTransaction().commit();
 		return current;
 	}
 
@@ -220,14 +219,22 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 * @see com.luckia.biller.core.services.bills.LiquidationProcessor#removeDetail(com.luckia.biller.core.model.LiquidationDetail)
 	 */
 	@Override
+	@Transactional
 	public Liquidation removeDetail(LiquidationDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Liquidation liquidation = detail.getLiquidation();
 		liquidation.getDetails().remove(detail);
-		entityManager.getTransaction().begin();
 		entityManager.remove(detail);
-		entityManager.getTransaction().commit();
 		return updateResults(liquidation);
+	}
+
+	@Override
+	@Transactional
+	public void remove(Liquidation liquidation) {
+		EntityManager entityManager = entityManagerProvider.get();
+		entityManager.createQuery("update Bill e set e.liquidation = null where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
+		entityManager.createQuery("delete from LiquidationDetail e where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
+		entityManager.remove(liquidation);
 	}
 
 	/**
@@ -242,4 +249,5 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			}
 		}
 	}
+
 }

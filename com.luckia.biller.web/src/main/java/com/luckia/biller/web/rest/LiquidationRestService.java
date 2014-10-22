@@ -104,6 +104,22 @@ public class LiquidationRestService {
 	}
 
 	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/remove/{id}")
+	public Message<Liquidation> remove(@PathParam("id") String liquidationId) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Liquidation liquidation = entityManager.find(Liquidation.class, liquidationId);
+			liquidationProcessor.remove(liquidation);
+			return new Message<>(Message.CODE_SUCCESS, "Liquidación eliminada");
+		} catch (Exception ex) {
+			LOG.error("Error al eliminar la liquidacion", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al eliminar la liquidación");
+		}
+	}
+
+	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("confirm/{id}")
 	public Message<Liquidation> confirm(@PathParam("id") String id) {

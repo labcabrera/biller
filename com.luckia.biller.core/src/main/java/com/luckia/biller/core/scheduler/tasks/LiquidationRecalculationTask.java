@@ -1,7 +1,6 @@
 package com.luckia.biller.core.scheduler.tasks;
 
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
@@ -10,9 +9,7 @@ import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
-import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 /**
@@ -50,26 +47,13 @@ public class LiquidationRecalculationTask implements Runnable {
 	public void run() {
 		EntityManager entityManager = entityManagerProvider.get();
 		Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, liquidationId);
+		LOG.debug("Eliminando liquidacion {}", liquidation);
 		LOG.info("Recalculando liquidacion de {} de {}", liquidation.getSender().getName(), liquidation.getDateTo());
-		LOG.info("Eliminando relacion de facturas asociadas a la liquidacion");
 		Range<Date> range = Range.between(liquidation.getDateFrom(), liquidation.getDateTo());
 		Long companyId = liquidation.getSender().getId();
 		entityManager.getTransaction().begin();
-		for (Bill bill : liquidation.getBills()) {
-			bill.setLiquidation(null);
-			entityManager.merge(bill);
-		}
-		entityManager.getTransaction().commit();
-		entityManager.getTransaction().begin();
-		LOG.info("Eliminando LiquidationDetails asociados");
-		for (Iterator<LiquidationDetail> iterator = liquidation.getDetails().iterator(); iterator.hasNext();) {
-			LiquidationDetail i = iterator.next();
-			entityManager.remove(i);
-			iterator.remove();
-		}
-		entityManager.getTransaction().commit();
-		LOG.info("Eliminando liquidacion");
-		entityManager.getTransaction().begin();
+		entityManager.createQuery("update Bill e set e.liquidation = null where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
+		entityManager.createQuery("delete from LiquidationDetail e where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
 		entityManager.remove(liquidation);
 		entityManager.getTransaction().commit();
 		LiquidationTask task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
