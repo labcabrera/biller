@@ -770,14 +770,15 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		}
 	};
 	$scope.recalculate = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la factura. Los ajustes manuales se perderan')) {
+		var dlg = dialogs.confirm('Confirmación','¿Desea recalcular la factura? Los ajustes manuales se perderán');
+		dlg.result.then(function(btn){
 			$http.post('rest/bills/recalculate/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
 				}
 			});
-		}
+		});
 	};
 	$scope.editSendMail = function() { $('#sendMailModal').modal('show'); };
 	$scope.sendMail = function() {
@@ -899,14 +900,15 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 		});
 	};
 	$scope.recalculate = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la liquidacion')) {
+		var dlg = dialogs.confirm('Confirmación','¿Desea recalcular la liquidación? Los ajustes manuales se perderán');
+		dlg.result.then(function(btn){
 			$http.post('rest/liquidations/recalculate/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$location.path("liquidations/id/" + data.payload.id);
 				}
 			});
-		}
+		});
 	};
 	$scope.recreatePDF = function() {
 		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la liquidacion')) {
@@ -989,7 +991,8 @@ billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParam
 	$scope.load = function() {
 	};
 	$scope.recalculateBill = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la factura')) {
+		var dlg = dialogs.confirm('Confirmación','¿Desea recalcular la factura? Los ajustes manuales se perderán');
+		dlg.result.then(function(btn){
 			var billYear = $scope.billYear;
 			var billMonth = $scope.billMonth;
 			var billStore = $scope.billStore != null ? $scope.billStore.id : '';
@@ -997,7 +1000,7 @@ billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParam
 			$http.post('rest/admin/recalculate/bill/' + billStore + '/' + billYear + "/" + billMonth).success(function(data) {
 				$scope.displayAlert(data);
 			});
-		}
+		});
 	};
 	$scope.recalculateLiquidation = function() {
 		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la liquidacion')) {
