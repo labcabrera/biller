@@ -1,3 +1,8 @@
+DEPLOYMENT
+
+	PRO: ssh luis.barragan@pre-factureitor.luckia.madrid -p 22021
+	PRE  ssh luis.barragan@pre-factureitor.luckia.madrid -p 22026
+
 2014-04-29
 
 DONE
