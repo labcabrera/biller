@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -205,15 +206,22 @@ public class BillRestService {
 	@Path("/send/{id}")
 	public Message<Bill> sendEmail(@PathParam("id") String id, String emailAddress) {
 		try {
-			EntityManager entityManager = entityManagerProvider.get();
-			entityManager.clear();
-			Bill bill = entityManager.find(Bill.class, id);
-			AppFile appFile = bill.getPdfFile();
-			String title = "Factura " + bill.getCode();
-			String body = "Adjunto PDF";
-			SendAppFileMailTask task = new SendAppFileMailTask(emailAddress, appFile, title, body, fileService, mailService);
-			new Thread(task).start();
-			return new Message<>(Message.CODE_SUCCESS, String.format(i18nService.getMessage("bill.send.email"), emailAddress), bill);
+			if (StringUtils.isBlank(emailAddress)) {
+				return new Message<>(Message.CODE_GENERIC_ERROR, "No se ha establecido el destinatario");
+			} else {
+				EntityManager entityManager = entityManagerProvider.get();
+				entityManager.clear();
+				Bill bill = entityManager.find(Bill.class, id);
+				AppFile appFile = bill.getPdfFile();
+				String title = "Factura " + bill.getCode();
+				String body = "Adjunto PDF";
+				String[] recipients = emailAddress.split("\\s*;\\s*");
+				for (String recipient : recipients) {
+					SendAppFileMailTask task = new SendAppFileMailTask(recipient, appFile, title, body, fileService, mailService);
+					new Thread(task).start();
+				}
+				return new Message<>(Message.CODE_SUCCESS, String.format(i18nService.getMessage("bill.send.email"), emailAddress), bill);
+			}
 		} catch (Exception ex) {
 			LOG.error("Error al enviar la factura", ex);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.send.email.error"));

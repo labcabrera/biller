@@ -198,7 +198,10 @@ public class LiquidationRestService {
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.clear();
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
-			liquidationMailService.sendEmail(liquidation, emailAddress, false);
+			String[] recipients = emailAddress.split("\\s*;\\s*");
+			for (String recipient : recipients) {
+				liquidationMailService.sendEmail(liquidation, recipient, false);
+			}
 			return new Message<>(Message.CODE_SUCCESS, String.format(i18nService.getMessage("liquidation.send.email.success"), emailAddress), liquidation);
 		} catch (Exception ex) {
 			LOG.error("Error al enviar la factura", ex);
