@@ -25,7 +25,7 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 			auditService.processCreated(current);
 			current.merge(entity);
 			entityManager.persist(current);
-			message = i18nService.getMessage("billingModel.persit");
+			message = i18nService.getMessage("billingModel.persist");
 		} else {
 			current = entityManager.find(BillingModel.class, entity.getId());
 			current.merge(entity);

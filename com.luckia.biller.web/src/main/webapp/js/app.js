@@ -115,6 +115,21 @@ billerApp.run(function($rootScope, $http) {
 	$rootScope.dateFormat = 'dd-MM-yyyy';
 });
 
+billerApp.factory('messageService', function() {
+	var message = null;
+    return {
+        setMessage: function(data) {
+        	message = data;
+        },
+        getMessage: function() {
+        	return message;
+        },
+        hasMessage: function() {
+        	return message != null;
+        }
+    };
+});
+
 /*
  * Directiva para generar inputs que solo aceptan valores numericos con una cantidad dada de decimales
  */

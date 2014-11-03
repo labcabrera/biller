@@ -58,7 +58,10 @@ billerControllers.controller('GroupListCtrl', [ '$scope', '$rootScope', '$routeP
 	$scope.search();
 } ]);
 
-billerControllers.controller('GroupDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', function($scope, $rootScope, $location, $routeParams, $http) {
+billerControllers.controller('GroupDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $location, $routeParams, $http, messageService) {
+	if(messageService.hasMessage()) {
+		$scope.displayAlert(messageService.getMessage());
+	}
 	$scope.load = function() {
 		$http.get('rest/groups/id/' + $routeParams.id).success(function(data) {
 			$scope.entity = data;
@@ -86,11 +89,12 @@ billerControllers.controller('GroupDetailCtrl', [ '$scope', '$rootScope', '$loca
 	$scope.load();
 } ]);
 
-billerControllers.controller('GroupNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+billerControllers.controller('GroupNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 	$scope.isReadOnly = false;
 	$scope.update = function() {
 		$http.post('rest/groups/merge/', $scope.entity).success(function(data) {
 			if(data.code == 200) {
+				messageService.setMessage(data);
 				$location.path("groups/id/" + data.payload.id);				
 			} else {
 				$scope.displayAlert(data);
@@ -131,7 +135,10 @@ billerControllers.controller('CompanyListCtrl', [ '$scope', '$http', '$routePara
 	$scope.search();
 } ]);
 
-billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
+billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	if(messageService.hasMessage()) {
+		$scope.displayAlert(messageService.getMessage());
+	}
 	$scope.regions = function(name) {
 		var url = "rest/regions/find/" + name + (angular.isDefined($scope.entity.address.province.id) ? '?province=' + $scope.entity.address.province.id : '');
 		return $http.get(url).then(function(response) { return response.data; });
@@ -179,12 +186,13 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 	$scope.load();
 } ]);
 
-billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 	$scope.isReadOnly = false;
 	$scope.reset = function() { };
 	$scope.update = function() {
 		$http.post('rest/companies/merge/', $scope.entity).success(function(data) {
 			if(data.code == 200) {
+				messageService.setMessage(data);
 				$location.path("companies/id/" + data.payload.id);				
 			} else {
 				$scope.displayAlert(data);
@@ -233,7 +241,10 @@ billerControllers.controller('StoreListCtrl', [ '$scope', '$routeParams', '$http
 	$scope.search();
 } ]);
 
-billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
+billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	if(messageService.hasMessage()) {
+		$scope.displayAlert(messageService.getMessage());
+	}
 	$scope.load = function() {
 		$http.get('rest/stores/id/' + $routeParams.id).success(function(data) {
 			$scope.entity = data;
@@ -288,12 +299,13 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 	$scope.load();
 } ]);
 
-billerControllers.controller('StoreNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+billerControllers.controller('StoreNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 	$scope.isReadOnly = false;
 	$scope.reset = function() { };
 	$scope.update = function() {
 		$http.post('rest/stores/merge/', $scope.entity).success(function(data) {
 			if(data.code == 200) {
+				messageService.setMessage(data);
 				$location.path("stores/id/" + data.payload.id);				
 			} else {
 				$scope.displayAlert(data);
@@ -339,7 +351,10 @@ billerControllers.controller('OwnerListCtrl', [ '$scope', '$http', function($sco
 	$scope.search();
 } ]);
 
-billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
+billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	if(messageService.hasMessage()) {
+		$scope.displayAlert(messageService.getMessage());
+	}
 	$scope.load = function() {
 		$http.get('rest/owners/id/' + $routeParams.id).success(function(data) { $scope.entity = data; });
 		$rootScope.isReadOnly = true;
@@ -371,13 +386,14 @@ billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$rout
 	$scope.load();
 } ]);
 
-billerControllers.controller('OwnerNewCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
+billerControllers.controller('OwnerNewCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
 	$scope.isReadOnly = false;
 	$scope.reset = function() {};
 	$scope.update = function() {
 		$http.post('rest/owners/merge/', $scope.entity).success(function(data) {
 			$scope.displayAlert(data);
 			if(data.code == 200) {
+				messageService.setMessage(data);
 				$location.path("owners/id/" + data.payload.id);				
 			}
 		});
@@ -416,7 +432,10 @@ billerControllers.controller('CostCenterListCtrl', [ '$scope', '$http', function
 } ]);
 
 
-billerControllers.controller('CostCenterDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', function($scope, $rootScope, $routeParams, $http, $location) {
+billerControllers.controller('CostCenterDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	if(messageService.hasMessage()) {
+		$scope.displayAlert(messageService.getMessage());
+	}
 	$scope.load = function() {
 		$http.get('rest/costcenters/id/' + $routeParams.id).success(function(data) { $scope.entity = data; });
 		$rootScope.isReadOnly = true;
@@ -446,11 +465,12 @@ billerControllers.controller('CostCenterDetailCtrl', [ '$scope', '$rootScope', '
 	$scope.load();
 } ]);
 
-billerControllers.controller('CostCenterNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+billerControllers.controller('CostCenterNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 	$scope.isReadOnly = false;
 	$scope.update = function() {
 		$http.post('rest/costcenters/merge/', $scope.entity).success(function(data) {
 			if(data.code == 200) {
+				messageService.setMessage(data);
 				$location.path("costcenters/id/" + data.payload.id);				
 			} else {
 				$scope.displayAlert(data);
@@ -490,7 +510,10 @@ billerControllers.controller('TerminalListCtrl', [ '$scope', '$rootScope', '$rou
 	$scope.search();
 } ]);
 
-billerControllers.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', function($scope, $rootScope, $location, $routeParams, $http) {
+billerControllers.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $location, $routeParams, $http, messageService) {
+	if(messageService.hasMessage()) {
+		$scope.displayAlert(messageService.getMessage());
+	}
 	$scope.load = function() {
 		$http.get('rest/terminals/id/' + $routeParams.id).success(function(data) {
 			$scope.entity = data;
@@ -515,11 +538,12 @@ billerControllers.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$l
 	$scope.load();
 } ]);
 
-billerControllers.controller('TerminalNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+billerControllers.controller('TerminalNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 	$scope.isReadOnly = false;
 	$scope.update = function() {
 		$http.post('rest/terminals/merge/', $scope.entity).success(function(data) {
 			if(data.code == 200) {
+				messageService.setMessage(data);
 				$location.path("terminals/id/" + data.payload.id);				
 			} else {
 				$scope.displayAlert(data);
@@ -558,7 +582,10 @@ billerControllers.controller('ModelListCtrl', [ '$scope', '$rootScope', '$http',
 } ]);
 
 /** Detalle de modelo de facturacion */
-billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $routeParams, $http, messageService) {
+	if(messageService.hasMessage()) {
+		$scope.displayAlert(messageService.getMessage());
+	}
 	$scope.load = function() {
 		$rootScope.isReadOnly = true;
 		$http.get('rest/models/id/' + $routeParams.id).success(function(data) {
@@ -619,11 +646,12 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 } ]);
 
 /** Nuevo modelo de facturacion */
-billerControllers.controller('ModelNewCtrl', [ '$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+billerControllers.controller('ModelNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 	$scope.isReadOnly = false;
 	$scope.update = function() {
 		$http.post('rest/models/merge/', $scope.entity).success(function(data) {
 			if(data.code == 200) {
+				messageService.setMessage(data);
 				$location.path("models/id/" + data.payload.id);				
 			} else {
 				$scope.displayAlert(data);
