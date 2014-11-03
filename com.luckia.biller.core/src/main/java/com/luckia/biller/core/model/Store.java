@@ -150,6 +150,7 @@ public class Store extends LegalEntity {
 				this.ispInfo = store.ispInfo;
 				this.autoConfirm = store.autoConfirm;
 				this.billingModel = store.billingModel;
+				this.billSequencePrefix = store.billSequencePrefix;
 			}
 		}
 	}
