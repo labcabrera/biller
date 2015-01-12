@@ -92,5 +92,11 @@ HTTP: auth + angularjs
 http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html
 
 http://witoldsz.github.io/angular-http-auth/
- 
+
+
+Modificaciones base de datos
+
+	Cambios modelo 2015-01-12
+	ALTER TABLE b_legal_entity ADD START_DATE DATE;
+	ALTER TABLE b_legal_entity ADD END_DATE DATE;
  

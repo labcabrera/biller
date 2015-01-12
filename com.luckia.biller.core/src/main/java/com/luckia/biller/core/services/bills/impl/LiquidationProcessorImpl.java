@@ -96,6 +96,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			entityManager.merge(bill);
 		}
 		entityManager.merge(liquidation);
+		LOG.debug("Procesada la liquidacion de {}. Creando transicion a estado borrador", company.getName());
 		stateMachineService.createTransition(liquidation, CommonState.Draft.name());
 		return liquidation;
 	}

@@ -6,6 +6,7 @@
 package com.luckia.biller.core.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,6 +23,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import com.luckia.biller.core.jpa.Mergeable;
@@ -70,6 +73,14 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 
 	@Column(name = "ACCOUNT_NUMBER", length = 64)
 	protected String accountNumber;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "START_DATE")
+	protected Date startDate;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "END_DATE")
+	protected Date endDate;
 
 	@Embedded
 	protected AuditData auditData;
@@ -154,6 +165,22 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 		this.accountNumber = accountNumber;
 	}
 
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 	@Override
 	public String toString() {
 		return "LegalEntity [id=" + id + ", idCard=" + idCard + ", name=" + name + ", email=" + email + "]";
@@ -175,6 +202,8 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 		this.comments = entity.comments;
 		this.phoneNumber = entity.phoneNumber;
 		this.parent = entity.parent;
+		this.startDate = entity.startDate;
+		this.endDate = entity.endDate;
 		if (this.address != null) {
 			this.address.merge(entity.getAddress());
 		}

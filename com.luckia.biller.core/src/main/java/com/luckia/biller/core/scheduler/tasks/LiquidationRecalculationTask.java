@@ -51,14 +51,20 @@ public class LiquidationRecalculationTask implements Runnable {
 		LOG.info("Recalculando liquidacion de {} de {}", liquidation.getSender().getName(), liquidation.getDateTo());
 		Range<Date> range = Range.between(liquidation.getDateFrom(), liquidation.getDateTo());
 		Long companyId = liquidation.getSender().getId();
-		entityManager.getTransaction().begin();
+		Boolean currentTransaction = entityManager.getTransaction().isActive();
+		if (!currentTransaction) {
+			entityManager.getTransaction().begin();
+		}
 		entityManager.createQuery("update Bill e set e.liquidation = null where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
 		entityManager.createQuery("delete from LiquidationDetail e where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
 		entityManager.remove(liquidation);
-		entityManager.getTransaction().commit();
+		if (!currentTransaction) {
+			entityManager.getTransaction().commit();
+		}
 		LiquidationTask task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
 		task.run();
 		liquidationResult = task.getLiquidationResult();
+		LOG.info("Recalculada la liquidacion de {}", liquidation.getSender().getName());
 	}
 
 	/**
