@@ -124,7 +124,9 @@ public class LiquidationRestService {
 	@Path("confirm/{id}")
 	public Message<Liquidation> confirm(@PathParam("id") String id) {
 		try {
-			Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, id);
+			EntityManager entityManager = entityManagerProvider.get();
+			entityManager.getEntityManagerFactory().getCache().evictAll();
+			Liquidation liquidation = entityManager.find(Liquidation.class, id);
 			liquidationProcessor.confirm(liquidation);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.confirm.success"), liquidation);
 		} catch (ValidationException ex) {
@@ -176,6 +178,7 @@ public class LiquidationRestService {
 	public Response getArtifactBinaryContent(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
+			entityManager.getEntityManagerFactory().getCache().evictAll();
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			pdfLiquidationGenerator.generate(liquidation, out);
