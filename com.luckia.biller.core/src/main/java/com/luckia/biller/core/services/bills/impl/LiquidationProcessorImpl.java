@@ -149,7 +149,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 
 	@Override
 	@Transactional
-	public Liquidation updateResults(Liquidation liquidation) {
+	public Liquidation updateLiquidationResults(Liquidation liquidation) {
 		LOG.debug("Actualizando resultados de liquidacion");
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.clear();
@@ -208,9 +208,10 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			LiquidationDetail current = entityManager.find(LiquidationDetail.class, detail.getId());
 			current.merge(detail);
 			entityManager.merge(current);
+			entityManager.flush();
 			liquidation = current.getLiquidation();
 		}
-		return updateResults(liquidation);
+		return updateLiquidationResults(liquidation);
 	}
 
 	/*
@@ -225,7 +226,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		Liquidation liquidation = detail.getLiquidation();
 		liquidation.getDetails().remove(detail);
 		entityManager.remove(detail);
-		return updateResults(liquidation);
+		return updateLiquidationResults(liquidation);
 	}
 
 	@Override

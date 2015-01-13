@@ -295,12 +295,7 @@ public class BillProcessorImpl implements BillProcessor {
 		}
 		entityManager.flush();
 		entityManager.refresh(bill);
-		// entityManager.clear();
-		// bill = entityManager.find(Bill.class, bill.getId());
 		processResults(bill);
-		// entityManager.clear();
-		// bill = entityManager.find(Bill.class, detail.getBill().getId());
-		entityManager.refresh(bill);
 		return bill;
 	}
 
@@ -311,8 +306,9 @@ public class BillProcessorImpl implements BillProcessor {
 		Bill bill = detail.getBill();
 		bill.getDetails().remove(detail);
 		entityManager.remove(detail);
-		entityManager.clear();
+		entityManager.flush();
 		bill = entityManager.find(Bill.class, detail.getBill().getId());
+		entityManager.refresh(bill);
 		processResults(bill);
 		return bill;
 	}

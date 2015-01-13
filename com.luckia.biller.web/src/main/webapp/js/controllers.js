@@ -775,7 +775,7 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		});
 	};
 	$scope.confirm = function() {
-		var dlg = dialogs.confirm('Confirmacion de aceptacion','Se va a aceptar la liquidacion');
+		var dlg = dialogs.confirm('Confirmacion de aceptacion','Se va a aceptar la factura');
 		dlg.result.then(function(btn){
 			$http.post('rest/bills/confirm/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
@@ -786,14 +786,15 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		});
 	};
 	$scope.cancel = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a cancelar la factura')) {
+		var dlg = dialogs.confirm('Confirmacion','Se va a cancelar la factura');
+		dlg.result.then(function(btn){
 			$http.post('rest/bills/cancel/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
 				}
 			});
-		}
+		});
 	};
 	$scope.rectify = function() {
 		var dlg = dialogs.confirm('Confirmacion de rectificacion','Se va a rectificar la factura');
@@ -890,14 +891,15 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	    $http.get('rest/bills/find?q=liquidation.id==' + $routeParams.id + "&n=15" + "&p=" + page).success(function(data) { $scope.childs = data; });
 	};
 	$scope.confirm = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a aceptar la liquidacion')) {
+		var dlg = dialogs.confirm('Confirmacion','Se va a aceptar la liquidacion');
+		dlg.result.then(function(btn){
 			$http.post('rest/liquidations/confirm/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
 				}
 			});
-		}
+		});
 	};
 	$scope.update = function() {
 		$http.post('rest/liquidations/merge/', $scope.entity).success(function(data) {
@@ -961,14 +963,15 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 		});
 	};
 	$scope.recreatePDF = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la liquidacion')) {
+		var dlg = dialogs.confirm('Confirmacion','Desea regenerar el PDF asociado a la liquidacion?');
+		dlg.result.then(function(btn){
 			$http.post('rest/liquidations/pdf/recreate/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
 				}
 			});
-		}
+		});
 	};
 	$scope.editSendMail = function() { $('#sendMailModal').modal('show'); };
 	$scope.sendMail = function() {

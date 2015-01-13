@@ -29,7 +29,7 @@ public interface LiquidationProcessor {
 	 * @param liquidation
 	 * @return
 	 */
-	Liquidation updateResults(Liquidation liquidation);
+	Liquidation updateLiquidationResults(Liquidation liquidation);
 
 	Liquidation mergeDetail(LiquidationDetail detail);
 

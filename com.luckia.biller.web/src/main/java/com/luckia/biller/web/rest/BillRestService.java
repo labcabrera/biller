@@ -153,7 +153,7 @@ public class BillRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/merge")
-	public Message<Bill> merge(BillDetail detail) {
+	public Message<Bill> mergeDetail(BillDetail detail) {
 		try {
 			Bill bill = billProcessor.mergeDetail(detail);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.merge"), bill);

@@ -7,7 +7,7 @@
 		<div class="col-sm-9">
 			<div id="alertContainer"></div>
 			<h4>
-				<span class="glyphicon glyphicon-file text-primary"></span>
+				<span class="glyphicon glyphicon-file text-muted"></span>
 				<span>Factura</span>
 			</h4>
 			<div>
@@ -94,7 +94,7 @@
 					<li class="active"><a data-target="#detailTab" data-toggle="tab">Detalles</a></li>
 					<li><a data-target="#ownerTab" data-toggle="tab">Titular</a></li>
 					<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
-					<li><a data-target="#liquidationDetailTab" data-toggle="tab">Detalles de liquidacion ({{entity.liquidationTotalAmount}})</a></li>
+					<li><a data-target="#liquidationDetailTab" data-toggle="tab">Detalles de liquidacion <span ng-if="entity.liquidationTotalAmount > 0">({{entity.liquidationTotalAmount}})</span></a></li>
 					<li><a data-target="#commentsPdfTab" data-toggle="tab">Comentarios PDF</a></li>
 					<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
 				</ul> 				
@@ -114,7 +114,7 @@
 									</tr>
 									<tr ng-repeat="detail in entity.details">
 										<td>{{detail.name}}</td>
-										<td class="data-amount"><span ng-if="detail.type == Adjustment">Si</span></td>
+										<td class="data-amount"><span ng-if="detail.concept = Adjustment">Si</span></td>
 										<td class="data-amount">{{detail.units}}</td>
 										<td class="data-amount">{{detail.value}}</td>
 										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
@@ -143,7 +143,6 @@
 								</table>
 								<div class="btn-toolbar m-top-40" role="toolbar">
 									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary'>A&ntilde;adir concepto</button>
-									<button ng-click="cancel()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary'>Anular</button>
 									<button ng-click="rectify()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-primary'>Rectificar</button>
 									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" href="rest/bills/draft/{{entity.id}}" role="button">Consultar borrador</a>
 									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled' && entity.currentState.stateDefinition.id != 'Initial'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button">Descargar</a>

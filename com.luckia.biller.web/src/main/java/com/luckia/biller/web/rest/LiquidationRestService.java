@@ -214,12 +214,11 @@ public class LiquidationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/pdf/recreate/{id}")
+	@Transactional
 	public Message<Liquidation> recreatePdf(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
-			entityManager.getTransaction().begin();
-
 			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
 			FileOutputStream out = new FileOutputStream(tempFile);
 			pdfLiquidationGenerator.generate(liquidation, out);
@@ -228,8 +227,6 @@ public class LiquidationRestService {
 			String name = String.format("bill-%s.pdf", liquidation.getId());
 			AppFile pdfFile = fileService.save(name, "application/pdf", in);
 			liquidation.setPdfFile(pdfFile);
-
-			entityManager.getTransaction().commit();
 			return new Message<>(Message.CODE_SUCCESS, "Se ha recreado el PDF de la liquidación", liquidation);
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
