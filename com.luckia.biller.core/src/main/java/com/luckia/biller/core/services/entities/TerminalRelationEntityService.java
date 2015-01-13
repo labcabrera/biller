@@ -7,6 +7,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
 
@@ -21,9 +22,9 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 	 * @see com.luckia.biller.core.services.entities.EntityService#merge(java.lang.Object)
 	 */
 	@Override
+	@Transactional
 	public Message<TerminalRelation> merge(TerminalRelation entity) {
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.getTransaction().begin();
 		TerminalRelation current;
 		String message;
 		if (entity.getId() == null) {
@@ -39,7 +40,6 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 			current = entityManager.merge(current);
 			message = i18nService.getMessage("terminal.merge");
 		}
-		entityManager.getTransaction().commit();
 		return new Message<>(Message.CODE_SUCCESS, message, current);
 	}
 
@@ -49,13 +49,12 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 	 * @see com.luckia.biller.core.services.entities.EntityService#remove(java.io.Serializable)
 	 */
 	@Override
+	@Transactional
 	public Message<TerminalRelation> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		TerminalRelation current = entityManager.find(TerminalRelation.class, primaryKey);
-		entityManager.getTransaction().begin();
 		auditService.processDeleted(current);
 		entityManager.merge(current);
-		entityManager.getTransaction().commit();
 		return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("terminal.remove"), current);
 	}
 

@@ -10,19 +10,20 @@ import java.io.Serializable;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.common.Message;
 
 public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGroup> {
 
 	@Override
+	@Transactional
 	public Message<CompanyGroup> merge(CompanyGroup entity) {
 		Message<CompanyGroup> validationResult = validate(entity);
 		if (validationResult.hasErrors()) {
 			return validationResult;
 		}
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.getTransaction().begin();
 		CompanyGroup current;
 		String message;
 		if (entity.getId() == null) {
@@ -38,19 +39,17 @@ public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGro
 			entityManager.persist(current);
 			message = i18nService.getMessage("companyGroup.merge");
 		}
-		entityManager.getTransaction().commit();
 		return new Message<CompanyGroup>(Message.CODE_SUCCESS, message, current);
 	}
 
 	@Override
+	@Transactional
 	public Message<CompanyGroup> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Query query = entityManager.createQuery("update LegalEntity e set e.parent = :parent where e.parent.id = :value");
 		CompanyGroup entity = entityManager.find(CompanyGroup.class, primaryKey);
-		entityManager.getTransaction().begin();
 		query.setParameter("parent", null).setParameter("value", entity.getId()).executeUpdate();
 		auditService.processDeleted(entity);
-		entityManager.getTransaction().commit();
 		return new Message<CompanyGroup>(Message.CODE_SUCCESS, i18nService.getMessage("companyGroup.remove"), entity);
 	}
 

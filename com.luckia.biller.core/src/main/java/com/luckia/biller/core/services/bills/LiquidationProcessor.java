@@ -37,5 +37,7 @@ public interface LiquidationProcessor {
 
 	/** Borrado fisico de la liquidacion */
 	void remove(Liquidation liquidation);
+	
+	Liquidation recalculate(String liquidationId);
 
 }

@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.CommonState;
@@ -45,6 +46,7 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#processRappel(com.luckia.biller.core.model.Store, org.apache.commons.lang3.Range)
 	 */
 	@Override
+	@Transactional
 	public void processRappel(Store store, Range<Date> range) {
 		try {
 			List<String> terminals = new ArrayList<>();
@@ -62,11 +64,9 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 			bonus.setRappel(rappel);
 			bonus.setBonusDate(range.getMaximum());
 			EntityManager entityManager = entityManagerProvider.get();
-			entityManager.getTransaction().begin();
 			auditService.processCreated(bonus);
 			stateMachineService.createTransition(bonus, CommonState.Draft.name());
 			entityManager.persist(bonus);
-			entityManager.getTransaction().commit();
 		} catch (Exception ex) {
 			throw new RuntimeException("Error al calcular el rappel del establecimiento " + store.getName(), ex);
 		}
@@ -88,12 +88,11 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#confirm(com.luckia.biller.core.model.RappelStoreBonus)
 	 */
 	@Override
+	@Transactional
 	public void confirm(RappelStoreBonus bonus) {
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.getTransaction().begin();
 		stateMachineService.createTransition(bonus, CommonState.Confirmed.name());
 		entityManager.persist(bonus);
-		entityManager.getTransaction().commit();
 	}
 
 	/**

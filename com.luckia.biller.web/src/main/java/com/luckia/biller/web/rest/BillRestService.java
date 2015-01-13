@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
@@ -97,14 +98,13 @@ public class BillRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
+	@Transactional
 	public Message<Bill> merge(Bill bill) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			Bill current = entityManager.find(Bill.class, bill.getId());
 			current.merge(bill);
-			entityManager.getTransaction().begin();
 			entityManager.merge(current);
-			entityManager.getTransaction().commit();
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.merge"), bill);
 		} catch (Exception ex) {
 			LOG.error("Error al actualizar la factura", ex);

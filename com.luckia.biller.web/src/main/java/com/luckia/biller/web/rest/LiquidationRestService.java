@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Liquidation;
@@ -36,7 +37,6 @@ import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
-import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.LiquidationMailService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
@@ -88,14 +88,13 @@ public class LiquidationRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
+	@Transactional
 	public Message<Liquidation> merge(Liquidation bill) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			Liquidation current = entityManager.find(Liquidation.class, bill.getId());
 			current.merge(bill);
-			entityManager.getTransaction().begin();
 			entityManager.merge(current);
-			entityManager.getTransaction().commit();
 			return new Message<>(Message.CODE_SUCCESS, "Liquidación actualizada", bill);
 		} catch (Exception ex) {
 			LOG.error("Error al actualizar la factura", ex);
@@ -241,11 +240,9 @@ public class LiquidationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/{id}")
-	public Message<Liquidation> recalculate(@PathParam("id") String id) {
+	public Message<Liquidation> recalculate(@PathParam("id") String liquidationId) {
 		try {
-			LiquidationRecalculationTask task = new LiquidationRecalculationTask(id, entityManagerProvider, liquidationProcessor);
-			task.run();
-			Liquidation liquidation = task.getLiquidationResult();
+			Liquidation liquidation = liquidationProcessor.recalculate(liquidationId);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.recalculate"), liquidation);
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);

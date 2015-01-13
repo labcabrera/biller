@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.HasState;
 import com.luckia.biller.core.model.State;
 import com.luckia.biller.core.model.StateDefinition;
@@ -20,12 +21,9 @@ public class StateMachineService {
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 
+	@Transactional
 	public void createTransition(HasState hasState, String stateDefinitionId) {
 		EntityManager entityManager = entityManagerProvider.get();
-		Boolean currentTransaction = entityManager.getTransaction().isActive();
-		if (!currentTransaction) {
-			entityManager.getTransaction().begin();
-		}
 		StateDefinition stateDefinition = entityManager.find(StateDefinition.class, stateDefinitionId);
 		Date now = Calendar.getInstance().getTime();
 		State state = new State();
@@ -34,8 +32,5 @@ public class StateMachineService {
 		state.setStateDefinition(stateDefinition);
 		hasState.setCurrentState(state);
 		entityManager.merge(hasState);
-		if (!currentTransaction) {
-			entityManager.getTransaction().commit();
-		}
 	}
 }

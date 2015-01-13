@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillDetail;
@@ -53,8 +54,8 @@ public class BillRecalculationTask implements Runnable {
 	 * @param bill
 	 * @param entityManager
 	 */
+	@Transactional
 	private void cleanPreviousResults(Bill bill, EntityManager entityManager) {
-		entityManager.getTransaction().begin();
 		if (bill.getDetails() != null) {
 			Iterator<BillDetail> iterator = bill.getDetails().iterator();
 			while (iterator.hasNext()) {
@@ -71,7 +72,6 @@ public class BillRecalculationTask implements Runnable {
 			}
 			bill.getLiquidationDetails().clear();
 		}
-		entityManager.getTransaction().commit();
 	}
 
 	private void checkModel(Bill bill, EntityManager entityManager) {

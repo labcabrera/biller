@@ -4,7 +4,10 @@
 <body>
 	<div class="row">
 		<div class="col-sm-9">
-			<h4>Liquidaciones <small>({{results.totalItems}} resultados)</small></h4>
+			<h4>
+				<span class="glyphicon glyphicon-list-alt text-primary"></span>
+				<span>Liquidaciones <small>({{results.totalItems}} resultados)</small></span>
+			</h4>
 			<div ng-if="results.results.length < 1">No se han encontrado resultados</div>
 			<div ng-if="results.results.length > 0">
 				<table class="table table-hover table-condensed" >
@@ -46,7 +49,7 @@
 						<label>Empresa</label><input type="text" class="form-control input-sm" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchOptions.company" />
 					</div>
 					<div class="form-group">
-						<label>Centro de coste</label> <input type="text" class="form-control input-sm" typeahead="center as center.name for center in costcenters($viewValue)" ng-model="searchOptions.costCenter" />
+						<label>Operador</label> <input type="text" class="form-control input-sm" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchOptions.trader" />
 					</div>
 					<div class="form-group">
 						<label>Estado</label> <select class="form-control input-sm" ng-model="searchOptions.state">

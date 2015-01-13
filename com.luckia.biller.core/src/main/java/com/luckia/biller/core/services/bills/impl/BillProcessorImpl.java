@@ -73,6 +73,7 @@ public class BillProcessorImpl implements BillProcessor {
 	 * @see com.luckia.biller.core.services.billing.BillProcessor#generateBill(com.luckia.biller.core.model.Store, org.apache.commons.lang3.Range)
 	 */
 	@Override
+	@Transactional
 	public Bill generateBill(Store store, Range<Date> range) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Bill bill = new Bill();
@@ -90,10 +91,8 @@ public class BillProcessorImpl implements BillProcessor {
 			throw new RuntimeException("No se puede generar la factura: no se ha definido la empresa del local " + store);
 		}
 		auditService.processCreated(bill);
-		entityManager.getTransaction().begin();
 		entityManager.persist(bill);
 		stateMachineService.createTransition(bill, CommonState.Initial.name());
-		entityManager.getTransaction().commit();
 		return bill;
 	}
 
@@ -103,18 +102,15 @@ public class BillProcessorImpl implements BillProcessor {
 	 * @see com.luckia.biller.core.services.billing.BillProcessor#processDetails(com.luckia.biller.core.model.Bill)
 	 */
 	@Override
+	@Transactional
 	public void processDetails(Bill bill) {
 		EntityManager entityManager = entityManagerProvider.get();
-		// Forzamos un clear para evitar problemas con la cache si el terminal ha sido modificado en otro hilo de ejecucion
-		entityManager.clear();
 		billDetailProcessor.process(bill);
-		entityManager.getTransaction().begin();
 		for (BillDetail detail : bill.getDetails()) {
 			entityManager.merge(detail);
 		}
 		entityManager.merge(bill);
 		stateMachineService.createTransition(bill, CommonState.Draft.name());
-		entityManager.getTransaction().commit();
 	}
 
 	/*
@@ -123,6 +119,7 @@ public class BillProcessorImpl implements BillProcessor {
 	 * @see com.luckia.biller.core.services.billing.BillProcessor#processResults(com.luckia.biller.core.model.Bill)
 	 */
 	@Override
+	@Transactional
 	public void processResults(Bill bill) {
 		BigDecimal netAmount = BigDecimal.ZERO;
 		for (BillDetail detail : bill.getDetails()) {
@@ -188,7 +185,6 @@ public class BillProcessorImpl implements BillProcessor {
 		bill.setLiquidationTotalAmount(totalLiquidationAmount);
 		bill.setAdjustmentAmount(adjustmentAmount);
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.getTransaction().begin();
 		entityManager.merge(bill);
 		if (bill.getLiquidation() != null) {
 			entityManager.flush();
@@ -208,7 +204,6 @@ public class BillProcessorImpl implements BillProcessor {
 			LOG.debug("Resultado de la liquidacion: {}", totalAmount);
 			entityManager.merge(liquidation);
 		}
-		entityManager.getTransaction().commit();
 	}
 
 	/*
@@ -217,10 +212,10 @@ public class BillProcessorImpl implements BillProcessor {
 	 * @see com.luckia.biller.core.services.bills.BillProcessor#confirmBill(com.luckia.biller.core.model.Bill)
 	 */
 	@Override
+	@Transactional
 	public void confirmBill(Bill bill) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
-			entityManager.getTransaction().begin();
 			stateMachineService.createTransition(bill, CommonState.Confirmed.name());
 			billCodeGenerator.generateCode(bill);
 			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
@@ -232,7 +227,6 @@ public class BillProcessorImpl implements BillProcessor {
 			AppFile pdfFile = fileService.save(name, "application/pdf", in);
 			bill.setPdfFile(pdfFile);
 			entityManager.merge(bill);
-			entityManager.getTransaction().commit();
 		} catch (Exception ex) {
 			throw new RuntimeException("Error al confirmar la factura", ex);
 		}
@@ -244,9 +238,9 @@ public class BillProcessorImpl implements BillProcessor {
 	 * @see com.luckia.biller.core.services.bills.BillProcessor#rectifyBill(com.luckia.biller.core.model.Bill)
 	 */
 	@Override
+	@Transactional
 	public Bill rectifyBill(Bill bill) {
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.getTransaction().begin();
 		stateMachineService.createTransition(bill, CommonState.Rectified.name());
 		Bill rectified = new Bill();
 		rectified.setId(UUID.randomUUID().toString());
@@ -271,7 +265,6 @@ public class BillProcessorImpl implements BillProcessor {
 		}
 		entityManager.merge(rectified);
 		stateMachineService.createTransition(rectified, CommonState.Draft.name());
-		entityManager.getTransaction().commit();
 		processResults(bill);
 		return rectified;
 	}
@@ -282,13 +275,13 @@ public class BillProcessorImpl implements BillProcessor {
 	 * @see com.luckia.biller.core.services.bills.BillProcessor#mergeDetail(com.luckia.biller.core.model.BillDetail)
 	 */
 	@Override
+	@Transactional
 	public Bill mergeDetail(BillDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Boolean isNew = detail.getId() == null;
 		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
 		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
 		Bill bill;
-		entityManager.getTransaction().begin();
 		if (isNew) {
 			bill = entityManager.find(Bill.class, detail.getBill().getId());
 			detail.setId(UUID.randomUUID().toString());
@@ -300,12 +293,14 @@ public class BillProcessorImpl implements BillProcessor {
 			entityManager.merge(current);
 			bill = current.getBill();
 		}
-		entityManager.getTransaction().commit();
-		entityManager.clear();
-		bill = entityManager.find(Bill.class, bill.getId());
+		entityManager.flush();
+		entityManager.refresh(bill);
+		// entityManager.clear();
+		// bill = entityManager.find(Bill.class, bill.getId());
 		processResults(bill);
-		entityManager.clear();
-		bill = entityManager.find(Bill.class, detail.getBill().getId());
+		// entityManager.clear();
+		// bill = entityManager.find(Bill.class, detail.getBill().getId());
+		entityManager.refresh(bill);
 		return bill;
 	}
 

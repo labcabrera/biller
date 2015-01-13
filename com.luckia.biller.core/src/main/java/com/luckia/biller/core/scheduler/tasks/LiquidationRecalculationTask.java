@@ -4,11 +4,13 @@ import java.util.Date;
 
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 
 import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
@@ -47,6 +49,7 @@ public class LiquidationRecalculationTask implements Runnable {
 	public void run() {
 		EntityManager entityManager = entityManagerProvider.get();
 		Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, liquidationId);
+		entityManager.lock(liquidation, LockModeType.PESSIMISTIC_READ);
 		LOG.debug("Eliminando liquidacion {}", liquidation);
 		LOG.info("Recalculando liquidacion de {} de {}", liquidation.getSender().getName(), liquidation.getDateTo());
 		Range<Date> range = Range.between(liquidation.getDateFrom(), liquidation.getDateTo());
@@ -65,6 +68,7 @@ public class LiquidationRecalculationTask implements Runnable {
 		task.run();
 		liquidationResult = task.getLiquidationResult();
 		LOG.info("Recalculada la liquidacion de {}", liquidation.getSender().getName());
+
 	}
 
 	/**

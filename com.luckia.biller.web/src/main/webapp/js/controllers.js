@@ -665,7 +665,7 @@ billerControllers.controller('ModelNewCtrl', [ '$scope', '$routeParams', '$http'
  * FACTURAS
  * ----------------------------------------------------------------------------
  */
-billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
+billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', 'messageService', function($scope, $rootScope, $routeParams, $http, $filter, messageService) {
 	$scope.currentPage = 1;
 	$scope.itemsPerPage = 20;
 	$scope.reset = function() {
@@ -702,7 +702,10 @@ billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routePa
 	$scope.search();
 } ]);
 
-billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', 'dialogs', function($scope, $rootScope, $routeParams, $location, $http, dialogs) {
+billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $location, $http, dialogs, messageService) {
+	if(messageService.hasMessage()) {
+		$scope.displayAlert(messageService.getMessage());
+	}
 	$scope.load = function() {
 		$http.get('rest/bills/' + $routeParams.id).success(function(data) { $scope.entity = data; });
 		$rootScope.isReadOnly = true;
@@ -757,14 +760,15 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		});
 	};
 	$scope.confirm = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a aceptar la factura')) {
+		var dlg = dialogs.confirm('Confirmacion de aceptacion','Se va a aceptar la liquidacion');
+		dlg.result.then(function(btn){
 			$http.post('rest/bills/confirm/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
 				}
 			});
-		}
+		});
 	};
 	$scope.cancel = function() {
 		if($rootScope.autoconfirm || window.confirm('Se va a cancelar la factura')) {
@@ -777,15 +781,17 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		}
 	};
 	$scope.rectify = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a rectificar la factura')) {
+		var dlg = dialogs.confirm('Confirmacion de rectificacion','Se va a rectificar la factura');
+		dlg.result.then(function(btn){
 			$http.post('rest/bills/rectify/' + $scope.entity.id).success(function(data) {
 				if(data.code == 200) {
+					messageService.setMessage(data);
 					$location.path("bills/id/" + data.payload.id);
 				} else {
 					$scope.displayAlert(data);
 				}
 			});
-		}
+		});
 	};
 	$scope.draft = function() {
 		if($rootScope.autoconfirm || window.confirm('Se va a revertir el estado de la factura')) {
@@ -839,7 +845,7 @@ billerControllers.controller('LiquidationListCtrl', [ '$scope', '$rootScope', '$
 		var predicateBuilder = new PredicateBuilder('');
 		predicateBuilder.append("code==", $scope.searchOptions.code);
 		predicateBuilder.append("sender.id==", $scope.searchOptions.company != null ? $scope.searchOptions.company.id : null);
-		predicateBuilder.append("receiver.id==", $scope.searchOptions.costCenter != null ? $scope.searchOptions.costCenter.id : null);
+		predicateBuilder.append("receiver.id==", $scope.searchOptions.trader != null ? $scope.searchOptions.trader.id : null);
 		predicateBuilder.append("dateFrom=ge=", $scope.searchOptions.from != null ? $filter('date')($scope.searchOptions.from, "yyyy-MM-dd") : null);
 		predicateBuilder.append("dateTo=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
 		predicateBuilder.append("currentState.stateDefinition.id==", $scope.searchOptions.state);
@@ -933,6 +939,7 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 			$http.post('rest/liquidations/recalculate/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
+					messageService.setMessage(data);
 					$location.path("liquidations/id/" + data.payload.id);
 				}
 			});

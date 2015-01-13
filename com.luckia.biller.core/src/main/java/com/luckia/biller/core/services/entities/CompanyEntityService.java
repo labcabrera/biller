@@ -9,19 +9,20 @@ import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.common.Message;
 
 public class CompanyEntityService extends LegalEntityBaseService<Company> {
 
 	@Override
+	@Transactional
 	public Message<Company> merge(Company entity) {
 		Message<Company> validationResult = validate(entity);
 		if (validationResult.hasErrors()) {
 			return validationResult;
 		}
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.getTransaction().begin();
 		Company current;
 		String message;
 		if (entity.getId() == null) {
@@ -37,18 +38,16 @@ public class CompanyEntityService extends LegalEntityBaseService<Company> {
 			entityManager.merge(current);
 			message = i18nService.getMessage("company.merge");
 		}
-		entityManager.getTransaction().commit();
 		return new Message<Company>(Message.CODE_SUCCESS, message, current);
 	}
 
 	@Override
+	@Transactional
 	public Message<Company> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Company current = entityManager.find(Company.class, primaryKey);
-		entityManager.getTransaction().begin();
 		auditService.processDeleted(current);
 		entityManager.merge(current);
-		entityManager.getTransaction().commit();
 		return new Message<Company>(Message.CODE_SUCCESS, i18nService.getMessage("company.remove"), current);
 	}
 

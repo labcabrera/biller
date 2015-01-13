@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.Owner;
 import com.luckia.biller.core.model.common.Message;
 
@@ -13,6 +14,7 @@ import com.luckia.biller.core.model.common.Message;
 public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 
 	@Override
+	@Transactional
 	public Message<Owner> merge(Owner entity) {
 		Message<Owner> validationResult = validate(entity);
 		if (validationResult.hasErrors()) {
@@ -21,7 +23,6 @@ public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 		Owner current;
 		String message;
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.getTransaction().begin();
 		if (entity.getId() == null) {
 			current = new Owner();
 			current.merge(entity);
@@ -35,18 +36,16 @@ public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 			entityManager.merge(current);
 			message = i18nService.getMessage("owner.merge");
 		}
-		entityManager.getTransaction().commit();
 		return new Message<Owner>(Message.CODE_SUCCESS, message, current);
 	}
 
 	@Override
+	@Transactional
 	public Message<Owner> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Owner current = entityManager.find(Owner.class, primaryKey);
-		entityManager.getTransaction().begin();
 		auditService.processDeleted(current);
 		entityManager.merge(current);
-		entityManager.getTransaction().commit();
 		return new Message<Owner>(Message.CODE_SUCCESS, i18nService.getMessage("owner.remove"), current);
 	}
 

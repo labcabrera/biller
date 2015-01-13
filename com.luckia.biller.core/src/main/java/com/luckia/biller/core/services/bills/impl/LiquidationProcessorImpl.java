@@ -33,6 +33,7 @@ import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.LiquidationResults;
+import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.StateMachineService;
@@ -164,11 +165,11 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 * @see com.luckia.biller.core.services.bills.LiquidationProcessor#confirm(com.luckia.biller.core.model.Liquidation)
 	 */
 	@Override
+	@Transactional
 	public void confirm(Liquidation liquidation) {
 		preValidateConfirmLiquidation(liquidation);
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
-			entityManager.getTransaction().begin();
 			stateMachineService.createTransition(liquidation, CommonState.Confirmed.name());
 			liquidationCodeGenerator.generateCode(liquidation);
 			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
@@ -180,7 +181,6 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			AppFile pdfFile = fileService.save(name, "application/pdf", in);
 			liquidation.setPdfFile(pdfFile);
 			entityManager.merge(liquidation);
-			entityManager.getTransaction().commit();
 		} catch (IOException ex) {
 			throw new RuntimeException("Error al confirmar la factura", ex);
 		}
@@ -192,9 +192,9 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 * @see com.luckia.biller.core.services.bills.LiquidationProcessor#mergeDetail(com.luckia.biller.core.model.LiquidationDetail)
 	 */
 	@Override
+	@Transactional
 	public Liquidation mergeDetail(LiquidationDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.getTransaction().begin();
 		Boolean isNew = detail.getId() == null;
 		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
 		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
@@ -210,7 +210,6 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			entityManager.merge(current);
 			liquidation = current.getLiquidation();
 		}
-		entityManager.getTransaction().commit();
 		return updateResults(liquidation);
 	}
 
@@ -251,4 +250,11 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		}
 	}
 
+	@Override
+	@Transactional
+	public Liquidation recalculate(String liquidationId) {
+		LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidationId, entityManagerProvider, this);
+		task.run();
+		return task.getLiquidationResult();
+	}
 }

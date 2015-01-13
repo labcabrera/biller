@@ -23,6 +23,7 @@ import javax.persistence.EntityManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.AppFile;
 
 /**
@@ -50,6 +51,7 @@ public class FileService {
 	 * 
 	 * @return
 	 */
+	@Transactional
 	public AppFile save(String name, String contentType, InputStream inputStream) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Date now = Calendar.getInstance().getTime();
@@ -68,10 +70,6 @@ public class FileService {
 		if (matcher.matches()) {
 			relativePath = matcher.group(1);
 		}
-		Boolean currentTransaction = entityManager.getTransaction().isActive();
-		if (!currentTransaction) {
-			entityManager.getTransaction().begin();
-		}
 		AppFile entity = new AppFile();
 		entity.setName(name);
 		entity.setContentType(contentType);
@@ -79,9 +77,6 @@ public class FileService {
 		entity.setInternalPath(relativePath);
 		entity.setSize(bytesCopied);
 		entityManager.persist(entity);
-		if (!currentTransaction) {
-			entityManager.getTransaction().commit();
-		}
 		return entity;
 	}
 
