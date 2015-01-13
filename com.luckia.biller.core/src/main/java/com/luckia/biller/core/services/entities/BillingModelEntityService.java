@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolation;
 
 import org.apache.commons.lang3.Validate;
@@ -98,6 +101,11 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 		} catch (Exception ex) {
 			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("billingModel.rappel.error.remove"));
 		}
+	}
+
+	@Override
+	protected void buildOrderCriteria(CriteriaQuery<BillingModel> criteria, CriteriaBuilder builder, Root<BillingModel> root) {
+		criteria.orderBy(builder.asc(root.<String> get("name")));
 	}
 
 	@Override

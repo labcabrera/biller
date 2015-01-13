@@ -558,7 +558,10 @@ billerControllers.controller('TerminalNewCtrl', [ '$scope', '$routeParams', '$ht
  * MODELOS DE FACTURACION
  * ----------------------------------------------------------------------------
  */
-billerControllers.controller('ModelListCtrl', [ '$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {
+billerControllers.controller('ModelListCtrl', [ '$scope', '$rootScope', '$http', 'messageService', function($scope, $rootScope, $http, messageService) {
+	if(messageService.hasMessage()) {
+		$scope.displayAlert(messageService.getMessage());
+	}
 	$scope.currentPage = 1;
 	$scope.reset = function() {
 		$scope.searchOptions = {
@@ -582,7 +585,7 @@ billerControllers.controller('ModelListCtrl', [ '$scope', '$rootScope', '$http',
 } ]);
 
 /** Detalle de modelo de facturacion */
-billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $routeParams, $http, messageService) {
+billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location','dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
 	if(messageService.hasMessage()) {
 		$scope.displayAlert(messageService.getMessage());
 	}
@@ -602,6 +605,18 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 				$rootScope.isReadOnly = true;
 				$scope.entity = data.payload;
 			}
+		});
+	};
+	$scope.remove = function() {
+		var dlg = dialogs.confirm('Confirmacion de borrado','Desea eliminar el modelo de facturacion?');
+		dlg.result.then(function(btn){
+			$http.post('rest/models/remove/' + $scope.entity.id).success(function(data) {
+				$scope.displayAlert(data);
+				if(data.code == 200) {
+					messageService.setMessage(data);
+					$location.path("models");
+				}
+			});
 		});
 	};
 	$scope.setStorePage = function(page) {

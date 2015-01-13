@@ -12,6 +12,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Rappel;
 import com.luckia.biller.core.model.common.Message;
@@ -22,10 +26,14 @@ import com.luckia.biller.core.services.entities.BillingModelEntityService;
 @Path("/models")
 public class BillingModelRestService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(BillingModelRestService.class);
+
 	@Inject
 	private BillingModelEntityService billingModelService;
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
+	@Inject
+	private I18nService i18nService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -51,6 +59,19 @@ public class BillingModelRestService {
 	@Path("/merge")
 	public Message<BillingModel> merge(BillingModel model) {
 		return billingModelService.merge(model);
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/remove/{id}")
+	public Message<BillingModel> remove(@PathParam("id") Long id) {
+		try {
+			return billingModelService.remove(id);
+		} catch (Exception ex) {
+			LOG.error("Error al eliminar el grupo", ex);
+			return new Message<BillingModel>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("companyGroup.error.remove"));
+		}
 	}
 
 	/**
