@@ -32,6 +32,7 @@ import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
+import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.common.Message;
@@ -39,6 +40,7 @@ import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.LiquidationMailService;
+import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.LiquidationEntityService;
 import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
@@ -65,6 +67,8 @@ public class LiquidationRestService {
 	private PDFLiquidationGenerator pdfLiquidationGenerator;
 	@Inject
 	private FileService fileService;
+	@Inject
+	private StateMachineService stateMachineService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -244,6 +248,22 @@ public class LiquidationRestService {
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
 			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("liquidation.recalculate.error"), null);
+		}
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/draft/{id}")
+	@Transactional
+	public Message<Liquidation> draft(@PathParam("id") String id) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Liquidation liquidation = entityManager.find(Liquidation.class, id);
+			stateMachineService.createTransition(liquidation, CommonState.Draft.name());
+			return new Message<>(Message.CODE_SUCCESS, "Estado actualizado", liquidation);
+		} catch (Exception ex) {
+			LOG.error("Error al revertir el estado de la liquidacion", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al revertir el estado de la liquidacion");
 		}
 	}
 }

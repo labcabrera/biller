@@ -94,6 +94,13 @@ public class BillRestService {
 		return billService.find(params);
 	}
 
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/detail/id/{id}")
+	public BillDetail find(@PathParam("id") String id) {
+		return entityManagerProvider.get().find(BillDetail.class, id);
+	}
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -116,6 +123,7 @@ public class BillRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/remove/{id}")
+	@Transactional
 	public Message<Bill> remove(@PathParam("id") String billId) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -131,6 +139,7 @@ public class BillRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("confirm/{id}")
+	@Transactional
 	public Message<Bill> confirm(@PathParam("id") String id) {
 		try {
 			Bill bill = entityManagerProvider.get().find(Bill.class, id);
@@ -142,17 +151,11 @@ public class BillRestService {
 		}
 	}
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/detail/id/{id}")
-	public BillDetail find(@PathParam("id") String id) {
-		return entityManagerProvider.get().find(BillDetail.class, id);
-	}
-
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/merge")
+	@Transactional
 	public Message<Bill> mergeDetail(BillDetail detail) {
 		try {
 			Bill bill = billProcessor.mergeDetail(detail);
@@ -166,6 +169,7 @@ public class BillRestService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/draft/{id}")
+	@Transactional
 	public Message<Bill> draft(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -181,6 +185,7 @@ public class BillRestService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/detail/remove/{id}")
+	@Transactional
 	public Message<Bill> removeDetail(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();

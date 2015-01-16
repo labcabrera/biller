@@ -60,6 +60,7 @@ public class LiquidationRecalculationTask implements Runnable {
 		}
 		entityManager.createQuery("update Bill e set e.liquidation = null where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
 		entityManager.createQuery("delete from LiquidationDetail e where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
+		entityManager.flush();
 		entityManager.remove(liquidation);
 		if (!currentTransaction) {
 			entityManager.getTransaction().commit();

@@ -810,14 +810,15 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		});
 	};
 	$scope.draft = function() {
-		if($rootScope.autoconfirm || window.confirm('Se va a revertir el estado de la factura')) {
+		var dlg = dialogs.confirm('Confirmacion','La factura pasara a estado borrador');
+		dlg.result.then(function(btn){
 			$http.post('rest/bills/draft/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
 				}
 			});
-		}
+		});
 	};
 	$scope.recalculate = function() {
 		var dlg = dialogs.confirm('Confirmacion','Desea recalcular la factura? Los ajustes manuales se perderan');
@@ -876,7 +877,7 @@ billerControllers.controller('LiquidationListCtrl', [ '$scope', '$rootScope', '$
 	$scope.search();
 } ]);
 
-billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'dialogs', function($scope, $rootScope, $routeParams, $http, $location, dialogs) {
+billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
 	$scope.load = function() {
 		$http.get('rest/liquidations/id/' + $routeParams.id).success(function(data) {
 			$scope.entity = data;
@@ -966,6 +967,17 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 		var dlg = dialogs.confirm('Confirmacion','Desea regenerar el PDF asociado a la liquidacion?');
 		dlg.result.then(function(btn){
 			$http.post('rest/liquidations/pdf/recreate/' + $scope.entity.id).success(function(data) {
+				$scope.displayAlert(data);
+				if(data.code == 200) {
+					$scope.entity = data.payload;
+				}
+			});
+		});
+	};
+	$scope.draft = function() {
+		var dlg = dialogs.confirm('Confirmacion','La liquidacion volvera a estado borrador');
+		dlg.result.then(function(btn){
+			$http.post('rest/liquidations/draft/' + $scope.entity.id).success(function(data) {
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
