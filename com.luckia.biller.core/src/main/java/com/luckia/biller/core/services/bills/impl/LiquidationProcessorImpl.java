@@ -20,6 +20,7 @@ import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,7 +172,10 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			stateMachineService.createTransition(liquidation, CommonState.Confirmed.name());
-			liquidationCodeGenerator.generateCode(liquidation);
+			// NOTA: pudiera ser que la liquidacion se ha regenerado, en cuyo caso mantenemos el mismo numero de liquidacion
+			if (StringUtils.isBlank(liquidation.getCode())) {
+				liquidationCodeGenerator.generateCode(liquidation);
+			}
 			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
 			FileOutputStream out = new FileOutputStream(tempFile);
 			pdfLiquidationGenerator.generate(liquidation, out);

@@ -116,7 +116,7 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 
 	@Override
 	public String toString() {
-		return String.format("{%s, %s}", concept, value);
+		return String.format("Detail (%s, %s) [Bill: %s] [Name: %s]", concept, value, bill, name);
 	}
 
 	@Override

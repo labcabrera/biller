@@ -19,6 +19,7 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,7 +218,10 @@ public class BillProcessorImpl implements BillProcessor {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			stateMachineService.createTransition(bill, CommonState.Confirmed.name());
-			billCodeGenerator.generateCode(bill);
+			// NOTA: pudiera ser que la factura se ha regenerado, en cuyo caso mantenemos el mismo numero de factura anterior
+			if (StringUtils.isBlank(bill.getCode())) {
+				billCodeGenerator.generateCode(bill);
+			}
 			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
 			FileOutputStream out = new FileOutputStream(tempFile);
 			pdfBillGenerator.generate(bill, out);
