@@ -726,7 +726,9 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		$rootScope.isReadOnly = true;
 	};
 	$scope.update = function() {
+		$scope.isSaving = true;
 		$http.post('rest/bills/merge/', $scope.entity).success(function(data) {
+			$scope.isSaving = false;
 			$scope.displayAlert(data);
 			if(data.code == 200) {
 				$rootScope.isReadOnly = true;				
@@ -738,15 +740,23 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		if(!$rootScope.isReadOnly) {
 			var dlg = dialogs.confirm('Confirmacion de borrado','Desea eliminar la factura?');
 			dlg.result.then(function(btn){
+				$scope.isSaving = true;
 				$http.post('rest/bills/remove/' + $scope.entity.id).success(function(data) {
-					if(data.code == 200) { $location.path("bills"); } else { $scope.displayAlert(data); }
+					$scope.isSaving = false;
+					if(data.code == 200) {
+						$location.path("bills");
+					} else {
+						$scope.displayAlert(data);
+					}
 				});
 			});
 		}
 	};
 	$scope.editDetail = function(data) {
-		if(data != null && !(typeof data === 'undefined') ) {	
+		if(data != null && !(typeof data === 'undefined') ) {
+			$scope.isSaving = true;
 			$http.get('rest/bills/detail/id/' + data).success(function(data) {
+				$scope.isSaving = false;
 				$scope.billDetail = data;
 				$scope.billDetail.bill = { "id": $scope.entity.id };
 				$('#editBillConceptModal').modal('show');
@@ -757,7 +767,9 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		};
 	};
 	$scope.mergeDetail = function(data) {
+		$scope.isSaving = true;
 		$http.post('rest/bills/detail/merge/', $scope.billDetail).success(function(data) {
+			$scope.isSaving = false;
 			$scope.displayAlert(data);
 			$("#editBillConceptModal").modal('hide');
 			if(data.code == 200) {
@@ -766,7 +778,9 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 		});
 	};
 	$scope.removeDetail = function(data) {
+		$scope.isSaving = true;
 		$http.post('rest/bills/detail/remove/' + data).success(function(data) {
+			$scope.isSaving = false;
 			if(data.code == 200) {
 				$scope.entity = data.payload;
 			}
@@ -777,7 +791,9 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 	$scope.confirm = function() {
 		var dlg = dialogs.confirm('Confirmacion de aceptacion','Se va a aceptar la factura');
 		dlg.result.then(function(btn){
+			$scope.isSaving = true;
 			$http.post('rest/bills/confirm/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
@@ -788,7 +804,9 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 	$scope.cancel = function() {
 		var dlg = dialogs.confirm('Confirmacion','Se va a cancelar la factura');
 		dlg.result.then(function(btn){
+			$scope.isSaving = true;
 			$http.post('rest/bills/cancel/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
@@ -799,7 +817,9 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 	$scope.rectify = function() {
 		var dlg = dialogs.confirm('Confirmacion de rectificacion','Se va a rectificar la factura');
 		dlg.result.then(function(btn){
+			$scope.isSaving = true;
 			$http.post('rest/bills/rectify/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				if(data.code == 200) {
 					messageService.setMessage(data);
 					$location.path("bills/id/" + data.payload.id);
@@ -812,7 +832,9 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 	$scope.draft = function() {
 		var dlg = dialogs.confirm('Confirmacion','La factura pasara a estado borrador');
 		dlg.result.then(function(btn){
+			$scope.isSaving = true;
 			$http.post('rest/bills/draft/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
@@ -823,7 +845,9 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 	$scope.recalculate = function() {
 		var dlg = dialogs.confirm('Confirmacion','Desea recalcular la factura? Los ajustes manuales se perderan');
 		dlg.result.then(function(btn){
+			$scope.isSaving = true;
 			$http.post('rest/bills/recalculate/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;	
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
