@@ -197,9 +197,9 @@
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>
-					<button type="button" class="btn btn-primary btn-sm" ng-click="removeRappel()" >Eliminar</button>
-					<button type="button" class="btn btn-primary btn-sm" ng-click="mergeRappel()" >Guardar</button>
+					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal" ng-disabled="isSaving">Cancelar</button>
+					<button type="button" class="btn btn-primary btn-sm" ng-click="removeRappel()" ng-disabled="isSaving">Eliminar</button>
+					<button type="button" class="btn btn-primary btn-sm" ng-click="mergeRappel()" ng-disabled="isSaving">Guardar</button>
 				</div>
 			</div>
 		</div>

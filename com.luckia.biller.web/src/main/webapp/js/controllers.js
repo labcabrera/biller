@@ -151,7 +151,9 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 		});
 	};
 	$scope.update = function() {
+		$scope.isSaving = true;
 		$http.post('rest/companies/merge/', $scope.entity).success(function(data) {
+			$scope.isSaving = false;
 			$rootScope.displayAlert(data);
 			if(data.code == 200) {
 				$scope.entity = data.payload;
@@ -161,14 +163,18 @@ billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$ro
 	};
 	$scope.remove = function() {
 		if($rootScope.autoconfirm || window.confirm('Se va a eliminar la empresa')) {
+			$scope.isSaving = true;
 			$http.post('rest/companies/remove/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				if(data.code == 200) { $location.path("companies"); } else { $scope.displayAlert(data); }
 			});
 		}
 	};
 	$scope.addStore = function() {
 		$scope.newStore.parent = $scope.entity;
+		$scope.isSaving = true;
 		$http.post('rest/stores/merge', $scope.newStore).success(function(data) {
+			$scope.isSaving = false;
 			$rootScope.displayAlert(data);
 			if(data.code == 200) {
 				$scope.load();
@@ -190,7 +196,9 @@ billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$htt
 	$scope.isReadOnly = false;
 	$scope.reset = function() { };
 	$scope.update = function() {
+		$scope.isSaving = true;
 		$http.post('rest/companies/merge/', $scope.entity).success(function(data) {
+			$scope.isSaving = false;
 			if(data.code == 200) {
 				messageService.setMessage(data);
 				$location.path("companies/id/" + data.payload.id);				
@@ -253,7 +261,9 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 		$rootScope.isReadOnly = true;
 	};
 	$scope.update = function() {
+		$scope.isSaving = true;
 		$http.post('rest/stores/merge/', $scope.entity).success(function(data) {
+			$scope.isSaving = false;
 			$rootScope.displayAlert(data);
 			if(data.code == 200) {
 				$scope.entity = data.payload;
@@ -263,7 +273,9 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 	};
 	$scope.remove = function() {
 		if($rootScope.autoconfirm || window.confirm('Se va a eliminar el establecimiento')) {
+			$scope.isSaving = true;
 			$http.post('rest/stores/remove/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				if(data.code == 200) { $location.path("stores"); } else { $scope.displayAlert(data); }
 			});
 		}
@@ -272,7 +284,9 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 		var current = $scope.newTerminal.store != null ? $scope.newTerminal.store.name : null;
 		if(current == null || ($rootScope.autoconfirm || window.confirm('El terminal esta actualmente asociado con la empresa ' + current))) {
 			$scope.newTerminal.store = $scope.entity;
+			$scope.isSaving = true;
 			$http.post('rest/terminals/merge', $scope.newTerminal).success(function(data) {
+				$scope.isSaving = false;
 				$rootScope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.load();
@@ -284,7 +298,9 @@ billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$rout
 	};
 	$scope.removeTerminal = function(data) {
 		data.store = null;
+		$scope.isSaving = true;
 		$http.post('rest/terminals/merge', data).success(function(data) {
+			$scope.isSaving = false;
 			$rootScope.displayAlert(data);
 			if(data.code == 200) {
 				$scope.load();
@@ -303,7 +319,9 @@ billerControllers.controller('StoreNewCtrl', [ '$scope', '$routeParams', '$http'
 	$scope.isReadOnly = false;
 	$scope.reset = function() { };
 	$scope.update = function() {
+		$scope.isSaving = true;
 		$http.post('rest/stores/merge/', $scope.entity).success(function(data) {
+			$scope.isSaving = false;
 			if(data.code == 200) {
 				messageService.setMessage(data);
 				$location.path("stores/id/" + data.payload.id);				
@@ -362,7 +380,9 @@ billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$rout
 	};
 	$scope.reset = function() { $scope.load(); };
 	$scope.update = function() {
+		$scope.isSaving = true;
 		$http.post('rest/owners/merge/', $scope.entity).success(function(data) {
+			$scope.isSaving = false;
 			$scope.displayAlert(data);
 			if(data.code == 200) {
 				$rootScope.isReadOnly = true;				
@@ -599,7 +619,9 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 		});
 	};
 	$scope.update = function() {
+		$scope.isSaving = true;
 		$http.post('rest/models/merge', $scope.entity).success(function(data) {
+			$scope.isSaving = false;
 			$scope.displayAlert(data);
 			if(data.code == 200) {
 				$rootScope.isReadOnly = true;
@@ -610,7 +632,9 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 	$scope.remove = function() {
 		var dlg = dialogs.confirm('Confirmacion de borrado','Desea eliminar el modelo de facturacion?');
 		dlg.result.then(function(btn){
+			$scope.isSaving = true;
 			$http.post('rest/models/remove/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					messageService.setMessage(data);
@@ -624,7 +648,9 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 	    $http.get('rest/stores/find?model=' + $routeParams.id + "&n=10" + "&p=" + page).success(function(data) { $scope.childs = data; });
 	};
 	$scope.mergeRappel = function() {
+		$scope.isSaving = true;
 		$http.post('rest/models/rappel/merge', $scope.newRappel).success(function(data) {
+			$scope.isSaving = false;
 			if(data.code == 200) {
 				$scope.displayAlert(data);
 				$rootScope.isReadOnly = true;
@@ -636,7 +662,9 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 		});
 	};
 	$scope.removeRappel = function() {
+		$scope.isSaving = true;
 		$http.post('rest/models/rappel/remove/' + $scope.newRappel.id).success(function(data) {
+			$scope.isSaving = false;
 			$scope.displayAlert(data);
 			if(data.code == 200) {
 				$rootScope.isReadOnly = true;
@@ -648,7 +676,9 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 	};
 	$scope.editRappel = function(rappelId) {
 		if(rappelId > 0) {
+			$scope.isSaving = true;
 			$http.get('rest/models/rappel/id/' + rappelId).success(function(data) {
+				$scope.isSaving = false;
 				$scope.newRappel = data;
 				$scope.newRappel.model = { 'id': $scope.entity.id};
 			});
@@ -664,7 +694,9 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 billerControllers.controller('ModelNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 	$scope.isReadOnly = false;
 	$scope.update = function() {
+		$scope.isSaving = true;
 		$http.post('rest/models/merge/', $scope.entity).success(function(data) {
+			$scope.isSaving = false;
 			if(data.code == 200) {
 				messageService.setMessage(data);
 				$location.path("models/id/" + data.payload.id);				
