@@ -857,7 +857,9 @@ billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$route
 	};
 	$scope.editSendMail = function() { $('#sendMailModal').modal('show'); };
 	$scope.sendMail = function() {
+		$scope.isSaving = true;
 		$http.post('rest/bills/send/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {
+			$scope.isSaving = false;
 			$scope.displayAlert(data);
 			$('#sendMailModal').modal('hide');
 		});
@@ -918,7 +920,9 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	$scope.confirm = function() {
 		var dlg = dialogs.confirm('Confirmacion','Se va a aceptar la liquidacion');
 		dlg.result.then(function(btn){
+			$scope.isSaving = true;
 			$http.post('rest/liquidations/confirm/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
@@ -927,7 +931,9 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 		});
 	};
 	$scope.update = function() {
+		$scope.isSaving = true;
 		$http.post('rest/liquidations/merge/', $scope.entity).success(function(data) {
+			$scope.isSaving = false;
 			$scope.displayAlert(data);
 			if(data.code == 200) {
 				$rootScope.isReadOnly = true;				
@@ -939,7 +945,9 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 		if(!$rootScope.isReadOnly) {
 			var dlg = dialogs.confirm('Confirmacion de borrado','Desea eliminar la liquidacion?');
 			dlg.result.then(function(btn){
+				$scope.isSaving = true;
 				$http.post('rest/liquidations/remove/' + $scope.entity.id).success(function(data) {
+					$scope.isSaving = false;
 					if(data.code == 200) { $location.path("liquidations"); } else { $scope.displayAlert(data); }
 				});
 			});
@@ -947,7 +955,9 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	};
 	$scope.editDetail = function(data) {
 		if(data != null && !(typeof data === 'undefined') ) {
+			$scope.isSaving = true;
 			$http.get('rest/liquidations/detail/id/' + data).success(function(data) {
+				$scope.isSaving = false;
 				$scope.liquidationDetail = data;
 				$scope.liquidationDetail.liquidation = { "id": $scope.entity.id };
 				$('#editLiquidationConceptModal').modal('show');
@@ -958,7 +968,9 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 		}
 	};
 	$scope.mergeDetail = function(data) {
+		$scope.isSaving = true;
 		$http.post('rest/liquidations/detail/merge/', $scope.liquidationDetail).success(function(data) {
+			$scope.isSaving = false;
 			$scope.displayAlert(data);
 			$("#editLiquidationConceptModal").modal('hide');
 			if(data.code == 200) {
@@ -967,7 +979,9 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 		});
 	};
 	$scope.removeDetail = function(data) {
+		$scope.isSaving = true;
 		$http.post('rest/liquidations/detail/remove/' + $scope.liquidationDetail.id).success(function(data) {
+			$scope.isSaving = false;
 			$scope.displayAlert(data);
 			$("#editLiquidationConceptModal").modal('hide');
 			if(data.code == 200) {
@@ -978,7 +992,9 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	$scope.recalculate = function() {
 		var dlg = dialogs.confirm('Confirmacion','Desea recalcular la liquidacion? Los ajustes manuales se perderan');
 		dlg.result.then(function(btn){
+			$scope.isSaving = true;
 			$http.post('rest/liquidations/recalculate/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					messageService.setMessage(data);
@@ -990,7 +1006,9 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	$scope.recreatePDF = function() {
 		var dlg = dialogs.confirm('Confirmacion','Desea regenerar el PDF asociado a la liquidacion?');
 		dlg.result.then(function(btn){
+			$scope.isSaving = true;
 			$http.post('rest/liquidations/pdf/recreate/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
@@ -1001,7 +1019,9 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	$scope.draft = function() {
 		var dlg = dialogs.confirm('Confirmacion','La liquidacion volvera a estado borrador');
 		dlg.result.then(function(btn){
+			$scope.isSaving = true;
 			$http.post('rest/liquidations/draft/' + $scope.entity.id).success(function(data) {
+				$scope.isSaving = false;
 				$scope.displayAlert(data);
 				if(data.code == 200) {
 					$scope.entity = data.payload;
@@ -1011,7 +1031,9 @@ billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', 
 	};
 	$scope.editSendMail = function() { $('#sendMailModal').modal('show'); };
 	$scope.sendMail = function() {
+		$scope.isSaving = true;
 		$http.post('rest/liquidations/send/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {
+			$scope.isSaving = false;
 			$scope.displayAlert(data);
 			$('#sendMailModal').modal('hide');
 		});
