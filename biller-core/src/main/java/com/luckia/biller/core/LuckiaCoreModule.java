@@ -1,5 +1,8 @@
 package com.luckia.biller.core;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import org.apache.bval.guice.ValidationModule;
 
 import com.google.inject.AbstractModule;
@@ -34,15 +37,15 @@ public class LuckiaCoreModule extends AbstractModule {
 	 */
 	@Override
 	public void configure() {
-		install(new JpaPersistModule(Constants.PERSISTENCE_UNIT_NAME));
+		installJpaModule();
+		install(new ValidationModule());
+		install(new LisModule());
 		bindEntityManagers();
 		bind(BillProcessor.class).to(BillProcessorImpl.class);
 		bind(LiquidationProcessor.class).to(LiquidationProcessorImpl.class);
 		bind(RappelStoreProcessor.class).to(RappelStoreProcessorImpl.class);
 		bind(BillDataProvider.class).to(LISBillDataProvider.class);
 		bind(LegalEntityValidator.class);
-		install(new ValidationModule());
-		install(new LisModule());
 	}
 
 	/**
@@ -54,6 +57,26 @@ public class LuckiaCoreModule extends AbstractModule {
 		EntityManagerProvider lisEntityManagerProvider = new EntityManagerProvider(Constants.PERSISTENCE_UNIT_NAME_LIS);
 		bind(EntityManagerProvider.class).toInstance(mainEntityManagerProvider);
 		bind(EntityManagerProvider.class).annotatedWith(Names.named(Constants.LIS)).toInstance(lisEntityManagerProvider);
+	}
+
+	protected void installJpaModule() {
+		JpaPersistModule module = new JpaPersistModule(Constants.PERSISTENCE_UNIT_NAME);
+		Properties propertiesTmp = new Properties();
+		Properties properties = new Properties();
+		try {
+			propertiesTmp.load(getClassLoader().getResourceAsStream(Constants.PROPERTIES_FILE));
+		} catch (IOException ex) {
+			throw new RuntimeException("Cant read application properties", ex);
+		}
+		for (Object i : propertiesTmp.keySet()) {
+			String key = (String) i;
+			if (key.startsWith(Constants.PROPERTIES_JPA_PREFIX)) {
+				properties.put(key.substring(Constants.PROPERTIES_JPA_PREFIX.length()), propertiesTmp.get(key));
+
+			}
+		}
+		module.properties(properties);
+		install(module);
 	}
 
 	protected ClassLoader getClassLoader() {

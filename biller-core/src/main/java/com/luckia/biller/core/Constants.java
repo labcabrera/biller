@@ -30,6 +30,10 @@ public final class Constants {
 	 */
 	public static final String PROPERTIES_FILE = "com.luckia.biller.properties";
 
+	public static final String PROPERTIES_JPA_PREFIX = "mysql.";
+
+	public static final String PROPERTIES_LIS_PREFIX = "lis.";
+
 	/**
 	 * Constructor privado para evitar que se generen instancias de esta clase.
 	 */

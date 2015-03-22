@@ -14,9 +14,6 @@ import com.luckia.biller.core.Constants;
 @Singleton
 public class LisEntityManagerProvider implements Provider<EntityManager> {
 
-	private static final String PERSISTENCE_UNIT_NAME = "com.cnp.saving.host";
-	private static final String PERSISTENCE_PROPERTY_PREFIX = "dis.";
-
 	private final ThreadLocal<EntityManager> entityManager;
 	private final EntityManagerFactory entityManagerFactory;
 	private final Properties persistenceProperties;
@@ -24,7 +21,7 @@ public class LisEntityManagerProvider implements Provider<EntityManager> {
 	public LisEntityManagerProvider() {
 		entityManager = new ThreadLocal<EntityManager>();
 		persistenceProperties = readHostProperties();
-		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, persistenceProperties);
+		entityManagerFactory = Persistence.createEntityManagerFactory(Constants.PERSISTENCE_UNIT_NAME_LIS, persistenceProperties);
 	}
 
 	@Override
@@ -46,8 +43,8 @@ public class LisEntityManagerProvider implements Provider<EntityManager> {
 			appProperties.load(in);
 			for (Object object : appProperties.keySet()) {
 				String key = (String) object;
-				if (key.startsWith(PERSISTENCE_PROPERTY_PREFIX)) {
-					result.put(key.substring(PERSISTENCE_PROPERTY_PREFIX.length()), appProperties.get(key));
+				if (key.startsWith(Constants.PROPERTIES_LIS_PREFIX)) {
+					result.put(key.substring(Constants.PROPERTIES_LIS_PREFIX.length()), appProperties.get(key));
 				}
 			}
 			return result;
