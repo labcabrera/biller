@@ -181,6 +181,11 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 		this.endDate = endDate;
 	}
 
+	public LegalEntity withName(String name) {
+		this.name = name;
+		return this;
+	}
+
 	@Override
 	public String toString() {
 		return "LegalEntity [id=" + id + ", idCard=" + idCard + ", name=" + name + ", email=" + email + "]";

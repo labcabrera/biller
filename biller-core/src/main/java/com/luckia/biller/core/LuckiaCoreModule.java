@@ -6,6 +6,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.luckia.biller.core.jpa.EntityManagerProvider;
+import com.luckia.biller.core.lis.LisModule;
 import com.luckia.biller.core.services.bills.BillDataProvider;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
@@ -39,12 +40,14 @@ public class LuckiaCoreModule extends AbstractModule {
 		bind(LiquidationProcessor.class).to(LiquidationProcessorImpl.class);
 		bind(RappelStoreProcessor.class).to(RappelStoreProcessorImpl.class);
 		bind(BillDataProvider.class).to(LISBillDataProvider.class);
-		install(new ValidationModule());
 		bind(LegalEntityValidator.class);
+		install(new ValidationModule());
+		install(new LisModule());
 	}
 
 	/**
-	 * Establece el {@link EntityManagerProvider} principal de la aplicacion y registra otro anotado como <code>@Named("LIS")</code> para acceder a la base de datos de LIS.
+	 * Establece el {@link EntityManagerProvider} principal de la aplicacion y registra otro anotado como <code>@Named("LIS")</code> para
+	 * acceder a la base de datos de LIS.
 	 */
 	protected void bindEntityManagers() {
 		EntityManagerProvider mainEntityManagerProvider = new EntityManagerProvider(Constants.PERSISTENCE_UNIT_NAME);

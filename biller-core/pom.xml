@@ -3,13 +3,13 @@
 
 	<parent>
 		<groupId>com.luckia.biller</groupId>
-		<artifactId>com.luckia.biller.parent</artifactId>
+		<artifactId>biller</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>com.luckia.biller.core</artifactId>
-	<name>com.luckia.biller.core</name>
+	<artifactId>biller-core</artifactId>
+	<name>biller-core</name>
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -87,6 +87,10 @@
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
 			<version>2.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
 		</dependency>
 	</dependencies>
 

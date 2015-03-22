@@ -3,7 +3,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.luckia.biller</groupId>
-	<artifactId>com.luckia.biller.parent</artifactId>
+	<artifactId>biller</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -28,9 +28,9 @@
 	</properties>
 
 	<modules>
-		<module>com.luckia.biller.core</module>
-		<module>com.luckia.biller.web</module>
-		<!--module>com.luckia.biller.deploy</module -->
+		<module>biller-core</module>
+		<module>biller-web</module>
+		<module>biller-deploy</module>
 	</modules>
 
 	<repositories>
@@ -62,18 +62,18 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.luckia.biller</groupId>
-				<artifactId>com.luckia.biller.core</artifactId>
+				<artifactId>biller-core</artifactId>
 				<version>${com.luckia.biller.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.luckia.biller</groupId>
-				<artifactId>com.luckia.biller.web</artifactId>
+				<artifactId>biller-web</artifactId>
 				<version>${com.luckia.biller.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.luckia.biller</groupId>
-				<artifactId>com.luckia.biller.core</artifactId>
-				<version>${com.luckia.biller.deploy}</version>
+				<artifactId>biller-deploy</artifactId>
+				<version>${com.luckia.biller.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.jersey</groupId>

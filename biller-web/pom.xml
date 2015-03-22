@@ -3,13 +3,13 @@
 
 	<parent>
 		<groupId>com.luckia.biller</groupId>
-		<artifactId>com.luckia.biller.parent</artifactId>
+		<artifactId>biller</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>com.luckia.biller.web</artifactId>
-	<name>com.luckia.biller.web</name>
+	<artifactId>biller-web</artifactId>
+	<name>biller-web</name>
 	<packaging>war</packaging>
 
 	<properties>
@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.luckia.biller</groupId>
-			<artifactId>com.luckia.biller.core</artifactId>
+			<artifactId>biller-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
