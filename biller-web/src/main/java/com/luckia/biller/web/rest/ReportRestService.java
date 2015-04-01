@@ -1,15 +1,16 @@
 package com.luckia.biller.web.rest;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -39,6 +40,8 @@ public class ReportRestService {
 	private LiquidationReportGenerator liquidationReportGenerator;
 	@Inject
 	private FileService fileService;
+	@Inject
+	private Provider<EntityManager> entityManagerProvider;
 
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -61,14 +64,17 @@ public class ReportRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("/liquidations")
-	public Response liquidations(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString) {
+	public Response liquidations(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString, @QueryParam("ids") String entityIds) {
 		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			Date from = new SimpleDateFormat("").parse(fromAsString);
-			Date to = new SimpleDateFormat("").parse(toAsString);
-			List<LegalEntity> entities = new ArrayList<LegalEntity>();
-			liquidationReportGenerator.generate(from, to, entities, out);
-			ResponseBuilder response = Response.ok(new ByteArrayInputStream(out.toByteArray()));
+			Date from = new SimpleDateFormat("yyyy-MM-dd").parse(fromAsString);
+			Date to = new SimpleDateFormat("yyyy-MM-dd").parse(toAsString);
+			List<String> ids = Arrays.asList(entityIds.split("\\s,\\s"));
+			String qlString = "select e from LegalEntity e where e.id in :ids";
+			TypedQuery<LegalEntity> query = entityManagerProvider.get().createQuery(qlString, LegalEntity.class);
+			List<LegalEntity> entities = query.setParameter("ids", ids).getResultList();
+			Message<AppFile> message = liquidationReportGenerator.generate(from, to, entities);
+			InputStream in = fileService.getInputStream(message.getPayload());
+			ResponseBuilder response = Response.ok(in);
 			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "Liquidaciones.xls"));
 			response.header("Content-Type", FileService.CONTENT_TYPE_EXCEL);
 			return response.build();

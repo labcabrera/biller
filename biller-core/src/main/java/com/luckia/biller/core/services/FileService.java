@@ -22,6 +22,8 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.AppFile;
@@ -36,6 +38,7 @@ public class FileService {
 	private static final String INVALID_FILE_CHARACTERS = "[/\\\\:;]";
 	private static final String INVALID_FILE_CHARACTERS_REPLACEMENT = "_";
 	private static final String FOLDER_DATE_FORMAT = "yyyy/MM/dd";
+	private static final Logger LOG = LoggerFactory.getLogger(FileService.class);
 
 	@Inject
 	private SettingsService settingsService;
@@ -63,6 +66,7 @@ public class FileService {
 		try {
 			FileOutputStream out = new FileOutputStream(target);
 			bytesCopied = IOUtils.copyLarge(inputStream, out);
+			LOG.debug("Generado fichero {}", target.getAbsolutePath());	
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

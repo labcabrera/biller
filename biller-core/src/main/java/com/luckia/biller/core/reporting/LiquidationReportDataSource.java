@@ -20,7 +20,7 @@ public class LiquidationReportDataSource {
 
 	public Map<LegalEntity, List<Liquidation>> getLiquidations(Date from, Date to, List<LegalEntity> entities) {
 		EntityManager entityManager = entityManagerProvider.get();
-		String qlString = "select e from Liquidation e where e.sender = :sender and e.dateFrom >= :from and e.dateTo <= :to";
+		String qlString = "select e from Liquidation e where e.sender = :sender and e.dateFrom >= :from and e.dateTo <= :to order by e.dateFrom";
 		TypedQuery<Liquidation> query = entityManager.createQuery(qlString, Liquidation.class);
 		query.setParameter("from", from);
 		query.setParameter("to", to);

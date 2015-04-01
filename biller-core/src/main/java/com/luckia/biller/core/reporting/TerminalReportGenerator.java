@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -47,7 +48,8 @@ public class TerminalReportGenerator extends BaseReport {
 
 	public Message<String> generate(Date date, OutputStream out) {
 		try {
-			date = date == null ? Calendar.getInstance().getTime() : date;
+			Validate.notNull(date);
+			LOG.debug("Generando informe de terminales a fecha {}", DateFormatUtils.ISO_DATE_FORMAT.format(date));
 			EntityManager entityManager = entityManagerProvider.get();
 			TypedQuery<TerminalRelation> query = entityManager.createQuery("select e from TerminalRelation e order by e.code", TerminalRelation.class);
 			List<TerminalRelation> relations = query.getResultList();

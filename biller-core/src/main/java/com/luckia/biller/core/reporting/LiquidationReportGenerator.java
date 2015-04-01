@@ -1,5 +1,7 @@
 package com.luckia.biller.core.reporting;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -9,11 +11,15 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillLiquidationDetail;
@@ -22,6 +28,7 @@ import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
+import com.luckia.biller.core.services.FileService;
 
 /**
  * Componente encargado de generar los reportes de liquidaciones.
@@ -30,15 +37,29 @@ public class LiquidationReportGenerator extends BaseReport {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LiquidationReportGenerator.class);
 
-	private final LiquidationReportDataSource dataSource;
-
 	@Inject
-	public LiquidationReportGenerator(LiquidationReportDataSource dataSource) {
-		this.dataSource = dataSource;
+	private LiquidationReportDataSource dataSource;
+	@Inject
+	private FileService fileService;
+
+	public Message<AppFile> generate(Date from, Date to, List<LegalEntity> entities) {
+		if (from == null && to == null) {
+			from = new DateTime().minusMonths(1).dayOfMonth().withMinimumValue().toDate();
+			to = new DateTime().minusMonths(1).dayOfMonth().withMaximumValue().toDate();
+		}
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		generate(from, to, entities, out);
+		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+		String fileName = String.format("Liquidaciones-%s-%s.xls", DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
+		AppFile appFile = fileService.save(fileName, FileService.CONTENT_TYPE_EXCEL, in);
+		return new Message<AppFile>(Message.CODE_SUCCESS, "Informe generado", appFile);
 	}
 
 	public Message<String> generate(Date from, Date to, List<LegalEntity> entities, OutputStream out) {
 		try {
+			Validate.notNull(from);
+			Validate.notNull(to);
+			LOG.debug("Generando informe de liquidacione entre {} y {}", DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
 			Map<LegalEntity, List<Liquidation>> liquidationMap = dataSource.getLiquidations(from, to, entities);
 			if (!liquidationMap.isEmpty()) {
 				HSSFWorkbook workbook = new HSSFWorkbook();
