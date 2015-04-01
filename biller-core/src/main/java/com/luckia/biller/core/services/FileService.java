@@ -31,6 +31,8 @@ import com.luckia.biller.core.model.AppFile;
  */
 public class FileService {
 
+	public static final String CONTENT_TYPE_EXCEL = "application/vnd.ms-excel";
+
 	private static final String INVALID_FILE_CHARACTERS = "[/\\\\:;]";
 	private static final String INVALID_FILE_CHARACTERS_REPLACEMENT = "_";
 	private static final String FOLDER_DATE_FORMAT = "yyyy/MM/dd";
@@ -44,7 +46,8 @@ public class FileService {
 	 * Guarda en base de datos el descriptor del fichero y almacena su contenido en el repositorio de la aplicación.
 	 * 
 	 * @param name
-	 *            Nombre identificativo del fichero (no tiene por que ser el nombre real del fichero, sólo indica el nombre que tiene dentro de la aplicación)
+	 *            Nombre identificativo del fichero (no tiene por que ser el nombre real del fichero, sólo indica el nombre que tiene dentro
+	 *            de la aplicación)
 	 * @param contentType
 	 *            Media type del fichero
 	 * @param inputStream
@@ -129,10 +132,14 @@ public class FileService {
 		int index = 0;
 		while (target.exists() && index++ < 1000) {
 			int lastDotIndex = name.lastIndexOf(".");
-			String prefix = name.substring(0, lastDotIndex);
-			String extension = name.substring(lastDotIndex);
-			String tmpName = prefix + "-copy-" + index + extension;
-			target = new File(folder, tmpName);
+			if (lastDotIndex >= 0) {
+				String prefix = name.substring(0, lastDotIndex);
+				String extension = name.substring(lastDotIndex);
+				String tmpName = prefix + "-copy-" + index + extension;
+				target = new File(folder, tmpName);
+			} else {
+				target = new File(folder, name + "-copy-" + index);
+			}
 		}
 		if (target.exists()) {
 			throw new RuntimeException("Ya existe el fichero " + target.getAbsolutePath());
