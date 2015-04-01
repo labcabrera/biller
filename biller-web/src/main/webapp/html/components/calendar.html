@@ -1,0 +1,14 @@
+<div>
+	<div ng-if="!showCalendar">
+		<div class="input-group">
+		<input input-date-format type="text" class="form-control" ng-click="loadRealCalendar()" placeholder="{{placeHolder}}" ng-model="$parent.ngModel" ng-disabled="disabled" /> <span class="input-group-btn">
+			<button type="button" class="btn btn-default width-40" ng-click="loadRealCalendar()" ng-disabled="disabled">
+				<i class="glyphicon glyphicon-calendar"></i>
+			</button>
+		</span>
+	</div>
+	</div>
+	<div ng-if="showCalendar">
+		<div calendar-real ng-model="$parent.ngModel" ></div>
+	</div>
+</div>

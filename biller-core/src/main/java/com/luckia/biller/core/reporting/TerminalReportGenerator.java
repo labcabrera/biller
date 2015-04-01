@@ -1,5 +1,7 @@
 package com.luckia.biller.core.reporting;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,22 +13,37 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.model.Address;
+import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
+import com.luckia.biller.core.services.FileService;
 
 public class TerminalReportGenerator extends BaseReport {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TerminalReportGeneratorTest.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TerminalReportGenerator.class);
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
+	@Inject
+	private FileService fileService;
+
+	public Message<AppFile> generate(Date date) {
+		date = date != null ? date : Calendar.getInstance().getTime();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		generate(date, out);
+		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+		String fileName = String.format("Terminales-%s.xls", DateFormatUtils.ISO_DATE_FORMAT.format(date));
+		AppFile appFile = fileService.save(fileName, FileService.CONTENT_TYPE_EXCEL, in);
+		return new Message<AppFile>(Message.CODE_SUCCESS, "Informe generado", appFile);
+	}
 
 	public Message<String> generate(Date date, OutputStream out) {
 		try {
