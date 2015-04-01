@@ -39,6 +39,7 @@
 			replace : 'true',
 			scope : {
 				ngModel : '=',
+				isReadOnly : '=',
 				disabled : '@'
 			},
 		};
@@ -95,6 +96,7 @@
 	}]);
 	
 	appModule.controller('ProvinceCtrl', ['$scope', '$http', function($scope, $http) {
+		$scope.selected = undefined;
 		$scope.provinces = function(name) {
 			return $http.get(REST_PATH + '/provinces/find/' + name).then(function(response) {
 				return response.data;

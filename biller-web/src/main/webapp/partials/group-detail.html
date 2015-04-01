@@ -26,7 +26,10 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Provincia</label>
 					<div class="col-sm-4">
+						<div province ng-model="entity.address.province" is-read-only="isReadOnly"></div>
+						<!--
 						<input type='text' class="form-control" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly" />
+						-->
 					</div>
 					<label for="inputPassword3" class="col-sm-2 control-label input-sm">Localidad</label>
 					<div class="col-sm-4">
@@ -87,5 +90,5 @@
 		<div ng-include src="'templates/entity-json-popup.html'"></div>
 	</div>
 </div>
-
+<pre ng-if="true">{{entity | json}}</pre>
 </html>

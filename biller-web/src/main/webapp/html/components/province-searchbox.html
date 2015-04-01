@@ -6,5 +6,5 @@
 	</script>
 	<input type="text" ng-model="ngModel" ng-disabled="disabled"
 		typeahead="province as province.name for province in provinces($viewValue)" typeahead-loading="loadingProvinces" class="form-control" typeahead-editable="false"
-		typeahead-template-url="customTemplateProvince.html">
+		typeahead-template-url="customTemplateProvince.html" ng-readonly="isReadOnly">
 </div>	
