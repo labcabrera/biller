@@ -76,14 +76,22 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 col-sm-offset-7 control-label input-sm">Co-explotaci&oacute;n</label>
+								<label class="col-sm-2 col-sm-offset-3 control-label input-sm">Co-explotaci&oacute;n</label>
 								<div class="col-sm-2">
 									<div class="input-group">
 										<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.coOperatingMonthlyFees" ng-readonly="isReadOnly" popover="Gastos mensuales de co-explotaci&oacute;n. Este valor se utiliza como gastos operativos para calcular el NR" popover-trigger="mouseenter"/>
 										<span class="input-group-addon">&euro;</span>
 									</div>
 									<span style="display:none" class="help-block">Importe mensual</span>
-								</div>	
+								</div>
+								<label class="col-sm-2 control-label input-sm">Coste por ubicaci&oacute;n</label>
+								<div class="col-sm-2">
+									<div class="input-group">
+										<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.pricePerLocation" ng-readonly="isReadOnly" popover="Gastos mensuales de co-explotaci&oacute;n. Este valor se utiliza como gastos operativos para calcular el NR" popover-trigger="mouseenter"/>
+										<span class="input-group-addon">&euro;</span>
+									</div>
+									<span style="display:none" class="help-block">Importe mensual</span>
+								</div>		
 							</div>
 							<hr class="col-sm-offset-2"/>
 							<h5 class="col-sm-offset-2">Establecimiento</h5>
