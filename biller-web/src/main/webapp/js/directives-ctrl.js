@@ -45,6 +45,22 @@
 		};
 	});
 	
+	appModule.directive('region', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/region-searchbox.html',
+			controller : 'RegionCtrl',
+			require : '^ngModel',
+			replace : 'true',
+			scope : {
+				ngModel : '=',
+				isReadOnly : '=',
+				provinceId : '=',
+				disabled : '@'
+			},
+		};
+	});
+	
 	appModule.directive('company', function() {
 		return {
 			restrict : 'AE',
@@ -54,6 +70,22 @@
 			replace : 'true',
 			scope : {
 				ngModel : '=',
+				isReadOnly : '=',
+				disabled : '@'
+			},
+		};
+	});
+	
+	appModule.directive('store', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/store-searchbox.html',
+			controller : 'StoreCtrl',
+			require : '^ngModel',
+			replace : 'true',
+			scope : {
+				ngModel : '=',
+				isReadOnly : '=',
 				disabled : '@'
 			},
 		};
@@ -96,7 +128,6 @@
 	}]);
 	
 	appModule.controller('ProvinceCtrl', ['$scope', '$http', function($scope, $http) {
-		$scope.selected = undefined;
 		$scope.provinces = function(name) {
 			return $http.get(REST_PATH + '/provinces/find/' + name).then(function(response) {
 				return response.data;
@@ -104,9 +135,25 @@
 		};
 	}]);
 	
+	appModule.controller('RegionCtrl', ['$scope', '$http', function($scope, $http) {
+		$scope.regions = function(name) {
+			var provinceId = $scope.provinceId;
+			console.log("Province: " + provinceId);
+			return $http.get("rest/regions/find/" + name + (provinceId != null ? '?province=' + provinceId : '')).then(function(response) { return response.data; });
+		};
+	}]);
+	
 	appModule.controller('CompanyCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.companies = function(name) {
 			return $http.get(REST_PATH + '/companies/find?q=name=lk=' + name).then(function(response) {
+				return response.data.results;
+			});
+		};
+	}]);
+	
+	appModule.controller('StoreCtrl', ['$scope', '$http', function($scope, $http) {
+		$scope.stores = function(name) {
+			return $http.get(REST_PATH + '/stores/find?q=name=lk=' + name).then(function(response) {
 				return response.data.results;
 			});
 		};

@@ -1,0 +1,10 @@
+<div>
+	<script type="text/ng-template" id="customTemplateRegion.html">
+  		<a>
+      		<span bind-html-unsafe="match.model.name | typeaheadHighlight:query"></span>
+		</a>
+	</script>
+	<input type="text" ng-model="ngModel" ng-disabled="disabled"
+		typeahead="region as region.name for region in regions($viewValue)" typeahead-loading="loadingRegions" class="form-control" typeahead-editable="false"
+		typeahead-template-url="customTemplateProvince.html" ng-readonly="isReadOnly">
+</div>	

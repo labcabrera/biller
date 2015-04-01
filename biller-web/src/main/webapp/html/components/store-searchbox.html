@@ -1,0 +1,10 @@
+<div>
+	<script type="text/ng-template" id="customTemplateStore.html">
+  		<a>
+      		<span bind-html-unsafe="match.model.name | typeaheadHighlight:query"></span>
+		</a>
+	</script>
+	<input type="text" ng-model="ngModel" ng-disabled="disabled"
+		typeahead="store as store.name for store in stores($viewValue)" typeahead-loading="loadingStores" class="form-control" typeahead-editable="false"
+		typeahead-template-url="customTemplateStore.html" ng-readonly="isReadOnly">
+</div>	

@@ -6,5 +6,5 @@
 	</script>
 	<input type="text" ng-model="ngModel" ng-disabled="disabled"
 		typeahead="company as company.name for company in companies($viewValue)" typeahead-loading="loadingCompanies" class="form-control" typeahead-editable="false"
-		typeahead-template-url="customTemplateCompany.html">
+		typeahead-template-url="customTemplateCompany.html" ng-readonly="isReadOnly">
 </div>	
