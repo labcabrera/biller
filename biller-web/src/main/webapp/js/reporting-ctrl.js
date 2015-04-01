@@ -9,4 +9,13 @@
 		};
 	}]);
 	
+	billerControllers.controller('ReportLiquidationsCtrl', ['$scope', '$location', '$window', function($scope, $location, $window) {
+		$scope.generate = function() {
+			var url = REST_PATH + '/report/liquidations';
+			$window.open(url, '_blank');
+		};
+	}]);
+	
+	
+	
 })();

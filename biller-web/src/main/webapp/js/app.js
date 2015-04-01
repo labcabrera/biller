@@ -35,7 +35,7 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope, $locat
 	}).when('/rappel/stores/', { templateUrl : 'partials/rappel-store-list.html', controller : 'RappelStoreListCtrl'
 	}).when('/rappel/stores/id/:id', { templateUrl : 'partials/rappel-store-detail.html', controller : 'RappelStoreDetailCtrl'
 	}).when('/reports/terminals', { templateUrl : 'html/reports/report-terminals.html', controller : 'ReportTerminalsCtrl'
-	}).when('/reports/liquidations', { templateUrl : 'html/reports/liquidations.html', controller : 'LiquidationsTerminalsCtrl'
+	}).when('/reports/liquidations', { templateUrl : 'html/reports/report-liquidations.html', controller : 'ReportLiquidationsCtrl'
 	}).when('/admin/console', { templateUrl : 'partials/admin/admin-console.html'
 	}).when('/admin/settings', { templateUrl : 'partials/admin/admin-settings.html', controller: 'SettingsCtrl'
 	}).when('/admin/jobs', { templateUrl : 'partials/admin/admin-jobs.html', controller: 'SettingsCtrl'

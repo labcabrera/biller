@@ -43,6 +43,20 @@
 			},
 		};
 	});
+	
+	appModule.directive('company', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/company-searchbox.html',
+			controller : 'CompanyCtrl',
+			require : '^ngModel',
+			replace : 'true',
+			scope : {
+				ngModel : '=',
+				disabled : '@'
+			},
+		};
+	});
 
 	appModule.controller('CalendarCtrl', ['$scope', function($scope) {
 		$scope.placeHolder= 'DD/MM/YYYY';
@@ -84,6 +98,14 @@
 		$scope.provinces = function(name) {
 			return $http.get(REST_PATH + '/provinces/find/' + name).then(function(response) {
 				return response.data;
+			});
+		};
+	}]);
+	
+	appModule.controller('CompanyCtrl', ['$scope', '$http', function($scope, $http) {
+		$scope.companies = function(name) {
+			return $http.get(REST_PATH + '/companies/find?q=name=lk=' + name).then(function(response) {
+				return response.data.results;
 			});
 		};
 	}]);

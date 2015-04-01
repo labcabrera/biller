@@ -1,4 +1,10 @@
-<input type="text"
-	class="form-control"
-	typeahead="province as province.name for province in provinces($viewValue)"
-	ng-readonly="false" />
+<div>
+	<script type="text/ng-template" id="customTemplateProvince.html">
+  		<a>
+      		<span bind-html-unsafe="match.model.name | typeaheadHighlight:query"></span>
+		</a>
+	</script>
+	<input type="text" ng-model="ngModel" ng-disabled="disabled"
+		typeahead="province as province.name for province in provinces($viewValue)" typeahead-loading="loadingProvinces" class="form-control" typeahead-editable="false"
+		typeahead-template-url="customTemplateProvince.html">
+</div>	
