@@ -85,6 +85,7 @@ public abstract class AbstractCodeGenerator<T> implements CodeGenerator<T> {
 		Map<Pattern, String> values = new LinkedHashMap<Pattern, String>();
 		values.put(Pattern.compile("\\{year\\}"), String.valueOf(new DateTime().getYear()));
 		values.put(Pattern.compile("\\{month\\}"), String.valueOf(new DateTime().getMonthOfYear()));
+		values.put(Pattern.compile("\\{month\\s*,\\s*2\\}"), StringUtils.leftPad(String.valueOf(new DateTime().getMonthOfYear()), 2, "0"));
 		return values;
 	}
 }

@@ -1,5 +1,7 @@
 package com.luckia.biller.core.reporting;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -15,10 +17,10 @@ import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.model.LegalEntity;
 
-public class TestLiquidationReportGenerator {
+public class LiquidationReportGeneratorTest {
 
 	@Test
-	public void test() {
+	public void test() throws FileNotFoundException {
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
 		injector.getInstance(PersistService.class).start();
 		LiquidationReportGenerator generator = injector.getInstance(LiquidationReportGenerator.class);
@@ -28,7 +30,8 @@ public class TestLiquidationReportGenerator {
 		LegalEntity legalEntity03 = getLegalEntity(entityManager, "IMPULSORA TURISTICA ALPAMAN, S.A.");
 		Date from = new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate();
 		Date to = new DateTime(2014, 6, 30, 0, 0, 0, 0).toDate();
-		generator.generate(from, to, Arrays.asList(legalEntity01, legalEntity02, legalEntity03));
+		FileOutputStream out = new FileOutputStream("./target/liquidation.xls");
+		generator.generate(from, to, Arrays.asList(legalEntity01, legalEntity02, legalEntity03), out);
 	}
 
 	private LegalEntity getLegalEntity(EntityManager entityManager, String name) {

@@ -216,4 +216,9 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 			this.idCard.merge(entity.getIdCard());
 		}
 	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T as(Class<T> class1) {
+		return (T) this;
+	}
 }

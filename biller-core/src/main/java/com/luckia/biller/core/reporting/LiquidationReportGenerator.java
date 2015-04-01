@@ -1,8 +1,9 @@
 package com.luckia.biller.core.reporting;
 
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
 
 /**
@@ -34,19 +37,18 @@ public class LiquidationReportGenerator extends BaseReport {
 		this.dataSource = dataSource;
 	}
 
-	public Message<String> generate(Date from, Date to, List<LegalEntity> entities) {
+	public Message<String> generate(Date from, Date to, List<LegalEntity> entities, OutputStream out) {
 		try {
 			Map<LegalEntity, List<Liquidation>> liquidationMap = dataSource.getLiquidations(from, to, entities);
 			if (!liquidationMap.isEmpty()) {
-				FileOutputStream fileOut = new FileOutputStream("./target/liquidations.xls");
 				HSSFWorkbook workbook = new HSSFWorkbook();
 				for (LegalEntity legalEntity : liquidationMap.keySet()) {
 					List<Liquidation> liquidations = liquidationMap.get(legalEntity);
 					processSheet(legalEntity, liquidations, workbook);
 				}
-				workbook.write(fileOut);
-				fileOut.flush();
-				fileOut.close();
+				workbook.write(out);
+				out.flush();
+				out.close();
 				return new Message<>(Message.CODE_SUCCESS, String.format("Generado report de %s liquidaciones", liquidationMap.size()));
 			} else {
 				return new Message<>(Message.CODE_SUCCESS, "No se han encontrado liquidaciones");
@@ -67,7 +69,7 @@ public class LiquidationReportGenerator extends BaseReport {
 			currentRow = createFooter(sheet, currentRow, liquidation);
 			currentRow += 3;
 		}
-		for (int i = 0; i < 18; i++) {
+		for (int i = 0; i < 26; i++) {
 			sheet.autoSizeColumn(i);
 		}
 	}
@@ -97,6 +99,8 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "GGR");
 		createHeaderCell(sheet, currentRow, cell++, "NGR");
 		createHeaderCell(sheet, currentRow, cell++, "NR");
+		cell++;
+		createHeaderCell(sheet, currentRow, cell++, "Terminales");
 		return currentRow + 1;
 	}
 
@@ -145,6 +149,20 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.GGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NR));
+			cell++;
+			StringBuffer sb = new StringBuffer();
+			if (Store.class.isAssignableFrom(bill.getSender().getClass())) {
+				Store store = bill.getSender().as(Store.class);
+				for (Iterator<TerminalRelation> iterator = store.getTerminalRelations().iterator(); iterator.hasNext();) {
+					TerminalRelation relation = iterator.next();
+					sb.append(relation.getCode());
+					if (iterator.hasNext()) {
+						sb.append(", ");
+					}
+
+				}
+			}
+			createCell(sheet, currentRow, cell++, sb.toString());
 			currentRow++;
 		}
 		return currentRow;
