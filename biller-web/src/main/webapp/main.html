@@ -69,12 +69,20 @@
 							<span class="glyphicon glyphicon-cog" aria-hidden="true"></span><span> Administraci&oacute;n</span></a>
 						</li>
 					</ul>
-					<ul ng-if="user != null" class="nav navbar-nav navbar-right">
-						<li><a href="">{{user.name}}</a></li>
-						<li><a ng-click="logout()" href="">Cerrar sesi&oacute;n</a></li>
-					</ul>
-					<ul ng-if="user == null" class="nav navbar-nav navbar-right">
-						<li><a href="#/login">Login</a></li>
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown" ng-controller="LanguageCtrl">
+							<a href="#" class="dropdown-toggle f16" role="button" aria-expanded="false">
+								<span ng-class="{'flag gb' : getLanguage() == 'en', 'flag es' : getLanguage() == 'es', 'flag it' : getLanguage() == 'it'}"></span>
+								<span class="hidden-xs hidden-sm">{{getLanguage() | translate}}</span><span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a class="f16" ng-click="changeLanguage('es')" ng-class="{'active' : getLanguage() == 'es'}"><span class="flag es"></span> {{'es' | translate}}</a></li>
+								<li><a class="f16" ng-click="changeLanguage('en')" ng-class="{'active' : getLanguage() == 'en'}"><span class="flag gb"></span> {{'en' | translate}}</a></li>
+							</ul>
+						</li>
+						<li ng-if="user != null"><a href="">{{user.name}}</a></li>
+						<li ng-if="user != null"><a ng-click="logout()" href="">Cerrar sesi&oacute;n</a></li>
+						<li ng-if="user == null"><a href="#/login">Login</a></li>
 					</ul>
 				</div>
 			</div>
@@ -91,6 +99,7 @@
 	<script src="lib/angular/angular-sanitize.js"></script>
 	<script src="lib/angular-dialog/dialogs.min.js"></script>
 	<script src="lib/translate/angular-translate.min.js"></script>
+	<script src="lib/translate/angular-translate-loader-static-files.min.js"></script>
 	<script src="lib/translate/angular-translate-loader-url.min.js"></script>
 	<script src="lib/jquery/jquery-1.11.0.js"></script>
 	<script src="lib/bootstrap/bootstrap.js"></script>

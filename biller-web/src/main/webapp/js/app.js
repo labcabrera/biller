@@ -2,9 +2,10 @@
 
 /* App Module */
 
-var billerApp = angular.module('billerApp', [ 'ngRoute', 'billerControllers', 'ui.bootstrap', 'dialogs.main']);
+var billerApp = angular.module('billerApp', [ 'ngRoute', 'billerControllers', 'ui.bootstrap', 'dialogs.main', 'pascalprecht.translate']);
 
 billerApp.config([ '$routeProvider', function($routeProvider, $rootScope, $location) {
+	
 	$routeProvider.when('/users', { templateUrl : 'partials/user-list.html', controller : 'UserListCtrl'
 	}).when('/users/:id', { templateUrl : 'partials/user-detail.html', controller : 'UserDetailCtrl'
 	}).when('/groups', { templateUrl : 'partials/group-list.html', controller : 'GroupListCtrl'
@@ -46,7 +47,26 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope, $locat
 	}).when('/', { templateUrl : 'static/index.html'
 	}).otherwise({ templateUrl : 'partials/404.html'
 	});
+	
 } ]);
+
+billerApp.config(['$translateProvider', function($translateProvider) {
+	$translateProvider.preferredLanguage('es');
+	//$translateProvider.useUrlLoader(CONTEXT_PATH + '/i18n/json');
+	$translateProvider.useStaticFilesLoader({
+		prefix: CONTEXT_PATH + '/i18n/',
+		suffix: '.json'
+	});
+}]);
+
+billerApp.controller('LanguageCtrl', ['$scope', '$translate', function($scope, $translate) {
+	$scope.changeLanguage = function(key) {
+		$translate.use(key);
+	};
+	$scope.getLanguage = function() {
+		return $translate.use();
+	};
+}]);
 
 billerApp.run(function($rootScope, $http) {
 	$rootScope.isReadOnly = true;
@@ -60,6 +80,7 @@ billerApp.run(function($rootScope, $http) {
 	$rootScope.costcenters = function(name) { return $http.get("rest/costcenters/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
 	$rootScope.provinces = function(name) { return $http.get("rest/provinces/find/" + name).then(function(response) { return response.data; }); };
 	$rootScope.regions = function(name, provinceId) { return $http.get("rest/regions/find/" + name + (provinceId != null ? '?province=' + provinceId : '')).then(function(response) { return response.data; }); };
+	
 
 	$rootScope.edit = function() {
 		$rootScope.isReadOnly = false;

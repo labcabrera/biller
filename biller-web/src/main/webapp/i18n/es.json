@@ -1,0 +1,6 @@
+{
+	"coOperatingMonthlyFees": "Co-explotación",
+	"coOperatingMonthlyFees.help": "Gastos mensuales de co-explotación. Este valor se utiliza como gastos operativos para calcular el NR" ,
+	"pricePerLocation": "Coste por ubicación",
+	"pricePerLocation.help": "Importe mensual por cada ubicación de la empresa operadora"
+}
