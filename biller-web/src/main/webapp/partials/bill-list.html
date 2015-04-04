@@ -25,8 +25,8 @@
 				</tr>
 				<tr ng-repeat="result in results.results">
 					<td><a href="#/bills/id/{{result.id}}">{{result.code != null ? result.code : 'Borrador'}}</a></td>
-					<td>{{ result.sender.name | limitTo: 22 }}{{result.sender.name.length > 22 ? '...' : ''}}</td>
-					<td>{{ result.receiver.name | limitTo: 22 }}{{result.receiver.name.length > 22 ? '...' : ''}}</td>
+					<td>{{ result.sender.name | limitTo: 18 }}{{result.sender.name.length > 18 ? '...' : ''}}</td>
+					<td>{{ result.receiver.name | limitTo: 18 }}{{result.receiver.name.length > 18 ? '...' : ''}}</td>
 					<td>
 						<span ng-if="result.currentState.stateDefinition.id == 'Draft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
 						<span ng-if="result.currentState.stateDefinition.id == 'Rectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>

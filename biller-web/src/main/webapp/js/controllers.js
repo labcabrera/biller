@@ -571,7 +571,7 @@ billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$rout
 	};
 	$scope.setStorePage = function(page) {
 	    $scope.currentPage = page;
-	    $http.get('rest/stores/find?model=' + $routeParams.id + "&n=10" + "&p=" + page).success(function(data) { $scope.childs = data; });
+	    $http.get('rest/stores/find?q=billingModel.id==' + $routeParams.id + "&n=10" + "&p=" + page).success(function(data) { $scope.childs = data; });
 	};
 	$scope.mergeRappel = function() {
 		$scope.isSaving = true;
