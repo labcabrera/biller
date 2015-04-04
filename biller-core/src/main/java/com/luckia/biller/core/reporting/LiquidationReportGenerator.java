@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -23,6 +25,7 @@ import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillLiquidationDetail;
+import com.luckia.biller.core.model.BillerComparator;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
@@ -63,6 +66,7 @@ public class LiquidationReportGenerator extends BaseReport {
 			Map<LegalEntity, List<Liquidation>> liquidationMap = dataSource.getLiquidations(from, to, entities);
 			if (!liquidationMap.isEmpty()) {
 				HSSFWorkbook workbook = new HSSFWorkbook();
+				init(workbook);
 				for (LegalEntity legalEntity : liquidationMap.keySet()) {
 					List<Liquidation> liquidations = liquidationMap.get(legalEntity);
 					processSheet(legalEntity, liquidations, workbook);
@@ -127,23 +131,29 @@ public class LiquidationReportGenerator extends BaseReport {
 
 	private int createFooter(HSSFSheet sheet, int currentRow, Liquidation liquidation) {
 		int textCol = 3;
+		int blankCol = 4;
 		int valueCol = 5;
-		createCell(sheet, currentRow, textCol, "Total:");
-		createCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getSenderAmount());
+		createDisabledCell(sheet, currentRow, textCol, "Total:");
+		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
+		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getSenderAmount());
 		currentRow++;
-		createCell(sheet, currentRow, textCol, "Ajustes:");
-		createCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getAdjustmentAmount());
+		createDisabledCell(sheet, currentRow, textCol, "Ajustes:");
+		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
+		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getAdjustmentAmount());
 		currentRow++;
-		createCell(sheet, currentRow, textCol, "Saldo de caja:");
-		createCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getCashStoreAmount());
+		createDisabledCell(sheet, currentRow, textCol, "Saldo de caja:");
+		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
+		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getCashStoreAmount());
 		currentRow++;
-		createCell(sheet, currentRow, textCol, "Resultado:");
-		createCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getReceiverAmount());
+		createDisabledCell(sheet, currentRow, textCol, "Resultado:");
+		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
+		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getReceiverAmount());
 		return currentRow + 1;
 
 	}
 
 	private int createLiquidationDetails(HSSFSheet sheet, int currentRow, Liquidation liquidation) {
+		Collections.sort(liquidation.getBills(), new BillerComparator());
 		for (int i = 0; i < liquidation.getBills().size(); i++) {
 			Bill bill = liquidation.getBills().get(i);
 			int cell = 0;

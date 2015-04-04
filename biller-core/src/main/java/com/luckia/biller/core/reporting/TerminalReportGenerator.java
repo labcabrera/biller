@@ -54,6 +54,7 @@ public class TerminalReportGenerator extends BaseReport {
 			TypedQuery<TerminalRelation> query = entityManager.createQuery("select e from TerminalRelation e order by e.code", TerminalRelation.class);
 			List<TerminalRelation> relations = query.getResultList();
 			HSSFWorkbook workbook = new HSSFWorkbook();
+			init(workbook);
 			HSSFSheet sheet = workbook.createSheet("Terminales");
 			int rowIndex = 0;
 			int cellIndex = 0;
@@ -70,10 +71,10 @@ public class TerminalReportGenerator extends BaseReport {
 				Store store = relation.getStore();
 				cellIndex = 0;
 				rowIndex++;
-				createCell(sheet, rowIndex, cellIndex++, relation.getCode());
-				createCell(sheet, rowIndex, cellIndex++, date);
 				if (store != null) {
 					Address address = relation.getStore().getAddress();
+					createCell(sheet, rowIndex, cellIndex++, relation.getCode());
+					createCell(sheet, rowIndex, cellIndex++, date);
 					createCell(sheet, rowIndex, cellIndex++, store.getName());
 					createCell(sheet, rowIndex, cellIndex++, address != null && address.getProvince() != null ? address.getProvince().getName() : StringUtils.EMPTY);
 					createCell(sheet, rowIndex, cellIndex++, address != null && address.getRegion() != null ? address.getRegion().getName() : StringUtils.EMPTY);
@@ -81,6 +82,12 @@ public class TerminalReportGenerator extends BaseReport {
 					createCell(sheet, rowIndex, cellIndex++, address != null && address.getRoad() != null ? address.getRoad() : StringUtils.EMPTY);
 					createCell(sheet, rowIndex, cellIndex++, relation.getStore().getPhoneNumber() != null ? relation.getStore().getPhoneNumber() : StringUtils.EMPTY);
 					createCell(sheet, rowIndex, cellIndex++, relation.getComments() != null ? relation.getComments() : StringUtils.EMPTY);
+				} else {
+					createDisabledCell(sheet, rowIndex, cellIndex++, relation.getCode());
+					createDisabledCell(sheet, rowIndex, cellIndex++, date);
+					for (int i = 0; i < 7; i++) {
+						createDisabledCell(sheet, rowIndex, cellIndex++, StringUtils.EMPTY);
+					}
 				}
 			}
 			for (int i = 0; i < 9; i++) {

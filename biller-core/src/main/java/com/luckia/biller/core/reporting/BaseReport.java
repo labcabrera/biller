@@ -2,21 +2,79 @@ package com.luckia.biller.core.reporting;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BaseReport {
 
-	private HSSFCellStyle headerStyle = null;
-	private HSSFCellStyle currentDateStyle = null;
-	private HSSFCellStyle currentNumberStyle = null;
+	private enum ReportStyle {
+		DEFAULT, DEFAULT_DATE, DEFAULT_NUMBERIC, HEADER, HEADER_NUMBERIC, DISABLED, DISABLED_DATE, DISABLED_NUMERIC
+	}
 
-	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex) {
+	private static final Logger LOG = LoggerFactory.getLogger(BaseReport.class);
+
+	private Map<ReportStyle, HSSFCellStyle> styles;
+
+	public void init(HSSFWorkbook workbook) {
+		styles = new HashMap<>();
+		styles.put(ReportStyle.DEFAULT, buildStyle(workbook));
+		styles.put(ReportStyle.DEFAULT_DATE, buildDateStyle(workbook, null));
+		styles.put(ReportStyle.DEFAULT_NUMBERIC, buildNumericStyle(workbook, null));
+		styles.put(ReportStyle.HEADER, buildStyle(workbook, HSSFColor.LIME.index));
+		styles.put(ReportStyle.HEADER, buildNumericStyle(workbook, HSSFColor.LIME.index));
+		styles.put(ReportStyle.HEADER_NUMBERIC, buildStyle(workbook, HSSFColor.LIME.index));
+		styles.put(ReportStyle.DISABLED, buildStyle(workbook, HSSFColor.GREY_25_PERCENT.index));
+		styles.put(ReportStyle.DISABLED_DATE, buildDateStyle(workbook, HSSFColor.GREY_25_PERCENT.index));
+		styles.put(ReportStyle.DISABLED_NUMERIC, buildNumericStyle(workbook, HSSFColor.GREY_25_PERCENT.index));
+	}
+
+	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex, String value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.DEFAULT);
+	}
+
+	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex, BigDecimal value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.DEFAULT_NUMBERIC);
+	}
+
+	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex, Date value) {
+		HSSFCell cell = createCellInternal(sheet, rowIndex, cellIndex, value);
+		if (value != null) {
+			return applyStyle(cell, ReportStyle.DEFAULT_DATE);
+		}
+		return cell;
+	}
+
+	protected HSSFCell createHeaderCell(HSSFSheet sheet, int rowIndex, int cellIndex, String value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.HEADER);
+	}
+
+	protected HSSFCell createHeaderCell(HSSFSheet sheet, int rowIndex, int cellIndex, BigDecimal value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.HEADER);
+	}
+
+	protected HSSFCell createDisabledCell(HSSFSheet sheet, int rowIndex, int cellIndex, String value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.DISABLED);
+	}
+
+	protected HSSFCell createDisabledCell(HSSFSheet sheet, int rowIndex, int cellIndex, Date value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.DISABLED_DATE);
+	}
+
+	protected HSSFCell createDisabledCell(HSSFSheet sheet, int rowIndex, int cellIndex, BigDecimal value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.DISABLED_NUMERIC);
+	}
+
+	protected HSSFCell createCellInternal(HSSFSheet sheet, int rowIndex, int cellIndex, Object value) {
 		HSSFRow row = sheet.getRow(rowIndex);
 		if (row == null) {
 			row = sheet.createRow(rowIndex);
@@ -25,61 +83,62 @@ public class BaseReport {
 		if (cell == null) {
 			cell = row.createCell(cellIndex);
 		}
-		return cell;
-	}
-
-	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex, String value) {
-		HSSFCell cell = createCell(sheet, rowIndex, cellIndex);
-		cell.setCellValue(value);
-		return cell;
-	}
-
-	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex, BigDecimal value) {
-		HSSFCell cell = createCell(sheet, rowIndex, cellIndex);
-		cell.setCellValue(value != null ? value.doubleValue() : 0d);
-		cell.setCellStyle(getNumericStyle(sheet));
-		return cell;
-	}
-
-	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex, Date value) {
-		HSSFCell cell = createCell(sheet, rowIndex, cellIndex);
 		if (value != null) {
-			cell.setCellValue(value);
-			cell.setCellStyle(getDateStyle(sheet));
+			if (value instanceof String) {
+				cell.setCellValue((String) value);
+			} else if (value instanceof Date) {
+				cell.setCellValue((Date) value);
+			} else if (value instanceof BigDecimal) {
+				cell.setCellValue(((BigDecimal) value).doubleValue());
+			} else {
+				LOG.warn("Invalid type {}", value);
+			}
+		}
+		return applyStyle(cell, ReportStyle.DEFAULT);
+	}
+
+	private HSSFCell applyStyle(HSSFCell cell, ReportStyle reportStyle) {
+		if (cell != null && styles.containsKey(reportStyle)) {
+			cell.setCellStyle(styles.get(reportStyle));
+		} else {
+			LOG.warn("Invalid style {}", reportStyle);
 		}
 		return cell;
 	}
 
-	protected HSSFCell createHeaderCell(HSSFSheet sheet, int rowIndex, int cellIndex, String value) {
-		HSSFCell cell = createCell(sheet, rowIndex, cellIndex, value);
-		cell.setCellStyle(getHeaderStyle(sheet));
-		return cell;
+	private HSSFCellStyle buildStyle(HSSFWorkbook workbook) {
+		return buildStyle(workbook, null);
 	}
 
-	private HSSFCellStyle getNumericStyle(HSSFSheet sheet) {
-		if (currentNumberStyle == null) {
-			HSSFDataFormat hssfDataFormat = sheet.getWorkbook().createDataFormat();
-			currentNumberStyle = sheet.getWorkbook().createCellStyle();
-			currentNumberStyle.setDataFormat(hssfDataFormat.getFormat("#,##0.00"));
+	private HSSFCellStyle buildStyle(HSSFWorkbook workbook, Short color) {
+		HSSFCellStyle style = workbook.createCellStyle();
+		if (color != null) {
+			style.setFillForegroundColor(color);
+			style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		}
-		return currentNumberStyle;
+		return style;
 	}
 
-	private HSSFCellStyle getDateStyle(HSSFSheet sheet) {
-		if (currentDateStyle == null) {
-			short format = sheet.getWorkbook().createDataFormat().getFormat("dd/MM/yyyy");
-			currentDateStyle = sheet.getWorkbook().createCellStyle();
-			currentDateStyle.setDataFormat(format);
+	private HSSFCellStyle buildNumericStyle(HSSFWorkbook workbook, Short color) {
+		HSSFDataFormat hssfDataFormat = workbook.createDataFormat();
+		HSSFCellStyle style = workbook.createCellStyle();
+		style.setDataFormat(hssfDataFormat.getFormat("#,##0.00"));
+		if (color != null) {
+			style.setFillForegroundColor(color);
+			style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		}
-		return currentDateStyle;
+		return style;
 	}
 
-	private HSSFCellStyle getHeaderStyle(HSSFSheet sheet) {
-		if (headerStyle == null) {
-			headerStyle = sheet.getWorkbook().createCellStyle();
-			headerStyle.setFillForegroundColor(HSSFColor.GOLD.index);
-			headerStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+	private HSSFCellStyle buildDateStyle(HSSFWorkbook workbook, Short color) {
+		HSSFCellStyle style = workbook.createCellStyle();
+		short format = workbook.createDataFormat().getFormat("dd/MM/yyyy");
+		style = workbook.createCellStyle();
+		style.setDataFormat(format);
+		if (color != null) {
+			style.setFillForegroundColor(color);
+			style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		}
-		return headerStyle;
+		return style;
 	}
 }
