@@ -8,24 +8,25 @@
 			<div id="alertContainer"></div>
 			<h4>
 				<span class="glyphicon glyphicon-file text-muted"></span>
-				<span>Factura</span>
+				<span>{{'bill' | translate}}</span>
 			</h4>
 			<div>
 				<form class="form-horizontal" role="form">
 					<div class="form-group">
-						<label class="col-sm-1 control-label input-sm">Emisor</label>
+						<label class="col-sm-2 control-label input-sm">{{'sender' | translate}}</label>
 						<div class="col-sm-4">
 							<div class=" input-group">
-								<input type='text' class="form-control" ng-model="entity.sender.name" ng-readonly="true" /> <span class="input-group-addon input-sm"> <a
+								<div store ng-model="entity.sender" is-read-only="isReadOnly"></div>
+								<span class="input-group-addon input-sm"> <a
 									href="#/stores/id/{{entity.sender.id}}"> <span class="glyphicon glyphicon-search"></span>
 								</a>
 								</span>
 							</div>
 						</div>
-						<label class="col-sm-1 control-label input-sm">Destinatario</label>
+						<label class="col-sm-2 control-label input-sm">{{'receiver' | translate}}</label>
 						<div class="col-sm-4">
 							<div class=" input-group">
-								<input type='text' class="form-control" ng-model="entity.receiver" ng-readonly="isReadOnly" typeahead="company as company.name for company in companies($viewValue)" />
+								<div company ng-model="entity.receiver" is-read-only="isReadOnly"></div>
 								<span class="input-group-addon input-sm">
 									<a href="#/companies/id/{{entity.receiver.id}}"> <span class="glyphicon glyphicon-search"></span>
 								</a>
@@ -34,30 +35,30 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-1 control-label input-sm">N&uacute;mero</label>
+						<label class="col-sm-2 control-label input-sm">{{'number' | translate}}</label>
 						<div class="col-sm-4">
 							<input type='text' class="form-control" ng-model="entity.code" ng-readonly="isReadOnly" />
 						</div>
-						<label class="col-sm-1 control-label input-sm">Fecha</label>
+						<label class="col-sm-2 control-label input-sm">{{'date' | translate}}</label>
 						<div class="col-sm-4">
 							<input type="text" class="form-control data-date" datepicker-popup="{{dateFormat}}" ng-model="entity.billDate" ng-readonly="isReadOnly"
 								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-1 control-label input-sm">Desde</label>
+						<label class="col-sm-2 control-label input-sm">{{'dateFrom' | translate}}</label>
 						<div class="col-sm-4">
 							<input type="text" class="form-control data-date" datepicker-popup="{{dateFormat}}" ng-model="entity.dateFrom" ng-readonly="isReadOnly"
 								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
 						</div>
-						<label class="col-sm-1 control-label input-sm">Hasta</label>
+						<label class="col-sm-2 control-label input-sm">{{'dateTo' | translate}}</label>
 						<div class="col-sm-4">
 							<input type="text" class="form-control data-date" datepicker-popup="{{dateFormat}}" ng-model="entity.dateTo" ng-readonly="isReadOnly"
 								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-1 control-label input-sm">Modelo</label>
+						<label class="col-sm-2 control-label input-sm">{{'model' | translate}}</label>
 						<div class="col-sm-4">
 							<div class="input-group">
 								<input type='text' class="form-control" ng-model="entity.model" ng-readonly="isReadOnly" typeahead="model as model.name for model in models($viewValue)" />								 
@@ -66,17 +67,17 @@
 								</span>
 							</div>
 						</div>
-						<label class="col-sm-1 control-label input-sm">Estado</label>
+						<label class="col-sm-2 control-label input-sm">{{'state' | translate}}</label>
 						<div class="col-sm-4">
 							<input type='text' class="form-control" ng-model="entity.currentState.stateDefinition.desc" ng-readonly="true" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-1 control-label input-sm">Tipo</label>
+						<label class="col-sm-2 control-label input-sm">{{'type' | translate}}</label>
 						<div class="col-sm-4">
 							<input type='text' class="form-control" ng-model="entity.billType.desc" ng-readonly="true" />
 						</div>
-						<label class="col-sm-1 control-label input-sm">Ordinaria</label>
+						<label class="col-sm-2 control-label input-sm">Ordinaria</label>
 						<div class="col-sm-4">
 							<div class="input-group">
 								<input type='text' class="form-control" ng-model="entity.parent.code" ng-readonly="true" />
@@ -91,10 +92,10 @@
 			
 			<div class="m-top-40">
 				<ul class="nav nav-tabs">
-					<li class="active"><a data-target="#detailTab" data-toggle="tab">Detalles</a></li>
-					<li><a data-target="#ownerTab" data-toggle="tab">Titular</a></li>
-					<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
-					<li><a data-target="#liquidationDetailTab" data-toggle="tab">Detalles de liquidacion <span ng-if="entity.liquidationTotalAmount > 0">({{entity.liquidationTotalAmount}})</span></a></li>
+					<li class="active"><a data-target="#detailTab" data-toggle="tab">{{'details' | translate}}</a></li>
+					<li><a data-target="#ownerTab" data-toggle="tab">{{'owner' | translate}}</a></li>
+					<li><a data-target="#commentsTab" data-toggle="tab">{{'comments' | translate}}</a></li>
+					<li><a data-target="#liquidationDetailTab" data-toggle="tab">{{'liquidationDetails' | translate}} <span ng-if="entity.liquidationTotalAmount > 0">({{entity.liquidationTotalAmount}})</span></a></li>
 					<li><a data-target="#commentsPdfTab" data-toggle="tab">Comentarios PDF</a></li>
 					<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
 				</ul> 				

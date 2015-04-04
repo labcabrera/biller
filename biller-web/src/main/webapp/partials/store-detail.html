@@ -13,7 +13,7 @@
 			<form class="form-horizontal" role="form">
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">Nombre</label>
-					<div class="col-sm-9">
+					<div class="col-sm-12">
 						<input type='text' class="form-control" ng-model="entity.name" ng-readonly="isReadOnly" required />
 					</div>
 				</div>
@@ -28,7 +28,7 @@
 							</span>
 						</div>
 					</div>
-					<label class="col-sm-1 control-label input-sm">C. Coste</label>
+					<label class="col-sm-2 control-label input-sm">C. Coste</label>
 					<div class="col-sm-4">
 						<div class="input-group">
 							<input type="text" class="form-control" ng-model="entity.costCenter" ng-readonly="isReadOnly" typeahead="costCenter as costCenter.name for costCenter in costcenters($viewValue)" typeahead-editable="false" />
@@ -44,7 +44,7 @@
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.idCard.number" ng-readonly="isReadOnly"  />
 					</div>
-					<label class="col-sm-1 control-label input-sm">Tipo</label>
+					<label class="col-sm-2 control-label input-sm">Tipo</label>
 					<div class="col-sm-4">
 						<select class="form-control" ng-model="entity.type" ng-readonly="isReadOnly" ng-disabled="isReadOnly">
 							<option value="Bar">Bar</option>
@@ -62,7 +62,7 @@
 					<div class="col-sm-4">
 						<input type="text" class="form-control" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly"  />
 					</div>
-					<label class="col-sm-1 control-label input-sm">Localidad</label>
+					<label class="col-sm-2 control-label input-sm">Localidad</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly"  />
 					</div>
@@ -72,7 +72,7 @@
 					<div class="col-sm-4">
 						<input type="text" class="form-control" ng-model="entity.address.road" ng-readonly="isReadOnly"  />
 					</div>
-					<label class="col-sm-1 control-label input-sm">N&uacute;mero</label>
+					<label class="col-sm-2 control-label input-sm">N&uacute;mero</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.address.number" ng-readonly="isReadOnly"  />
 					</div>
@@ -82,7 +82,7 @@
 					<div class="col-sm-4">
 						<input type="text" class="form-control" ng-model="entity.email" ng-readonly="isReadOnly" />
 					</div>
-					<label class="col-sm-1 control-label input-sm">Serie</label>
+					<label class="col-sm-2 control-label input-sm">Serie</label>
 					<div class="col-sm-4">
 						<div class="input-group">
 							<input type="text" class="form-control" ng-model="entity.billSequencePrefix" ng-readonly="isReadOnly" />
@@ -102,7 +102,7 @@
 							<span class="input-group-addon glyphicon glyphicon-calendar"></span>
 						</div>
 					</div>
-					<label class="col-sm-1 control-label input-sm">Fin</label>
+					<label class="col-sm-2 control-label input-sm">Fin</label>
 					<div class="col-sm-4">
 						<div class="input-group">
 							<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="entity.endDate"

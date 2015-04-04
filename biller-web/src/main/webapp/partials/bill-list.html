@@ -8,19 +8,19 @@
 	<div class="col-sm-9">
 		<h4>
 			<span class="glyphicon glyphicon-file text-muted"></span>
-			<span>Facturas <small>({{results.totalItems}} resultados)</small></span>
+			<span>{{'bills' | translate}} <small>({{results.totalItems}} {{'resultsLowerCase' | translate}})</small></span>
 		</h4>
-		<div ng-if="results.results.length < 1">No se han encontrado resultados</div>
+		<div ng-if="results.results.length < 1">{{'noResults' | translate}}</div>
 		<div ng-if="results.results.length > 0">
 			<table class="table table-hover table-condensed">
 				<tr>
-					<th>N&uacute;mero</th>
-					<th>Establecimiento</th>
-					<th>Empresa</th>
-					<th>Estado</th>
-					<th>Fecha</th>
-					<th>Tipo</th>
-					<th>Importe</th>
+					<th>{{'number' | translate}}</th>
+					<th>{{'store' | translate}}</th>
+					<th>{{'company' | translate}}</th>
+					<th>{{'state' | translate}}</th>
+					<th>{{'date' | translate}}</th>
+					<th>{{'type' | translate}}</th>
+					<th>{{'amount' | translate}}</th>
 					<th></th>
 				</tr>
 				<tr ng-repeat="result in results.results">
@@ -47,25 +47,22 @@
 
 	<div class="col-sm-3">
 		<div>
-			<h4>Filtrar resultados</h4>
+			<h4>{{'filterResults' | translate}}</h4>
 			<form role="form">
 				<div class="form-group">
-					<label>C&oacute;digo</label>
+					<label>{{'code' | translate}}</label>
 					<input type="text" class="form-control input-sm" ng-model="searchOptions.code" />
 				</div>
 				<div class="form-group">
-					<label>Establecimiento</label>
+					<label>{{'store' | translate}}</label>
 					<div store ng-model="searchOptions.store"></div>
-					<!--
-					<input type="text" class="form-control input-sm" typeahead="store as store.name for store in stores($viewValue)" ng-model="searchOptions.store" />
-					-->
 				</div>
 				<div class="form-group">
-					<label>Empresa</label>
+					<label>{{'company' | translate}}</label>
 					<div company ng-model="searchOptions.company"></div>
 				</div>
 				<div class="form-group">
-					<label>Estado</label>
+					<label>{{'state' | translate}}</label>
 					<select class="selectpicker form-control input-sm" ng-model="searchOptions.state">
 						<option value=""></option>
 						<option value="Draft">Borradores</option>
@@ -75,19 +72,15 @@
 					</select>
 				</div>
 				<div class="form-group">
-					<label>Desde</label>
-					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="searchOptions.from"
-							ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
-						<span class="input-group-addon glyphicon glyphicon-calendar"></span>
+					<label>{{'dateFrom' | translate}}</label>
+					<div class="input-group col-sm-12">
+						<div calendar ng-model="searchOptions.from" require="false"></div>
 					</div>
 				</div>
 				<div class="form-group">
-					<label>Hasta</label>
-					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="searchOptions.to"
-							ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
-						<span class="input-group-addon glyphicon glyphicon-calendar"></span>
+					<label>{{'dateTo' | translate}}</label>
+					<div class="input-group col-sm-12">
+						<div calendar ng-model="searchOptions.to" require="false"></div>
 					</div>
 				</div>
 				<div class="form-group">
