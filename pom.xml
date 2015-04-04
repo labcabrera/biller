@@ -30,7 +30,7 @@
 	<modules>
 		<module>biller-core</module>
 		<module>biller-web</module>
-		<module>biller-deploy</module>
+		<!-- module>biller-deploy</module -->
 	</modules>
 
 	<repositories>
