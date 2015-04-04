@@ -2,10 +2,6 @@
 
 	var billerControllers = angular.module('billerControllers');
 
-	/* ----------------------------------------------------------------------------
-	 * GRUPOS DE EMPRESAS
-	 * ----------------------------------------------------------------------------
-	 */
 	billerControllers.controller('GroupListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
 		$scope.currentPage = 1;
 		$scope.searchName = '';
@@ -37,9 +33,10 @@
 		$scope.load = function() {
 			$http.get(REST_PATH + '/groups/id/' + $routeParams.id).success(function(data) {
 				$scope.entity = data;
-				$http.get(REST_PATH + '/companies/find?q=parent.id==' + $routeParams.id).success(function(data) { $scope.childs = data.results; });
+			});
 			$rootScope.isReadOnly = true;
-		});};
+			$scope.setCompanyPage(1);
+		};
 		$scope.update = function() {
 			$http.post(REST_PATH + '/groups/merge/', $scope.entity).success(function(data) {
 				$scope.displayAlert(data);
@@ -55,6 +52,12 @@
 					if(data.code == 200) { $location.path("groups"); } else { $scope.displayAlert(data); }
 				});
 			}
+		};
+		$scope.setCompanyPage = function(page) {
+		    $scope.currentPage = page;
+		    $http.get('rest/companies/find?q=parent.id==' + $routeParams.id + "&n=10" + "&p=" + page).success(function(data) {
+		    	$scope.childs = data;
+		    });
 		};
 		$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
 		$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });

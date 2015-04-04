@@ -48,10 +48,15 @@
 			<div class="tab-content">
 				<div class="tab-pane active" id="companiesTab">
 					<div class="m-top-15">
-						<div ng-if="childs == null || childs.length == 0">No hay empresas asociadas a este grupo</div>
-						<ul class="list-group">
-							<li class="list-group-item" ng-repeat="child in childs"><a href="#/companies/id/{{child.id}}">{{child.name}}</a></li>
-						</ul>
+						<div ng-if="childs == null || childs.results == null || childs.results.length == 0">No hay empresas asociadas a este grupo</div>
+						<div ng-if="childs.totalItems > 0">
+							<ul class="list-group">
+								<li class="list-group-item" ng-repeat="child in childs.results"><a href="#/companies/id/{{child.id}}">{{child.name}}</a></li>
+							</ul>
+							<pagination total-items="childs.totalItems" page="childs.currentPage" items-per-page="childs.itemsPerPage"
+								on-select-page="setCompanyPage(page)" max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior"
+									next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
+						</div>
 					</div>
 				</div>
 				<div class="tab-pane" id="commentsTab">
@@ -86,5 +91,6 @@
 		<div ng-include src="'templates/entity-json-popup.html'"></div>
 	</div>
 </div>
-<pre ng-if="true">{{entity | json}}</pre>
+<pre ng-if="false">{{entity | json}}</pre>
+<pre ng-if="false">{{childs | json}}</pre>
 </html>
