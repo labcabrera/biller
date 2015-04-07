@@ -3,6 +3,9 @@ package com.luckia.biller.web.rest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -19,19 +22,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.Range;
-import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.model.Bill;
-import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
+import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
-import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
@@ -39,8 +40,6 @@ import com.luckia.biller.core.services.bills.LiquidationProcessor;
 public class AdminRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdminRestService.class);
-	private static final int RECALCULATE_BILLS_THREAD_COUNT = 10;
-	private static final boolean DISABLE_RECALCULATE = true;
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
@@ -84,30 +83,16 @@ public class AdminRestService {
 			TypedQuery<Bill> query = entityManager.createQuery(criteria);
 			List<Bill> bills = query.getResultList();
 			LOG.debug("Se van a recalcular {} facturas", bills.size());
-
-			// Store store = entityManager.find(Store.class, storeId);
-			// Validate.notNull(store, "No se encuentra el establecimiento");
-			//
-			// TypedQuery<Bill> query = entityManager.createNamedQuery("Bill.selectByStoreInRange", Bill.class);
-			// query.setParameter("sender", store);
-			// query.setParameter("from", range.getMinimum());
-			// query.setParameter("to", range.getMaximum());
-			// List<Bill> bills = query.getResultList();
-			// String message;
-			// Runnable task = null;
-			// if (bills.isEmpty()) {
-			// task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
-			// message = "Factura generada";
-			// } else if (bills.size() > 1) {
-			// message = "Se han encontrado varias facturas. Utilice la opcion de recalcular desde la vista de facturas.";
-			// } else {
-			// String billId = bills.iterator().next().getId();
-			// task = new BillRecalculationTask(billId, entityManagerProvider, billProcessor);
-			// message = "Factura recalculada";
-			// }
-			// if (task != null) {
-			// new Thread(task).start();
-			// }
+			if (!bills.isEmpty()) {
+				ExecutorService executorService = Executors.newFixedThreadPool(1);
+				for (Bill bill : bills) {
+					Runnable task = new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor);
+					executorService.execute(task);
+				}
+				executorService.shutdown();
+				executorService.awaitTermination(5, TimeUnit.HOURS);
+				LOG.debug("Esperando a la finalizacion de {} tareas", bills.size());
+			}
 			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s facturas", bills.size()));
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
@@ -141,24 +126,19 @@ public class AdminRestService {
 			criteria.where(predicates.toArray(new Predicate[predicates.size()]));
 			TypedQuery<Liquidation> query = entityManager.createQuery(criteria);
 			List<Liquidation> liquidations = query.getResultList();
-			LOG.debug("Se van a recalcular {} facturas", liquidations.size());
-
-			String message;
-			// Runnable task = null;
-			// if (liquidations.isEmpty()) {
-			// task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
-			message = "Liquidación generada";
-			// } else if (liquidations.size() > 1) {
-			// message = "Se han encontrado varias facturas. Utilice la opcion de recalcular desde la vista de facturas.";
-			// } else {
-			// String liquidationId = liquidations.iterator().next().getId();
-			// task = new LiquidationRecalculationTask(liquidationId, entityManagerProvider, liquidationProcessor);
-			// message = "Liquidación recalculada";
-			// }
-			// if (task != null) {
-			// new Thread(task).start();
-			// }
-			return new Message<String>(Message.CODE_SUCCESS, message);
+			LOG.debug("Se van a recalcular {} liquidaciones", liquidations.size());
+			if (!liquidations.isEmpty()) {
+				ExecutorService executorService = Executors.newFixedThreadPool(1);
+				for (Liquidation liquidation : liquidations) {
+					Runnable task = new LiquidationRecalculationTask(liquidation.getId(), entityManagerProvider, liquidationProcessor);
+					executorService.execute(task);
+				}
+				executorService.shutdown();
+				LOG.debug("Esperando a la finalizacion de {} tareas", liquidations.size());
+				executorService.awaitTermination(5, TimeUnit.HOURS);
+				LOG.debug("Finalizada el procesamiento de liquidaciones", liquidations.size());
+			}
+			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s liquidaciones", liquidations.size()));
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
 			return new Message<String>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());
