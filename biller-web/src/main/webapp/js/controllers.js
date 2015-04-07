@@ -954,7 +954,7 @@ billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParam
 			var billYear = $scope.billYear;
 			var billMonth = $scope.billMonth;
 			$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
-			$http.post('rest/admin/recalculate/bills/' + billStore + '/' + billYear + "/" + billMonth).success(function(data) {
+			$http.post('rest/admin/recalculate/bills/' + billYear + "/" + billMonth).success(function(data) {
 				$scope.displayAlert(data);
 			});
 		});
@@ -970,5 +970,16 @@ billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParam
 			});
 		}
 	};
+	$scope.recalculateAllLiquidations = function() {
+		if($rootScope.autoconfirm || window.confirm('Se va a recalcular todas las liquidaciones')) {
+			var liquidationYear = $scope.liquidationYear;
+			var liquidationMonth = $scope.liquidationMonth;
+			var liquidationCompany = $scope.liquidationCompany != null ? $scope.liquidationCompany.id : '';
+			$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
+			$http.post('rest/admin/recalculate/liquidations/' + liquidationYear + "/" + liquidationMonth).success(function(data) {
+				$scope.displayAlert(data);
+			});
+		}
+	}
 }]);
 
