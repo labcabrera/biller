@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.Constants;
 import com.luckia.biller.core.common.MathUtils;
+import com.luckia.biller.core.lis.Lis;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.lis.LisTerminalRecord;
@@ -35,7 +36,7 @@ public class LISBillDataProvider implements BillDataProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(LISBillDataProvider.class);
 
 	@Inject
-	@Named(Constants.LIS)
+	@Lis
 	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private BillFeesService billFeesService;

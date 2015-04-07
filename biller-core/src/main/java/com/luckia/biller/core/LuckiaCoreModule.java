@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.bval.guice.ValidationModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.persist.jpa.JpaPersistModule;
@@ -28,6 +30,8 @@ import com.luckia.biller.core.validation.LegalEntityValidator;
  */
 public class LuckiaCoreModule extends AbstractModule {
 
+	private static final Logger LOG = LoggerFactory.getLogger(LuckiaCoreModule.class);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -35,6 +39,7 @@ public class LuckiaCoreModule extends AbstractModule {
 	 */
 	@Override
 	public void configure() {
+		LOG.debug("Configuring Luckia core module");
 		installJpaModule();
 		install(new ValidationModule());
 		install(new LisModule());
@@ -43,6 +48,7 @@ public class LuckiaCoreModule extends AbstractModule {
 		bind(RappelStoreProcessor.class).to(RappelStoreProcessorImpl.class);
 		bind(BillDataProvider.class).to(LISBillDataProvider.class);
 		bind(LegalEntityValidator.class);
+		LOG.debug("Configured Luckia core module");
 	}
 
 	protected void installJpaModule() {
