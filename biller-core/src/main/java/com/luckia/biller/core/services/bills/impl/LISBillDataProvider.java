@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -20,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.Constants;
 import com.luckia.biller.core.common.MathUtils;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.lis.LisTerminalRecord;
@@ -36,7 +36,7 @@ public class LISBillDataProvider implements BillDataProvider {
 
 	@Inject
 	@Named(Constants.LIS)
-	private EntityManagerProvider entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private BillFeesService billFeesService;
 
@@ -47,7 +47,8 @@ public class LISBillDataProvider implements BillDataProvider {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.billing.BillingDataProvider#retreive(com.luckia.biller.core.model.Bill, org.apache.commons.lang3.Range, java.util.List)
+	 * @see com.luckia.biller.core.services.billing.BillingDataProvider#retreive(com.luckia.biller.core.model.Bill,
+	 * org.apache.commons.lang3.Range, java.util.List)
 	 */
 	@Override
 	public Map<BillConcept, BigDecimal> retreive(Bill bill, Range<Date> range, List<String> terminals) {

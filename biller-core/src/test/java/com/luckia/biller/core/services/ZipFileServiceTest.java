@@ -14,7 +14,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.LuckiaCoreModule;
-import com.luckia.biller.core.jpa.EntityManagerProvider;
 import com.luckia.biller.core.model.Liquidation;
 
 public class ZipFileServiceTest {
