@@ -75,8 +75,8 @@ public class AdminRestService {
 			CriteriaQuery<Bill> criteria = builder.createQuery(Bill.class);
 			Root<Bill> root = criteria.from(Bill.class);
 			List<Predicate> predicates = new ArrayList<Predicate>();
-			predicates.add(builder.greaterThan(root.<Date> get("dateFrom"), range.getMinimum()));
-			predicates.add(builder.greaterThan(root.<Date> get("dateTo"), range.getMaximum()));
+			predicates.add(builder.greaterThanOrEqualTo(root.<Date> get("dateFrom"), range.getMinimum()));
+			predicates.add(builder.lessThanOrEqualTo(root.<Date> get("dateTo"), range.getMaximum()));
 			if (storeId != null) {
 				predicates.add(builder.equal(root.<LegalEntity> get("sender").<Long> get("id"), storeId));
 			}
@@ -129,31 +129,35 @@ public class AdminRestService {
 		try {
 			Range<Date> range = getEffectiveRange(year, month);
 			EntityManager entityManager = entityManagerProvider.get();
-			Company company = entityManager.find(Company.class, companyId);
-			Validate.notNull(company, "No se encuentra la empresa operadora");
-			TypedQuery<Liquidation> query = entityManager.createNamedQuery("Bill.selectByStoreInRange", Liquidation.class);
-			query.setParameter("sender", company);
-			query.setParameter("from", range.getMinimum());
-			query.setParameter("to", range.getMaximum());
-
-			// TODO
-
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+			CriteriaQuery<Liquidation> criteria = builder.createQuery(Liquidation.class);
+			Root<Liquidation> root = criteria.from(Liquidation.class);
+			List<Predicate> predicates = new ArrayList<Predicate>();
+			predicates.add(builder.greaterThanOrEqualTo(root.<Date> get("dateFrom"), range.getMinimum()));
+			predicates.add(builder.lessThanOrEqualTo(root.<Date> get("dateTo"), range.getMaximum()));
+			if (companyId != null) {
+				predicates.add(builder.equal(root.<LegalEntity> get("sender").<Long> get("id"), companyId));
+			}
+			criteria.where(predicates.toArray(new Predicate[predicates.size()]));
+			TypedQuery<Liquidation> query = entityManager.createQuery(criteria);
 			List<Liquidation> liquidations = query.getResultList();
+			LOG.debug("Se van a recalcular {} facturas", liquidations.size());
+
 			String message;
-			Runnable task = null;
-			if (liquidations.isEmpty()) {
-				task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
-				message = "Liquidación generada";
-			} else if (liquidations.size() > 1) {
-				message = "Se han encontrado varias facturas. Utilice la opcion de recalcular desde la vista de facturas.";
-			} else {
-				String liquidationId = liquidations.iterator().next().getId();
-				task = new LiquidationRecalculationTask(liquidationId, entityManagerProvider, liquidationProcessor);
-				message = "Liquidación recalculada";
-			}
-			if (task != null) {
-				new Thread(task).start();
-			}
+			// Runnable task = null;
+			// if (liquidations.isEmpty()) {
+			// task = new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor);
+			message = "Liquidación generada";
+			// } else if (liquidations.size() > 1) {
+			// message = "Se han encontrado varias facturas. Utilice la opcion de recalcular desde la vista de facturas.";
+			// } else {
+			// String liquidationId = liquidations.iterator().next().getId();
+			// task = new LiquidationRecalculationTask(liquidationId, entityManagerProvider, liquidationProcessor);
+			// message = "Liquidación recalculada";
+			// }
+			// if (task != null) {
+			// new Thread(task).start();
+			// }
 			return new Message<String>(Message.CODE_SUCCESS, message);
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
