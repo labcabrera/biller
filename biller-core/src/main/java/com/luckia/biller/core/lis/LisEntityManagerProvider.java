@@ -9,10 +9,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.luckia.biller.core.Constants;
 
 @Singleton
 public class LisEntityManagerProvider implements Provider<EntityManager> {
+
+	private static final Logger LOG = LoggerFactory.getLogger(LisEntityManagerProvider.class);
 
 	private final ThreadLocal<EntityManager> entityManager;
 	private final EntityManagerFactory entityManagerFactory;
@@ -44,7 +49,10 @@ public class LisEntityManagerProvider implements Provider<EntityManager> {
 			for (Object object : appProperties.keySet()) {
 				String key = (String) object;
 				if (key.startsWith(Constants.PROPERTIES_LIS_PREFIX)) {
-					result.put(key.substring(Constants.PROPERTIES_LIS_PREFIX.length()), appProperties.get(key));
+					String lisKey = key.substring(Constants.PROPERTIES_LIS_PREFIX.length());
+					String lisValue = (String) appProperties.get(key);
+					LOG.debug("Setting LIS data base connection property {}: {}", lisKey, lisValue);
+					result.put(lisKey, lisValue);
 				}
 			}
 			return result;
