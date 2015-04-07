@@ -41,6 +41,7 @@ public class LisEntityManagerProvider implements Provider<EntityManager> {
 
 	private Properties readHostProperties() {
 		try {
+			LOG.debug("Reading LIS properties");
 			Properties result = new Properties();
 			Properties appProperties = new Properties();
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -48,6 +49,7 @@ public class LisEntityManagerProvider implements Provider<EntityManager> {
 			appProperties.load(in);
 			for (Object object : appProperties.keySet()) {
 				String key = (String) object;
+				LOG.debug("Filtering property {}", key);
 				if (key.startsWith(Constants.PROPERTIES_LIS_PREFIX)) {
 					String lisKey = key.substring(Constants.PROPERTIES_LIS_PREFIX.length());
 					String lisValue = (String) appProperties.get(key);
