@@ -10,7 +10,6 @@ import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
@@ -48,16 +47,16 @@ public class LiquidationRecalculationTask implements Runnable {
 	@Override
 	public void run() {
 		EntityManager entityManager = entityManagerProvider.get();
+		Boolean currentTransaction = entityManager.getTransaction().isActive();
+		if (!currentTransaction) {
+			entityManager.getTransaction().begin();
+		}
 		Liquidation liquidation = entityManagerProvider.get().find(Liquidation.class, liquidationId);
 		entityManager.lock(liquidation, LockModeType.PESSIMISTIC_READ);
 		LOG.debug("Eliminando liquidacion {}", liquidation);
 		LOG.info("Recalculando liquidacion de {} de {}", liquidation.getSender().getName(), liquidation.getDateTo());
 		Range<Date> range = Range.between(liquidation.getDateFrom(), liquidation.getDateTo());
 		Long companyId = liquidation.getSender().getId();
-		Boolean currentTransaction = entityManager.getTransaction().isActive();
-		if (!currentTransaction) {
-			entityManager.getTransaction().begin();
-		}
 		entityManager.createQuery("update Bill e set e.liquidation = null where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
 		entityManager.createQuery("delete from LiquidationDetail e where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
 		entityManager.flush();
