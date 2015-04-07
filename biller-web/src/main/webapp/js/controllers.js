@@ -948,6 +948,17 @@ billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParam
 			});
 		});
 	};
+	$scope.recalculateAllBills = function() {
+		var dlg = dialogs.confirm('Confirmacion','Desea recalcular todas las facturas? Los ajustes manuales se perderan');
+		dlg.result.then(function(btn){
+			var billYear = $scope.billYear;
+			var billMonth = $scope.billMonth;
+			$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
+			$http.post('rest/admin/recalculate/bills/' + billStore + '/' + billYear + "/" + billMonth).success(function(data) {
+				$scope.displayAlert(data);
+			});
+		});
+	};
 	$scope.recalculateLiquidation = function() {
 		if($rootScope.autoconfirm || window.confirm('Se va a recalcular la liquidacion')) {
 			var liquidationYear = $scope.liquidationYear;
