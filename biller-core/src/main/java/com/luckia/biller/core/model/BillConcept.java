@@ -58,5 +58,11 @@ public enum BillConcept {
 	ManualWithoutLiquidation,
 
 	/** Cualquier otro concepto de facturacion que no este incluido en el modelo */
-	Other
+	Other,
+
+	/** Total apostado. */
+	TotalBetAmount,
+
+	/** Cancelaciones. */
+	Cance1lled;
 }

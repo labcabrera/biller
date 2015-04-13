@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -19,7 +18,6 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.Constants;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.lis.Lis;
 import com.luckia.biller.core.model.Bill;
@@ -87,6 +85,8 @@ public class LISBillDataProvider implements BillDataProvider {
 			BigDecimal gastosOperativos = coOperatingMonthlyFees;
 			BigDecimal nr = ngr.subtract(gastosOperativos);
 			BigDecimal storeCash = stakes.subtract(totalWinAmount);
+			map.put(BillConcept.TotalBetAmount, totalBetAmount);
+			map.put(BillConcept.Cance1lled, totalCancelledAmount);
 			map.put(BillConcept.Stakes, stakes);
 			map.put(BillConcept.GGR, ggr);
 			map.put(BillConcept.NGR, ngr);
