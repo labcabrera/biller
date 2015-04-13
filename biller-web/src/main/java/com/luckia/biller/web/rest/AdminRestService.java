@@ -22,7 +22,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.Range;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +34,7 @@ import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
+import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
@@ -91,7 +91,7 @@ public class AdminRestService {
 					tasks.add(new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor));
 				}
 				LOG.debug("Esperando a la finalizacion de {} tareas", bills.size());
-			} else if (bills.isEmpty() && storeId != null) {
+			} else if (storeId != null) {
 				LOG.debug("No se han encontrado facturas para el establecimiento {}. Generando de cero", storeId);
 				tasks.add(new BillTask(storeId, range, entityManagerProvider, billProcessor));
 			}
@@ -102,6 +102,7 @@ public class AdminRestService {
 				}
 				executorService.shutdown();
 				executorService.awaitTermination(5, TimeUnit.HOURS);
+				LOG.debug("Finalizado el tratamiento de {} tareas", tasks.size());
 			}
 			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s facturas", bills.size()));
 		} catch (Exception ex) {
@@ -136,17 +137,23 @@ public class AdminRestService {
 			criteria.where(predicates.toArray(new Predicate[predicates.size()]));
 			TypedQuery<Liquidation> query = entityManager.createQuery(criteria);
 			List<Liquidation> liquidations = query.getResultList();
-			LOG.debug("Se van a recalcular {} liquidaciones", liquidations.size());
+			List<Runnable> tasks = new ArrayList<>();
 			if (!liquidations.isEmpty()) {
-				ExecutorService executorService = Executors.newFixedThreadPool(1);
+				LOG.debug("Se van a recalcular {} liquidaciones", liquidations.size());
 				for (Liquidation liquidation : liquidations) {
-					Runnable task = new LiquidationRecalculationTask(liquidation.getId(), entityManagerProvider, liquidationProcessor);
+					tasks.add(new LiquidationRecalculationTask(liquidation.getId(), entityManagerProvider, liquidationProcessor));
+				}
+			} else if (companyId != null) {
+				tasks.add(new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor));
+			}
+			if (!tasks.isEmpty()) {
+				ExecutorService executorService = Executors.newFixedThreadPool(1);
+				for (Runnable task : tasks) {
 					executorService.execute(task);
 				}
 				executorService.shutdown();
-				LOG.debug("Esperando a la finalizacion de {} tareas", liquidations.size());
 				executorService.awaitTermination(5, TimeUnit.HOURS);
-				LOG.debug("Finalizada el procesamiento de liquidaciones", liquidations.size());
+				LOG.debug("Finalizado el tratamiento de {} tareas", tasks.size());
 			}
 			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s liquidaciones", liquidations.size()));
 		} catch (Exception ex) {
