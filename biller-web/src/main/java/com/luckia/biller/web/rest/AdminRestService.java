@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
+import com.luckia.biller.core.scheduler.tasks.BillTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
@@ -82,16 +84,24 @@ public class AdminRestService {
 			criteria.where(predicates.toArray(new Predicate[predicates.size()]));
 			TypedQuery<Bill> query = entityManager.createQuery(criteria);
 			List<Bill> bills = query.getResultList();
-			LOG.debug("Se van a recalcular {} facturas", bills.size());
+			List<Runnable> tasks = new ArrayList<>();
 			if (!bills.isEmpty()) {
-				ExecutorService executorService = Executors.newFixedThreadPool(1);
+				LOG.debug("Se van a recalcular {} facturas", bills.size());
 				for (Bill bill : bills) {
-					Runnable task = new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor);
+					tasks.add(new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor));
+				}
+				LOG.debug("Esperando a la finalizacion de {} tareas", bills.size());
+			} else if (bills.isEmpty() && storeId != null) {
+				LOG.debug("No se han encontrado facturas para el establecimiento {}. Generando de cero", storeId);
+				tasks.add(new BillTask(storeId, range, entityManagerProvider, billProcessor));
+			}
+			if (!tasks.isEmpty()) {
+				ExecutorService executorService = Executors.newFixedThreadPool(1);
+				for (Runnable task : tasks) {
 					executorService.execute(task);
 				}
 				executorService.shutdown();
 				executorService.awaitTermination(5, TimeUnit.HOURS);
-				LOG.debug("Esperando a la finalizacion de {} tareas", bills.size());
 			}
 			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s facturas", bills.size()));
 		} catch (Exception ex) {
