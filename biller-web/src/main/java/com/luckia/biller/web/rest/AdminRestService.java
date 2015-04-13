@@ -104,7 +104,7 @@ public class AdminRestService {
 				executorService.awaitTermination(5, TimeUnit.HOURS);
 				LOG.debug("Finalizado el tratamiento de {} tareas", tasks.size());
 			}
-			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s facturas", bills.size()));
+			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s facturas", tasks.size()));
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
 			return new Message<String>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());
@@ -155,7 +155,7 @@ public class AdminRestService {
 				executorService.awaitTermination(5, TimeUnit.HOURS);
 				LOG.debug("Finalizado el tratamiento de {} tareas", tasks.size());
 			}
-			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s liquidaciones", liquidations.size()));
+			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s liquidaciones", tasks.size()));
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
 			return new Message<String>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());
