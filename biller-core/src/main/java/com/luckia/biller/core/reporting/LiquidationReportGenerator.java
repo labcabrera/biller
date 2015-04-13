@@ -115,6 +115,8 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "Importe neto");
 		createHeaderCell(sheet, currentRow, cell++, "Iva");
 		cell++;
+		createHeaderCell(sheet, currentRow, cell++, "Apostado");
+		createHeaderCell(sheet, currentRow, cell++, "Cancelado");
 		createHeaderCell(sheet, currentRow, cell++, "Stakes (base)");
 		createHeaderCell(sheet, currentRow, cell++, "GGR (base)");
 		createHeaderCell(sheet, currentRow, cell++, "NGR (base)");
@@ -171,6 +173,8 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, bill.getNetAmount());
 			createCell(sheet, currentRow, cell++, bill.getVatAmount());
 			cell++;
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalBetAmount));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Cance1lled));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Stakes));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.GGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NGR));
