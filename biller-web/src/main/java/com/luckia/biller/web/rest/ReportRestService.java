@@ -66,6 +66,7 @@ public class ReportRestService {
 	@Path("/liquidations")
 	public Response liquidations(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString, @QueryParam("ids") String entityIds) {
 		try {
+			LOG.debug("Generando informe de liquidacines ({},{},{}", fromAsString, toAsString, entityIds);
 			Date from = new SimpleDateFormat("yyyy-MM-dd").parse(fromAsString);
 			Date to = new SimpleDateFormat("yyyy-MM-dd").parse(toAsString);
 			List<String> ids = Arrays.asList(entityIds.split("\\s,\\s"));

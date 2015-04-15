@@ -63,6 +63,9 @@ public class LiquidationReportGenerator extends BaseReport {
 			Validate.notNull(from);
 			Validate.notNull(to);
 			LOG.debug("Generando informe de liquidacione entre {} y {}", DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
+			for (LegalEntity i : entities) {
+				LOG.debug("  Operadora: {}", i.getName());
+			}
 			Map<LegalEntity, List<Liquidation>> liquidationMap = dataSource.getLiquidations(from, to, entities);
 			if (!liquidationMap.isEmpty()) {
 				HSSFWorkbook workbook = new HSSFWorkbook();
