@@ -64,5 +64,5 @@ public enum BillConcept {
 	TotalBetAmount,
 
 	/** Cancelaciones. */
-	Cance1lled;
+	Cance1lled, TotalWinAmount, TotalAttributable, Margin;
 }

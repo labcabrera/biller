@@ -68,7 +68,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.impl.LiquidationProcessor#process(com.luckia.biller.core.model.Company, org.apache.commons.lang3.Range)
+	 * @see com.luckia.biller.core.services.bills.impl.LiquidationProcessor#process(com.luckia.biller.core.model.Company,
+	 * org.apache.commons.lang3.Range)
 	 */
 	@Override
 	@Transactional
@@ -110,6 +111,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		BigDecimal storeAmount = BigDecimal.ZERO;
 		BigDecimal adjustmentsAmount = BigDecimal.ZERO;
 		BigDecimal cashStore = BigDecimal.ZERO;
+		BigDecimal pricePerLocation = BigDecimal.ZERO;
 		for (Bill bill : liquidation.getBills()) {
 			if (bill.getModel() == null) {
 				LOG.warn("Ignorando factura sin modelo de facturacion asociado (posiblemente no este definida a nivel de establecimiento)");
@@ -117,6 +119,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			}
 			betAmount = betAmount.add(bill.getLiquidationBetAmount() != null ? bill.getLiquidationBetAmount() : BigDecimal.ZERO);
 			satAmount = satAmount.add(bill.getLiquidationSatAmount() != null ? bill.getLiquidationSatAmount() : BigDecimal.ZERO);
+			pricePerLocation = pricePerLocation.add(bill.getLiquidationPricePerLocation() != null ? bill.getLiquidationPricePerLocation() : BigDecimal.ZERO);
 			otherBillAmount = otherBillAmount.add(bill.getLiquidationOtherAmount() != null ? bill.getLiquidationOtherAmount() : BigDecimal.ZERO);
 			adjustmentsAmount = adjustmentsAmount.add(bill.getAdjustmentAmount() != null ? bill.getAdjustmentAmount() : BigDecimal.ZERO);
 			cashStore = cashStore.add(bill.getStoreCash() != null ? bill.getStoreCash() : BigDecimal.ZERO);
@@ -132,6 +135,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		results.setBetAmount(betAmount);
 		results.setStoreAmount(storeAmount);
 		results.setSatAmount(satAmount);
+		results.setPricePerLocation(pricePerLocation);
 		results.setOtherAmount(otherBillAmount);
 		results.setAdjustmentAmount(adjustmentsAmount);
 		results.setAdjustmentSharedAmount(adjustmentsAmount.divide(new BigDecimal("2"), 2, RoundingMode.HALF_EVEN));
@@ -243,7 +247,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	}
 
 	/**
-	 * Comprobamos que todas las facturas de la liquidacion han sido aceptadas. En caso de que alguna factura no esté aceptada eleva un {@link ValidationException}
+	 * Comprobamos que todas las facturas de la liquidacion han sido aceptadas. En caso de que alguna factura no esté aceptada eleva un
+	 * {@link ValidationException}
 	 * 
 	 * @param liquidation
 	 */

@@ -56,6 +56,9 @@ public class BillingModelAttributes implements Mergeable<BillingModelAttributes>
 	@Column(name = "SAT_MONTLY_FEES", precision = 18, scale = 2)
 	private BigDecimal satMonthlyFees;
 
+	@Column(name = "PRICE_PER_LOCATION", precision = 18, scale = 2)
+	private BigDecimal pricePerLocation;
+
 	public BigDecimal getStakesPercent() {
 		return stakesPercent;
 	}
@@ -122,6 +125,7 @@ public class BillingModelAttributes implements Mergeable<BillingModelAttributes>
 			this.nrPercent = entity.nrPercent;
 			this.satMonthlyFees = entity.satMonthlyFees;
 			this.stakesPercent = entity.stakesPercent;
+			this.pricePerLocation = entity.pricePerLocation;
 		}
 	}
 }

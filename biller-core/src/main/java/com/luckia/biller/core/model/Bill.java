@@ -98,6 +98,9 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	@Column(name = "LIQUIDATION_SAT_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal liquidationSatAmount;
 
+	@Column(name = "LIQUIDATION_PRICE_PER_LOCATION", precision = 18, scale = 2)
+	private BigDecimal liquidationPricePerLocation;
+
 	@Column(name = "LIQUIDATION_OTHER_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal liquidationOtherAmount;
 
@@ -227,6 +230,14 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	public void setLiquidationOtherAmount(BigDecimal liquidationOtherAmount) {
 		this.liquidationOtherAmount = liquidationOtherAmount;
+	}
+
+	public BigDecimal getLiquidationPricePerLocation() {
+		return liquidationPricePerLocation;
+	}
+
+	public void setLiquidationPricePerLocation(BigDecimal liquidationPricePerLocation) {
+		this.liquidationPricePerLocation = liquidationPricePerLocation;
 	}
 
 	/*

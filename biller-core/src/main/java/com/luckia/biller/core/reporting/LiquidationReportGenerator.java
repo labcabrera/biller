@@ -115,9 +115,12 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "Importe neto");
 		createHeaderCell(sheet, currentRow, cell++, "Iva");
 		cell++;
-		createHeaderCell(sheet, currentRow, cell++, "Apostado");
-		createHeaderCell(sheet, currentRow, cell++, "Cancelado");
+		createHeaderCell(sheet, currentRow, cell++, "Apostado (base)");
+		createHeaderCell(sheet, currentRow, cell++, "Cancelado (base)");
+		createHeaderCell(sheet, currentRow, cell++, "Premios (base)");
 		createHeaderCell(sheet, currentRow, cell++, "Stakes (base)");
+		createHeaderCell(sheet, currentRow, cell++, "Imputable (base)");
+		createHeaderCell(sheet, currentRow, cell++, "Margen (base)");
 		createHeaderCell(sheet, currentRow, cell++, "GGR (base)");
 		createHeaderCell(sheet, currentRow, cell++, "NGR (base)");
 		createHeaderCell(sheet, currentRow, cell++, "NR (base)");
@@ -175,7 +178,10 @@ public class LiquidationReportGenerator extends BaseReport {
 			cell++;
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalBetAmount));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Cance1lled));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalWinAmount));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Stakes));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalAttributable));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Margin));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.GGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NR));
