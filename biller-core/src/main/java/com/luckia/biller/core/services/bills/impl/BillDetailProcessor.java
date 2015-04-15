@@ -29,7 +29,8 @@ import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.bills.BillDataProvider;
 
 /**
- * Servicio encargado de crear los detalles de una factura a partir de los datos obtenidos a traves de {@link BillDataProvider}. Esto genera dos listas de conceptos:
+ * Servicio encargado de crear los detalles de una factura a partir de los datos obtenidos a traves de {@link BillDataProvider}. Esto genera
+ * dos listas de conceptos:
  * <ul>
  * <li>Conceptos de facturacion: en principio solo se facturara a los bares por un porcentaje de las ventas</li>
  * <li>Conceptos de liquidacion: en este punto se generan los conceptos a partir de los cuales se realizara la liquidacion conjunta.</li>
@@ -63,6 +64,7 @@ public class BillDetailProcessor {
 		} else {
 			Range<Date> range = Range.between(bill.getDateFrom(), bill.getDateTo());
 			Map<BillConcept, BigDecimal> billingData = billingDataProvider.retreive(bill, range, terminals);
+			bill.setBillingRawData(billingData);
 			BigDecimal vatPercent = settingsService.getBillingSettings().getValue("vat", BigDecimal.class);
 			BigDecimal vatDivisor = BigDecimal.ONE.add(vatPercent.divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN));
 
