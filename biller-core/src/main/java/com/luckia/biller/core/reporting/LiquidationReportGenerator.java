@@ -85,6 +85,7 @@ public class LiquidationReportGenerator extends BaseReport {
 	}
 
 	private void processSheet(LegalEntity operator, List<Liquidation> liquidations, HSSFWorkbook workbook) {
+		LOG.debug("Procesando hoja de liquidacion del operador {}", operator.getName());
 		HSSFSheet sheet = workbook.createSheet(operator.getName());
 		int currentRow = 0;
 		for (int i = 0; i < liquidations.size(); i++) {
