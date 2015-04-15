@@ -22,8 +22,8 @@
 						<th></th>
 					</tr>
 					<tr ng-repeat="result in results.results">
-						<td><a href="#liquidations/id/{{result.id}}">{{result.sender.name}}</a></td>
-						<td><a href="#liquidations/id/{{result.id}}">{{result.receiver.name}}</a></td>
+						<td><a href="#liquidations/id/{{result.id}}">{{ result.sender.name | limitTo: 18 }}{{result.sender.name.length > 18 ? '...' : ''}}</a></td>
+						<td><a href="#liquidations/id/{{result.id}}">{{ result.receiver.name | limitTo: 18 }}{{result.receiver.name.length > 18 ? '...' : ''}}</a></td>
 						<td>{{result.code}}</td>
 						<td>
 							<span ng-if="result.currentState.stateDefinition.id == 'Draft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
