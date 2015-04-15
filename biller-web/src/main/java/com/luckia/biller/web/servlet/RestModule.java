@@ -59,6 +59,8 @@ public class RestModule implements Module {
 		binder.bind(StoreRestService.class);
 		binder.bind(TerminalRelationRestService.class);
 		binder.bind(UserRestService.class);
+		// Filtro para limpiar las sesiones de JPA
+		binder.bind(RestPersistFilter.class);
 		// Deshabilitamos la seguridad
 		// binder.bind(SecurityInterceptor.class);
 	}
