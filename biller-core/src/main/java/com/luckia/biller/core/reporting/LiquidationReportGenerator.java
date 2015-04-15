@@ -214,8 +214,11 @@ public class LiquidationReportGenerator extends BaseReport {
 	}
 
 	private BigDecimal getLiquidationConceptBaseValue(Bill bill, BillConcept concept) {
-		BillLiquidationDetail detail = getLiquidationConcept(bill, concept);
-		return detail != null ? detail.getBaseValue() : null;
+		BigDecimal result = BigDecimal.ZERO;
+		if (bill.getBillingRawData() != null && bill.getBillingRawData().containsKey(concept)) {
+			result = bill.getBillingRawData().get(concept);
+		}
+		return result;
 	}
 
 	private BigDecimal getLiquidationConceptValue(Bill bill, BillConcept concept) {
