@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.joda.time.DateTime;
@@ -80,7 +81,7 @@ public class ReportRestService {
 			calculateRange(fromAsString, toAsString, from, to);
 			String[] ids = entityIds.split("\\s,\\s");
 			List<Company> entities;
-			if (ids.length > 0) {
+			if (StringUtils.isNotBlank(entityIds) && ids.length > 0) {
 				String qlString = "select e from LegalEntity e where e.id in :ids";
 				TypedQuery<Company> query = entityManagerProvider.get().createQuery(qlString, Company.class);
 				entities = query.setParameter("ids", Arrays.asList(ids)).getResultList();
