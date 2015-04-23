@@ -3,6 +3,7 @@ package com.luckia.biller.core.reporting;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -55,12 +56,15 @@ public class TerminalReportGenerator extends BaseReport {
 			List<TerminalRelation> relations = query.getResultList();
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			init(workbook);
-			HSSFSheet sheet = workbook.createSheet("Terminales");
+			HSSFSheet sheet = workbook.createSheet("Terminales " + new SimpleDateFormat("dd/MM/yyyy").format(date));
 			int rowIndex = 0;
 			int cellIndex = 0;
 			createHeaderCell(sheet, rowIndex, cellIndex++, "Terminal");
-			createHeaderCell(sheet, rowIndex, cellIndex++, "Fecha");
 			createHeaderCell(sheet, rowIndex, cellIndex++, "Establecimiento");
+			createHeaderCell(sheet, rowIndex, cellIndex++, "Operador");
+			createHeaderCell(sheet, rowIndex, cellIndex++, "Centro de coste");
+			createHeaderCell(sheet, rowIndex, cellIndex++, "Fecha inicio");
+			createHeaderCell(sheet, rowIndex, cellIndex++, "Fecha fin");
 			createHeaderCell(sheet, rowIndex, cellIndex++, "Provincia");
 			createHeaderCell(sheet, rowIndex, cellIndex++, "Localidad");
 			createHeaderCell(sheet, rowIndex, cellIndex++, "Código postal");
@@ -74,14 +78,17 @@ public class TerminalReportGenerator extends BaseReport {
 				if (store != null) {
 					Address address = relation.getStore().getAddress();
 					createCell(sheet, rowIndex, cellIndex++, relation.getCode());
-					createCell(sheet, rowIndex, cellIndex++, date);
 					createCell(sheet, rowIndex, cellIndex++, store.getName());
+					createCell(sheet, rowIndex, cellIndex++, store.getParent() != null ? store.getParent().getName() : StringUtils.EMPTY);
+					createCell(sheet, rowIndex, cellIndex++, store.getCostCenter() != null ? store.getCostCenter().getName() : StringUtils.EMPTY);
+					createCell(sheet, rowIndex, cellIndex++, store.getStartDate());
+					createCell(sheet, rowIndex, cellIndex++, store.getEndDate());
 					createCell(sheet, rowIndex, cellIndex++, address != null && address.getProvince() != null ? address.getProvince().getName() : StringUtils.EMPTY);
 					createCell(sheet, rowIndex, cellIndex++, address != null && address.getRegion() != null ? address.getRegion().getName() : StringUtils.EMPTY);
 					createCell(sheet, rowIndex, cellIndex++, address != null && address.getZipCode() != null ? address.getZipCode() : StringUtils.EMPTY);
 					createCell(sheet, rowIndex, cellIndex++, address != null && address.getRoad() != null ? address.getRoad() : StringUtils.EMPTY);
 					createCell(sheet, rowIndex, cellIndex++, relation.getStore().getPhoneNumber() != null ? relation.getStore().getPhoneNumber() : StringUtils.EMPTY);
-					createCell(sheet, rowIndex, cellIndex++, relation.getComments() != null ? relation.getComments() : StringUtils.EMPTY);
+					createCell(sheet, rowIndex, cellIndex++, store.getComments() != null ? store.getComments() : StringUtils.EMPTY);
 				} else {
 					createDisabledCell(sheet, rowIndex, cellIndex++, relation.getCode());
 					createDisabledCell(sheet, rowIndex, cellIndex++, date);
