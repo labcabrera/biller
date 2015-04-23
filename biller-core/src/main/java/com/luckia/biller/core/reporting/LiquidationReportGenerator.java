@@ -215,6 +215,7 @@ public class LiquidationReportGenerator extends BaseReport {
 
 				}
 			}
+			createCell(sheet, currentRow, cell++, sb.toString());
 			cell++;
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Stakes));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SatMonthlyFees));
@@ -222,7 +223,6 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, BigDecimal.ZERO);
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Adjustment));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Other));
-			createCell(sheet, currentRow, cell++, sb.toString());
 			currentRow++;
 		}
 		return currentRow;
