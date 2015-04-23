@@ -141,7 +141,8 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "SAT");
 		createHeaderCell(sheet, currentRow, cell++, "ATC");
 		createHeaderCell(sheet, currentRow, cell++, "Coste ubicacion");
-		createHeaderCell(sheet, currentRow, cell++, "Ajustes");
+		createHeaderCell(sheet, currentRow, cell++, "Ajustes liquidacion");
+		createHeaderCell(sheet, currentRow, cell++, "Otros");
 		return currentRow + 1;
 	}
 
@@ -206,6 +207,7 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SatMonthlyFees));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CommercialMonthlyFees));
 			createCell(sheet, currentRow, cell++, BigDecimal.ZERO);
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Adjustment));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Other));
 			StringBuffer sb = new StringBuffer();
 			if (Store.class.isAssignableFrom(bill.getSender().getClass())) {
