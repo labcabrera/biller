@@ -203,12 +203,6 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NR));
 			cell++;
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Stakes));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SatMonthlyFees));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CommercialMonthlyFees));
-			createCell(sheet, currentRow, cell++, BigDecimal.ZERO);
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Adjustment));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Other));
 			StringBuffer sb = new StringBuffer();
 			if (Store.class.isAssignableFrom(bill.getSender().getClass())) {
 				Store store = bill.getSender().as(Store.class);
@@ -221,6 +215,13 @@ public class LiquidationReportGenerator extends BaseReport {
 
 				}
 			}
+			cell++;
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Stakes));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SatMonthlyFees));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CommercialMonthlyFees));
+			createCell(sheet, currentRow, cell++, BigDecimal.ZERO);
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Adjustment));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Other));
 			createCell(sheet, currentRow, cell++, sb.toString());
 			currentRow++;
 		}
