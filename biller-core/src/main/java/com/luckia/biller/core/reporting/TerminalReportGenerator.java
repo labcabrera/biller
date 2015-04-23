@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.AppFile;
+import com.luckia.biller.core.model.Company;
+import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
@@ -37,26 +39,33 @@ public class TerminalReportGenerator extends BaseReport {
 	@Inject
 	private FileService fileService;
 
-	public Message<AppFile> generate(Date date) {
+	public Message<AppFile> generate(Date date, Company company, CostCenter costCenter) {
 		date = date != null ? date : Calendar.getInstance().getTime();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		generate(date, out);
+		generate(date, out, company, costCenter);
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 		String fileName = String.format("Terminales-%s.xls", DateFormatUtils.ISO_DATE_FORMAT.format(date));
 		AppFile appFile = fileService.save(fileName, FileService.CONTENT_TYPE_EXCEL, in);
 		return new Message<AppFile>(Message.CODE_SUCCESS, "Informe generado", appFile);
 	}
 
-	public Message<String> generate(Date date, OutputStream out) {
+	public Message<String> generate(Date date, OutputStream out, Company company, CostCenter costCenter) {
 		try {
 			Validate.notNull(date);
 			LOG.debug("Generando informe de terminales a fecha {}", DateFormatUtils.ISO_DATE_FORMAT.format(date));
 			EntityManager entityManager = entityManagerProvider.get();
-			TypedQuery<TerminalRelation> query = entityManager.createQuery("select e from TerminalRelation e order by e.code", TerminalRelation.class);
+			TypedQuery<TerminalRelation> query;
+			if (company != null) {
+				query = entityManager.createQuery("select e from TerminalRelation e where e.store.parent = :company order by e.code", TerminalRelation.class);
+				query.setParameter("company", company);
+			} else {
+				query = entityManager.createQuery("select e from TerminalRelation e order by e.code", TerminalRelation.class);
+			}
 			List<TerminalRelation> relations = query.getResultList();
+			LOG.debug("Encontrados {} terminales", relations.size());
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			init(workbook);
-			HSSFSheet sheet = workbook.createSheet("Terminales " + new SimpleDateFormat("dd/MM/yyyy").format(date));
+			HSSFSheet sheet = workbook.createSheet("Terminales " + new SimpleDateFormat("dd-MM-yyyy").format(date));
 			int rowIndex = 0;
 			int cellIndex = 0;
 			createHeaderCell(sheet, rowIndex, cellIndex++, "Terminal");
@@ -91,13 +100,12 @@ public class TerminalReportGenerator extends BaseReport {
 					createCell(sheet, rowIndex, cellIndex++, store.getComments() != null ? store.getComments() : StringUtils.EMPTY);
 				} else {
 					createDisabledCell(sheet, rowIndex, cellIndex++, relation.getCode());
-					createDisabledCell(sheet, rowIndex, cellIndex++, date);
-					for (int i = 0; i < 7; i++) {
+					for (int i = 0; i < 11; i++) {
 						createDisabledCell(sheet, rowIndex, cellIndex++, StringUtils.EMPTY);
 					}
 				}
 			}
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < 20; i++) {
 				sheet.autoSizeColumn(i);
 			}
 			workbook.write(out);

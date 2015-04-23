@@ -3,6 +3,8 @@ package com.luckia.biller.web.rest;
 import java.util.Iterator;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.i18n.I18nService;
+import com.luckia.biller.core.model.Owner;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
@@ -34,6 +37,8 @@ public class StoreRestService {
 	private StoreEntityService entityService;
 	@Inject
 	private I18nService i18nService;
+	@Inject
+	private Provider<EntityManager> entityManagerProvider;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -63,6 +68,11 @@ public class StoreRestService {
 	@Path("/merge")
 	public Message<Store> merge(Store entity) {
 		try {
+			Owner owner = null;
+			if (entity.getOwner() != null && entity.getOwner().getId() != null) {
+				owner = entityManagerProvider.get().find(Owner.class, entity.getOwner().getId());
+			}
+			entity.setOwner(owner);
 			return entityService.merge(entity);
 		} catch (PersistenceException ex) {
 			LOG.error("Error al actualizar el establecimiento", ex);

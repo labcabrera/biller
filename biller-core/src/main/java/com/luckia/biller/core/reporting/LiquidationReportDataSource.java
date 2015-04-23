@@ -10,6 +10,7 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
 
@@ -18,7 +19,7 @@ public class LiquidationReportDataSource {
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 
-	public Map<LegalEntity, List<Liquidation>> getLiquidations(Date from, Date to, List<LegalEntity> entities) {
+	public Map<LegalEntity, List<Liquidation>> getLiquidations(Date from, Date to, List<Company> entities) {
 		EntityManager entityManager = entityManagerProvider.get();
 		String qlString = "select e from Liquidation e where e.sender = :sender and e.dateFrom >= :from and e.dateTo <= :to order by e.dateFrom";
 		TypedQuery<Liquidation> query = entityManager.createQuery(qlString, Liquidation.class);

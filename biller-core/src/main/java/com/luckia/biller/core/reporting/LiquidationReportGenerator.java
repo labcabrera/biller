@@ -26,6 +26,7 @@ import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.BillerComparator;
+import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
@@ -45,7 +46,7 @@ public class LiquidationReportGenerator extends BaseReport {
 	@Inject
 	private FileService fileService;
 
-	public Message<AppFile> generate(Date from, Date to, List<LegalEntity> entities) {
+	public Message<AppFile> generate(Date from, Date to, List<Company> entities) {
 		if (from == null && to == null) {
 			from = new DateTime().minusMonths(1).dayOfMonth().withMinimumValue().toDate();
 			to = new DateTime().minusMonths(1).dayOfMonth().withMaximumValue().toDate();
@@ -58,7 +59,7 @@ public class LiquidationReportGenerator extends BaseReport {
 		return new Message<AppFile>(Message.CODE_SUCCESS, "Informe generado", appFile);
 	}
 
-	public Message<String> generate(Date from, Date to, List<LegalEntity> entities, OutputStream out) {
+	public Message<String> generate(Date from, Date to, List<Company> entities, OutputStream out) {
 		try {
 			Validate.notNull(from);
 			Validate.notNull(to);

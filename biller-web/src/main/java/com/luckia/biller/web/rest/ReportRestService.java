@@ -19,10 +19,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.lang3.mutable.Mutable;
+import org.apache.commons.lang3.mutable.MutableObject;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.model.AppFile;
+import com.luckia.biller.core.model.Company;
+import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.reporting.LiquidationReportGenerator;
@@ -46,10 +51,13 @@ public class ReportRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("/terminals")
-	public Response terminals(@QueryParam("date") String dateAsString) {
+	public Response terminals(@QueryParam("date") String dateAsString, @QueryParam("companyId") Long companyId, @QueryParam("costCenterId") Long costCenterId) {
 		try {
 			Date date = Calendar.getInstance().getTime();
-			Message<AppFile> message = terminalReportGenerator.generate(date);
+			EntityManager entityManager = entityManagerProvider.get();
+			Company company = companyId != null ? entityManager.find(Company.class, companyId) : null;
+			CostCenter costCenter = costCenterId != null ? entityManager.find(CostCenter.class, costCenterId) : null;
+			Message<AppFile> message = terminalReportGenerator.generate(date, company, costCenter);
 			InputStream in = fileService.getInputStream(message.getPayload());
 			ResponseBuilder response = Response.ok(in);
 			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "Terminales.xls"));
@@ -67,13 +75,19 @@ public class ReportRestService {
 	public Response liquidations(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString, @QueryParam("ids") String entityIds) {
 		try {
 			LOG.debug("Generando informe de liquidacines ({},{},{}", fromAsString, toAsString, entityIds);
-			Date from = new SimpleDateFormat("yyyy-MM-dd").parse(fromAsString);
-			Date to = new SimpleDateFormat("yyyy-MM-dd").parse(toAsString);
-			List<String> ids = Arrays.asList(entityIds.split("\\s,\\s"));
-			String qlString = "select e from LegalEntity e where e.id in :ids";
-			TypedQuery<LegalEntity> query = entityManagerProvider.get().createQuery(qlString, LegalEntity.class);
-			List<LegalEntity> entities = query.setParameter("ids", ids).getResultList();
-			Message<AppFile> message = liquidationReportGenerator.generate(from, to, entities);
+			Mutable<Date> from = new MutableObject<Date>();
+			Mutable<Date> to = new MutableObject<Date>();
+			calculateRange(fromAsString, toAsString, from, to);
+			String[] ids = entityIds.split("\\s,\\s");
+			List<Company> entities;
+			if (ids.length > 0) {
+				String qlString = "select e from LegalEntity e where e.id in :ids";
+				TypedQuery<Company> query = entityManagerProvider.get().createQuery(qlString, Company.class);
+				entities = query.setParameter("ids", Arrays.asList(ids)).getResultList();
+			} else {
+				entities = entityManagerProvider.get().createQuery("select e from Company e", Company.class).getResultList();
+			}
+			Message<AppFile> message = liquidationReportGenerator.generate(from.getValue(), to.getValue(), entities);
 			InputStream in = fileService.getInputStream(message.getPayload());
 			ResponseBuilder response = Response.ok(in);
 			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "Liquidaciones.xls"));
@@ -83,5 +97,19 @@ public class ReportRestService {
 			LOG.error("Error al generar el informe de liquidaciones", ex);
 			throw new RuntimeException("Error la generar el informe de liquidaciones");
 		}
+	}
+
+	private void calculateRange(String fromAsString, String toAsString, Mutable<Date> resultFrom, Mutable<Date> resultTo) {
+		try {
+			resultFrom.setValue(new SimpleDateFormat("yyyy-MM-dd").parse(fromAsString));
+			resultTo.setValue(new SimpleDateFormat("yyyy-MM-dd").parse(toAsString));
+			return;
+		} catch (Exception ignore) {
+		}
+		DateTime now = new DateTime();
+		DateTime dateTimeFrom = now.minusMonths(1).dayOfMonth().withMinimumValue();
+		DateTime dateTimeTo = now.minusMonths(1).dayOfMonth().withMaximumValue();
+		resultFrom.setValue(dateTimeFrom.toDate());
+		resultTo.setValue(dateTimeTo.toDate());
 	}
 }
