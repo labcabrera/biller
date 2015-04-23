@@ -33,7 +33,7 @@ public final class RestPersistFilter implements ContainerRequestFilter, Containe
 		try {
 			unitOfWork.begin();
 		} catch (Exception ex) {
-			LOG.debug("La unidad de persistencia ya esta inicializada", ex);
+			LOG.trace("La unidad de persistencia ya esta inicializada ({})", ex.getMessage());
 			try {
 				unitOfWork.end();
 				unitOfWork.begin();
