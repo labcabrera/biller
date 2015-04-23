@@ -80,7 +80,7 @@ public class LISBillDataProvider implements BillDataProvider {
 			BigDecimal gameFeesPercent = bill != null ? billFeesService.getGameFeesPercent(bill) : BigDecimal.ZERO;
 			BigDecimal stakes = totalBetAmount.subtract(totalCancelledAmount);
 			BigDecimal ggr = stakes.subtract(totalAttributable);
-			BigDecimal tasaDeJuego = MathUtils.isPositive(ggr) ? ggr.multiply(gameFeesPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN) : BigDecimal.ZERO;
+			BigDecimal tasaDeJuego = ggr.multiply(gameFeesPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 			BigDecimal ngr = ggr.subtract(tasaDeJuego);
 			BigDecimal gastosOperativos = coOperatingMonthlyFees;
 			BigDecimal nr = ngr.subtract(gastosOperativos);
