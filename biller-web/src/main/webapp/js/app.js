@@ -48,7 +48,21 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope, $locat
 	}).otherwise({ templateUrl : 'partials/404.html'
 	});
 	
+	
 } ]);
+
+billerApp.directive('typeahead', function() {
+	return {
+		require : 'ngModel',
+		link : function(scope, element, attrs, modelCtrl) {
+			var checkObject = function(value) {
+				return (value == '' || typeof value === 'string') ? null : value;
+			};
+			modelCtrl.$parsers.push(checkObject);
+			checkObject(scope[attrs.ngModel]);
+		}
+	};
+});
 
 billerApp.config(['$translateProvider', function($translateProvider) {
 	$translateProvider.preferredLanguage('es');
