@@ -1,0 +1,65 @@
+<div class="row">
+	<div class="col-sm-9">
+		
+		<message-error-panel ng-model="message"></message-error-panel>
+	
+		<h4>{{'billRecalculation' | translate}}</h4>
+		<div>
+			<form class="form-horizontal">
+				
+				<div class="form-group">	
+					<label class="col-sm-2 control-label input-sm" translate="year"></label>
+					<div class="col-sm-2 data-code">
+						<input ng-model="options.year" class="form-control numeric-field" ng-disabled="prepareResult != null"></input>
+					</div>
+					<label class="col-sm-1 control-label input-sm" translate="month"></label>
+					<div class="col-sm-3">
+						<select class="form-control" ng-options="item.label for item in months track by item.id" ng-model="options.month" ng-disabled="prepareResult != null"></select>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label input-sm">{{'mode' | translate}}</label>
+					<div class="col-sm-6">
+						<select class="form-control" ng-options="item.label for item in modes track by item.id" ng-model="options.mode" ng-disabled="prepareResult != null"></select>
+					</div>
+				</div>
+				
+				<div class="form-group" ng-show="options.mode.id == 'byStore'">
+					<label class="col-sm-2 control-label input-sm">{{'store' | translate}}</label>
+					<div class="col-sm-6">
+						<div store ng-model="options.store" locked="prepareResult != null"></div>
+					</div>
+				</div>
+				
+				<div class="form-group" ng-show="options.mode.id == 'byCompany'">
+					<label class="col-sm-2 control-label input-sm">{{'company' | translate}}</label>
+					<div class="col-sm-6">
+						<div company ng-model="options.company" locked="prepareResult != null"></div>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<div class="col-sm-6 col-sm-offset-2">
+						<button class="btn btn-primary btn-sm" ng-click="prepareBill()" ng-disabled="prepareResult != null">{{'prepareBillRecalculation' | translate}}</button>
+					</div>
+				</div>
+				
+				<!-- Resultados -->
+				<div ng-if="prepareResult != null">
+					<div bill-recalculation-info ng-model="prepareResult" ></div>
+					<div class="form-group">
+						<div class="col-sm-6 col-sm-offset-2">
+							<button class="btn btn-success btn-sm" ng-click="executeBillRecalculation()">{{'execute' | translate}}</button>
+							<button class="btn btn-primary btn-sm" ng-click="cancelBillRecalculation()">{{'cancel' | translate}}</button>
+						</div>
+					</div>
+				</div>
+				
+								
+			</form>
+		</div>
+	</div>
+</div>
+
+<pre>{{message|json}}</pre>

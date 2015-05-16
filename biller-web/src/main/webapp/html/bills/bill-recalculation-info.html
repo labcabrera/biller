@@ -1,0 +1,41 @@
+<div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label input-sm" translate="billAffectedCount"></label>
+		<div class="col-sm-2">
+			<input type="text" class="form-control numeric-field input-sm" ng-model="entity.currentBills.length" ng-disabled="true"></input>
+		</div>
+		<label class="col-sm-1 control-label input-sm" translate="dateFrom"></label>
+		<div class="col-sm-3">
+			<input type="text" class="form-control input-sm" ng-model="entity.from" ng-disabled="true"></input>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label input-sm" translate="billNonExistingCount"></label>
+		<div class="col-sm-2">
+			<input type="text" class="form-control numeric-field input-sm" ng-model="entity.nonExistingBills.length" ng-disabled="true"></input>
+		</div>
+		<label class="col-sm-1 control-label input-sm" translate="dateTo"></label>
+		<div class="col-sm-3">
+			<input type="text" class="form-control input-sm" ng-model="entity.to" ng-disabled="true"></input>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label input-sm" translate="billAffectedCount"></label>
+		<div class="col-sm-10">
+			<table class="table table-hover table-condensed">
+				<tbody>
+					<tr ng-repeat="item in entity.currentBills | offset: (pageCurrentBills - 1) * itemsPerPage | limitTo: itemsPerPage">
+						<td>{{item.storeName}}</td>
+					</tr>
+				</tbody>
+			</table>
+			<pagination
+				ng-if="entity.currentBills.length > itemsPerPage"
+				total-items="entity.currentBills.length" page="pageCurrentBills" items-per-page="itemsPerPage" on-select-page="setCurrentBillsPage(page)"
+				max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="{{'last' | translate}}"></pagination>
+		</div>
+	</div>
+
+
+</div>

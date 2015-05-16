@@ -1,0 +1,17 @@
+<div>
+	<div class="{{messageClass}}" role="alert" ng-if="messages != null && messages.length > 0" collapse="isCollapse">
+		<button type="button" class="close" ng-click="setCollapse()">
+			<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+		</button>
+		<div class="row">
+			<div class="col-sm-1">
+				<span class="{{messageIcon}}" style="font-size: 3em;"></span>
+			</div>
+			<div class="col-sm-10">
+				<div ng-repeat="message in messages">
+					<span>{{message | translate}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

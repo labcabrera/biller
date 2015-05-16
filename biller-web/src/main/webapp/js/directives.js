@@ -79,7 +79,7 @@
 			scope : {
 				ngModel : '=',
 				isReadOnly : '=',
-				disabled : '@'
+				locked : '='
 			},
 		};
 	});
@@ -94,7 +94,7 @@
 			scope : {
 				ngModel : '=',
 				isReadOnly : '=',
-				disabled : '@'
+				locked : '='
 			},
 		};
 	});
@@ -167,5 +167,73 @@
 		};
 	}]);
 	
+	billerModule.directive('messageErrorPanel', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/message-error-panel.html',
+			controller : ['$scope', '$timeout', function($scope, $timeout) {
+				$scope.$watch('message', function() {
+					$scope.isCollapse = false;
+				});
+				$scope.setCollapse = function() {
+					$scope.isCollapse = true;
+				};
+				if ($scope.autoClose) {
+					$scope.$watch('message', function(newValue, oldValue) {
+						$timeout(function() {
+							$scope.isCollapse = true;
+						}, 5000);
+					});
+				}
+			}],
+			require : '^ngModel',
+			replace : 'false',
+			scope : {
+				message : '=ngModel',
+				autoClose : '='
+			},
+		};
+	});
 	
+	billerModule.directive('messageErrorBox', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/message-error-box.html',
+			controller : ['$scope', function($scope) {
+				$scope.$watch('messages', function() {
+					$scope.isCollapse = false;
+				});
+				$scope.setCollapse = function() {
+					$scope.isCollapse = true;
+				};
+			}],
+			require : '^ngModel',
+			replace : 'false',
+			scope : {
+				messages : '=ngModel',
+				messageIcon : '@',
+				messageClass : '@'
+			}
+		};
+	});
+
+	billerModule.factory('MessageUtils', function() {
+		return {
+			createError : function(text) {
+				var message = new Object();
+				message.errors = new Array();
+				message.errors[0] = new Object();
+				message.errors[0].text = text;
+				return message;
+			}
+		};
+	});
+
+	billerModule.factory('Utils', function() {
+		return {
+			isEmpty : function(value) {
+				return value == null || value == '' || value == 'undefined';
+			}
+		};
+	});
 })();
