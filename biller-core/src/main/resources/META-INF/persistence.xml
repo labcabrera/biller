@@ -11,7 +11,7 @@
 		<class>com.luckia.biller.core.model.AppFile</class>
 		<class>com.luckia.biller.core.model.AppSettings</class>
 		<class>com.luckia.biller.core.model.Bill</class>
-		<class>com.luckia.biller.core.model.BillingProvinceFees</class>
+		<class>com.luckia.biller.core.model.ProvinceTaxes</class>
 		<class>com.luckia.biller.core.model.BillDetail</class>
 		<class>com.luckia.biller.core.model.BillLiquidationDetail</class>
 		<class>com.luckia.biller.core.model.BillingModel</class>

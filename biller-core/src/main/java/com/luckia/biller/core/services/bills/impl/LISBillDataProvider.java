@@ -24,7 +24,7 @@ import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.lis.LisTerminalRecord;
 import com.luckia.biller.core.services.bills.BillDataProvider;
-import com.luckia.biller.core.services.bills.BillFeesService;
+import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 
 /**
  * Implementación de {@link BillDataProvider} que obtiene la información de la base de datos de LIS.
@@ -37,7 +37,7 @@ public class LISBillDataProvider implements BillDataProvider {
 	@Lis
 	private Provider<EntityManager> entityManagerProvider;
 	@Inject
-	private BillFeesService billFeesService;
+	private ProvinceTaxesService provinceTaxesService;
 
 	public Map<BillConcept, BigDecimal> retreive(Range<Date> range, List<String> terminals) {
 		return retreive(null, range, terminals);
@@ -77,7 +77,7 @@ public class LISBillDataProvider implements BillDataProvider {
 			if (bill != null && bill.getModel() != null && bill.getModel().getCompanyModel() != null && bill.getModel().getCompanyModel().getCoOperatingMonthlyFees() != null) {
 				coOperatingMonthlyFees = bill.getModel().getCompanyModel().getCoOperatingMonthlyFees();
 			}
-			BigDecimal gameFeesPercent = bill != null ? billFeesService.getGameFeesPercent(bill) : BigDecimal.ZERO;
+			BigDecimal gameFeesPercent = bill != null ? provinceTaxesService.getGameFeesPercent(bill) : BigDecimal.ZERO;
 			BigDecimal stakes = totalBetAmount.subtract(totalCancelledAmount);
 			BigDecimal ggr = stakes.subtract(totalAttributable);
 			BigDecimal tasaDeJuego = ggr.multiply(gameFeesPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
