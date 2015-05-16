@@ -162,6 +162,7 @@ public class AdminRestService {
 		}
 	}
 
+	// TODO este metodo ya no se utiliza
 	public Message<String> calculateNewStores(@PathParam("year") Integer year, @PathParam("month") Integer month) {
 		try {
 			Range<Date> range = getEffectiveRange(year, month);

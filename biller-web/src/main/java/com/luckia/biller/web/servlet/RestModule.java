@@ -16,6 +16,7 @@ import com.luckia.biller.web.rest.CompanyRestService;
 import com.luckia.biller.web.rest.CostCenterRestService;
 import com.luckia.biller.web.rest.LiquidationRestService;
 import com.luckia.biller.web.rest.OwnerRestService;
+import com.luckia.biller.web.rest.ProvinceTaxesRestService;
 import com.luckia.biller.web.rest.ProvincesRestService;
 import com.luckia.biller.web.rest.RappelStoreRestService;
 import com.luckia.biller.web.rest.RegionsRestService;
@@ -41,7 +42,10 @@ public class RestModule implements Module {
 	public void configure(final Binder binder) {
 		LOG.debug("Configuring Guice Module");
 		binder.install(new LuckiaCoreModule());
+		// Components
+		binder.bind(RestPersistFilter.class);
 		binder.bind(GsonMessageBodyHandler.class);
+		// Rest services
 		binder.bind(AdminRestService.class);
 		binder.bind(BillingModelRestService.class);
 		binder.bind(BillRestService.class);
@@ -52,6 +56,7 @@ public class RestModule implements Module {
 		binder.bind(LiquidationRestService.class);
 		binder.bind(OwnerRestService.class);
 		binder.bind(ProvincesRestService.class);
+		binder.bind(ProvinceTaxesRestService.class);
 		binder.bind(RappelStoreRestService.class);
 		binder.bind(RegionsRestService.class);
 		binder.bind(ReportRestService.class);
@@ -59,9 +64,5 @@ public class RestModule implements Module {
 		binder.bind(StoreRestService.class);
 		binder.bind(TerminalRelationRestService.class);
 		binder.bind(UserRestService.class);
-		// Filtro para limpiar las sesiones de JPA
-		binder.bind(RestPersistFilter.class);
-		// Deshabilitamos la seguridad
-		// binder.bind(SecurityInterceptor.class);
 	}
 }
