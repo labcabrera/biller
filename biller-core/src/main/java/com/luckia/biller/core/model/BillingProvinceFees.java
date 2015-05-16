@@ -37,6 +37,12 @@ public class BillingProvinceFees implements Serializable, Mergeable<BillingProvi
 	@Column(name = "FEES_PERCENT", precision = 18, scale = 2, nullable = false)
 	private BigDecimal feesPercent;
 
+	/**
+	 * IVA aplicado en la provincia.
+	 */
+	@Column(name = "VAT_PERCENT", precision = 18, scale = 2, nullable = false)
+	private BigDecimal vatPercent;
+
 	public Long getId() {
 		return id;
 	}
@@ -59,6 +65,14 @@ public class BillingProvinceFees implements Serializable, Mergeable<BillingProvi
 
 	public void setFeesPercent(BigDecimal feesPercent) {
 		this.feesPercent = feesPercent;
+	}
+
+	public BigDecimal getVatPercent() {
+		return vatPercent;
+	}
+
+	public void setVatPercent(BigDecimal vatPercent) {
+		this.vatPercent = vatPercent;
 	}
 
 	@Override

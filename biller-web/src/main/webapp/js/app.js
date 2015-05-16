@@ -29,6 +29,7 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope, $locat
 	}).when('/models', { templateUrl : 'partials/model-list.html', controller : 'ModelListCtrl'
 	}).when('/models/id/:id', { templateUrl : 'partials/model-detail.html', controller : 'ModelDetailCtrl'
 	}).when('/models/new', { templateUrl : 'partials/model-detail.html', controller : 'ModelNewCtrl'
+	}).when('/taxes', { templateUrl : 'html/taxes/taxes.html', controller : 'TaxesCtrl'
 	}).when('/bills', { templateUrl : 'partials/bill-list.html', controller : 'BillListCtrl'
 	}).when('/bills/id/:id', { templateUrl : 'partials/bill-detail.html', controller : 'BillDetailCtrl'
 	}).when('/liquidations', { templateUrl : 'partials/liquidation-list.html', controller : 'LiquidationListCtrl'

@@ -48,5 +48,7 @@
 	"resultsLowerCase": "resultados",
 	"model": "Modelo",
 	"DIALOGS_YES": "Si",
-	"DIALOGS_NO": "No"
+	"DIALOGS_NO": "No",
+	"taxes": "Impuestos",
+	"gameFeesAndVat": "IVA e impuestos sobre el juego"
 }
