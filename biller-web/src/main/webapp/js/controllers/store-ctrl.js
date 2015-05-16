@@ -1,8 +1,8 @@
 (function() {
 
-	var billerControllers = angular.module('billerControllers');
+	var billerModule = angular.module('billerModule');
 
-	billerControllers.controller('StoreListCtrl', [ '$scope', '$routeParams', '$http', function($scope, $routeParams, $http) {
+	billerModule.controller('StoreListCtrl', [ '$scope', '$routeParams', '$http', function($scope, $routeParams, $http) {
 		$scope.currentPage = 1;
 		$scope.itemsPerPage = 15;
 		$scope.reset = function() {
@@ -36,7 +36,7 @@
 		$scope.search();
 	} ]);
 
-	billerControllers.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.displayAlert(messageService.getMessage());
 		}
@@ -102,7 +102,7 @@
 		$scope.load();
 	} ]);
 
-	billerControllers.controller('StoreNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('StoreNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 		$scope.isReadOnly = false;
 		$scope.reset = function() { };
 		$scope.update = function() {

@@ -1,12 +1,12 @@
 (function() {
 	
-	var billerControllers = angular.module('billerControllers');
+	var billerModule = angular.module('billerModule');
 	
 	/* ----------------------------------------------------------------------------
 	 * MODELOS DE FACTURACION
 	 * ----------------------------------------------------------------------------
 	 */
-	billerControllers.controller('ModelListCtrl', [ '$scope', '$rootScope', '$http', 'messageService', function($scope, $rootScope, $http, messageService) {
+	billerModule.controller('ModelListCtrl', [ '$scope', '$rootScope', '$http', 'messageService', function($scope, $rootScope, $http, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.displayAlert(messageService.getMessage());
 		}
@@ -33,7 +33,7 @@
 	} ]);
 	
 	/** Detalle de modelo de facturacion */
-	billerControllers.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location','dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
+	billerModule.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location','dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.displayAlert(messageService.getMessage());
 		}
@@ -118,8 +118,10 @@
 		$scope.load();
 	} ]);
 	
-	/** Nuevo modelo de facturacion */
-	billerControllers.controller('ModelNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
+	/**
+	 * Nuevo modelo de facturacion.
+	 */
+	billerModule.controller('ModelNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 		$scope.isReadOnly = false;
 		$scope.update = function() {
 			$scope.isSaving = true;
@@ -136,13 +138,11 @@
 		$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
 	} ]);
 	
-	
-	
 	/* ----------------------------------------------------------------------------
 	 * RAPPEL DE ESTABLECIMIENTOS
 	 * ----------------------------------------------------------------------------
 	 */
-	billerControllers.controller('RappelStoreListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
+	billerModule.controller('RappelStoreListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
 		$scope.currentPage = 1;
 		$scope.itemsPerPage = 15;
 		$scope.reset = function() {
@@ -162,7 +162,7 @@
 		$scope.search();
 	} ]);
 	
-	billerControllers.controller('RappelStoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+	billerModule.controller('RappelStoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
 		$scope.load = function() {
 			$http.get('rest/rappel/stores/id/' + $routeParams.id).success(function(data) {
 				$scope.entity = data;

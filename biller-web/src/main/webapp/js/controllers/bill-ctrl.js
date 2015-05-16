@@ -1,12 +1,12 @@
 (function() {
 	
-	var billerControllers = angular.module('billerControllers');
+	var billerModule = angular.module('billerModule');
 
 	/* ----------------------------------------------------------------------------
 	 * FACTURAS
 	 * ----------------------------------------------------------------------------
 	 */
-	billerControllers.controller('BillListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', 'messageService', function($scope, $rootScope, $routeParams, $http, $filter, messageService) {
+	billerModule.controller('BillListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', 'messageService', function($scope, $rootScope, $routeParams, $http, $filter, messageService) {
 		$scope.currentPage = 1;
 		$scope.itemsPerPage = 20;
 		$scope.reset = function() {
@@ -43,7 +43,7 @@
 		$scope.search();
 	} ]);
 	
-	billerControllers.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $location, $http, dialogs, messageService) {
+	billerModule.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $location, $http, dialogs, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.displayAlert(messageService.getMessage());
 		}
@@ -197,7 +197,7 @@
 	 * LIQUIDACIONES
 	 * ----------------------------------------------------------------------------
 	 */
-	billerControllers.controller('LiquidationListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
+	billerModule.controller('LiquidationListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', function($scope, $rootScope, $routeParams, $http, $filter) {
 		$scope.currentPage = 1;
 		$scope.itemsPerPage = 15;
 		$scope.reset = function() {
@@ -229,7 +229,7 @@
 		$scope.search();
 	} ]);
 	
-	billerControllers.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
+	billerModule.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
 		$scope.load = function() {
 			$http.get('rest/liquidations/id/' + $routeParams.id).success(function(data) {
 				$scope.entity = data;

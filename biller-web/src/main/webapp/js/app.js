@@ -1,10 +1,8 @@
 'use strict';
 
-/* App Module */
+var billerModule = angular.module('billerModule', [ 'ngRoute', 'billerModule', 'ui.bootstrap', 'dialogs.main', 'pascalprecht.translate']);
 
-var billerApp = angular.module('billerApp', [ 'ngRoute', 'billerControllers', 'ui.bootstrap', 'dialogs.main', 'pascalprecht.translate']);
-
-billerApp.config([ '$routeProvider', function($routeProvider, $rootScope, $location) {
+billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $location) {
 	
 	$routeProvider.when('/users', { templateUrl : 'partials/user-list.html', controller : 'UserListCtrl'
 	}).when('/users/:id', { templateUrl : 'partials/user-detail.html', controller : 'UserDetailCtrl'
@@ -52,7 +50,7 @@ billerApp.config([ '$routeProvider', function($routeProvider, $rootScope, $locat
 	
 } ]);
 
-billerApp.directive('typeahead', function() {
+billerModule.directive('typeahead', function() {
 	return {
 		require : 'ngModel',
 		link : function(scope, element, attrs, modelCtrl) {
@@ -65,16 +63,15 @@ billerApp.directive('typeahead', function() {
 	};
 });
 
-billerApp.config(['$translateProvider', function($translateProvider) {
+billerModule.config(['$translateProvider', function($translateProvider) {
 	$translateProvider.preferredLanguage('es');
-	//$translateProvider.useUrlLoader(CONTEXT_PATH + '/i18n/json');
 	$translateProvider.useStaticFilesLoader({
 		prefix: CONTEXT_PATH + '/i18n/',
 		suffix: '.json'
 	});
 }]);
 
-billerApp.controller('LanguageCtrl', ['$scope', '$translate', function($scope, $translate) {
+billerModule.controller('LanguageCtrl', ['$scope', '$translate', function($scope, $translate) {
 	$scope.changeLanguage = function(key) {
 		$translate.use(key);
 	};
@@ -83,7 +80,7 @@ billerApp.controller('LanguageCtrl', ['$scope', '$translate', function($scope, $
 	};
 }]);
 
-billerApp.run(function($rootScope, $http) {
+billerModule.run(function($rootScope, $http) {
 	$rootScope.isReadOnly = true;
 	$rootScope.itemsPerPage = 10;
 	$rootScope.groups = function(name) { return $http.get("rest/groups/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
@@ -153,7 +150,7 @@ billerApp.run(function($rootScope, $http) {
 	$rootScope.dateFormat = 'dd-MM-yyyy';
 });
 
-billerApp.factory('messageService', function() {
+billerModule.factory('messageService', function() {
 	var message = null;
     return {
         setMessage: function(data) {
@@ -171,7 +168,7 @@ billerApp.factory('messageService', function() {
 /*
  * Directiva para generar inputs que solo aceptan valores numericos con una cantidad dada de decimales
  */
-billerApp.directive('numberOnlyInput', function () {
+billerModule.directive('numberOnlyInput', function () {
     return {
         restrict: 'EA',
         template: '<input class="form-control input-sm data-amount" name="{{inputName}}" ng-model="inputValue" />',
@@ -222,27 +219,3 @@ function PredicateBuilder(expression) {
 		this.expression += key;
 	};
 }
-
-
-// TODO revisar!
-billerApp.factory('sessionInjector', ['$rootScope', '$location', function($rootScope, $location, Session) {
-    var sessionInjector = {
-        request: function(config) {
-//        	console.log("Estableciendo cabeceras " + ($rootScope.user != null ? $rootScope.user.name : '<null>'));
-//        	if($rootScope.user == null) {
-//        		$location.path("groups");
-//        	} else {
-//        		config.headers['x-session-name'] = $rootScope.user.name;
-//        		config.headers['x-session-token'] = 'randomtoken';        		
-//        	}
-            return config;
-        }
-    };
-    return sessionInjector;
-}]);
-billerApp.config(['$httpProvider', function($httpProvider) {
-    $httpProvider.interceptors.push('sessionInjector');
-}]);
-
-
-

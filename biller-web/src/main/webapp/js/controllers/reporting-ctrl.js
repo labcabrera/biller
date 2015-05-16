@@ -1,8 +1,8 @@
 (function() {
 
-	var billerControllers = angular.module('billerControllers');
+	var billerModule = angular.module('billerModule');
 
-	billerControllers.controller('ReportTerminalsCtrl', [ '$scope', '$location', '$window', function($scope, $location, $window) {
+	billerModule.controller('ReportTerminalsCtrl', [ '$scope', '$location', '$window', function($scope, $location, $window) {
 		$scope.generate = function() {
 			var url = REST_PATH + '/report/terminals';
 			if($scope.reportData != null && $scope.reportData.company != null && $scope.reportData.company.id != null) {
@@ -12,7 +12,7 @@
 		};
 	} ]);
 
-	billerControllers.controller('ReportLiquidationsCtrl', [ '$scope', '$location', '$window', '$filter', function($scope, $location, $window, $filter) {
+	billerModule.controller('ReportLiquidationsCtrl', [ '$scope', '$location', '$window', '$filter', function($scope, $location, $window, $filter) {
 		$scope.reportData = {};
 		$scope.generate = function() {
 			var ids = '';

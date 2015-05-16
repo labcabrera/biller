@@ -1,8 +1,8 @@
 (function() {
 
-	var appModule = angular.module('billerControllers');
+	var billerModule = angular.module('billerModule');
 	
-	appModule.directive('calendar', function() {
+	billerModule.directive('calendar', function() {
 		return {
 			restrict : 'AE',
 			templateUrl : 'html/components/calendar.html',
@@ -16,7 +16,7 @@
 		};
 	});
 	
-	appModule.directive('calendarReal', function() {
+	billerModule.directive('calendarReal', function() {
 		return {
 			restrict : 'AE',
 			templateUrl : 'html/components/calendar-real.html',
@@ -30,7 +30,7 @@
 		};
 	});
 	
-	appModule.directive('province', function() {
+	billerModule.directive('province', function() {
 		return {
 			restrict : 'AE',
 			templateUrl : 'html/components/province-searchbox.html',
@@ -45,7 +45,7 @@
 		};
 	});
 	
-	appModule.directive('region', function() {
+	billerModule.directive('region', function() {
 		return {
 			restrict : 'AE',
 			templateUrl : 'html/components/region-searchbox.html',
@@ -61,7 +61,7 @@
 		};
 	});
 	
-	appModule.directive('company', function() {
+	billerModule.directive('company', function() {
 		return {
 			restrict : 'AE',
 			templateUrl : 'html/components/company-searchbox.html',
@@ -76,7 +76,7 @@
 		};
 	});
 	
-	appModule.directive('store', function() {
+	billerModule.directive('store', function() {
 		return {
 			restrict : 'AE',
 			templateUrl : 'html/components/store-searchbox.html',
@@ -91,7 +91,7 @@
 		};
 	});
 
-	appModule.controller('CalendarCtrl', ['$scope', function($scope) {
+	billerModule.controller('CalendarCtrl', ['$scope', function($scope) {
 		$scope.placeHolder= 'DD/MM/YYYY';
 		$scope.showCalendar = false;
 		$scope.loadRealCalendar = function() {
@@ -99,7 +99,7 @@
 		};
 	}]);
 	
-	appModule.controller('CalendarRealCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+	billerModule.controller('CalendarRealCtrl', ['$scope', '$timeout', function($scope, $timeout) {
 		//$scope.format = 'mediumDate';
 		$scope.format = 'dd/MM/yyyy';
 		$scope.placeHolder= 'DD/MM/YYYY';
@@ -127,7 +127,7 @@
 		};
 	}]);
 	
-	appModule.controller('ProvinceCtrl', ['$scope', '$http', function($scope, $http) {
+	billerModule.controller('ProvinceCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.provinces = function(name) {
 			return $http.get(REST_PATH + '/provinces/find/' + name).then(function(response) {
 				return response.data;
@@ -135,7 +135,7 @@
 		};
 	}]);
 	
-	appModule.controller('RegionCtrl', ['$scope', '$http', function($scope, $http) {
+	billerModule.controller('RegionCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.regions = function(name) {
 			var provinceId = $scope.provinceId;
 			console.log("Province: " + provinceId);
@@ -143,7 +143,7 @@
 		};
 	}]);
 	
-	appModule.controller('CompanyCtrl', ['$scope', '$http', function($scope, $http) {
+	billerModule.controller('CompanyCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.companies = function(name) {
 			return $http.get(REST_PATH + '/companies/find?q=name=lk=' + name).then(function(response) {
 				return response.data.results;
@@ -151,7 +151,7 @@
 		};
 	}]);
 	
-	appModule.controller('StoreCtrl', ['$scope', '$http', function($scope, $http) {
+	billerModule.controller('StoreCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.stores = function(name) {
 			return $http.get(REST_PATH + '/stores/find?q=name=lk=' + name).then(function(response) {
 				return response.data.results;

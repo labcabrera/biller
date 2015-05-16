@@ -1,8 +1,8 @@
 (function() {
 
-	var billerControllers = angular.module('billerControllers');
+	var billerModule = angular.module('billerModule');
 
-	billerControllers.controller('GroupListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+	billerModule.controller('GroupListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
 		$scope.currentPage = 1;
 		$scope.searchName = '';
 		$scope.reset = function() {
@@ -26,7 +26,7 @@
 		$scope.search();
 	} ]);
 
-	billerControllers.controller('GroupDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $location, $routeParams, $http, messageService) {
+	billerModule.controller('GroupDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $location, $routeParams, $http, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.displayAlert(messageService.getMessage());
 		}
@@ -64,7 +64,7 @@
 		$scope.load();
 	} ]);
 
-	billerControllers.controller('GroupNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('GroupNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 		$scope.isReadOnly = false;
 		$scope.update = function() {
 			$http.post(REST_PATH + '/groups/merge/', $scope.entity).success(function(data) {

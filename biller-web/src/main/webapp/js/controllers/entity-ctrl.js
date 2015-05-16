@@ -1,39 +1,13 @@
 (function() {
 	
-	var billerControllers = angular.module('billerControllers');
-	
-	/* ----------------------------------------------------------------------------
-	 * USUARIOS
-	 * ----------------------------------------------------------------------------
-	 */
-	
-	billerControllers.controller('LoginCtrl', [ '$scope', '$rootScope', '$location', '$http', function($scope, $rootScope, $location, $http) {
-		$scope.login = function(user, password) {
-			var request = { "name": $scope.username, "password": $scope.password};
-			$http.post('rest/users/login', request).success(function(data) {
-				if(data.code == 200) {
-					$rootScope.user = data.payload;
-					$location.url("index");
-				} else {
-					$rootScope.loginResult = data.message;
-				}
-			});
-		};
-	} ]);
-	billerControllers.controller('UserListCtrl', [ '$scope', '$http', function($scope, $http) {
-		$http.get('rest/users').success(function(data) { $scope.users = data; });
-		$scope.orderProp = 'name';
-	} ]);
-	billerControllers.controller('UserDetailCtrl', [ '$scope', '$routeParams', '$http', function($scope, $routeParams, $http) {
-		$http.get('rest/users/' + $routeParams.id).success(function(data) { $scope.user = data; });
-	} ]);
+	var billerModule = angular.module('billerModule');
 	
 	/* ----------------------------------------------------------------------------
 	 * EMPRESAS
 	 * ----------------------------------------------------------------------------
 	 */
 	
-	billerControllers.controller('CompanyListCtrl', [ '$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
+	billerModule.controller('CompanyListCtrl', [ '$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
 		$scope.currentPage = 1;
 		$scope.itemsPerPage = 15;
 		$scope.reset = function() {
@@ -59,7 +33,7 @@
 		$scope.search();
 	} ]);
 	
-	billerControllers.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.displayAlert(messageService.getMessage());
 		}
@@ -116,7 +90,7 @@
 		$scope.load();
 	} ]);
 	
-	billerControllers.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('CompanyNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 		$scope.isReadOnly = false;
 		$scope.reset = function() { };
 		$scope.update = function() {
@@ -139,7 +113,7 @@
 	 * TITULARES
 	 * ----------------------------------------------------------------------------
 	 */
-	billerControllers.controller('OwnerListCtrl', [ '$scope', '$http', function($scope, $http) {
+	billerModule.controller('OwnerListCtrl', [ '$scope', '$http', function($scope, $http) {
 		$scope.currentPage = 1;
 		$scope.reset = function() {
 			$scope.searchOptions = {
@@ -170,7 +144,7 @@
 		$scope.search();
 	} ]);
 	
-	billerControllers.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.displayAlert(messageService.getMessage());
 		}
@@ -207,7 +181,7 @@
 		$scope.load();
 	} ]);
 	
-	billerControllers.controller('OwnerNewCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('OwnerNewCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
 		$scope.isReadOnly = false;
 		$scope.reset = function() {};
 		$scope.update = function() {
@@ -227,7 +201,7 @@
 	 * CENTROS DE COSTE
 	 * ----------------------------------------------------------------------------
 	 */
-	billerControllers.controller('CostCenterListCtrl', [ '$scope', '$http', function($scope, $http) {
+	billerModule.controller('CostCenterListCtrl', [ '$scope', '$http', function($scope, $http) {
 		$scope.currentPage = 1;
 		$scope.reset = function() {
 			$scope.searchOptions = {
@@ -253,7 +227,7 @@
 	} ]);
 	
 	
-	billerControllers.controller('CostCenterDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('CostCenterDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.displayAlert(messageService.getMessage());
 		}
@@ -286,7 +260,7 @@
 		$scope.load();
 	} ]);
 	
-	billerControllers.controller('CostCenterNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('CostCenterNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 		$scope.isReadOnly = false;
 		$scope.update = function() {
 			$http.post('rest/costcenters/merge/', $scope.entity).success(function(data) {
@@ -305,7 +279,7 @@
 	 * TERMINALES
 	 * ----------------------------------------------------------------------------
 	 */
-	billerControllers.controller('TerminalListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+	billerModule.controller('TerminalListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
 		$scope.currentPage = 1;
 		$scope.searchName = '';
 		$scope.reset = function() {
@@ -331,7 +305,7 @@
 		$scope.search();
 	} ]);
 	
-	billerControllers.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $location, $routeParams, $http, messageService) {
+	billerModule.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $location, $routeParams, $http, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.displayAlert(messageService.getMessage());
 		}
@@ -359,7 +333,7 @@
 		$scope.load();
 	} ]);
 	
-	billerControllers.controller('TerminalNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('TerminalNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 		$scope.isReadOnly = false;
 		$scope.update = function() {
 			$http.post('rest/terminals/merge/', $scope.entity).success(function(data) {
@@ -373,68 +347,5 @@
 		};
 		$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
 	} ]);
-	
-	/* ----------------------------------------------------------------------------
-	 * CONFIGURACION DE LA APLICACION
-	 * ----------------------------------------------------------------------------
-	 */
-	billerControllers.controller('SettingsCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
-		$scope.load = function() {
-			$http.get('rest/settings/id/MAIL').success(function(data) { $scope.mailSettings = data; });
-			$http.get('rest/settings/id/SYSTEM').success(function(data) { $scope.systemSettings = data; });
-			$http.get('rest/settings/id/BILLING').success(function(data) { $scope.billingSettings = data; });
-		};
-		$scope.load();
-	}]);
-	
-	billerControllers.controller('AdminCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', 'dialogs', function($scope, $rootScope, $routeParams, $http, dialogs) {
-		$scope.load = function() {
-		};
-		$scope.recalculateBill = function() {
-			var dlg = dialogs.confirm('Confirmacion','Desea recalcular la factura? Los ajustes manuales se perderan');
-			dlg.result.then(function(btn){
-				var billYear = $scope.billYear;
-				var billMonth = $scope.billMonth;
-				var billStore = $scope.billStore != null ? $scope.billStore.id : '';
-				$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
-				$http.post('rest/admin/recalculate/bill/' + billStore + '/' + billYear + "/" + billMonth).success(function(data) {
-					$scope.displayAlert(data);
-				});
-			});
-		};
-		$scope.recalculateAllBills = function() {
-			var dlg = dialogs.confirm('Confirmacion','Desea recalcular todas las facturas? Los ajustes manuales se perderan');
-			dlg.result.then(function(btn){
-				var billYear = $scope.billYear;
-				var billMonth = $scope.billMonth;
-				$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
-				$http.post('rest/admin/recalculate/bills/' + billYear + "/" + billMonth).success(function(data) {
-					$scope.displayAlert(data);
-				});
-			});
-		};
-		$scope.recalculateLiquidation = function() {
-			if($rootScope.autoconfirm || window.confirm('Se va a recalcular la liquidacion')) {
-				var liquidationYear = $scope.liquidationYear;
-				var liquidationMonth = $scope.liquidationMonth;
-				var liquidationCompany = $scope.liquidationCompany != null ? $scope.liquidationCompany.id : '';
-				$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
-				$http.post('rest/admin/recalculate/liquidation/' + liquidationCompany + '/' + liquidationYear + "/" + liquidationMonth).success(function(data) {
-					$scope.displayAlert(data);
-				});
-			}
-		};
-		$scope.recalculateAllLiquidations = function() {
-			if($rootScope.autoconfirm || window.confirm('Se va a recalcular todas las liquidaciones')) {
-				var liquidationYear = $scope.liquidationYear;
-				var liquidationMonth = $scope.liquidationMonth;
-				var liquidationCompany = $scope.liquidationCompany != null ? $scope.liquidationCompany.id : '';
-				$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
-				$http.post('rest/admin/recalculate/liquidations/' + liquidationYear + "/" + liquidationMonth).success(function(data) {
-					$scope.displayAlert(data);
-				});
-			}
-		}
-	}]);
 
 })();
