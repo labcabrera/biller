@@ -2,9 +2,8 @@
 	
 	var billerModule = angular.module('billerModule');
 	
-	/* ----------------------------------------------------------------------------
-	 * CONFIGURACION DE LA APLICACION
-	 * ----------------------------------------------------------------------------
+	/**
+	 * Configuracion de la aplicación.
 	 */
 	billerModule.controller('SettingsCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
 		$scope.load = function() {

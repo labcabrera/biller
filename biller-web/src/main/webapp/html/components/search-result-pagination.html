@@ -1,0 +1,6 @@
+<div class="center" ng-show="searchResults.totalItems > 0 && searchResults.totalItems > searchResults.itemsPerPage">
+	<pagination class="pagination-sm" boundary-links="true" rotate="false"
+	total-items="searchResults.totalItems" items-per-page="searchResults.itemsPerPage" ng-model="searchResults.currentPage" num-pages="searchResults.totalPages"
+	ng-change="setPage(searchResults.currentPage)" max-size="10"
+	first-text="{{'first' | translate}}" last-text="{{'last' | translate}}" next-text="{{'next' | translate}}" previous-text="{{'previous' | translate}}"></pagination>
+</div>		

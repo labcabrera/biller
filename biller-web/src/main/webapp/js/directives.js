@@ -2,6 +2,14 @@
 
 	var billerModule = angular.module('billerModule');
 	
+	billerModule.directive('searchResultPagination', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/search-result-pagination.html',
+			replace : 'false'
+		};
+	});
+	
 	billerModule.directive('calendar', function() {
 		return {
 			restrict : 'AE',
