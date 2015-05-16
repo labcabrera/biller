@@ -43,7 +43,7 @@ public class RegionsRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find/{expression}")
-	public List<Region> find(@PathParam("expression") String expression, @QueryParam("province") Long province) {
+	public List<Region> find(@PathParam("expression") String expression, @QueryParam("province") String province) {
 		EntityManager entityManager = entityManagerProvider.get();
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Region> criteria = builder.createQuery(Region.class);
