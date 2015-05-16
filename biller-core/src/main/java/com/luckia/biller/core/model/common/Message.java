@@ -10,7 +10,9 @@ public class Message<I> {
 
 	private String code;
 	private String message;
+	private List<String> info;
 	private List<String> errors;
+	private List<String> warnings;
 
 	private I payload;
 
@@ -74,18 +76,39 @@ public class Message<I> {
 		this.message = message;
 		return this;
 	}
-	
+
 	public Message<I> withPayload(I payload) {
 		this.payload = payload;
 		return this;
 	}
 
-	public void addError(String value) {
+	public Message<I> addInfo(String value) {
+		synchronized (this) {
+			if (info == null) {
+				info = new ArrayList<String>();
+			}
+		}
+		info.add(value);
+		return this;
+	}
+
+	public Message<I> addWarning(String value) {
+		synchronized (this) {
+			if (warnings == null) {
+				warnings = new ArrayList<String>();
+			}
+		}
+		warnings.add(value);
+		return this;
+	}
+
+	public Message<I> addError(String value) {
 		synchronized (this) {
 			if (errors == null) {
 				errors = new ArrayList<String>();
 			}
 		}
 		errors.add(value);
+		return this;
 	}
 }

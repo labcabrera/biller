@@ -4,7 +4,13 @@
       		<span bind-html-unsafe="match.model.name | typeaheadHighlight:query"></span>
 		</a>
 	</script>
-	<input type="text" ng-model="ngModel" ng-disabled="disabled"
-		typeahead="company as company.name for company in companies($viewValue)" typeahead-loading="loadingCompanies" class="form-control" typeahead-editable="false"
-		typeahead-template-url="customTemplateCompany.html" ng-readonly="isReadOnly">
+	<input type="text"
+		class="form-control"
+		ng-model="ngModel"
+		ng-disabled="locked"
+		typeahead="company as company.name for company in companies($viewValue)"
+		typeahead-loading="loadingCompanies"
+		typeahead-editable="false"
+		typeahead-template-url="customTemplateCompany.html"
+		ng-readonly="isReadOnly"></input>
 </div>	
