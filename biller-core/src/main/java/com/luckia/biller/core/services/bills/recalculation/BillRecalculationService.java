@@ -113,6 +113,34 @@ public class BillRecalculationService {
 			detail.setStoreName(bill.getSender().getName());
 			result.getCurrentBills().add(detail);
 		}
+		if (store != null && !findByStore(store.getId(), bills)) {
+			BillRecalculationDetail detail = new BillRecalculationDetail();
+			detail.setStoreId(store.getId());
+			detail.setStoreName(store.getName());
+			result.getNonExistingBills().add(detail);
+		}
+		if (company != null) {
+			EntityManager entityManager = entityManagerProvider.get();
+			TypedQuery<Store> query = entityManager.createNamedQuery(Store.QUERY_SELECT_BY_COMPANY, Store.class);
+			query.setParameter("company", company);
+			for (Store i : query.getResultList()) {
+				if (!findByStore(i.getId(), bills)) {
+					BillRecalculationDetail detail = new BillRecalculationDetail();
+					detail.setStoreId(i.getId());
+					detail.setStoreName(i.getName());
+					result.getNonExistingBills().add(detail);
+				}
+			}
+		}
 		return result;
+	}
+
+	private boolean findByStore(Long storeId, List<Bill> bills) {
+		for (Bill bill : bills) {
+			if (storeId.equals(bill.getSender().getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

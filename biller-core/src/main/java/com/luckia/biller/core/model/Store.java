@@ -32,10 +32,12 @@ import com.luckia.biller.core.serialization.NotSerializable;
 @Table(name = "B_STORE")
 @DiscriminatorValue("S")
 @SuppressWarnings("serial")
-@NamedQueries({ @NamedQuery(name = "Store.selectAll", query = "select s from Store s order by s.name") })
-// @ValidStore
-// @ValidLegalEntity
+@NamedQueries({ @NamedQuery(name = "Store.selectAll", query = "select s from Store s order by s.name"),
+		@NamedQuery(name = "Store.selectByCompany", query = "select s from Store s where s.parent = :company order by s.name") })
 public class Store extends LegalEntity {
+
+	public static final String QUERY_SELECT_ALL = "Store.selectAll";
+	public static final String QUERY_SELECT_BY_COMPANY = "Store.selectByCompany";
 
 	@Column(name = "TYPE", length = 32)
 	@Enumerated(EnumType.STRING)
@@ -62,13 +64,15 @@ public class Store extends LegalEntity {
 	private List<TerminalRelation> terminalRelations;
 
 	/**
-	 * En caso de que este valor esté a <code>true</code> las facturas se aceptarán nada más se genere el borrador, no será necesario que un operador acepte manualmente la factura.
+	 * En caso de que este valor esté a <code>true</code> las facturas se aceptarán nada más se genere el borrador, no será necesario que un
+	 * operador acepte manualmente la factura.
 	 */
 	@Column(name = "AUTO_CONFIRM")
 	private Boolean autoConfirm;
 
 	/**
-	 * Posibilidades: usar un oneToOne, usar un ManyToOne y dejarlo a null cuando tenga la facturacion por defecto o cualquier otra alternativa
+	 * Posibilidades: usar un oneToOne, usar un ManyToOne y dejarlo a null cuando tenga la facturacion por defecto o cualquier otra
+	 * alternativa
 	 */
 	@OneToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_MODEL_ID")

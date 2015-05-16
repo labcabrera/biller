@@ -21,8 +21,10 @@
 					$scope.pageNonExistingBills = 0;
 				};
 				$scope.setCurrentBillsPage = function(value) {
-					console.log("set page " + value);
 					$scope.pageCurrentBills = value;
+				};
+				$scope.setNonExistingBillsPage = function(value) {
+					$scope.pageNonExistingBills = value;
 				};
 				$scope.init();
 			}],
