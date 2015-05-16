@@ -26,6 +26,7 @@
 	"entities": "Entidades",
 	"gameFeesAndVat": "IVA e impuestos sobre el juego",
 	"gameFeesPercent": "Impuestos de juego (%)",
+	"generate": "Generar",
 	"filterResults": "Filtrar resultados",
 	"idCard.nif": "NIF",
 	"liquidation": "Liquidación",
@@ -55,6 +56,7 @@
 	"stores": "Locales",
 	"taxes": "Impuestos",
 	"terminals": "Terminales",
+	"terminalReport": "Informe de terminales",
 	"type": "Tipo",
 	"vat": "IVA",
 	"vatPercent": "IVA (%)"
