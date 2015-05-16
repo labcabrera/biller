@@ -3,17 +3,17 @@
 		<h4>{{'gameFeesAndVat' | translate}} <small>({{results.totalItems}} resultados)</small></h4>
 		<table class="table table-hover table-condensed">
 				<tr>
-					<th>{{'province' | translate}}</th>
-					<th>{{'vatPercent' | translate}}</th>
-					<th>{{'gameFeesPercent' | translate}}</th>
-					<th></th>
+					<th class="col-sm-6">{{'province' | translate}}</th>
+					<th class="col-sm-2">{{'vatPercent' | translate}}</th>
+					<th class="col-sm-2">{{'gameFeesPercent' | translate}}</th>
+					<th class="col-sm-2"></th>
 				</tr>
 				<tr ng-repeat="result in results.results">
 					<td>{{result.province.name}}</a></td>
 					<td>{{result.vatPercent}}</td>
 					<td>{{result.feesPercent}}</td>
 					<td>
-						<button class="btn btn-sm btn-primary">{{'modify' | translate}}</button>
+						<button class="btn btn-sm btn-primary" ng-click="edit(result)">{{'modify' | translate}}</button>
 					</td>
 				</tr>
 			</table>

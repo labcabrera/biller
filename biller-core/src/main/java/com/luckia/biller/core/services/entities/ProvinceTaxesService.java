@@ -7,6 +7,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +68,11 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 			LOG.warn("No se ha podido resolver la informacion de impuestos asociada a la factura: {} (provincia: {}, emisor: {})", bill, province, bill.getSender());
 		}
 		return result;
+	}
+
+	@Override
+	protected void buildOrderCriteria(CriteriaQuery<ProvinceTaxes> criteria, CriteriaBuilder builder, Root<ProvinceTaxes> root) {
+		criteria.orderBy(builder.asc(root.<Province> get("province").<String> get("name")));
 	}
 
 	@Override

@@ -48,7 +48,7 @@
 			scope : {
 				ngModel : '=',
 				isReadOnly : '=',
-				disabled : '@'
+				locked : '='
 			},
 		};
 	});
