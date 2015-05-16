@@ -48,13 +48,19 @@
 		$scope.search();
 	}]);
 	
-	billerModule.controller('TaxesDetailCtrl', [ '$scope', '$routeParams', '$http', 'entity', function($scope, $routeParams, $http, entity) {
+	billerModule.controller('TaxesDetailCtrl', [ '$scope', '$routeParams', '$http', '$modalInstance', 'entity', function($scope, $routeParams, $http, $modalInstance, entity) {
 		$scope.entity = entity;
 		$scope.cancel = function() {
 			$modalInstance.dismiss('cancel');
 		};
 		$scope.save = function() {
-			
+			$http.post(REST_PATH + '/provinceTaxes/merge', $scope.entity).success(function(data) {
+				if (data.code == '200') {
+					$modalInstance.close(data);
+				} else {
+					$scope.message = data;					
+				};
+			});
 		};
 	}]);
 

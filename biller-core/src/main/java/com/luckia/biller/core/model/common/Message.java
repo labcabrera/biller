@@ -15,6 +15,7 @@ public class Message<I> {
 	private I payload;
 
 	public Message() {
+		code = CODE_SUCCESS;
 	}
 
 	public Message(String code, String message) {
@@ -62,6 +63,21 @@ public class Message<I> {
 
 	public boolean hasErrors() {
 		return errors != null && !errors.isEmpty();
+	}
+
+	public Message<I> withCode(String code) {
+		this.code = code;
+		return this;
+	}
+
+	public Message<I> withMessage(String message) {
+		this.message = message;
+		return this;
+	}
+	
+	public Message<I> withPayload(I payload) {
+		this.payload = payload;
+		return this;
 	}
 
 	public void addError(String value) {

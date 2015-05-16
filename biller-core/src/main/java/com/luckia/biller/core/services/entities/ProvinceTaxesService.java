@@ -1,6 +1,7 @@
 package com.luckia.biller.core.services.entities;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,10 +15,12 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.ProvinceTaxes;
+import com.luckia.biller.core.model.common.Message;
 
 /**
  * Servicio encargado de obtener la tasa de juego asociado a una factura. En teoria este valor dependera de la comunidad autonoma, aunque de
@@ -33,6 +36,23 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
+
+	@Override
+	@Transactional
+	public Message<ProvinceTaxes> merge(ProvinceTaxes entity) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			ProvinceTaxes current = entityManager.find(ProvinceTaxes.class, entity.getId());
+			current.setFeesPercent(entity.getFeesPercent() != null ? entity.getFeesPercent().setScale(2, RoundingMode.HALF_EVEN) : BigDecimal.ZERO);
+			current.setVatPercent(entity.getVatPercent() != null ? entity.getVatPercent().setScale(2, RoundingMode.HALF_EVEN) : BigDecimal.ZERO);
+			entityManager.merge(current);
+			return new Message<ProvinceTaxes>().withMessage("provinceTaxes.merge.success").withPayload(current);
+		} catch (Exception ex) {
+			LOG.error("Merge error", ex);
+			return new Message<ProvinceTaxes>().withCode(Message.CODE_GENERIC_ERROR).withMessage("provinceTaxes.merge.error");
+
+		}
+	}
 
 	public BigDecimal getGameFeesPercent(Bill bill) {
 		ProvinceTaxes entity = resolveTaxes(bill);

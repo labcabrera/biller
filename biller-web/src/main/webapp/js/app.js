@@ -46,8 +46,6 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/', { templateUrl : 'static/index.html'
 	}).otherwise({ templateUrl : 'partials/404.html'
 	});
-	
-	
 } ]);
 
 billerModule.directive('typeahead', function() {
@@ -92,7 +90,6 @@ billerModule.run(function($rootScope, $http) {
 	$rootScope.costcenters = function(name) { return $http.get("rest/costcenters/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
 	$rootScope.provinces = function(name) { return $http.get("rest/provinces/find/" + name).then(function(response) { return response.data; }); };
 	$rootScope.regions = function(name, provinceId) { return $http.get("rest/regions/find/" + name + (provinceId != null ? '?province=' + provinceId : '')).then(function(response) { return response.data; }); };
-	
 
 	$rootScope.edit = function() {
 		$rootScope.isReadOnly = false;
