@@ -27,6 +27,7 @@ import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
+import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
 public class BillRecalculationService {
@@ -37,6 +38,8 @@ public class BillRecalculationService {
 	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private BillProcessor billProcessor;
+	@Inject
+	private AuditService auditService;
 
 	public Message<BillRecalculationInfo> prepare(Company company, Store store, Range<Date> range) {
 		try {
@@ -71,7 +74,7 @@ public class BillRecalculationService {
 			if (info.getCurrentBills() != null) {
 				for (BillRecalculationDetail detail : info.getCurrentBills()) {
 					if (detail.getBillId() != null) {
-						tasks.add(new BillRecalculationTask(detail.getBillId(), entityManagerProvider, billProcessor));
+						tasks.add(new BillRecalculationTask(detail.getBillId(), entityManagerProvider, billProcessor, auditService));
 					}
 				}
 			}
@@ -91,10 +94,21 @@ public class BillRecalculationService {
 				executorService.awaitTermination(5, TimeUnit.HOURS);
 				LOG.debug("Finalizado el tratamiento de {} tareas", tasks.size());
 			}
-			return new Message<BillRecalculationInfo>(Message.CODE_SUCCESS, String.format("Recalculadas %s facturas", tasks.size()));
+			return new Message<BillRecalculationInfo>().addInfo("billRecalculation.execute.success");
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
 			return new Message<BillRecalculationInfo>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());
+		}
+	}
+
+	public Message<Bill> recalculate(String billId) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Bill bill = entityManager.find(Bill.class, billId);
+			new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor, auditService).run();
+			return new Message<Bill>().addInfo("billRecalculation.bill.success").withPayload(bill);
+		} catch (Exception ex) {
+			return new Message<Bill>().withCode(Message.CODE_GENERIC_ERROR).addError("billRecalculation.bill.error");
 		}
 	}
 

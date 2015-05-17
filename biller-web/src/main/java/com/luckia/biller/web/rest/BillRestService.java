@@ -35,10 +35,10 @@ import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
-import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.impl.BillProcessorImpl;
+import com.luckia.biller.core.services.bills.recalculation.BillRecalculationService;
 import com.luckia.biller.core.services.entities.BillEntityService;
 import com.luckia.biller.core.services.mail.MailService;
 import com.luckia.biller.core.services.mail.SendAppFileMailTask;
@@ -75,6 +75,8 @@ public class BillRestService {
 	private I18nService i18nService;
 	@Inject
 	private StateMachineService stateMachineService;
+	@Inject
+	private BillRecalculationService billRecalculationService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -252,17 +254,8 @@ public class BillRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/{id}")
-	public Message<Bill> recalculate(@PathParam("id") String id) {
-		try {
-			EntityManager entityManager = entityManagerProvider.get();
-			Bill bill = entityManager.find(Bill.class, id);
-			BillRecalculationTask task = new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor);
-			task.run();
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.recalculate"), bill);
-		} catch (Exception ex) {
-			LOG.error("Error al recalcular la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.recalculate.error"), null);
-		}
+	public Message<Bill> recalculate(@PathParam("id") String billId) {
+		return billRecalculationService.recalculate(billId);
 	}
 
 	@GET

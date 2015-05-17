@@ -1,19 +1,17 @@
 package com.luckia.biller.core.scheduler.tasks;
 
-import java.util.Iterator;
-
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.Bill;
-import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillDetail;
+import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
 /**
@@ -26,11 +24,13 @@ public class BillRecalculationTask implements Runnable {
 	private final String billId;
 	private final Provider<EntityManager> entityManagerProvider;
 	private final BillProcessor billProcessor;
+	private final AuditService auditService;
 
-	public BillRecalculationTask(String billId, Provider<EntityManager> entityManagerProvider, BillProcessor billProcessor) {
+	public BillRecalculationTask(String billId, Provider<EntityManager> entityManagerProvider, BillProcessor billProcessor, AuditService auditService) {
 		this.billId = billId;
 		this.entityManagerProvider = entityManagerProvider;
 		this.billProcessor = billProcessor;
+		this.auditService = auditService;
 	}
 
 	/*
@@ -41,11 +41,21 @@ public class BillRecalculationTask implements Runnable {
 	@Override
 	public void run() {
 		EntityManager entityManager = entityManagerProvider.get();
-		Bill bill = entityManager.find(Bill.class, billId);
-		checkModel(bill, entityManager);
-		cleanPreviousResults(bill, entityManager);
-		billProcessor.processDetails(bill);
-		billProcessor.processResults(bill);
+		if (!entityManager.getTransaction().isActive()) {
+			entityManager.getTransaction().begin();
+		}
+		try {
+			Bill bill = entityManager.find(Bill.class, billId);
+			checkModel(bill, entityManager);
+			cleanPreviousResults(bill, entityManager);
+			billProcessor.processDetails(bill);
+			billProcessor.processResults(bill);
+			auditService.processModified(bill);
+			entityManager.getTransaction().commit();
+		} catch (RuntimeException ex) {
+			LOG.error("Error al regenerar la factura {}", billId, ex);
+			entityManager.getTransaction().rollback();
+		}
 	}
 
 	/**
@@ -54,24 +64,27 @@ public class BillRecalculationTask implements Runnable {
 	 * @param bill
 	 * @param entityManager
 	 */
-	@Transactional
 	private void cleanPreviousResults(Bill bill, EntityManager entityManager) {
 		if (bill.getDetails() != null) {
-			Iterator<BillDetail> iterator = bill.getDetails().iterator();
-			while (iterator.hasNext()) {
-				BillDetail detail = iterator.next();
-				if (detail.getConcept() != BillConcept.Adjustment) {
-					iterator.remove();
-					entityManager.remove(detail);
-				}
+			for (BillDetail detail : bill.getDetails()) {
+				entityManager.remove(detail);
 			}
+			bill.getDetails().clear();
 		}
 		if (bill.getLiquidationDetails() != null) {
-			for (Object i : bill.getLiquidationDetails()) {
+			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
 				entityManager.remove(i);
 			}
 			bill.getLiquidationDetails().clear();
 		}
+		if (bill.getBillingRawData() != null) {
+			for (Object i : bill.getBillingRawData().keySet()) {
+				System.out.println(i);
+			}
+		}
+		entityManager.merge(bill);
+		entityManager.createNativeQuery("delete from BILL_RAW_DATA WHERE ID_BILL = ?").setParameter(1, bill.getId()).executeUpdate();
+		entityManager.flush();
 	}
 
 	private void checkModel(Bill bill, EntityManager entityManager) {

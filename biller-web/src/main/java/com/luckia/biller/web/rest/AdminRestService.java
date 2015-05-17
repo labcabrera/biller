@@ -35,6 +35,7 @@ import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
+import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
@@ -49,6 +50,8 @@ public class AdminRestService {
 	private BillProcessor billProcessor;
 	@Inject
 	private LiquidationProcessor liquidationProcessor;
+	@Inject
+	private AuditService auditService;
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -88,7 +91,7 @@ public class AdminRestService {
 			if (!bills.isEmpty()) {
 				LOG.debug("Se van a recalcular {} facturas", bills.size());
 				for (Bill bill : bills) {
-					tasks.add(new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor));
+					tasks.add(new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor, auditService));
 				}
 				LOG.debug("Esperando a la finalizacion de {} tareas", bills.size());
 			} else if (storeId != null) {

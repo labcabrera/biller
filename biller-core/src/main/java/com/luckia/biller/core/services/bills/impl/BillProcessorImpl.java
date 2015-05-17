@@ -112,6 +112,7 @@ public class BillProcessorImpl implements BillProcessor {
 		}
 		entityManager.merge(bill);
 		stateMachineService.createTransition(bill, CommonState.Draft.name());
+		entityManager.flush();
 	}
 
 	/*

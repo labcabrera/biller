@@ -17,12 +17,16 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.eclipse.persistence.annotations.ChangeTracking;
+import org.eclipse.persistence.annotations.ChangeTrackingType;
 
 import com.luckia.biller.core.jpa.Mergeable;
 
@@ -47,6 +51,7 @@ import com.luckia.biller.core.jpa.Mergeable;
 @Table(name = "B_BILL")
 @DiscriminatorValue("B")
 @SuppressWarnings("serial")
+@ChangeTracking(ChangeTrackingType.DEFERRED)
 @NamedQueries({
 		@NamedQuery(name = "Bill.selectPendingByReceiverInRange", query = "select b from Bill b where b.receiver = :receiver and b.dateFrom >= :from and b.dateTo <= :to and b.liquidation is null"),
 		@NamedQuery(name = "Bill.selectByStoreInRange", query = "select b from Bill b where b.sender = :sender and b.dateFrom >= :from and b.dateTo <= :to") })
@@ -117,7 +122,7 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	@JoinColumn(name = "LIQUIDATION_ID")
 	protected Liquidation liquidation;
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(name = "BILL_RAW_DATA", joinColumns = @JoinColumn(name = "ID_BILL"))
 	protected Map<BillConcept, BigDecimal> billingRawData;
 
