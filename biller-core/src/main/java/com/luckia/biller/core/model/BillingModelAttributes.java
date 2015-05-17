@@ -115,6 +115,14 @@ public class BillingModelAttributes implements Mergeable<BillingModelAttributes>
 		this.satMonthlyFees = satMonthlyFees;
 	}
 
+	public BigDecimal getPricePerLocation() {
+		return pricePerLocation;
+	}
+
+	public void setPricePerLocation(BigDecimal pricePerLocation) {
+		this.pricePerLocation = pricePerLocation;
+	}
+
 	@Override
 	public void merge(BillingModelAttributes entity) {
 		if (entity != null) {

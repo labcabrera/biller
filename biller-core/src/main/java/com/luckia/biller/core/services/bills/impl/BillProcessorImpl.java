@@ -71,7 +71,8 @@ public class BillProcessorImpl implements BillProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.billing.BillProcessor#generateBill(com.luckia.biller.core.model.Store, org.apache.commons.lang3.Range)
+	 * @see com.luckia.biller.core.services.billing.BillProcessor#generateBill(com.luckia.biller.core.model.Store,
+	 * org.apache.commons.lang3.Range)
 	 */
 	@Override
 	@Transactional
@@ -138,6 +139,7 @@ public class BillProcessorImpl implements BillProcessor {
 		// Procesamos la liquidacion
 		BigDecimal betAmount = BigDecimal.ZERO;
 		BigDecimal satAmount = BigDecimal.ZERO;
+		BigDecimal pricePerLocation = BigDecimal.ZERO;
 		BigDecimal otherAmount = BigDecimal.ZERO;
 		BigDecimal adjustmentAmount = BigDecimal.ZERO;
 
@@ -155,6 +157,9 @@ public class BillProcessorImpl implements BillProcessor {
 				case SatMonthlyFees:
 				case CommercialMonthlyFees:
 					satAmount = satAmount.add(partial);
+					break;
+				case PricePerLocation:
+					pricePerLocation = pricePerLocation.add(partial);
 					break;
 				default:
 					LOG.warn("Ignorando concepto no esperado en la liquidacion: {}", detail.getConcept());
@@ -179,7 +184,7 @@ public class BillProcessorImpl implements BillProcessor {
 			}
 		}
 
-		BigDecimal totalLiquidationAmount = betAmount.add(satAmount).add(otherAmount);
+		BigDecimal totalLiquidationAmount = betAmount.add(satAmount).add(otherAmount).add(pricePerLocation);
 		LOG.debug("Bill liquidation amount: {}; Adjustment amount: {}", totalLiquidationAmount, adjustmentAmount);
 		bill.setLiquidationBetAmount(betAmount);
 		bill.setLiquidationSatAmount(satAmount);

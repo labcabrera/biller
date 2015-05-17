@@ -27,6 +27,7 @@ import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.bills.BillDataProvider;
+import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 
 /**
  * Servicio encargado de crear los detalles de una factura a partir de los datos obtenidos a traves de {@link BillDataProvider}. Esto genera
@@ -49,6 +50,8 @@ public class BillDetailProcessor {
 	private BillDetailNameProvider billDetailNameProvider;
 	@Inject
 	private SettingsService settingsService;
+	@Inject
+	private ProvinceTaxesService provinceTaxesService;
 
 	/**
 	 * CUIDADO: los importes que provienen de LIS tienen IVA, de modo que para hacer el calculo debemos volver a calcular la base
@@ -65,7 +68,7 @@ public class BillDetailProcessor {
 			Range<Date> range = Range.between(bill.getDateFrom(), bill.getDateTo());
 			Map<BillConcept, BigDecimal> billingData = billingDataProvider.retreive(bill, range, terminals);
 			bill.setBillingRawData(billingData);
-			BigDecimal vatPercent = settingsService.getBillingSettings().getValue("vat", BigDecimal.class);
+			BigDecimal vatPercent = provinceTaxesService.getVatPercent(bill);
 			BigDecimal vatDivisor = BigDecimal.ONE.add(vatPercent.divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN));
 
 			if (model.getStoreModel() == null) {
@@ -106,6 +109,7 @@ public class BillDetailProcessor {
 	private void processLiquidationFixedConcepts(Bill bill, BillingModel model, Range<Date> range, List<String> terminals) {
 		Map<BillConcept, BigDecimal> fixedConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
 		fixedConcepts.put(BillConcept.CommercialMonthlyFees, model.getCompanyModel().getCommercialMonthlyFees());
+		fixedConcepts.put(BillConcept.PricePerLocation, model.getCompanyModel().getPricePerLocation());
 		fixedConcepts.put(BillConcept.SatMonthlyFees, model.getCompanyModel().getSatMonthlyFees());
 		for (BillConcept concept : fixedConcepts.keySet()) {
 			BigDecimal value = fixedConcepts.get(concept);

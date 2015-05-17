@@ -41,6 +41,9 @@ public enum BillConcept {
 	/** Gastos mensuales de servicio de atencion al cliente */
 	SatMonthlyFees,
 
+	/** Coste por ubicacion */
+	PricePerLocation,
+
 	/** Saldo de caja */
 	StoreCash,
 
