@@ -219,7 +219,7 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Stakes));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SatMonthlyFees));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CommercialMonthlyFees));
-			createCell(sheet, currentRow, cell++, BigDecimal.ZERO);
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.PricePerLocation));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Other));
 			currentRow++;
 		}
