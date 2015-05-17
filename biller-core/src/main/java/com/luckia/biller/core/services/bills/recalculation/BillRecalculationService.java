@@ -29,6 +29,7 @@ import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
+import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
@@ -74,6 +75,7 @@ public class BillRecalculationService {
 
 	public Message<BillRecalculationInfo> execute(BillRecalculationInfo info) {
 		try {
+			Range<Date> range = Range.between(info.getFrom(), info.getTo());
 			Message<BillRecalculationInfo> message = new Message<BillRecalculationInfo>();
 			List<Runnable> tasks = new ArrayList<>();
 			// Primero recalculamos las facturas existentes
@@ -86,7 +88,6 @@ public class BillRecalculationService {
 			}
 			// En segundo lugar calculamos las facturas no existentes
 			if (info.getNonExistingBills() != null) {
-				Range<Date> range = Range.between(info.getFrom(), info.getTo());
 				for (BillRecalculationDetail detail : info.getNonExistingBills()) {
 					tasks.add(new BillTask(detail.getStoreId(), range, entityManagerProvider, billProcessor));
 				}
@@ -108,14 +109,14 @@ public class BillRecalculationService {
 				query.setParameter("to", info.getTo());
 				List<Liquidation> list = query.getResultList();
 				if (list.isEmpty()) {
-
+					message.addInfo("Generando liquidación del operador " + info.getCompany().getName());
+					new LiquidationTask(info.getCompany().getId(), range, entityManagerProvider, liquidationProcessor).run();
 				} else {
 					if (list.size() > 1) {
 						message.addWarning("Se han encontrado {} liquidaciones del operador en el rango indicado.");
 					}
 					for (Liquidation liquidation : list) {
-						LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidation.getId(), entityManagerProvider, liquidationProcessor);
-						task.run();
+						new LiquidationRecalculationTask(liquidation.getId(), entityManagerProvider, liquidationProcessor).run();
 					}
 				}
 			}
