@@ -102,20 +102,22 @@ public class BillDetailProcessor {
 				LOG.debug("No generamos resultados de liquidacion de {}: carece de operaciones en el rango de facturacion", store.getName());
 			}
 			// Almacenamos el saldo de caja
-			bill.setStoreCash(billingData.containsKey(BillConcept.StoreCash) ? billingData.get(BillConcept.StoreCash) : BigDecimal.ZERO);
+			bill.setStoreCash(billingData.containsKey(BillConcept.StoreCash) ? billingData.get(BillConcept.StoreCash).setScale(2, RoundingMode.HALF_EVEN) : BigDecimal.ZERO);
 		}
 	}
 
 	private void processLiquidationFixedConcepts(Bill bill, BillingModel model, Range<Date> range, List<String> terminals) {
 		Map<BillConcept, BigDecimal> fixedConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
 		fixedConcepts.put(BillConcept.CommercialMonthlyFees, model.getCompanyModel().getCommercialMonthlyFees());
-		fixedConcepts.put(BillConcept.PricePerLocation, model.getCompanyModel().getPricePerLocation());
 		fixedConcepts.put(BillConcept.SatMonthlyFees, model.getCompanyModel().getSatMonthlyFees());
 		for (BillConcept concept : fixedConcepts.keySet()) {
 			BigDecimal value = fixedConcepts.get(concept);
 			if (MathUtils.isNotZeroPositive(value)) {
 				addLiquidationFixedConcept(bill, concept, value);
 			}
+		}
+		if (MathUtils.isNotZero(model.getCompanyModel().getPricePerLocation())) {
+			addLiquidationFixedConcept(bill, BillConcept.PricePerLocation, model.getCompanyModel().getPricePerLocation().negate());
 		}
 	}
 
