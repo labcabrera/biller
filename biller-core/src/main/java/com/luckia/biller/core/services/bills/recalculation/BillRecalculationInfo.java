@@ -16,6 +16,7 @@ public class BillRecalculationInfo implements Serializable {
 	private Company company;
 	private List<BillRecalculationDetail> currentBills;
 	private List<BillRecalculationDetail> nonExistingBills;
+	private Boolean recalculateLiquidation;
 
 	public Date getFrom() {
 		return from;
@@ -63,5 +64,13 @@ public class BillRecalculationInfo implements Serializable {
 
 	public void setNonExistingBills(List<BillRecalculationDetail> nonExistingBills) {
 		this.nonExistingBills = nonExistingBills;
+	}
+
+	public Boolean getRecalculateLiquidation() {
+		return recalculateLiquidation;
+	}
+
+	public void setRecalculateLiquidation(Boolean recalculateLiquidation) {
+		this.recalculateLiquidation = recalculateLiquidation;
 	}
 }

@@ -23,12 +23,15 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
+import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
+import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.bills.BillProcessor;
+import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 public class BillRecalculationService {
 
@@ -38,6 +41,8 @@ public class BillRecalculationService {
 	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private BillProcessor billProcessor;
+	@Inject
+	private LiquidationProcessor liquidationProcessor;
 	@Inject
 	private AuditService auditService;
 
@@ -69,6 +74,7 @@ public class BillRecalculationService {
 
 	public Message<BillRecalculationInfo> execute(BillRecalculationInfo info) {
 		try {
+			Message<BillRecalculationInfo> message = new Message<BillRecalculationInfo>();
 			List<Runnable> tasks = new ArrayList<>();
 			// Primero recalculamos las facturas existentes
 			if (info.getCurrentBills() != null) {
@@ -94,7 +100,26 @@ public class BillRecalculationService {
 				executorService.awaitTermination(5, TimeUnit.HOURS);
 				LOG.debug("Finalizado el tratamiento de {} tareas", tasks.size());
 			}
-			return new Message<BillRecalculationInfo>().addInfo("billRecalculation.execute.success");
+			if (info.getCompany() != null && info.getRecalculateLiquidation() != null && info.getRecalculateLiquidation()) {
+				EntityManager entityManager = entityManagerProvider.get();
+				TypedQuery<Liquidation> query = entityManager.createNamedQuery(Liquidation.QUERY_SEARCH_BY_COMPANY_IN_RANGE, Liquidation.class);
+				query.setParameter("sender", info.getCompany());
+				query.setParameter("from", info.getFrom());
+				query.setParameter("to", info.getTo());
+				List<Liquidation> list = query.getResultList();
+				if (list.isEmpty()) {
+
+				} else {
+					if (list.size() > 1) {
+						message.addWarning("Se han encontrado {} liquidaciones del operador en el rango indicado.");
+					}
+					for (Liquidation liquidation : list) {
+						LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidation.getId(), entityManagerProvider, liquidationProcessor);
+						task.run();
+					}
+				}
+			}
+			return message.addInfo("billRecalculation.execute.success");
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
 			return new Message<BillRecalculationInfo>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());

@@ -39,6 +39,14 @@
 					</div>
 				</div>
 				
+				<div class="form-group" ng-show="options.mode.id == 'byCompany'">
+					<div class="col-sm-offset-2 col-sm-10">
+						<div class="checkbox">
+							<label><input type="checkbox" ng-model="recalculateLiquidation" ng-disabled="prepareResult != null">{{'recalculateLiquidation' | translate}}</label>
+						</div>
+					</div>
+				</div>
+
 				<div class="form-group">
 					<div class="col-sm-6 col-sm-offset-2">
 						<button class="btn btn-primary btn-sm" ng-click="prepareBill()" ng-disabled="prepareResult != null">{{'prepareBillRecalculation' | translate}}</button>
@@ -50,8 +58,8 @@
 					<div bill-recalculation-info ng-model="prepareResult" ></div>
 					<div class="form-group">
 						<div class="col-sm-6 col-sm-offset-2">
-							<button class="btn btn-success btn-sm" ng-click="executeBillRecalculation()">{{'execute' | translate}}</button>
-							<button class="btn btn-primary btn-sm" ng-click="cancelBillRecalculation()">{{'cancel' | translate}}</button>
+							<button class="btn btn-success btn-sm" ng-click="executeBillRecalculation()" ng-disabled="isLoading">{{'execute' | translate}}</button>
+							<button class="btn btn-primary btn-sm" ng-click="cancelBillRecalculation()" ng-disabled="isLoading">{{'cancel' | translate}}</button>
 						</div>
 					</div>
 				</div>
@@ -59,5 +67,8 @@
 								
 			</form>
 		</div>
+	</div>
+	<div class="col-sm-3">
+		<div>{{'billRecalculationInfo' | translate}}</div>
 	</div>
 </div>

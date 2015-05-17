@@ -38,6 +38,8 @@ import com.luckia.biller.core.serialization.NotSerializable;
 @NamedQueries({ @NamedQuery(name = "Liquidation.selectByCompanyInRange", query = "select e from Liquidation e where e.sender = :sender and e.dateFrom >= :from and e.dateTo <= :to") })
 public class Liquidation extends AbstractBill implements Mergeable<Liquidation> {
 
+	public static final String QUERY_SEARCH_BY_COMPANY_IN_RANGE = "Liquidation.selectByCompanyInRange";
+
 	/**
 	 * Lista de facturas que componen la liquidación.
 	 */

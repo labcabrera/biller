@@ -45,7 +45,7 @@
 	
 	billerModule.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $location, $http, dialogs, messageService) {
 		if(messageService.hasMessage()) {
-			$scope.displayAlert(messageService.getMessage());
+			$scope.message = messageService.getMessage();
 		}
 		$scope.load = function() {
 			$http.get('rest/bills/' + $routeParams.id).success(function(data) { $scope.entity = data; });
@@ -55,9 +55,9 @@
 			$scope.isSaving = true;
 			$http.post('rest/bills/merge/', $scope.entity).success(function(data) {
 				$scope.isSaving = false;
-				$scope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
-					$rootScope.isReadOnly = true;				
+					$rootScope.isReadOnly = true;
 					$scope.entity = data.payload;
 				}
 			});
@@ -72,8 +72,8 @@
 						if(data.code == 200) {
 							$location.path("bills");
 						} else {
-							$scope.displayAlert(data);
-						}
+							$scope.message = data;
+						};
 					});
 				});
 			}
@@ -96,7 +96,7 @@
 			$scope.isSaving = true;
 			$http.post('rest/bills/detail/merge/', $scope.billDetail).success(function(data) {
 				$scope.isSaving = false;
-				$scope.displayAlert(data);
+				$scope.message = data;
 				$("#editBillConceptModal").modal('hide');
 				if(data.code == 200) {
 					$scope.entity = data.payload;
@@ -107,10 +107,10 @@
 			$scope.isSaving = true;
 			$http.post('rest/bills/detail/remove/' + data).success(function(data) {
 				$scope.isSaving = false;
+				$scope.message = data;
 				if(data.code == 200) {
 					$scope.entity = data.payload;
 				}
-				$scope.displayAlert(data);
 				$("#editBillConceptModal").modal('hide');
 			});
 		};
@@ -120,7 +120,7 @@
 				$scope.isSaving = true;
 				$http.post('rest/bills/confirm/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;
-					$scope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						$scope.entity = data.payload;
 					}
@@ -133,7 +133,7 @@
 				$scope.isSaving = true;
 				$http.post('rest/bills/cancel/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;
-					$scope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						$scope.entity = data.payload;
 					}
@@ -146,12 +146,11 @@
 				$scope.isSaving = true;
 				$http.post('rest/bills/rectify/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;
+					$scope.message = data;
 					if(data.code == 200) {
 						messageService.setMessage(data);
 						$location.path("bills/id/" + data.payload.id);
-					} else {
-						$scope.displayAlert(data);
-					}
+					};
 				});
 			});
 		};
@@ -161,7 +160,7 @@
 				$scope.isSaving = true;
 				$http.post('rest/bills/draft/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;
-					$scope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						$scope.entity = data.payload;
 					}
@@ -174,7 +173,7 @@
 				$scope.isSaving = true;
 				$http.post('rest/bills/recalculate/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;	
-					$scope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						$scope.entity = data.payload;
 					}
@@ -186,7 +185,7 @@
 			$scope.isSaving = true;
 			$http.post('rest/bills/send/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {
 				$scope.isSaving = false;
-				$scope.displayAlert(data);
+				$scope.message = data;
 				$('#sendMailModal').modal('hide');
 			});
 		};
