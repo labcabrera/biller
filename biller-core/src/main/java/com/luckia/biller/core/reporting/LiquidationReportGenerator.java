@@ -17,6 +17,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +106,17 @@ public class LiquidationReportGenerator extends BaseReport {
 	}
 
 	private int createHeader(HSSFSheet sheet, int currentRow) {
+		createHeaderCell(sheet, currentRow, 2, "RESUMEN");
+		createHeaderCell(sheet, currentRow, 11, "FACTURA");
+		createHeaderCell(sheet, currentRow, 14, "DETALLE LIQUIDACION");
+		createHeaderCell(sheet, currentRow, 24, "MODELO APLICADO");
+		createHeaderCell(sheet, currentRow, 30, "GASTOS DIRECTOS");
+		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 2, 9));
+		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 11, 12));
+		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 14, 22));
+		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 24, 26));
+		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 30, 34));
+		currentRow++;
 		int cell = 0;
 		createHeaderCell(sheet, currentRow, cell++, "Operadora");
 		createHeaderCell(sheet, currentRow, cell++, "Local");
@@ -130,7 +142,6 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "NGR (base)");
 		createHeaderCell(sheet, currentRow, cell++, "NR (base)");
 		cell++;
-		createHeaderCell(sheet, currentRow, cell++, "Stakes");
 		createHeaderCell(sheet, currentRow, cell++, "GGR");
 		createHeaderCell(sheet, currentRow, cell++, "NGR");
 		createHeaderCell(sheet, currentRow, cell++, "NR");
@@ -197,7 +208,6 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NR));
 			cell++;
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Stakes));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.GGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NR));
@@ -216,7 +226,6 @@ public class LiquidationReportGenerator extends BaseReport {
 			}
 			createCell(sheet, currentRow, cell++, sb.toString());
 			cell++;
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Stakes));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SatMonthlyFees));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CommercialMonthlyFees));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.PricePerLocation));

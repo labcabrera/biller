@@ -93,6 +93,8 @@ public class BaseReport {
 			} else {
 				LOG.warn("Invalid type {}", value);
 			}
+		} else {
+			cell.setCellValue(0d);
 		}
 		return applyStyle(cell, ReportStyle.DEFAULT);
 	}
