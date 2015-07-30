@@ -2,7 +2,7 @@
 	<div class="col-sm-9">
 		<h4>{{'stores' | translate}} <small>({{results.totalItems}} resultados)</small></h4>
 		<div class="m-top-15">
-			<div ng-if="results.results.length < 1">No se han encontrado resultados</div>
+			<div ng-if="results.results.length < 1">{{'noResults' | translate}}</div>
 			<div ng-if="results.results.length > 0">
 				<table class="table table-condensed">
 					<tr>
@@ -19,7 +19,7 @@
 					</tr>
 				</table>
 				<div class="pull-right">
-					<a href="#stores/new">Nuevo establecimiento</a>
+					<a href="#stores/new">{{'store.newStore' | translate}}</a>
 				</div>
 				<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)"
 					max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
@@ -66,11 +66,11 @@
 				</div>			
 				<div class="form-group">
 					<div class="checkbox">
-						<label><input type="checkbox" ng-model="searchOptions.showDeleted">Mostrar grupos eliminados</label>
+						<label><input type="checkbox" ng-model="searchOptions.showDeleted">{{'store.showDeleted' | translate}}</label>
 					</div>
 				</div>
-				<button class="btn btn-primary btn-sm" ng-click="search()">Buscar</button>
-				<button class="btn btn-default btn-sm" ng-click="reset()">Reset</button>
+				<button class="btn btn-primary btn-sm" ng-click="search()">{{'search' | translate}}</button>
+				<button class="btn btn-default btn-sm" ng-click="reset()">{{'reset' | translate}}</button>
 			</form>
 		</div>
 	</div>

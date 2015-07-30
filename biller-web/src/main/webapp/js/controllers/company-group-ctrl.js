@@ -14,7 +14,11 @@
 		$scope.getSearchUrl = function() {
 			var predicateBuilder = new PredicateBuilder('');
 			predicateBuilder.append("name=lk=", $scope.searchOptions.name);			
-			if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
+			if(!$scope.searchOptions.showDeleted) {
+				predicateBuilder.appendKey("auditData.deleted=n=");
+			} else {
+				predicateBuilder.appendKey("auditData.deleted=!n=");
+			}
 			return REST_PATH + '/groups/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
 		$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
