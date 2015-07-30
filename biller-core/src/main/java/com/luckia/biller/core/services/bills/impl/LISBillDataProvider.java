@@ -87,7 +87,7 @@ public class LISBillDataProvider implements BillDataProvider {
 			BigDecimal storeCash = stakes.subtract(totalWinAmount);
 			map.put(BillConcept.TotalBetAmount, totalBetAmount);
 			map.put(BillConcept.Cance1lled, totalCancelledAmount);
-			map.put(BillConcept.TotalWinAmount, totalCancelledAmount);
+			map.put(BillConcept.TotalWinAmount, totalWinAmount);
 			map.put(BillConcept.TotalAttributable, totalAttributable);
 			map.put(BillConcept.Margin, stakes.subtract(totalAttributable));
 			map.put(BillConcept.Stakes, stakes);
@@ -95,7 +95,7 @@ public class LISBillDataProvider implements BillDataProvider {
 			map.put(BillConcept.NGR, ngr);
 			map.put(BillConcept.NR, nr);
 			map.put(BillConcept.StoreCash, storeCash);
-			LOG.debug("Terminales: {}", Arrays.toString(terminals.toArray()));
+			LOG.debug("Terminales procesados: {}", Arrays.toString(terminals.toArray()));
 			LOG.debug("Stakes: {}; GGR: {}; NGR: {}; NR: {}; CoOpFees: {}; StoreCash: {}", stakes, ggr, ngr, nr, gastosOperativos, storeCash);
 		}
 		return map;

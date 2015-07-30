@@ -135,8 +135,8 @@ public class LiquidationReportGenerator extends BaseReport {
 		cell++;
 		createHeaderCell(sheet, currentRow, cell++, "Apostado (base)");
 		createHeaderCell(sheet, currentRow, cell++, "Cancelado (base)");
-		createHeaderCell(sheet, currentRow, cell++, "Premios (base)");
-		createHeaderCell(sheet, currentRow, cell++, "Stakes (base)");
+		createHeaderCell(sheet, currentRow, cell++, "Apostado efectivo (base)");
+		createHeaderCell(sheet, currentRow, cell++, "Pagado (base)");
 		createHeaderCell(sheet, currentRow, cell++, "Imputable (base)");
 		createHeaderCell(sheet, currentRow, cell++, "Margen (base)");
 		createHeaderCell(sheet, currentRow, cell++, "GGR (base)");
@@ -147,13 +147,13 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "NGR");
 		createHeaderCell(sheet, currentRow, cell++, "NR");
 		cell++;
-		createHeaderCell(sheet, currentRow, cell++, "Terminales");
-		cell++;
 		createHeaderCell(sheet, currentRow, cell++, "Apuestas");
 		createHeaderCell(sheet, currentRow, cell++, "SAT");
 		createHeaderCell(sheet, currentRow, cell++, "ATC");
 		createHeaderCell(sheet, currentRow, cell++, "Coste ubicacion");
 		createHeaderCell(sheet, currentRow, cell++, "Otros");
+		cell++;
+		createHeaderCell(sheet, currentRow, cell++, "Terminales");
 		return currentRow + 1;
 	}
 
@@ -201,8 +201,8 @@ public class LiquidationReportGenerator extends BaseReport {
 			cell++;
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalBetAmount));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Cance1lled));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalWinAmount));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Stakes));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalWinAmount));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalAttributable));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Margin));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.GGR));
@@ -213,6 +213,12 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NR));
 			cell++;
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Stakes));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SatMonthlyFees));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CommercialMonthlyFees));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.PricePerLocation));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Other));
+			cell++;
 			StringBuffer sb = new StringBuffer();
 			if (Store.class.isAssignableFrom(bill.getSender().getClass())) {
 				Store store = bill.getSender().as(Store.class);
@@ -222,15 +228,10 @@ public class LiquidationReportGenerator extends BaseReport {
 					if (iterator.hasNext()) {
 						sb.append(", ");
 					}
-
+					
 				}
 			}
 			createCell(sheet, currentRow, cell++, sb.toString());
-			cell++;
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SatMonthlyFees));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CommercialMonthlyFees));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.PricePerLocation));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Other));
 			currentRow++;
 		}
 		return currentRow;

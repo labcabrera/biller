@@ -29,6 +29,7 @@ import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
+import com.luckia.biller.core.model.BillRawData;
 import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
@@ -108,8 +109,11 @@ public class BillProcessorImpl implements BillProcessor {
 	public void processDetails(Bill bill) {
 		EntityManager entityManager = entityManagerProvider.get();
 		billDetailProcessor.process(bill);
-		for (BillDetail detail : bill.getDetails()) {
-			entityManager.merge(detail);
+		for (BillDetail i : bill.getDetails()) {
+			entityManager.merge(i);
+		}
+		for(BillRawData i : bill.getBillRawData()) {
+			entityManager.merge(i);
 		}
 		entityManager.merge(bill);
 		stateMachineService.createTransition(bill, CommonState.Draft.name());

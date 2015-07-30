@@ -85,7 +85,6 @@ public class BillRecalculationTask implements Runnable {
 			bill.getBillRawData().clear();
 		}
 		entityManager.merge(bill);
-		// entityManager.createNativeQuery("delete from BILL_RAW_DATA WHERE ID_BILL = ?").setParameter(1, bill.getId()).executeUpdate();
 		entityManager.flush();
 	}
 

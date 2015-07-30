@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,21 +15,21 @@ import javax.persistence.Table;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 @Entity
-@Table(name = "BILL_RAW_DATA")
+@Table(name = "B_BILL_RAW_DATA")
 public class BillRawData {
 
 	@Id
-	@ManyToOne
-	@JoinColumn(name = "ID_BILL")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "BILL_ID", nullable = false)
 	@NotSerializable
 	private Bill bill;
 
 	@Id
-	@Column(name = "BILLINGRAWDATA_KEY")
+	@Column(name = "CONCEPT", nullable = false, length = 45)
 	@Enumerated(EnumType.ORDINAL)
 	private BillConcept concept;
 
-	@Column(name = "BILLINGRAWDATA")
+	@Column(name = "CONCEPT_AMOUNT", nullable = false, precision = 18, scale = 2)
 	private BigDecimal amount;
 
 	public BillRawData() {
