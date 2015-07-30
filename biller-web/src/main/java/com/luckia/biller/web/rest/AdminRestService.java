@@ -26,6 +26,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Injector;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
@@ -37,7 +38,6 @@ import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.bills.BillProcessor;
-import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 @Path("/admin")
 public class AdminRestService {
@@ -49,9 +49,9 @@ public class AdminRestService {
 	@Inject
 	private BillProcessor billProcessor;
 	@Inject
-	private LiquidationProcessor liquidationProcessor;
-	@Inject
 	private AuditService auditService;
+	@Inject
+	private Injector injector;
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -144,10 +144,10 @@ public class AdminRestService {
 			if (!liquidations.isEmpty()) {
 				LOG.debug("Se van a recalcular {} liquidaciones", liquidations.size());
 				for (Liquidation liquidation : liquidations) {
-					tasks.add(new LiquidationRecalculationTask(liquidation.getId(), entityManagerProvider, liquidationProcessor));
+					tasks.add(new LiquidationRecalculationTask(liquidation.getId(), injector));
 				}
 			} else if (companyId != null) {
-				tasks.add(new LiquidationTask(companyId, range, entityManagerProvider, liquidationProcessor));
+				tasks.add(new LiquidationTask(companyId, range, injector));
 			}
 			if (!tasks.isEmpty()) {
 				ExecutorService executorService = Executors.newFixedThreadPool(1);

@@ -4,5 +4,5 @@
 #mvn clean install -Pprod -DskipTests=true
 
 echo "Uploading war"
-scp -P10822 ./biller-web/target/*.war  root@37.187.153.76:/tmp/
+scp -P10822 ./biller-web/target/*.war  root@37.187.153.76:/tmp/biller.war
 

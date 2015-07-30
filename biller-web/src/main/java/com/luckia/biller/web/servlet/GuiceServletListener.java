@@ -26,6 +26,7 @@ public class GuiceServletListener extends GuiceResteasyBootstrapServletContextLi
 			SchedulerService schedulerService = new SchedulerService(injector);
 			schedulerService.registerJobs();
 			schedulerService.getScheduler().start();
+			LOG.error("Started components");
 		} catch (SchedulerException ex) {
 			LOG.error("Scheduler initialization error", ex);
 		}

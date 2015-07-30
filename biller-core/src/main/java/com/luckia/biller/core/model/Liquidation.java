@@ -12,9 +12,11 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.luckia.biller.core.jpa.Mergeable;
@@ -56,6 +58,10 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "liquidation")
 	private List<LiquidationDetail> details;
 
+	@OneToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "REPORT_FILE_ID")
+	protected AppFile reportFile;
+
 	public List<Bill> getBills() {
 		return bills;
 	}
@@ -78,6 +84,14 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 
 	public void setLiquidationResults(LiquidationResults liquidationResults) {
 		this.liquidationResults = liquidationResults;
+	}
+
+	public AppFile getReportFile() {
+		return reportFile;
+	}
+
+	public void setReportFile(AppFile reportFile) {
+		this.reportFile = reportFile;
 	}
 
 	@Override

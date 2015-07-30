@@ -18,7 +18,6 @@ import com.luckia.biller.core.LuckiaCoreModule;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
-import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 public class Patch20140523A {
 
@@ -29,7 +28,6 @@ public class Patch20140523A {
 		Injector injector = Guice.createInjector(new LuckiaCoreModule());
 		injector.getInstance(PersistService.class).start();
 		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
-		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
 		EntityManager entityManager = entityManagerProvider.get();
 
 		Date from = new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate();
@@ -49,7 +47,7 @@ public class Patch20140523A {
 		LOG.debug("Encontradas {} liquidaciones", liquidations.size());
 		for (Liquidation liquidation : liquidations) {
 			String liquidationId = liquidation.getId();
-			LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidationId, entityManagerProvider, liquidationProcessor);
+			LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidationId, injector);
 			task.run();
 		}
 	}

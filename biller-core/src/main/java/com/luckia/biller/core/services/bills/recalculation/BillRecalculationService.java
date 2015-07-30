@@ -20,6 +20,7 @@ import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Injector;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
@@ -32,7 +33,6 @@ import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.bills.BillProcessor;
-import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
 public class BillRecalculationService {
 
@@ -43,9 +43,9 @@ public class BillRecalculationService {
 	@Inject
 	private BillProcessor billProcessor;
 	@Inject
-	private LiquidationProcessor liquidationProcessor;
-	@Inject
 	private AuditService auditService;
+	@Inject
+	private Injector injector;
 
 	public Message<BillRecalculationInfo> prepare(Company company, Store store, Range<Date> range) {
 		try {
@@ -110,13 +110,13 @@ public class BillRecalculationService {
 				List<Liquidation> list = query.getResultList();
 				if (list.isEmpty()) {
 					message.addInfo("Generando liquidación del operador " + info.getCompany().getName());
-					new LiquidationTask(info.getCompany().getId(), range, entityManagerProvider, liquidationProcessor).run();
+					new LiquidationTask(info.getCompany().getId(), range, injector).run();
 				} else {
 					if (list.size() > 1) {
 						message.addWarning("Se han encontrado {} liquidaciones del operador en el rango indicado.");
 					}
 					for (Liquidation liquidation : list) {
-						new LiquidationRecalculationTask(liquidation.getId(), entityManagerProvider, liquidationProcessor).run();
+						new LiquidationRecalculationTask(liquidation.getId(), injector).run();
 					}
 				}
 			}

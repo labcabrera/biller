@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Injector;
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.AppFile;
@@ -40,7 +41,6 @@ import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.BillProcessor;
-import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
 /**
@@ -67,7 +67,7 @@ public class BillProcessorImpl implements BillProcessor {
 	@Inject
 	private AuditService auditService;
 	@Inject
-	private LiquidationProcessor liquidationProcessor;
+	private Injector injector;
 
 	/*
 	 * (non-Javadoc)
@@ -112,7 +112,7 @@ public class BillProcessorImpl implements BillProcessor {
 		for (BillDetail i : bill.getDetails()) {
 			entityManager.merge(i);
 		}
-		for(BillRawData i : bill.getBillRawData()) {
+		for (BillRawData i : bill.getBillRawData()) {
 			entityManager.merge(i);
 		}
 		entityManager.merge(bill);
@@ -347,7 +347,7 @@ public class BillProcessorImpl implements BillProcessor {
 		if (liquidation != null) {
 			LOG.debug("Actualizando los detalles de la liquidacion {}", liquidation);
 			entityManager.flush();
-			LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidation.getId(), entityManagerProvider, liquidationProcessor);
+			LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidation.getId(), injector);
 			task.run();
 		}
 	}

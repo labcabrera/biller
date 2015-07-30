@@ -145,6 +145,7 @@
 								<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">A&ntilde;adir concepto</button>
 								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft'" href="rest/liquidations/draft/{{entity.id}}" role="button" ng-disabled="isSaving">Consultar borrador</a>
 								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button" ng-disabled="isSaving">Descargar</a>
+								<a class="btn btn-primary btn-sm" ng-if="entity.reportFile != null" href="rest/binary/download/{{entity.reportFile.id}}" role="button" ng-disabled="isSaving">Report</a>
 								<button ng-click="recreatePDF()" ng-if="entity.currentState.stateDefinition.id != 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Recrear PDF</button>
 								<button ng-click="draft()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Draft</button>
 								<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Aceptar borrador</button>

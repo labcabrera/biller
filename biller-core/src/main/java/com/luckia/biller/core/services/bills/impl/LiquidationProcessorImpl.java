@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Injector;
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
@@ -64,6 +65,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private I18nService i18nService;
 	@Inject
 	private LiquidationReceiverProvider liquidationReceiverProvider;
+	@Inject
+	private Injector injector;
 
 	/*
 	 * (non-Javadoc)
@@ -263,7 +266,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	@Override
 	@Transactional
 	public Liquidation recalculate(String liquidationId) {
-		LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidationId, entityManagerProvider, this);
+		LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidationId, injector);
 		task.run();
 		return task.getLiquidationResult();
 	}

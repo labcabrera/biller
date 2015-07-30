@@ -24,7 +24,6 @@ import com.luckia.biller.core.scheduler.BillingJob;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
-import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.deploy.poi.MasterWorkbookProcessor;
 
 /**
@@ -125,7 +124,6 @@ public class Main {
 		LOG.info("--------------------------- EJECUTANDO PATCH ---------------------------");
 		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 		BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
-		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
 		List<Range<Date>> ranges = new ArrayList<>();
 		ranges.add(Range.between(new DateTime(2014, 1, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 1, 31, 0, 0, 0, 0).toDate()));
 		ranges.add(Range.between(new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate(), new DateTime(2014, 2, 28, 0, 0, 0, 0).toDate()));
@@ -153,7 +151,7 @@ public class Main {
 		LOG.debug("-- Regenerando liquidaciones --");
 		for (Company company : companies) {
 			for (Range<Date> range : ranges) {
-				LiquidationTask task = new LiquidationTask(company.getId(), range, entityManagerProvider, liquidationProcessor);
+				LiquidationTask task = new LiquidationTask(company.getId(), range, injector);
 				task.run();
 			}
 		}
