@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -21,11 +22,11 @@ import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
+import com.luckia.biller.core.model.BillRawData;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.BillingModelAttributes;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
-import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.bills.BillDataProvider;
 import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 
@@ -49,8 +50,6 @@ public class BillDetailProcessor {
 	@Inject
 	private BillDetailNameProvider billDetailNameProvider;
 	@Inject
-	private SettingsService settingsService;
-	@Inject
 	private ProvinceTaxesService provinceTaxesService;
 
 	/**
@@ -67,7 +66,10 @@ public class BillDetailProcessor {
 		} else {
 			Range<Date> range = Range.between(bill.getDateFrom(), bill.getDateTo());
 			Map<BillConcept, BigDecimal> billingData = billingDataProvider.retreive(bill, range, terminals);
-			bill.setBillingRawData(billingData);
+			bill.setBillRawData(new ArrayList<BillRawData>());
+			for (Entry<BillConcept, BigDecimal> entry : billingData.entrySet()) {
+				bill.getBillRawData().add(new BillRawData(bill, entry.getKey(), entry.getValue()));
+			}
 			BigDecimal vatPercent = provinceTaxesService.getVatPercent(bill);
 			BigDecimal vatDivisor = BigDecimal.ONE.add(vatPercent.divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN));
 

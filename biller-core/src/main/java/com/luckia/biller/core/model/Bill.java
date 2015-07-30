@@ -7,13 +7,10 @@ package com.luckia.biller.core.model;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -122,9 +119,8 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	@JoinColumn(name = "LIQUIDATION_ID")
 	protected Liquidation liquidation;
 
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "BILL_RAW_DATA", joinColumns = @JoinColumn(name = "ID_BILL"))
-	protected Map<BillConcept, BigDecimal> billingRawData;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "bill", cascade = CascadeType.PERSIST)
+	protected List<BillRawData> billRawData;
 
 	/**
 	 * Representa el saldo de caja del establecimiento (pagos - cancelaciones - premios)
@@ -252,12 +248,12 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 		this.liquidationPricePerLocation = liquidationPricePerLocation;
 	}
 
-	public Map<BillConcept, BigDecimal> getBillingRawData() {
-		return billingRawData;
+	public List<BillRawData> getBillRawData() {
+		return billRawData;
 	}
 
-	public void setBillingRawData(Map<BillConcept, BigDecimal> billingRawData) {
-		this.billingRawData = billingRawData;
+	public void setBillRawData(List<BillRawData> billRawData) {
+		this.billRawData = billRawData;
 	}
 
 	/*

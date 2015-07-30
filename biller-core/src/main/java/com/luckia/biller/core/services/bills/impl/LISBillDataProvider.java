@@ -88,7 +88,7 @@ public class LISBillDataProvider implements BillDataProvider {
 			map.put(BillConcept.TotalBetAmount, totalBetAmount);
 			map.put(BillConcept.Cance1lled, totalCancelledAmount);
 			map.put(BillConcept.TotalWinAmount, totalCancelledAmount);
-			map.put(BillConcept.TotalAttributable, totalCancelledAmount);
+			map.put(BillConcept.TotalAttributable, totalAttributable);
 			map.put(BillConcept.Margin, stakes.subtract(totalAttributable));
 			map.put(BillConcept.Stakes, stakes);
 			map.put(BillConcept.GGR, ggr);

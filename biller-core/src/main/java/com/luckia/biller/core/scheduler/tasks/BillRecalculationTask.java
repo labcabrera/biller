@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
+import com.luckia.biller.core.model.BillRawData;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.AuditService;
@@ -77,13 +78,14 @@ public class BillRecalculationTask implements Runnable {
 			}
 			bill.getLiquidationDetails().clear();
 		}
-		if (bill.getBillingRawData() != null) {
-			for (Object i : bill.getBillingRawData().keySet()) {
-				System.out.println(i);
+		if (bill.getBillRawData() != null) {
+			for (BillRawData i : bill.getBillRawData()) {
+				entityManager.remove(i);
 			}
+			bill.getBillRawData().clear();
 		}
 		entityManager.merge(bill);
-		entityManager.createNativeQuery("delete from BILL_RAW_DATA WHERE ID_BILL = ?").setParameter(1, bill.getId()).executeUpdate();
+		// entityManager.createNativeQuery("delete from BILL_RAW_DATA WHERE ID_BILL = ?").setParameter(1, bill.getId()).executeUpdate();
 		entityManager.flush();
 	}
 

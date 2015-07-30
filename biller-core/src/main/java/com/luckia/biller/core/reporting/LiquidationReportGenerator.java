@@ -26,6 +26,7 @@ import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillLiquidationDetail;
+import com.luckia.biller.core.model.BillRawData;
 import com.luckia.biller.core.model.BillerComparator;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
@@ -237,8 +238,12 @@ public class LiquidationReportGenerator extends BaseReport {
 
 	private BigDecimal getLiquidationConceptBaseValue(Bill bill, BillConcept concept) {
 		BigDecimal result = BigDecimal.ZERO;
-		if (bill.getBillingRawData() != null && bill.getBillingRawData().containsKey(concept)) {
-			result = bill.getBillingRawData().get(concept);
+		if (bill.getBillRawData() != null) {
+			for (BillRawData i : bill.getBillRawData()) {
+				if (i.getConcept() == concept) {
+					return i.getAmount();
+				}
+			}
 		}
 		return result;
 	}
