@@ -24,7 +24,12 @@
 			predicateBuilder.append("costCenter.id==", $scope.searchOptions.costCenter != null ? $scope.searchOptions.costCenter.id : null);
 			predicateBuilder.append("owner.id==", $scope.searchOptions.owner != null ? $scope.searchOptions.owner.id : null);
 			predicateBuilder.append("type==", $scope.searchOptions.type);
-			if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
+			if(!$scope.searchOptions.showDeleted) {
+				predicateBuilder.appendKey("auditData.deleted=n=");
+			} else {
+				predicateBuilder.appendKey("auditData.deleted=!n=");
+				
+			}
 			return 'rest/stores/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
 		$scope.setPage = function(page) {

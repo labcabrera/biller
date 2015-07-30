@@ -45,6 +45,7 @@
 	"liquidations": "Liquidaciones",
 	"mode": "Modo",
 	"model": "Modelo",
+	"model.showDeleted": "Mostrar eliminados",
 	"modify": "Modificar",
 	"name": "Nombre",
 	"month": "Mes",
