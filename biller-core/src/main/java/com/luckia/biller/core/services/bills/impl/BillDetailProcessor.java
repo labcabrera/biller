@@ -77,7 +77,7 @@ public class BillDetailProcessor {
 				model.setStoreModel(new BillingModelAttributes());
 			}
 			// Calculamos los conceptos de la facturacion.
-			BigDecimal stakes = billingData.get(BillConcept.Stakes).divide(vatDivisor, 2, RoundingMode.HALF_EVEN);
+			BigDecimal stakes = billingData.containsKey(BillConcept.Stakes) ? billingData.get(BillConcept.Stakes).divide(vatDivisor, 2, RoundingMode.HALF_EVEN) : null;
 			if (MathUtils.isNotZero(stakes)) {
 				// En las ventas hay que quitar el IVA
 				if (MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {

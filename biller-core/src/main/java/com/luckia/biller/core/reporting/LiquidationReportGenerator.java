@@ -116,7 +116,7 @@ public class LiquidationReportGenerator extends BaseReport {
 		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 11, 12));
 		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 14, 22));
 		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 24, 26));
-		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 30, 34));
+		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 28, 32));
 		currentRow++;
 		int cell = 0;
 		createHeaderCell(sheet, currentRow, cell++, "Operadora");
