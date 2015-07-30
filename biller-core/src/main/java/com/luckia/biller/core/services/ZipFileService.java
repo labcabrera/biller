@@ -56,6 +56,10 @@ public class ZipFileService {
 					LOG.debug("No se incluye la factura de {}: carece de fichero asociado", bill.getSender().getName());
 				}
 			}
+			if (liquidation.getReportFile() != null) {
+				in = fileService.getInputStream(liquidation.getReportFile());
+				addZipEntry(in, zipOutputStream, normalizeName(liquidation.getReportFile().getName()));
+			}
 			zipOutputStream.flush();
 			zipOutputStream.close();
 		} catch (Exception ex) {
