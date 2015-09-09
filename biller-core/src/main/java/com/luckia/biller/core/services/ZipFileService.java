@@ -26,7 +26,7 @@ public class ZipFileService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ZipFileService.class);
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
-	private static final String[] REPLACEMENTS_KEYS = { "á", "é", "í", "ó", "ú", "ñ", " ", "." };
+	private static final String[] REPLACEMENTS_KEYS = { "á", "é", "í", "ó", "ú", "ñ", " " };
 	private static final String[] REPLACEMENTS_VALUES = { "a", "e", "i", "o", "u", "n", "_", "" };
 	private static final String FORMAT_LIQUIDATION_NAME = "liquidacion-%s-%s.pdf";
 	private static final String FORMAT_BILL_NAME = "factura-%s-%s.pdf";
