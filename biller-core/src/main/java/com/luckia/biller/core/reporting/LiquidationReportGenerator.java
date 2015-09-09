@@ -31,6 +31,7 @@ import com.luckia.biller.core.model.BillerComparator;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
@@ -150,6 +151,7 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "Apuestas");
 		createHeaderCell(sheet, currentRow, cell++, "SAT");
 		createHeaderCell(sheet, currentRow, cell++, "ATC");
+		createHeaderCell(sheet, currentRow, cell++, "Co-expotacion");
 		createHeaderCell(sheet, currentRow, cell++, "Coste ubicacion");
 		createHeaderCell(sheet, currentRow, cell++, "Otros");
 		cell++;
@@ -161,13 +163,19 @@ public class LiquidationReportGenerator extends BaseReport {
 		int textCol = 3;
 		int blankCol = 4;
 		int valueCol = 5;
+		BigDecimal adjustementAmount = BigDecimal.ZERO;
+		if (liquidation.getDetails() != null) {
+			for (LiquidationDetail i : liquidation.getDetails()) {
+				adjustementAmount = adjustementAmount.add(i.getValue());
+			}
+		}
+		createDisabledCell(sheet, currentRow, textCol, "Ajustes:");
+		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
+		createDisabledCell(sheet, currentRow, valueCol, adjustementAmount);
+		currentRow++;
 		createDisabledCell(sheet, currentRow, textCol, "Total:");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
 		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getSenderAmount());
-		currentRow++;
-		createDisabledCell(sheet, currentRow, textCol, "Ajustes:");
-		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getAdjustmentAmount());
 		currentRow++;
 		createDisabledCell(sheet, currentRow, textCol, "Saldo de caja:");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
@@ -216,8 +224,9 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Stakes));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SatMonthlyFees));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CommercialMonthlyFees));
+			createCell(sheet, currentRow, cell++, bill.getModel().getCompanyModel().getCoOperatingMonthlyFees());
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.PricePerLocation));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Other));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Adjustment));
 			cell++;
 			StringBuffer sb = new StringBuffer();
 			if (Store.class.isAssignableFrom(bill.getSender().getClass())) {
@@ -228,7 +237,7 @@ public class LiquidationReportGenerator extends BaseReport {
 					if (iterator.hasNext()) {
 						sb.append(", ");
 					}
-					
+
 				}
 			}
 			createCell(sheet, currentRow, cell++, sb.toString());
@@ -262,5 +271,4 @@ public class LiquidationReportGenerator extends BaseReport {
 		}
 		return null;
 	}
-
 }
