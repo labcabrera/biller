@@ -34,8 +34,10 @@ public class LiquidationMailService {
 			Boolean deleteOnExit = true;
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			zipFileService.generate(liquidation, out);
+
 			File tmpFile = File.createTempFile("biller-liquidation-", ".tmp");
 			tmpFile.deleteOnExit();
+
 			FileOutputStream fileOut = new FileOutputStream(tmpFile);
 			fileOut.write(out.toByteArray());
 			fileOut.flush();
@@ -49,4 +51,5 @@ public class LiquidationMailService {
 			throw new RuntimeException("Error durante el envio del correo", ex);
 		}
 	}
+
 }
