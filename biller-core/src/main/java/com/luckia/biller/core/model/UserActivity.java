@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -29,7 +31,8 @@ public class UserActivity {
 	private Date date;
 
 	@Column(name = "TYPE", length = 128, nullable = false)
-	private String type;
+	@Enumerated(EnumType.STRING)
+	private UserActivityType type;
 
 	@Column(name = "DATA", columnDefinition = "TEXT", nullable = true)
 	private String data;
@@ -58,11 +61,11 @@ public class UserActivity {
 		this.date = date;
 	}
 
-	public String getType() {
+	public UserActivityType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(UserActivityType type) {
 		this.type = type;
 	}
 
