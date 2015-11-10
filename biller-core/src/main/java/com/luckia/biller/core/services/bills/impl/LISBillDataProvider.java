@@ -67,11 +67,13 @@ public class LISBillDataProvider implements BillDataProvider {
 			BigDecimal totalWinAmount = BigDecimal.ZERO;
 			BigDecimal totalCancelledAmount = BigDecimal.ZERO;
 			BigDecimal totalAttributable = BigDecimal.ZERO;
+			BigDecimal totalCredit = BigDecimal.ZERO;
 			for (LisTerminalRecord i : records) {
 				totalBetAmount = totalBetAmount.add(i.getBetAmount());
 				totalWinAmount = totalWinAmount.add(i.getWinAmount());
 				totalCancelledAmount = totalCancelledAmount.add(i.getCancelledAmount());
 				totalAttributable = totalAttributable.add(i.getAttributable());
+				totalCredit = totalCredit.add(i.getCredit());
 			}
 			BigDecimal coOperatingMonthlyFees = BigDecimal.ZERO;
 			if (bill != null && bill.getModel() != null && bill.getModel().getCompanyModel() != null && bill.getModel().getCompanyModel().getCoOperatingMonthlyFees() != null) {
@@ -84,7 +86,7 @@ public class LISBillDataProvider implements BillDataProvider {
 			BigDecimal ngr = ggr.subtract(tasaDeJuego);
 			BigDecimal gastosOperativos = coOperatingMonthlyFees;
 			BigDecimal nr = ngr.subtract(gastosOperativos);
-			BigDecimal storeCash = stakes.subtract(totalWinAmount);
+			BigDecimal storeCash = stakes.subtract(totalWinAmount).add(totalCredit);
 			map.put(BillConcept.TotalBetAmount, totalBetAmount);
 			map.put(BillConcept.Cance1lled, totalCancelledAmount);
 			map.put(BillConcept.TotalWinAmount, totalWinAmount);
@@ -95,6 +97,7 @@ public class LISBillDataProvider implements BillDataProvider {
 			map.put(BillConcept.NGR, ngr);
 			map.put(BillConcept.NR, nr);
 			map.put(BillConcept.StoreCash, storeCash);
+			map.put(BillConcept.Credit, totalCredit);
 			LOG.debug("Terminales procesados: {}", Arrays.toString(terminals.toArray()));
 			LOG.debug("Stakes: {}; GGR: {}; NGR: {}; NR: {}; CoOpFees: {}; StoreCash: {}", stakes, ggr, ngr, nr, gastosOperativos, storeCash);
 		}

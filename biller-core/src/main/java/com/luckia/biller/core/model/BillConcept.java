@@ -46,6 +46,9 @@ public enum BillConcept {
 
 	/** Saldo de caja */
 	StoreCash,
+	
+	/** Credito */
+	Credit,
 
 	/** Ajuste operativo */
 	Adjustment,

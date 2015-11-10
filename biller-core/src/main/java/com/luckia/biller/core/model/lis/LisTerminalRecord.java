@@ -44,6 +44,9 @@ public class LisTerminalRecord {
 	@Column(name = "imputables")
 	private BigDecimal attributable;
 
+	@Column(name = "credito")
+	private BigDecimal credit;
+
 	public Date getDate() {
 		return date;
 	}
@@ -90,5 +93,13 @@ public class LisTerminalRecord {
 
 	public void setAttributable(BigDecimal attributable) {
 		this.attributable = attributable;
+	}
+
+	public BigDecimal getCredit() {
+		return credit;
+	}
+
+	public void setCredit(BigDecimal credit) {
+		this.credit = credit;
 	}
 }
