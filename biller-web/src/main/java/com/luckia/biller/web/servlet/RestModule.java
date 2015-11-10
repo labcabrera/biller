@@ -27,6 +27,7 @@ import com.luckia.biller.web.rest.SettingsRestService;
 import com.luckia.biller.web.rest.StoreRestService;
 import com.luckia.biller.web.rest.TerminalRelationRestService;
 import com.luckia.biller.web.rest.UserRestService;
+import com.luckia.biller.web.security.SecurityInterceptor;
 
 /**
  * Modulo de Guice encargado de registrar los servicios REST que expone la aplicacion.
@@ -47,6 +48,8 @@ public class RestModule implements Module {
 		// Components
 		binder.bind(RestPersistFilter.class);
 		binder.bind(GsonMessageBodyHandler.class);
+		// Security
+		binder.bind(SecurityInterceptor.class);
 		// Rest services
 		binder.bind(AdminRestService.class);
 		binder.bind(BillingModelRestService.class);

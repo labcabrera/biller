@@ -2,6 +2,7 @@ package com.luckia.biller.web.rest;
 
 import java.util.Map;
 
+import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -21,6 +22,7 @@ public class SecurityRestService {
 	@POST
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Message<Map<String, String>> login(JsonElement request) {
 		String key = request.getAsJsonObject().get("user").getAsString();
 		String password = request.getAsJsonObject().get("password").getAsString();
@@ -29,6 +31,7 @@ public class SecurityRestService {
 
 	@POST
 	@Path("/logout")
+	@PermitAll
 	public Message<String> logout(String sessionId) {
 		userSessionService.logout(sessionId);
 		return new Message<String>().withMessage("Success");

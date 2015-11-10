@@ -5,15 +5,29 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
+import com.google.inject.Singleton;
 import com.luckia.biller.core.model.User;
 
+@Singleton
 public class SecurityService {
+
+	private final ThreadLocal<User> users;
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 
-	// TODO dummy
+	public SecurityService() {
+		users = new ThreadLocal<>();
+	}
+
+	public void setCurrentUser(User user) {
+		users.set(user);
+	}
+
 	public User getCurrentUser() {
+		if (users.get() != null) {
+			return users.get();
+		}
 		try {
 			return entityManagerProvider.get().createNamedQuery("User.selectByName", User.class).setParameter("name", "admin").getSingleResult();
 		} catch (NoResultException ex) {
