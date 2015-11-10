@@ -1,22 +1,31 @@
 package com.luckia.biller.core.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Provider;
+import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.reporting.LiquidationReportGenerator;
 
 /**
  * Genera un ZIP con los ficheros de la liquidacion mensual. A partir de una liquidacion genera un ZIP dentro del cual se encuentran todas
@@ -34,6 +43,10 @@ public class ZipFileService {
 
 	@Inject
 	private FileService fileService;
+	@Inject
+	private LiquidationReportGenerator reportGenerator;
+	@Inject
+	private Provider<EntityManager> entityManagerProvider;
 
 	public void generate(Liquidation liquidation, OutputStream out) {
 		Validate.notNull(liquidation.getPdfFile(), "Missing liquidation file");
@@ -56,9 +69,12 @@ public class ZipFileService {
 					LOG.debug("No se incluye la factura de {}: carece de fichero asociado", bill.getSender().getName());
 				}
 			}
-			if (liquidation.getReportFile() != null) {
-				in = fileService.getInputStream(liquidation.getReportFile());
-				addZipEntry(in, zipOutputStream, normalizeName(liquidation.getReportFile().getName()));
+			try {
+				AppFile reportFile = generateReport(liquidation);
+				InputStream reportInputStream = fileService.getInputStream(reportFile);
+				addZipEntry(reportInputStream, zipOutputStream, normalizeName(liquidation.getReportFile().getName()));
+			} catch (Exception ignore) {
+				LOG.error("Error al adjuntar el report", ignore);
 			}
 			zipOutputStream.flush();
 			zipOutputStream.close();
@@ -87,5 +103,28 @@ public class ZipFileService {
 
 	private String formatDate(Date date) {
 		return date != null ? new SimpleDateFormat(DATE_FORMAT).format(date) : StringUtils.EMPTY;
+	}
+
+	private AppFile generateReport(Liquidation liquidation) {
+		EntityManager entityManager = entityManagerProvider.get();
+		Date from = liquidation.getDateFrom();
+		Date to = liquidation.getDateTo();
+		Company company = liquidation.getSender().as(Company.class);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		reportGenerator.generate(from, to, Arrays.asList(company), out);
+		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+		String fileName = String.format("Liquidaciones-%s-%s.xls", DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
+		AppFile appFile = fileService.save(fileName, FileService.CONTENT_TYPE_EXCEL, in);
+		if (entityManager.getTransaction().isActive()) {
+			liquidation.setReportFile(appFile);
+			entityManager.merge(liquidation);
+			entityManager.flush();
+		} else {
+			entityManager.getTransaction().begin();
+			liquidation.setReportFile(appFile);
+			entityManager.merge(liquidation);
+			entityManager.getTransaction().commit();
+		}
+		return appFile;
 	}
 }

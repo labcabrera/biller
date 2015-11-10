@@ -16,7 +16,7 @@
 		<logback.version>1.0.13</logback.version>
 		<gson.version>2.2.4</gson.version>
 		<mvel.version>2.1.6.Final</mvel.version>
-		<javax.persistence.version>2.0.3</javax.persistence.version>
+		<javax.persistence.version>2.1.0</javax.persistence.version>
 		<hsqldb.version>2.2.9</hsqldb.version>
 		<mysql.version>5.1.26</mysql.version>
 		<poi.version>3.9</poi.version>
