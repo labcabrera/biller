@@ -13,9 +13,7 @@
 			$http.post('rest/security/login', request).success(function(data) {
 				switch(data.code) {
 				case '200':
-					//billerModule.run(function($http) {
-						  $http.defaults.headers.common.sessionId = data.payload.session;
-					//});
+					$http.defaults.headers.common.sessionid = data.payload.session;
 					$rootScope.user = data.payload;
 					$location.url("index");
 					break;
