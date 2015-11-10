@@ -45,6 +45,7 @@
 	"liquidationDetails": "Detalles de la liquidación",
 	"liquidationRecalculation": "Recalcular liquidaciones",
 	"liquidations": "Liquidaciones",
+	"liquidationsSumary": "Resumen de liquidaciones",
 	"mode": "Modo",
 	"model": "Modelo",
 	"model.showDeleted": "Mostrar eliminados",
