@@ -14,9 +14,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -77,6 +81,20 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	@Column(name = "INCLUDE_STORES")
 	private Boolean includeStores;
 
+	/**
+	 * Tipo de calculo del IVA aplicado.
+	 */
+	@Column(name = "VAT_LIQUIDATION_TYPE", length = 32, nullable = true)
+	@Enumerated(EnumType.STRING)
+	private VatLiquidationType vatLiquidationType;
+
+	/**
+	 * Receptor de la liquidacion en el caso de que no sea la entidad legal por defecto.
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "RECEIVER_ID")
+	private LegalEntity receiver;
+
 	public Long getId() {
 		return id;
 	}
@@ -135,6 +153,22 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 		this.includeStores = includeStores;
 	}
 
+	public VatLiquidationType getVatLiquidationType() {
+		return vatLiquidationType;
+	}
+
+	public void setVatLiquidationType(VatLiquidationType vatLiquidationType) {
+		this.vatLiquidationType = vatLiquidationType;
+	}
+
+	public LegalEntity getReceiver() {
+		return receiver;
+	}
+
+	public void setReceiver(LegalEntity receiver) {
+		this.receiver = receiver;
+	}
+
 	@Override
 	public void merge(BillingModel entity) {
 		if (entity != null) {
@@ -155,6 +189,7 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 				storeModel.merge(entity.storeModel);
 			}
 			this.name = entity.name;
+			this.vatLiquidationType = entity.vatLiquidationType;
 		}
 	}
 
