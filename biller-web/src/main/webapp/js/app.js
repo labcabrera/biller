@@ -44,6 +44,7 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/login', { templateUrl : 'partials/login.html', controller: 'LoginCtrl'
 	}).when('/index', { templateUrl : 'static/index.html'
 	}).when('/sequence-prefix', { templateUrl : 'static/sequence-prefix.html'
+	}).when('/forbidden', { templateUrl : 'partials/403.html'
 	}).when('/', { templateUrl : 'static/index.html'
 	}).otherwise({ templateUrl : 'partials/404.html'
 	});

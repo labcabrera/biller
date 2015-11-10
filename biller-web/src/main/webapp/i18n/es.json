@@ -96,5 +96,6 @@
 	"concept.Margin": "Márgen",
 	"concept.GGR": "GGR",
 	"concept.Stakes": "Stakes",
-	"concept.StoreCash": "Saldo de caja"
+	"concept.StoreCash": "Saldo de caja",
+	"security.forbidden": "No tiene permisos para acceder al recurso solicitado"
 }
