@@ -3,7 +3,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"></head>
 <body>
 	<div class="row">
-		<div class="container" exclude-ng-controller="LoginCtrl">
+		<div class="container" ng-controller="LoginCtrl">
 			<form role="form" class="col-sm-4 col-sm-offset-4">
 				<div class="form-group">
 					<label for="username">Usuario</label>
@@ -16,7 +16,7 @@
 					<input type="checkbox" value="remember-me" /> Recordarme
 				</div>
 				<div ng-if="loginResult!=null" class="alert alert-warning">{{loginResult}}</div>
-				<button ng-click="login()" class="btn btn-sm btn-primary">Ingresar</button>
+				<button ng-click="login()" class="btn btn-sm btn-primary">Login</button>
 			</form>
 		</div>
 	</div>

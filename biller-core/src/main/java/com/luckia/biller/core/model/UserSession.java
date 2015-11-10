@@ -17,7 +17,7 @@ import javax.persistence.TemporalType;
 public class UserSession {
 
 	@Id
-	@Column(name = "SESSION")
+	@Column(name = "SESSION", length = 36)
 	private String session;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)

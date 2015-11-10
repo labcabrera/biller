@@ -1,12 +1,12 @@
 package com.luckia.biller.core.services.security;
 
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 //import javax.inject.Inject;
 //import javax.inject.Named;
@@ -50,20 +50,20 @@ public class UserSessionService {
 		TypedQuery<User> query = entityManager.createQuery(qlString, User.class);
 		List<User> users = query.setParameter("key", key).getResultList();
 		if (users.isEmpty()) {
-			return result.withCode("404");
+			return result.withCode("404").addError("login.invalid.user");
 		}
 		for (User user : users) {
 			String digest = calculatePasswordDigest(password);
-			if (digest.equals(user.getPassword())) {
+			if (digest.equals(user.getPasswordDigest())) {
 				UserSession session = createSession(user);
 				Map<String, String> map = new LinkedHashMap<>();
 				map.put("name", user.getName());
 				map.put("email", user.getEmail());
 				map.put("session", session.getSession());
-				return result.withPayload(map);
+				return result.addInfo("login.success").withPayload(map);
 			}
 		}
-		return result.withCode("401");
+		return result.withCode("401").addError("login.invalid.password");
 	}
 
 	public Message<Boolean> validateSession(String sessionId) {
@@ -87,11 +87,11 @@ public class UserSessionService {
 	public UserSession createSession(User user) {
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.createQuery("delete from UserSession e where e.user = :user").setParameter("user", user).executeUpdate();
-		SecureRandom random = new SecureRandom();
-		byte[] rawSession = new byte[32];
-		random.nextBytes(rawSession);
+		// SecureRandom random = new SecureRandom();
+		// byte[] rawSession = new byte[32];
+		// random.nextBytes(rawSession);
 		UserSession session = new UserSession();
-		session.setSession(Hex.encodeHexString(rawSession));
+		session.setSession(UUID.randomUUID().toString());
 		session.setUser(user);
 		session.setCreated(new DateTime().toDate());
 		session.setLastAccess(session.getCreated());

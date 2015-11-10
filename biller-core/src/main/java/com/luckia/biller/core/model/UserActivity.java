@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 public class UserActivity {
 
 	@Id
+	@Column(name = "ID")
 	private String id;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)

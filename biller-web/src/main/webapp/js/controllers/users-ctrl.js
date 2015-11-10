@@ -9,14 +9,20 @@
 	
 	billerModule.controller('LoginCtrl', [ '$scope', '$rootScope', '$location', '$http', function($scope, $rootScope, $location, $http) {
 		$scope.login = function(user, password) {
-			var request = { "name": $scope.username, "password": $scope.password};
-			$http.post('rest/users/login', request).success(function(data) {
-				if(data.code == 200) {
+			var request = { "user": $scope.username, "password": $scope.password};
+			$http.post('rest/security/login', request).success(function(data) {
+				switch(data.code) {
+				case '200':
 					$rootScope.user = data.payload;
 					$location.url("index");
-				} else {
-					$rootScope.loginResult = data.message;
-				}
+					break;
+				case '404':
+					$rootScope.loginResult = "Usuario no válido";
+					break;
+				case '401':
+					$rootScope.loginResult = "Password incorrecta";
+					break;
+				};
 			});
 		};
 	} ]);
