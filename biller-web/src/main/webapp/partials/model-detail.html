@@ -89,7 +89,23 @@
 										<input type='text' class="form-control numeric-field" ng-model="entity.companyModel.pricePerLocation" ng-readonly="isReadOnly" popover="{{'pricePerLocation.help' | translate}}" popover-trigger="mouseenter"/>
 										<span class="input-group-addon">&euro;</span>
 									</div>
-								</div>		
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 col-sm-offset-3">{{'vatLiquidationType' | translate}}</label>
+								<div class="col-sm-6">
+									<select class="form-control">
+										<option>No incluído</option>
+										<option>Incluído en el importe de la liquidación</option>
+										<option>Añadido sobre el importe de la liquidación</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 col-sm-offset-3">{{'receiver' | translate}}</label>
+								<div class="col-sm-6">
+									<div company-group ng-model="entity.receiver"></div>
+								</div>
 							</div>
 							<hr class="col-sm-offset-2"/>
 							<h5 class="col-sm-offset-2">Establecimiento</h5>

@@ -84,6 +84,21 @@
 		};
 	});
 	
+	billerModule.directive('companyGroup', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/company-group-searchbox.html',
+			controller : 'CompanyGroupCtrl',
+			require : '^ngModel',
+			replace : 'true',
+			scope : {
+				ngModel : '=',
+				isReadOnly : '=',
+				locked : '='
+			},
+		};
+	});
+	
 	billerModule.directive('store', function() {
 		return {
 			restrict : 'AE',
@@ -154,6 +169,14 @@
 	billerModule.controller('CompanyCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.companies = function(name) {
 			return $http.get(REST_PATH + '/companies/find?q=name=lk=' + name).then(function(response) {
+				return response.data.results;
+			});
+		};
+	}]);
+
+	billerModule.controller('CompanyGroupCtrl', ['$scope', '$http', function($scope, $http) {
+		$scope.companies = function(name) {
+			return $http.get(REST_PATH + '/groups/find?q=name=lk=' + name).then(function(response) {
 				return response.data.results;
 			});
 		};

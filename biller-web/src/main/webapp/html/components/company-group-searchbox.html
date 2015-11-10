@@ -1,0 +1,16 @@
+<div>
+	<script type="text/ng-template" id="customTemplateCompany.html">
+  		<a>
+      		<span bind-html-unsafe="match.model.name | typeaheadHighlight:query"></span>
+		</a>
+	</script>
+	<input type="text"
+		class="form-control"
+		ng-model="ngModel"
+		ng-disabled="locked"
+		typeahead="company as company.name for company in companies($viewValue)"
+		typeahead-loading="loadingCompanies"
+		typeahead-editable="false"
+		typeahead-template-url="customTemplateCompany.html"
+		ng-readonly="isReadOnly"></input>
+</div>	
