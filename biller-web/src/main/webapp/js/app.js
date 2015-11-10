@@ -149,6 +149,34 @@ billerModule.run(function($rootScope, $http) {
 	$rootScope.dateFormat = 'dd-MM-yyyy';
 });
 
+/*
+billerModule.config(['$httpProvider', function($httpProvider) {
+	$httpProvider.interceptors.push('securityInterceptor');
+}]);
+
+billerModule.factory('securityInterceptor', ['$q', '$location', function($q, $location) {  
+    var injector = {
+		request: function(data) {
+    		console.log("http request " + data.url);
+            return data;
+    	},
+    	response: function(data) {
+    		console.log("http response url " + data.config.url + ": " + data.status);
+            return data;
+    	},
+        requestError: function(data) {
+        	console.log("http request error " + data.config.url + ": " + data.statys);
+            return data;
+        },
+        responseError: function(data) {
+        	console.log("http response error url " + data.config.url + ": " + data.status);
+        	return $q.reject(data);
+        }
+    };
+    return injector;
+}]);
+*/
+
 billerModule.factory('messageService', function() {
 	var message = null;
     return {
