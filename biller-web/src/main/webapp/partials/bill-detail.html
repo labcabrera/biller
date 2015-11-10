@@ -95,6 +95,7 @@
 					<li><a data-target="#commentsTab" data-toggle="tab">{{'comments' | translate}}</a></li>
 					<li><a data-target="#liquidationDetailTab" data-toggle="tab">{{'liquidationDetails' | translate}} <span ng-if="entity.liquidationTotalAmount > 0">({{entity.liquidationTotalAmount}})</span></a></li>
 					<li><a data-target="#commentsPdfTab" data-toggle="tab">Comentarios PDF</a></li>
+					<li><a data-target="#advancedInfoTab" data-toggle="tab">Inf. técnica</a></li>
 					<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
 				</ul> 				
 				<div class="tab-content">
@@ -201,6 +202,12 @@
 									<td class="data-amount"><b>{{entity.adjustmentAmount}}</b></td>
 									<td></td>
 								</tr>
+								<tr ng-repeat="i in entity.billRawData | filter: { concept: 'Credit' }">
+									<td><b>Crédito</b></td>
+									<td></td>
+									<td class="data-amount"><b>{{i.amount}}</b></td>
+									<td></td>
+								</tr>
 								<tr>
 									<td><b>Saldo de caja</b></td>
 									<td></td>
@@ -215,6 +222,27 @@
 					<div class="tab-pane" id="commentsPdfTab">
 						<div class="m-top-15">
 							<textarea class="form-control" rows="5" ng-model="entity.commentsPdf" ng-readonly="isReadOnly"></textarea>
+						</div>
+					</div>
+					
+					<div class="tab-pane" id="advancedInfoTab">
+						<div class="m-top-15">
+							<table>
+								<thead>
+									<tr>
+										<td><b>Concepto</b></td>
+										<td><b>Importe</b></td>
+									</tr>
+								<thead>
+								<tbody>
+									<tr ng-repeat="i in entity.billRawData">
+										<td>{{'concept.' + i.concept | translate}}</td>
+										<td></td>
+										<td class="data-amount">{{i.amount}}</td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 					
