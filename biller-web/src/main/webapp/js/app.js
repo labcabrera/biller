@@ -184,7 +184,7 @@ billerModule.factory('securityInterceptor', ['$q', '$location', function($q, $lo
 /**
 * SECURITY INTERCEPTOR
 */
-billerModule.factory('authInterceptor', ['$rootScope', '$q', '$window', function ($rootScope, $q, $window) {
+billerModule.factory('authInterceptor', ['$rootScope', '$q', '$window', '$location', function ($rootScope, $q, $window, $location) {
 	return {
 		request: function (config) {
 			config.headers = config.headers || {};
@@ -197,10 +197,11 @@ billerModule.factory('authInterceptor', ['$rootScope', '$q', '$window', function
 			return config;
 		},
 		requestError: function (rejection) {
-			console.log("rejection: " + rejection);
+			console.log("authInterceptor request error: " + rejection);
 			return $q.reject(rejection);
 		},
 		response: function (response) {
+			console.log("response: " + response.status);
 			if (response.status === 401 || response.status === 403) {
 				delete $window.sessionStorage.sessionid;
 				alert('you must login first');
@@ -209,6 +210,11 @@ billerModule.factory('authInterceptor', ['$rootScope', '$q', '$window', function
 			return response || $q.when(response);
 		},
 		responseError: function (rejection) {
+			console.log("interceptor response error status: " + rejection.status);
+			if(rejection.status === 403) {
+				$location.url("forbidden");
+				return;
+			}
 			if (rejection.status === 401) {
 				delete $window.sessionStorage.sessionid;
 				$rootScope.isUserLogged  = $window.sessionStorage.sessionid != null;

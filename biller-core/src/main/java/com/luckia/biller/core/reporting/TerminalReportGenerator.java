@@ -30,6 +30,9 @@ import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.services.FileService;
 
+/**
+ * Componente encargado de generar una hoja de calculo con el informe de terminales registrados en la aplicacion.
+ */
 public class TerminalReportGenerator extends BaseReport {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TerminalReportGenerator.class);
@@ -42,14 +45,14 @@ public class TerminalReportGenerator extends BaseReport {
 	public Message<AppFile> generate(Date date, Company company, CostCenter costCenter) {
 		date = date != null ? date : Calendar.getInstance().getTime();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		generate(date, out, company, costCenter);
+		generate(date, company, costCenter, out);
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 		String fileName = String.format("Terminales-%s.xls", DateFormatUtils.ISO_DATE_FORMAT.format(date));
 		AppFile appFile = fileService.save(fileName, FileService.CONTENT_TYPE_EXCEL, in);
 		return new Message<AppFile>(Message.CODE_SUCCESS, "Informe generado", appFile);
 	}
 
-	public Message<String> generate(Date date, OutputStream out, Company company, CostCenter costCenter) {
+	public Message<String> generate(Date date, Company company, CostCenter costCenter, OutputStream out) {
 		try {
 			Validate.notNull(date);
 			LOG.debug("Generando informe de terminales a fecha {}", DateFormatUtils.ISO_DATE_FORMAT.format(date));

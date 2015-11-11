@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
@@ -29,11 +30,17 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CostCenter;
+import com.luckia.biller.core.model.LegalEntity;
+import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.reporting.LiquidationReportGenerator;
+import com.luckia.biller.core.reporting.LiquidationSummaryReportGenerator;
 import com.luckia.biller.core.reporting.TerminalReportGenerator;
 import com.luckia.biller.core.services.FileService;
 
+/**
+ * Servicio REST encargado de la generacion de informes
+ */
 @Path("/report")
 public class ReportRestService {
 
@@ -44,13 +51,24 @@ public class ReportRestService {
 	@Inject
 	private LiquidationReportGenerator liquidationReportGenerator;
 	@Inject
+	private LiquidationSummaryReportGenerator liquidationSummaryReportGenerator;
+	@Inject
 	private FileService fileService;
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 
+	/**
+	 * Crea el informe de terminales a una fecha dada
+	 * 
+	 * @param dateAsString
+	 * @param companyId
+	 * @param costCenterId
+	 * @return
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("/terminals")
+	@PermitAll
 	public Response terminals(@QueryParam("date") String dateAsString, @QueryParam("companyId") Long companyId, @QueryParam("costCenterId") Long costCenterId) {
 		try {
 			Date date = Calendar.getInstance().getTime();
@@ -72,6 +90,7 @@ public class ReportRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("/liquidations")
+	@PermitAll
 	public Response liquidations(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString, @QueryParam("ids") String entityIds) {
 		try {
 			LOG.debug("Generando informe de liquidacines ({},{},{}", fromAsString, toAsString, entityIds);
@@ -99,6 +118,31 @@ public class ReportRestService {
 		}
 	}
 
+	@GET
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Path("/liquidation-summary")
+	@PermitAll
+	public Response liquidationSummary(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString, @QueryParam("companyId") String companyId,
+			@QueryParam("costCenterId") String costCenterId) {
+		try {
+			LOG.debug("Generating liquidation summary report ({},{},{},{}", fromAsString, toAsString, companyId, costCenterId);
+			Mutable<Date> from = new MutableObject<Date>();
+			Mutable<Date> to = new MutableObject<Date>();
+			calculateRange(fromAsString, toAsString, from, to);
+			EntityManager entityManager = entityManagerProvider.get();
+			Company company = StringUtils.isNotBlank(companyId) ? entityManager.find(Company.class, Long.parseLong(companyId)) : null;
+			CostCenter costCenter = StringUtils.isNotBlank(costCenterId) ? entityManager.find(CostCenter.class, Long.parseLong(costCenterId)) : null;
+			Message<AppFile> message = liquidationSummaryReportGenerator.generate(from.getValue(), to.getValue(), company, costCenter);
+			InputStream in = fileService.getInputStream(message.getPayload());
+			ResponseBuilder response = Response.ok(in);
+			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "Resumen de liquidaciones.xls"));
+			response.header("Content-Type", FileService.CONTENT_TYPE_EXCEL);
+			return response.build();
+		} catch (Exception ex) {
+			throw new RuntimeException("Error la generar el informe de liquidaciones", ex);
+		}
+	}
+
 	private void calculateRange(String fromAsString, String toAsString, Mutable<Date> resultFrom, Mutable<Date> resultTo) {
 		try {
 			resultFrom.setValue(new SimpleDateFormat("yyyy-MM-dd").parse(fromAsString));
@@ -112,4 +156,5 @@ public class ReportRestService {
 		resultFrom.setValue(dateTimeFrom.toDate());
 		resultTo.setValue(dateTimeTo.toDate());
 	}
+
 }

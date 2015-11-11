@@ -33,11 +33,18 @@
 		};
 		$scope.search = function() {
 			$scope.currentPage = 1;
-			$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
+			$http.get($scope.getSearchUrl()).then(function(data) {
+				console.log("data: " + data);
+				$scope.results = data;
+			}, function(data) {
+				console.log("error: " + data);
+			});
 		};
 		$scope.setPage = function(page) {
 		    $scope.currentPage = page;
-		    $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
+		    $http.get($scope.getSearchUrl()).then(function(data) {
+		    	$scope.results = data;
+		    });
 		};
 		$scope.reset();
 		$scope.search();

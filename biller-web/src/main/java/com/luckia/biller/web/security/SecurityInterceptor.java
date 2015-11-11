@@ -28,7 +28,7 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 	private static final boolean DISABLE_SECURITY = false;
 
 	private static final String AUTHORIZATION_PROPERTY = "sessionid";
-	private static final ServerResponse ACCESS_FORBIDDEN = new ServerResponse("Nobody can access this resource", 403, new Headers<Object>());;
+	private static final ServerResponse ACCESS_FORBIDDEN = new ServerResponse("{\"message\":\"Access forbidden\"}", 403, new Headers<Object>());;
 
 	@Inject
 	private javax.inject.Provider<EntityManager> entityManagerProvider;
