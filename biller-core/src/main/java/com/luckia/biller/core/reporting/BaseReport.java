@@ -15,7 +15,10 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BaseReport {
+/**
+ * Clase base con metodos para facilitar la generacion de reports usando POI (estilos, creacion de celdas, etc).
+ */
+public abstract class BaseReport {
 
 	private enum ReportStyle {
 		DEFAULT, DEFAULT_DATE, DEFAULT_NUMBERIC, HEADER, HEADER_NUMBERIC, DISABLED, DISABLED_DATE, DISABLED_NUMERIC

@@ -113,6 +113,27 @@
 			},
 		};
 	});
+	
+	billerModule.directive('costCenter', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/cost-center-searchbox.html',
+			controller : ['$scope', '$http', function($scope, $http) {
+				$scope.costCenters = function(name) {
+					return $http.get(REST_PATH + '/costcenters/find?q=name=lk=' + name).then(function(response) {
+						return response.data;
+					});
+				};
+			}],
+			require : '^ngModel',
+			replace : 'true',
+			scope : {
+				ngModel : '=',
+				isReadOnly : '=',
+				locked : '='
+			},
+		};
+	});
 
 	billerModule.controller('CalendarCtrl', ['$scope', function($scope) {
 		$scope.placeHolder= 'DD/MM/YYYY';

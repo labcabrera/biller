@@ -36,6 +36,7 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/rappel/stores/id/:id', { templateUrl : 'partials/rappel-store-detail.html', controller : 'RappelStoreDetailCtrl'
 	}).when('/reports/terminals', { templateUrl : 'html/reports/report-terminals.html', controller : 'ReportTerminalsCtrl'
 	}).when('/reports/liquidations', { templateUrl : 'html/reports/report-liquidations.html', controller : 'ReportLiquidationsCtrl'
+	}).when('/reports/liquidations-summary', { templateUrl : 'html/reports/report-liquidations-summary.html', controller : 'ReportLiquidationsSummaryCtrl'
 	}).when('/admin/console', { templateUrl : 'partials/admin/admin-console.html'
 	}).when('/admin/settings', { templateUrl : 'partials/admin/admin-settings.html', controller: 'SettingsCtrl'
 	}).when('/admin/jobs', { templateUrl : 'partials/admin/admin-jobs.html', controller: 'SettingsCtrl'
@@ -80,7 +81,7 @@ billerModule.controller('LanguageCtrl', ['$scope', '$translate', function($scope
 	};
 }]);
 
-billerModule.run(function($rootScope, $http) {
+billerModule.run(function($rootScope, $http, $window) {
 	$rootScope.isReadOnly = true;
 	$rootScope.itemsPerPage = 10;
 	$rootScope.groups = function(name) { return $http.get("rest/groups/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
@@ -123,6 +124,8 @@ billerModule.run(function($rootScope, $http) {
 	};
 	
 	$rootScope.logout = function() {
+		console.log("logout");
+		$window.sessionStorage.sessionid = null;
 		$rootScope.user = { "name": ""};
 	};
 
@@ -176,6 +179,49 @@ billerModule.factory('securityInterceptor', ['$q', '$location', function($q, $lo
     return injector;
 }]);
 */
+
+
+/**
+* SECURITY INTERCEPTOR
+*/
+billerModule.factory('authInterceptor', ['$rootScope', '$q', '$window', function ($rootScope, $q, $window) {
+	return {
+		request: function (config) {
+			config.headers = config.headers || {};
+			if ($window.sessionStorage.sessionid) {
+				config.headers.sessionid = $window.sessionStorage.sessionid;
+			}
+			if (config.method == 'POST' && config.data == null) {
+				config.data = '{}';
+			}
+			return config;
+		},
+		requestError: function (rejection) {
+			console.log("rejection: " + rejection);
+			return $q.reject(rejection);
+		},
+		response: function (response) {
+			if (response.status === 401 || response.status === 403) {
+				delete $window.sessionStorage.sessionid;
+				alert('you must login first');
+				// handle the case where the user is not authenticated
+			}
+			return response || $q.when(response);
+		},
+		responseError: function (rejection) {
+			if (rejection.status === 401) {
+				delete $window.sessionStorage.sessionid;
+				$rootScope.isUserLogged  = $window.sessionStorage.sessionid != null;
+				// handle the case where the user is not authenticated
+			}
+			return $q.reject(rejection);
+		} 
+};}]);
+
+billerModule.config(['$httpProvider', function ($httpProvider) {
+	$httpProvider.interceptors.push('authInterceptor');
+}]);
+
 
 billerModule.factory('messageService', function() {
 	var message = null;

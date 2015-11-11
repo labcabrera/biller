@@ -7,13 +7,17 @@
 	 * ----------------------------------------------------------------------------
 	 */
 	
-	billerModule.controller('LoginCtrl', [ '$scope', '$rootScope', '$location', '$http', function($scope, $rootScope, $location, $http) {
+	billerModule.controller('LoginCtrl', [ '$scope', '$rootScope', '$location', '$http', '$window', function($scope, $rootScope, $location, $http, $window) {
 		$scope.login = function(user, password) {
 			var request = { "user": $scope.username, "password": $scope.password};
 			$http.post('rest/security/login', request).success(function(data) {
 				switch(data.code) {
 				case '200':
-					$http.defaults.headers.common.sessionid = data.payload.session;
+					var sessionid = data.payload.session;
+					$window.sessionStorage.sessionid = sessionid;
+					$window.sessionStorage.username = data.payload.name;
+					$window.sessionStorage.email = data.payload.email;
+					//$http.defaults.headers.common.sessionid = sessionid;
 					$rootScope.user = data.payload;
 					$location.url("index");
 					break;
