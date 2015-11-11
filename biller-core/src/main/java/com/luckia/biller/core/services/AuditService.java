@@ -16,6 +16,7 @@ import com.luckia.biller.core.model.Auditable;
 import com.luckia.biller.core.model.User;
 import com.luckia.biller.core.model.UserActivity;
 import com.luckia.biller.core.model.UserActivityType;
+import com.luckia.biller.core.serialization.Serializer;
 
 public class AuditService {
 
@@ -23,6 +24,8 @@ public class AuditService {
 	private SecurityService securityService;
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
+	@Inject
+	private Serializer serializer;
 
 	public void processCreated(Auditable auditable) {
 		Date now = Calendar.getInstance().getTime();
@@ -52,12 +55,22 @@ public class AuditService {
 		auditable.getAuditData().setModifiedBy(securityService.getCurrentUser());
 	}
 
+	public void addUserActivity(UserActivityType type, Object data) {
+		addUserActivity(securityService.getCurrentUser(), type, data);
+	}
+
 	@Transactional
-	public void addUserActivity(User user, UserActivityType type, String data) {
+	public void addUserActivity(User user, UserActivityType type, Object data) {
+		String dataStr = null;
+		if (data != null && String.class.isAssignableFrom(data.getClass())) {
+			dataStr = (String) data;
+		} else if (data != null) {
+			dataStr = serializer.toJson(data);
+		}
 		UserActivity entity = new UserActivity();
 		entity.setId(UUID.randomUUID().toString());
 		entity.setUser(user);
-		entity.setData(data);
+		entity.setData(dataStr);
 		entity.setType(type);
 		entity.setDate(new DateTime().toDate());
 		EntityManager entityManager = entityManagerProvider.get();

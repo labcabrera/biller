@@ -43,6 +43,11 @@ public class Serializer {
 		}
 	}
 
+	public String toJson(Object object) {
+		Gson gson = getBuilder().create();
+		return gson.toJson(object);
+	}
+
 	public <T> T deserialize(Class<T> type, InputStream entityStream) {
 		InputStreamReader streamReader = null;
 		try {

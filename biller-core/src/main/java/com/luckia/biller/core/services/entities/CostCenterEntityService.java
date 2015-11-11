@@ -2,13 +2,19 @@ package com.luckia.biller.core.services.entities;
 
 import java.io.Serializable;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.CostCenter;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
+import com.luckia.biller.core.services.AuditService;
 
 public class CostCenterEntityService extends EntityService<CostCenter> {
+
+	@Inject
+	private AuditService auditService;
 
 	@Override
 	@Transactional
@@ -26,12 +32,14 @@ public class CostCenterEntityService extends EntityService<CostCenter> {
 			auditService.processCreated(current);
 			entityManager.persist(current);
 			message = i18nService.getMessage("costCenter.persist");
+			auditService.addUserActivity(UserActivityType.COST_CENTER_INSERT, entity);
 		} else {
 			current = entityManager.find(CostCenter.class, entity.getId());
 			current.merge(entity);
 			auditService.processModified(current);
 			entityManager.merge(current);
 			message = i18nService.getMessage("costCenter.merge");
+			auditService.addUserActivity(UserActivityType.COST_CENTER_UPDATE, entity);
 		}
 		return new Message<CostCenter>(Message.CODE_SUCCESS, message, current);
 	}
@@ -43,6 +51,7 @@ public class CostCenterEntityService extends EntityService<CostCenter> {
 		CostCenter current = entityManager.find(CostCenter.class, primaryKey);
 		auditService.processDeleted(current);
 		entityManager.merge(current);
+		auditService.addUserActivity(UserActivityType.COST_CENTER_DELETE, primaryKey);
 		return new Message<CostCenter>(Message.CODE_SUCCESS, i18nService.getMessage("costCenter.remove"), current);
 	}
 
