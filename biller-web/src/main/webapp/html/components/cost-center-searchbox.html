@@ -1,0 +1,16 @@
+<div>
+	<script type="text/ng-template" id="customTemplateStore.html">
+  		<a>
+      		<span bind-html-unsafe="match.model.name | typeaheadHighlight:query"></span>
+		</a>
+	</script>
+	<input type="text"
+		class="form-control"
+		ng-model="ngModel"
+		ng-disabled="locked"
+		typeahead="costCenter as costCenter.name for costCenter in costCenters($viewValue)"
+		typeahead-loading="loadingCostCenters"
+		typeahead-editable="false"
+		typeahead-template-url="customTemplateStore.html"
+		ng-readonly="locked">
+</div>	

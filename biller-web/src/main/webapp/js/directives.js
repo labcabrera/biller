@@ -121,7 +121,7 @@
 			controller : ['$scope', '$http', function($scope, $http) {
 				$scope.costCenters = function(name) {
 					return $http.get(REST_PATH + '/costcenters/find?q=name=lk=' + name).then(function(response) {
-						return response.data;
+						return response.data.results;
 					});
 				};
 			}],
