@@ -31,8 +31,8 @@
 		$scope.generate = function() {
 			var from = $scope.reportData.from != null ? $filter('date')($scope.reportData.from, "yyyy-MM-dd") : '';
 			var to = $scope.reportData.to != null ? $filter('date')($scope.reportData.to, "yyyy-MM-dd") : '';
-			var companyId = "";
-			var costCenterId = "";
+			var companyId = $scope.reportData.company != null ? $scope.reportData.company.id : "";
+			var costCenterId = $scope.reportData.costCenter != null ? $scope.reportData.costCenter.id : "";
 			var url = REST_PATH + '/report/liquidation-summary?from=' + from + '&to=' + to + "&companyId=" + companyId + "&costCenterId=" + costCenterId;
 			$window.open(url, '_blank');
 		};

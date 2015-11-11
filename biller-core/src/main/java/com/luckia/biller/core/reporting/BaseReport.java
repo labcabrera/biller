@@ -28,14 +28,15 @@ public abstract class BaseReport {
 
 	private Map<ReportStyle, HSSFCellStyle> styles;
 
+	// e7501e
 	public void init(HSSFWorkbook workbook) {
 		styles = new HashMap<>();
 		styles.put(ReportStyle.DEFAULT, buildStyle(workbook));
 		styles.put(ReportStyle.DEFAULT_DATE, buildDateStyle(workbook, null));
 		styles.put(ReportStyle.DEFAULT_NUMBERIC, buildNumericStyle(workbook, null));
-		styles.put(ReportStyle.HEADER, buildStyle(workbook, HSSFColor.LIME.index));
-		styles.put(ReportStyle.HEADER, buildNumericStyle(workbook, HSSFColor.LIME.index));
-		styles.put(ReportStyle.HEADER_NUMBERIC, buildStyle(workbook, HSSFColor.LIME.index));
+		styles.put(ReportStyle.HEADER, buildStyle(workbook, HSSFColor.LIGHT_ORANGE.index));
+		styles.put(ReportStyle.HEADER, buildNumericStyle(workbook, HSSFColor.LIGHT_ORANGE.index));
+		styles.put(ReportStyle.HEADER_NUMBERIC, buildStyle(workbook, HSSFColor.LIGHT_ORANGE.index));
 		styles.put(ReportStyle.DISABLED, buildStyle(workbook, HSSFColor.GREY_25_PERCENT.index));
 		styles.put(ReportStyle.DISABLED_DATE, buildDateStyle(workbook, HSSFColor.GREY_25_PERCENT.index));
 		styles.put(ReportStyle.DISABLED_NUMERIC, buildNumericStyle(workbook, HSSFColor.GREY_25_PERCENT.index));
