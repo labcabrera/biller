@@ -158,7 +158,7 @@
 								</tr>
 							</table>
 							<div class="btn-toolbar m-top-40" role="toolbar">
-								<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">A&ntilde;adir concepto</button>
+								<button ng-click="editLiquidationDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">{{'addAdjustment' | translate}}</button>
 								<button ng-click="rectify()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Rectificar</button>
 								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" href="rest/bills/draft/{{entity.id}}" role="button" ng-disabled="isSaving">Consultar borrador</a>
 								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled' && entity.currentState.stateDefinition.id != 'Initial'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button" ng-disabled="isSaving">Descargar</a>
@@ -166,7 +166,6 @@
 								<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Aceptar borrador</button>
 								<button ng-click="recalculate()" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving" >Recalcular</button>
 								<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Enviar</button>
-								<!-- button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'Cancelled'" class="btn btn-sm btn-success pull-right">Rectificar</button -->
 							</div>
 						</div>
 					</div>
@@ -267,6 +266,10 @@
 						<div ng-include src="'templates/entity-audit-info.html'"></div>
 					</div>
 					
+					<pre>
+					{{billLiquidationDetail|json}}
+					</pre>
+					
 				</div>
 			</div>
 		</div>
@@ -275,7 +278,7 @@
 		<div class="col-sm-3">
 			<div ng-include src="'templates/entity-toolbar.html'"></div>
 			<div class="m-top-40">
-				<h4>Facturaci&oacute;n</h4>
+				<h4>Facturación</h4>
 				<ul class="list-unstyled">
 					<li><a href="#/bills">Ver facturas</a></li>
 					<li><a href="#/bills?store={{entity.sender.id}}">Ver facturas de este establecimiento</a></li>
@@ -291,6 +294,7 @@
 			<div ng-include src="'templates/entity-json-popup.html'"></div>
 		</div>
 	</div>
+	<div ng-include src="'templates/bill-modal-liquidation-detail.html'"></div>
 	<div ng-include src="'templates/bill-modal-detail.html'"></div>
 	<div ng-include src="'templates/bill-modal-email.html'"></div>
 </div>

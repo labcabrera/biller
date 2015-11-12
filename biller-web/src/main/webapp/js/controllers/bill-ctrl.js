@@ -86,6 +86,32 @@
 				});
 			}
 		};
+		$scope.editLiquidationDetail = function(data) {
+			if(data != null && !(typeof data === 'undefined') ) {
+				$scope.isSaving = true;
+				$http.get('rest/bills/liquidation/detail/id/' + data).success(function(data) {
+					$scope.isSaving = false;
+					$scope.billLiquidationDetail = data;
+					$scope.billLiquidationDetail.bill = { "id": $scope.entity.id };
+					$('#editBillLiquidationConceptModal').modal('show');
+				});	
+			} else {
+				$scope.billLiquidationDetail = { "bill" : { "id" : $scope.entity.id }, "value":"", "units":"" };
+				$('#editBillLiquidationConceptModal').modal('show');			
+			};
+		};
+		$scope.mergeLiquidationDetail = function(detail) {
+			console.log("detail: " + detail);
+			$scope.isSaving = true;
+			$http.post('rest/bills/detail/liquidation/merge/', detail).success(function(data) {
+				$scope.isSaving = false;
+				$scope.message = data;
+				$("#editBillLiquidationConceptModal").modal('hide');
+				if(data.code == 200) {
+					$scope.entity = data.payload;
+				}
+			});
+		};
 		$scope.editDetail = function(data) {
 			if(data != null && !(typeof data === 'undefined') ) {
 				$scope.isSaving = true;

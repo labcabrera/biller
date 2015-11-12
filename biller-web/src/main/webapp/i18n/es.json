@@ -60,6 +60,7 @@
 	"liquidationRecalculation": "Recalcular liquidaciones",
 	"liquidations": "Liquidaciones",
 	"liquidationsSummary": "Resumen de liquidaciones",
+	"liquidationIncluded": "Incluir en la liquidación",
 	"mode": "Modo",
 	"model": "Modelo",
 	"model.showDeleted": "Mostrar eliminados",

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.Range;
 
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
+import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.Store;
 
 /**
@@ -51,11 +52,17 @@ public interface BillProcessor {
 	 */
 	Bill rectifyBill(Bill bill);
 
-	Bill mergeDetail(BillDetail detail);
-	
-	Bill removeDetail(BillDetail detail);
+	Bill mergeBillDetail(BillDetail detail);
 
-	/** Borrado fisico de facturas */
+	Bill removeBillDetail(BillDetail detail);
+
+	Bill mergeLiquidationDetail(BillLiquidationDetail detail);
+
+	Bill removeLiquidationDetail(BillLiquidationDetail detail);
+
+	/**
+	 * Borrado fisico de facturas
+	 */
 	void remove(Bill bill);
 
 }

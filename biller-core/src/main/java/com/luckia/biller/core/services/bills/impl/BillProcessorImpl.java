@@ -290,7 +290,7 @@ public class BillProcessorImpl implements BillProcessor {
 	 */
 	@Override
 	@Transactional
-	public Bill mergeDetail(BillDetail detail) {
+	public Bill mergeBillDetail(BillDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Boolean isNew = detail.getId() == null;
 		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
@@ -315,7 +315,37 @@ public class BillProcessorImpl implements BillProcessor {
 
 	@Override
 	@Transactional
-	public Bill removeDetail(BillDetail detail) {
+	public Bill mergeLiquidationDetail(BillLiquidationDetail detail) {
+		EntityManager entityManager = entityManagerProvider.get();
+		Boolean isNew = detail.getId() == null;
+		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
+		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
+		Bill bill;
+		if (isNew) {
+			bill = entityManager.find(Bill.class, detail.getBill().getId());
+			detail.setId(UUID.randomUUID().toString());
+			entityManager.persist(detail);
+			bill.getLiquidationDetails().add(detail);
+		} else {
+			BillLiquidationDetail current = entityManager.find(BillLiquidationDetail.class, detail.getId());
+			current.merge(detail);
+			entityManager.merge(current);
+			bill = current.getBill();
+		}
+		entityManager.flush();
+		entityManager.refresh(bill);
+		processResults(bill);
+		return bill;
+	}
+
+	@Override
+	public Bill removeLiquidationDetail(BillLiquidationDetail detail) {
+		return null;
+	}
+
+	@Override
+	@Transactional
+	public Bill removeBillDetail(BillDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Bill bill = detail.getBill();
 		bill.getBillDetails().remove(detail);

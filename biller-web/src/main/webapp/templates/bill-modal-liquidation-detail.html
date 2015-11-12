@@ -1,0 +1,59 @@
+<div class="modal fade" id="editBillLiquidationConceptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">{{'liquidationDetail.edit'}}</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{'type' | translate}}</label>
+						<div class="col-sm-8">
+							<select class="form-control" ng-model="billLiquidationDetail.type">
+								<option value="RAPPEL">{{'rappel' | translate}}</option>
+								<option value="CREDIT">{{'credit' | translate}}</option>
+								<option value="LOAN_RECOVERY">{{'loanRecovery' | translate}}</option>
+								<option value="ROBBERY">{{'robbery' | translate}}</option>
+								<option value="OTHER">{{'other' | translate}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group" ng-if="billLiquidationDetail.type == 'OTHER'">
+						<label class="col-sm-2 control-label">{{'description' | translate}}</label>
+						<div class="col-sm-8">
+							<input type='text' class="form-control" ng-model="billLiquidationDetail.name" />
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-8 col-sm-offset-2">
+							<div class="checkbox">
+								<label><input type="checkbox" ng-model="billLiquidationDetail.liquidationIncluded" ng-init="billLiquidationDetail.liquidationIncluded=true">{{'liquidationIncluded' | translate}}</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{'units' | translate}}</label>
+						<div class="col-sm-4">
+							<number-only-input input-value="billLiquidationDetail.units" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{'amount' | translate}}</label>
+						<div class="col-sm-4">
+							<number-only-input input-value="billLiquidationDetail.value"/>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{'cancel' | translate}}</button>
+				<button type="button" class="btn btn-default btn-sm" ng-click="removeLiquidationDetail(billDetail.id)" ng-if="billDetail.id != null">{{'remove' | translate}}</button>
+				<button type="button" class="btn btn-success btn-sm" ng-click="mergeLiquidationDetail(billLiquidationDetail)">{{'save' | translate}}</button>
+			</div>
+			<div>
+				<pre>billLiquidationDetail: {{billLiquidationDetail | json}}</pre>
+			</div>
+		</div>
+	</div>
+</div>

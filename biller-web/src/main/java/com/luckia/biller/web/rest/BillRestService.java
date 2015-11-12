@@ -31,6 +31,7 @@ import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
+import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
@@ -156,11 +157,26 @@ public class BillRestService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/detail/liquidation/merge")
+	@Transactional
+	public Message<Bill> mergeLiquidationDetail(BillLiquidationDetail detail) {
+		try {
+			Bill bill = billProcessor.mergeLiquidationDetail(detail);
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.merge"), bill);
+		} catch (Exception ex) {
+			LOG.error("Error al actualizar el detalle", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.detail.merge.error"));
+		}
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/merge")
 	@Transactional
-	public Message<Bill> mergeDetail(BillDetail detail) {
+	public Message<Bill> mergeBillDetail(BillDetail detail) {
 		try {
-			Bill bill = billProcessor.mergeDetail(detail);
+			Bill bill = billProcessor.mergeBillDetail(detail);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.merge"), bill);
 		} catch (Exception ex) {
 			LOG.error("Error al actualizar el detalle", ex);
@@ -192,7 +208,7 @@ public class BillRestService {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			BillDetail detail = entityManager.find(BillDetail.class, id);
-			Bill bill = billProcessor.removeDetail(detail);
+			Bill bill = billProcessor.removeBillDetail(detail);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.remove"), bill);
 		} catch (Exception ex) {
 			LOG.error("Error al eliminar el detalle", ex);
