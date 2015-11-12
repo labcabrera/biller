@@ -280,4 +280,30 @@
 			}
 		};
 	});
+	
+	billerModule.directive('addBillLiquidationDetail', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'templates/bill-modal-liquidation-detail.html',
+			controller : function($scope, $http) {
+				$scope.mergeLiquidationDetail = function() {
+					$scope.isSaving = true;
+					$http.post('rest/bills/detail/liquidation/merge/', $scope.detail).success(function(data) {
+						$scope.isSaving = false;
+						$scope.message = data;
+						$("#editBillLiquidationConceptModal").modal('hide');
+						if(data.code == 200) {
+							$scope.bill = data.payload;
+						}
+					});
+				};
+			},
+			scope : {
+				bill: "=",
+				detail : '=',
+				message: '='
+			}
+		};
+	});
+
 })();

@@ -94,10 +94,10 @@
 							<div class="form-group">
 								<label class="col-sm-2 col-sm-offset-3">{{'vatLiquidationType' | translate}}</label>
 								<div class="col-sm-6">
-									<select class="form-control">
-										<option>No incluído</option>
-										<option>Incluído en el importe de la liquidación</option>
-										<option>Añadido sobre el importe de la liquidación</option>
+									<select class="form-control" ng-model="entity.vatLiquidationType">
+										<option value="EXCLUDED">No incluído</option>
+										<option value="LIQUIDATION_INCLUDED">Incluído en el importe de la liquidación</option>
+										<option value="LIQUIDATION_ADDED">Añadido sobre el importe de la liquidación</option>
 									</select>
 								</div>
 							</div>

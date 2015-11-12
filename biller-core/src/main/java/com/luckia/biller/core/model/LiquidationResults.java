@@ -25,10 +25,6 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	@Column(name = "PRICE_PER_LOCATION_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal pricePerLocation;
 
-	/** Suma de todos los ajustes manuales de las facturas */
-	@Column(name = "OTHER_AMOUNT", precision = 18, scale = 2)
-	private BigDecimal otherAmount;
-
 	/** Suma de todos los ajustes operativos de las facturas */
 	@Column(name = "ADJUSTMENT_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal adjustmentAmount;
@@ -77,14 +73,6 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 
 	public void setStoreAmount(BigDecimal storeAmount) {
 		this.storeAmount = storeAmount;
-	}
-
-	public BigDecimal getOtherAmount() {
-		return otherAmount;
-	}
-
-	public void setOtherAmount(BigDecimal otherAmount) {
-		this.otherAmount = otherAmount;
 	}
 
 	public BigDecimal getAdjustmentAmount() {
@@ -149,7 +137,6 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 			this.adjustmentAmount = entity.adjustmentAmount;
 			this.betAmount = entity.betAmount;
 			this.cashStoreAmount = entity.cashStoreAmount;
-			this.otherAmount = entity.otherAmount;
 			this.receiverAmount = entity.receiverAmount;
 			this.satAmount = entity.satAmount;
 			this.senderAmount = entity.senderAmount;

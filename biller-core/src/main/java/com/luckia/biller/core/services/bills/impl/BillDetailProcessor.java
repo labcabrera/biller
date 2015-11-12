@@ -152,6 +152,7 @@ public class BillDetailProcessor {
 			detail.setPercent(percent);
 			detail.setUnits(BigDecimal.ONE);
 			detail.setName(billDetailNameProvider.getName(detail));
+			detail.setLiquidationIncluded(true); // revisar
 			if (bill.getLiquidationDetails() == null) {
 				bill.setLiquidationDetails(new ArrayList<BillLiquidationDetail>());
 			}

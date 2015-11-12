@@ -117,9 +117,20 @@
 								<tr>
 									<th>Concepto</th>
 									<th class="data-amount">Unidades</th>
-									<th class="data-amount">Importe</th>
+									<th class="data-amount">Base</th>
+									<th class="data-amount">IVA</th>
+									<th class="data-amount">Total</th>
 									<th></th>
 								</tr>
+								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: true}">
+									<td>{{detail.name}}</td>
+									<td class="data-amount">{{detail.units}}</td>
+									<td class="data-amount">{{detail.value}}</td>
+									<td class="data-amount"></td>
+									<td class="data-amount"></td>
+									<td></td>
+								</tr>
+								<!--
 								<tr ng-repeat="detail in entity.liquidationDetails">
 									<td>{{detail.name}}</td>
 									<td class="data-amount">{{detail.units}}</td>
@@ -132,8 +143,11 @@
 									<td class="data-amount">{{detail.value}}</td>
 									<td></td>
 								</tr>
+								-->
 								<tr>
 									<td><b>Total</b></td>
+									<td></td>
+									<td></td>
 									<td></td>
 									<td class="data-amount"><b>{{entity.liquidationTotalAmount}}</b></td>
 									<td></td>
@@ -141,11 +155,15 @@
 								<tr>
 									<td><b>Ajustes operativos</b></td>
 									<td></td>
+									<td></td>
+									<td></td>
 									<td class="data-amount"><b>{{entity.adjustmentAmount}}</b></td>
 									<td></td>
 								</tr>
 								<tr ng-repeat="i in entity.billRawData | filter: { concept: 'Credit' }">
 									<td><b>Crédito</b></td>
+									<td></td>
+									<td></td>
 									<td></td>
 									<td class="data-amount"><b>{{i.amount}}</b></td>
 									<td></td>
@@ -153,7 +171,21 @@
 								<tr>
 									<td><b>Saldo de caja</b></td>
 									<td></td>
+									<td></td>
+									<td></td>
 									<td class="data-amount"><b>{{entity.storeCash}}</b></td>
+									<td></td>
+								</tr>
+								<tr ng-if="entity.liquidationOuterAmount > 0">
+									<td colspan="4"><b>Ajustes fuera de liquidación</b></td>
+									<td class="data-amount"><b>{{entity.liquidationOuterAmount}}</b></td>
+								</tr>
+								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: false}">
+									<td>{{detail.name}}</td>
+									<td class="data-amount">{{detail.units}}</td>
+									<td class="data-amount">{{detail.value}}</td>
+									<td class="data-amount"></td>
+									<td class="data-amount"></td>
 									<td></td>
 								</tr>
 							</table>
@@ -294,7 +326,10 @@
 			<div ng-include src="'templates/entity-json-popup.html'"></div>
 		</div>
 	</div>
+	<!--
 	<div ng-include src="'templates/bill-modal-liquidation-detail.html'"></div>
+	-->
+	<div add-bill-liquidation-detail bill="entity" detail="billLiquidationDetail" message="message"></div>
 	<div ng-include src="'templates/bill-modal-detail.html'"></div>
 	<div ng-include src="'templates/bill-modal-email.html'"></div>
 </div>

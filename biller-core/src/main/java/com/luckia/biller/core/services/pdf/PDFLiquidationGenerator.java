@@ -129,12 +129,12 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 						map.put("value", detail.getValue());
 						adjustmentDetails.add(map);
 						break;
-					case ManualWithLiquidation:
-						map = new HashMap<>();
-						map.put("name", bill.getSender().getName() + ": " + detail.getName());
-						map.put("value", detail.getValue());
-						otherDetails.add(map);
-						break;
+					// case ManualWithLiquidation:
+					// map = new HashMap<>();
+					// map.put("name", bill.getSender().getName() + ": " + detail.getName());
+					// map.put("value", detail.getValue());
+					// otherDetails.add(map);
+					// break;
 					default:
 						break;
 					}
@@ -205,13 +205,13 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			}
 		}
 
-		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getOtherAmount())) {
-			cells.add(createCell("Otros conceptos", Element.ALIGN_LEFT, documentFont));
-			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getOtherAmount()), Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getOtherAmount()), Element.ALIGN_RIGHT, documentFont));
-		}
+		// if (MathUtils.isNotZero(liquidation.getLiquidationResults().getOtherAmount())) {
+		// cells.add(createCell("Otros conceptos", Element.ALIGN_LEFT, documentFont));
+		// cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
+		// cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getOtherAmount()), Element.ALIGN_RIGHT, documentFont));
+		// cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
+		// cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getOtherAmount()), Element.ALIGN_RIGHT, documentFont));
+		// }
 
 		cells.add(createCell("TOTAL LIQUIDACIÓN", Element.ALIGN_LEFT, boldFont));
 		cells.addAll(createEmptyCells(3));

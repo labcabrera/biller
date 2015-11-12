@@ -111,14 +111,11 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	@Column(name = "LIQUIDATION_PRICE_PER_LOCATION", precision = 18, scale = 2)
 	private BigDecimal liquidationPricePerLocation;
 
-	@Column(name = "LIQUIDATION_OTHER_AMOUNT", precision = 18, scale = 2)
-	private BigDecimal liquidationOtherAmount;
+	@Column(name = "LIQUIDATION_MANUAL_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal liquidationManualAmount;
 
-	/**
-	 * Total de ajustes operativos de la liquidación
-	 */
-	@Column(name = "ADJUSTMENT_AMOUNT", precision = 18, scale = 2)
-	private BigDecimal adjustmentAmount;
+	@Column(name = "LIQUIDATION_OUTER_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal liquidationOuterAmount;
 
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "LIQUIDATION_ID")
@@ -213,14 +210,6 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 		this.storeCash = storeCash;
 	}
 
-	public BigDecimal getAdjustmentAmount() {
-		return adjustmentAmount;
-	}
-
-	public void setAdjustmentAmount(BigDecimal adjustmentAmount) {
-		this.adjustmentAmount = adjustmentAmount;
-	}
-
 	public BigDecimal getLiquidationBetAmount() {
 		return liquidationBetAmount;
 	}
@@ -237,14 +226,6 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 		this.liquidationSatAmount = liquidationSatAmount;
 	}
 
-	public BigDecimal getLiquidationOtherAmount() {
-		return liquidationOtherAmount;
-	}
-
-	public void setLiquidationOtherAmount(BigDecimal liquidationOtherAmount) {
-		this.liquidationOtherAmount = liquidationOtherAmount;
-	}
-
 	public BigDecimal getLiquidationPricePerLocation() {
 		return liquidationPricePerLocation;
 	}
@@ -259,6 +240,22 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	public void setBillRawData(List<BillRawData> billRawData) {
 		this.billRawData = billRawData;
+	}
+
+	public BigDecimal getLiquidationManualAmount() {
+		return liquidationManualAmount;
+	}
+
+	public void setLiquidationManualAmount(BigDecimal liquidationManualAmount) {
+		this.liquidationManualAmount = liquidationManualAmount;
+	}
+
+	public BigDecimal getLiquidationOuterAmount() {
+		return liquidationOuterAmount;
+	}
+
+	public void setLiquidationOuterAmount(BigDecimal liquidationOuterAmount) {
+		this.liquidationOuterAmount = liquidationOuterAmount;
 	}
 
 	/*

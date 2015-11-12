@@ -15,12 +15,12 @@ public enum VatLiquidationType {
 	 * IVA incluido en el importe de la liquidacion (como lo hace las facturas). Por ejemplo, si el resultado de la liquidacion fuesen 1000€
 	 * habria que separarlos en dos conceptos, uno de 174 euros en concepto de iva y otro de 826.
 	 */
-	LIQUIDATION_BILL,
+	LIQUIDATION_INCLUDED,
 
 	/**
 	 * IVA incluido pero se añade sobre el importe de la liquidacion. Si por ejemplo el resultado de la liquidacion fueran 1000€ habria que
 	 * añadir un concepto de IVA de 210€
 	 */
-	LIQUIDATION
+	LIQUIDATION_ADDED
 
 }

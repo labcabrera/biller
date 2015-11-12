@@ -35,6 +35,7 @@ import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.model.VatLiquidationType;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
@@ -128,6 +129,7 @@ public class BillProcessorImpl implements BillProcessor {
 	@Override
 	@Transactional
 	public void processResults(Bill bill) {
+		EntityManager entityManager = entityManagerProvider.get();
 		BigDecimal netAmount = BigDecimal.ZERO;
 		for (BillDetail detail : bill.getBillDetails()) {
 			netAmount = netAmount.add(detail.getValue());
@@ -140,63 +142,65 @@ public class BillProcessorImpl implements BillProcessor {
 		bill.setVatPercent(vatPercent);
 		bill.setVatAmount(vatAmount);
 
+		Boolean vatApplies = false;
+		BigDecimal vat = BigDecimal.ZERO;
+		if (bill.getModel().getVatLiquidationType() != null && bill.getModel().getVatLiquidationType() == VatLiquidationType.LIQUIDATION_INCLUDED) {
+			vatApplies = true;
+			// TODO resolver
+			vat = new BigDecimal("21");
+		}
+
 		// Procesamos la liquidacion
-		BigDecimal betAmount = BigDecimal.ZERO;
-		BigDecimal satAmount = BigDecimal.ZERO;
-		BigDecimal pricePerLocation = BigDecimal.ZERO;
-		BigDecimal otherAmount = BigDecimal.ZERO;
-		BigDecimal adjustmentAmount = BigDecimal.ZERO;
+		BigDecimal liquidationBetAmount = BigDecimal.ZERO;
+		BigDecimal liquidationSatAmount = BigDecimal.ZERO;
+		BigDecimal liquidationPricePerLocation = BigDecimal.ZERO;
+		BigDecimal liquidationManualAmount = BigDecimal.ZERO;
+		BigDecimal liquidationOuterAmount = BigDecimal.ZERO;
 
 		// Primero calculamos los conceptos de liquidacion
 		for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
-			if (detail.getConcept() != null) {
-				BigDecimal partial = detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO;
+			BigDecimal partialBase = detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO;
+			BigDecimal partialVat = partialBase.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+			BigDecimal partialTotal = partialBase.add(partialVat);
+			detail.setBaseValue(partialBase);
+			if (detail.getConcept() == null) {
+				LOG.warn("Missing concept in bill {}", bill);
+			} else if (detail.getLiquidationIncluded() == null || detail.getLiquidationIncluded()) {
 				switch (detail.getConcept()) {
 				case Stakes:
 				case GGR:
 				case NGR:
 				case NR:
-					betAmount = betAmount.add(partial);
+					liquidationBetAmount = liquidationBetAmount.add(partialBase);
 					break;
 				case SatMonthlyFees:
 				case CommercialMonthlyFees:
-					satAmount = satAmount.add(partial);
+					liquidationSatAmount = liquidationSatAmount.add(partialBase);
 					break;
 				case PricePerLocation:
-					pricePerLocation = pricePerLocation.add(partial);
+					liquidationPricePerLocation = liquidationPricePerLocation.add(partialBase);
+					break;
+				case MANUAL:
+					liquidationManualAmount = liquidationManualAmount.add(partialBase);
 					break;
 				default:
 					LOG.warn("Ignorando concepto no esperado en la liquidacion: {}", detail.getConcept());
 					break;
 				}
+			} else if (detail.getLiquidationIncluded() != null && !detail.getLiquidationIncluded()) {
+				liquidationOuterAmount = liquidationOuterAmount.add(partialBase);
 			}
-		}
-		// Despues comprobamos los conceptos de facturacion que aplican a la liquidacion
-		for (BillDetail detail : bill.getBillDetails()) {
-			if (detail.getConcept() != null) {
-				BigDecimal partial = detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO;
-				switch (detail.getConcept()) {
-				case ManualWithLiquidation:
-					otherAmount = otherAmount.add(partial);
-					break;
-				case Adjustment:
-					adjustmentAmount = adjustmentAmount.add(partial);
-					break;
-				default:
-					break;
-				}
-			}
+			entityManager.merge(detail);
 		}
 
-		BigDecimal totalLiquidationAmount = betAmount.add(satAmount).add(otherAmount).add(pricePerLocation);
-		LOG.debug("Bill liquidation amount: {}; Adjustment amount: {}", totalLiquidationAmount, adjustmentAmount);
-		bill.setLiquidationBetAmount(betAmount);
-		bill.setLiquidationSatAmount(satAmount);
-		bill.setLiquidationOtherAmount(otherAmount);
+		BigDecimal totalLiquidationAmount = liquidationBetAmount.add(liquidationSatAmount).add(liquidationPricePerLocation).add(liquidationManualAmount);
+		bill.setLiquidationBetAmount(liquidationBetAmount);
+		bill.setLiquidationSatAmount(liquidationSatAmount);
 		bill.setLiquidationTotalAmount(totalLiquidationAmount);
-		bill.setAdjustmentAmount(adjustmentAmount);
-		EntityManager entityManager = entityManagerProvider.get();
+		bill.setLiquidationManualAmount(liquidationManualAmount);
+		bill.setLiquidationOuterAmount(liquidationOuterAmount);
 		entityManager.merge(bill);
+
 		if (bill.getLiquidation() != null) {
 			entityManager.flush();
 			entityManager.clear();

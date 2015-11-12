@@ -46,21 +46,27 @@ public enum BillConcept {
 
 	/** Saldo de caja */
 	StoreCash,
-	
+
 	/** Credito */
 	Credit,
 
+	/** Ajuste manual */
+	MANUAL,
+
 	/** Ajuste operativo */
+	@Deprecated
 	Adjustment,
 
 	/**
 	 * Ajuste manual incluído en la liquidación
 	 */
+	@Deprecated
 	ManualWithLiquidation,
 
 	/**
 	 * Ajuste manual no incluído en la liquidación
 	 */
+	@Deprecated
 	ManualWithoutLiquidation,
 
 	/** Cualquier otro concepto de facturacion que no este incluido en el modelo */
@@ -70,5 +76,14 @@ public enum BillConcept {
 	TotalBetAmount,
 
 	/** Cancelaciones. */
-	Cance1lled, TotalWinAmount, TotalAttributable, Margin;
+	Cance1lled,
+
+	/** Total premiado */
+	TotalWinAmount,
+
+	/** Total imputable */
+	TotalAttributable,
+
+	/** Margen */
+	Margin;
 }

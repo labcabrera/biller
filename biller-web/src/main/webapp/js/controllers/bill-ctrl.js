@@ -56,7 +56,14 @@
 			$scope.message = messageService.getMessage();
 		}
 		$scope.load = function() {
-			$http.get('rest/bills/' + $routeParams.id).success(function(data) { $scope.entity = data; });
+			$http.get('rest/bills/' + $routeParams.id).success(function(data) {
+				$scope.entity = data;
+				$scope.billLiquidationDetail = {
+						"bill": {"id": $scope.entity.id },
+						"concept": "MANUAL",
+						"liquidationIncluded": true
+				};
+			});
 			$rootScope.isReadOnly = true;
 		};
 		$scope.update = function() {
@@ -96,14 +103,15 @@
 					$('#editBillLiquidationConceptModal').modal('show');
 				});	
 			} else {
-				$scope.billLiquidationDetail = { "bill" : { "id" : $scope.entity.id }, "value":"", "units":"" };
+				//$scope.billLiquidationDetail = $scope.billLiquidationDetail ? $scope.billLiquidationDetail : {};
+				//$scope.billLiquidationDetail.id = $scope.entity.id;
 				$('#editBillLiquidationConceptModal').modal('show');			
 			};
 		};
-		$scope.mergeLiquidationDetail = function(detail) {
-			console.log("detail: " + detail);
+		$scope.mergeLiquidationDetail = function() {
+			console.log("mergeLiquidationDetail");
 			$scope.isSaving = true;
-			$http.post('rest/bills/detail/liquidation/merge/', detail).success(function(data) {
+			$http.post('rest/bills/detail/liquidation/merge/', $scope.billLiquidationDetail).success(function(data) {
 				$scope.isSaving = false;
 				$scope.message = data;
 				$("#editBillLiquidationConceptModal").modal('hide');

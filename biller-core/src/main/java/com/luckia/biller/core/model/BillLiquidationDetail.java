@@ -15,7 +15,17 @@ import javax.persistence.Entity;
 @SuppressWarnings("serial")
 public class BillLiquidationDetail extends AbstractBillDetail {
 
+	/**
+	 * Indica si el concepto forma parte de la liquidacion o queda fuera de esta.
+	 */
 	@Column(name = "LIQUIDATION_INCLUDED", nullable = false)
 	private Boolean liquidationIncluded;
 
+	public Boolean getLiquidationIncluded() {
+		return liquidationIncluded;
+	}
+
+	public void setLiquidationIncluded(Boolean liquidationIncluded) {
+		this.liquidationIncluded = liquidationIncluded;
+	}
 }

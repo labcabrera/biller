@@ -110,9 +110,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private void internalProcessResults(Liquidation liquidation) {
 		BigDecimal betAmount = BigDecimal.ZERO;
 		BigDecimal satAmount = BigDecimal.ZERO;
-		BigDecimal otherBillAmount = BigDecimal.ZERO;
 		BigDecimal storeAmount = BigDecimal.ZERO;
-		BigDecimal adjustmentsAmount = BigDecimal.ZERO;
+		BigDecimal manualAmount = BigDecimal.ZERO;
 		BigDecimal cashStore = BigDecimal.ZERO;
 		BigDecimal pricePerLocation = BigDecimal.ZERO;
 		for (Bill bill : liquidation.getBills()) {
@@ -123,8 +122,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			betAmount = betAmount.add(bill.getLiquidationBetAmount() != null ? bill.getLiquidationBetAmount() : BigDecimal.ZERO);
 			satAmount = satAmount.add(bill.getLiquidationSatAmount() != null ? bill.getLiquidationSatAmount() : BigDecimal.ZERO);
 			pricePerLocation = pricePerLocation.add(bill.getLiquidationPricePerLocation() != null ? bill.getLiquidationPricePerLocation() : BigDecimal.ZERO);
-			otherBillAmount = otherBillAmount.add(bill.getLiquidationOtherAmount() != null ? bill.getLiquidationOtherAmount() : BigDecimal.ZERO);
-			adjustmentsAmount = adjustmentsAmount.add(bill.getAdjustmentAmount() != null ? bill.getAdjustmentAmount() : BigDecimal.ZERO);
+			manualAmount = manualAmount.add(bill.getLiquidationManualAmount() != null ? bill.getLiquidationManualAmount() : BigDecimal.ZERO);
 			cashStore = cashStore.add(bill.getStoreCash() != null ? bill.getStoreCash() : BigDecimal.ZERO);
 			if (bill.getModel() != null && BooleanUtils.isTrue(bill.getModel().getIncludeStores())) {
 				storeAmount = storeAmount.add(bill.getAmount());
@@ -139,13 +137,12 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		results.setStoreAmount(storeAmount);
 		results.setSatAmount(satAmount);
 		results.setPricePerLocation(pricePerLocation);
-		results.setOtherAmount(otherBillAmount);
-		results.setAdjustmentAmount(adjustmentsAmount);
-		results.setAdjustmentSharedAmount(adjustmentsAmount.divide(new BigDecimal("2"), 2, RoundingMode.HALF_EVEN));
+		results.setAdjustmentAmount(manualAmount);
+		results.setAdjustmentSharedAmount(manualAmount.divide(new BigDecimal("2"), 2, RoundingMode.HALF_EVEN));
 		results.setCashStoreAmount(cashStore);
-		results.setCashStoreAdjustmentAmount(cashStore.add(adjustmentsAmount));
+		results.setCashStoreAdjustmentAmount(cashStore.add(manualAmount));
 
-		BigDecimal senderAmount = betAmount.add(satAmount).add(otherBillAmount).add(results.getAdjustmentSharedAmount());
+		BigDecimal senderAmount = betAmount.add(satAmount).add(results.getAdjustmentSharedAmount());
 		if (liquidation.getDetails() != null) {
 			for (LiquidationDetail detail : liquidation.getDetails()) {
 				senderAmount = senderAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
