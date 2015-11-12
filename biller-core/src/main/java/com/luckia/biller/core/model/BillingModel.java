@@ -169,10 +169,6 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 		this.receiver = receiver;
 	}
 
-	public boolean vatLiquidationApplies() {
-		return this.vatLiquidationType != null && this.vatLiquidationType == VatLiquidationType.LIQUIDATION_INCLUDED;
-	}
-
 	@Override
 	public void merge(BillingModel entity) {
 		if (entity != null) {

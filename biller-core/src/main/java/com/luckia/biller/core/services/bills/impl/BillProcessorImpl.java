@@ -35,7 +35,6 @@ import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
-import com.luckia.biller.core.model.VatLiquidationType;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
@@ -310,17 +309,37 @@ public class BillProcessorImpl implements BillProcessor {
 		EntityManager entityManager = entityManagerProvider.get();
 		Bill bill = entityManager.find(Bill.class, detail.getBill().getId());
 		Boolean isNew = detail.getId() == null;
-		Boolean vatApplies = bill.getModel().vatLiquidationApplies();
 		BigDecimal units = detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null;
-		BigDecimal vatPercent = new BigDecimal("21"); // TODO resolver
-		BigDecimal netValue = detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null;
-		BigDecimal vatValue = vatApplies ? netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN) : BigDecimal.ZERO;
-		BigDecimal value = netValue.add(vatValue);
-		detail.setBaseValue(netValue);
+		BigDecimal receivedValue = detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null;
+		BigDecimal vatPercent = BigDecimal.ZERO;
+		BigDecimal baseValue = BigDecimal.ZERO;
+		BigDecimal netValue = BigDecimal.ZERO;
+		BigDecimal vatValue = BigDecimal.ZERO;
+		BigDecimal value = BigDecimal.ZERO;
+		switch (bill.getModel().getVatLiquidationType()) {
+		case EXCLUDED:
+			vatPercent = BigDecimal.ZERO;
+			value = baseValue = netValue = receivedValue;
+			break;
+		case LIQUIDATION_INCLUDED:
+			vatPercent = new BigDecimal("21"); // TODO resolver
+			BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent).divide(MathUtils.HUNDRED);
+			netValue = receivedValue.divide(divisor, 2, RoundingMode.HALF_EVEN);
+			vatValue = receivedValue.subtract(netValue);
+			value = netValue.add(vatValue);
+			break;
+		case LIQUIDATION_ADDED:
+			vatPercent = new BigDecimal("21"); // TODO resolver
+			netValue = receivedValue;
+			vatValue = netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+			value = netValue.add(vatValue);
+			break;
+		}
+		detail.setBaseValue(baseValue);
 		detail.setNetValue(netValue);
 		detail.setVatValue(vatValue);
 		detail.setValue(value);
-		detail.setVatPercent(vatApplies ? vatPercent : BigDecimal.ZERO);
+		detail.setVatPercent(vatPercent);
 		detail.setUnits(units);
 		if (isNew) {
 			detail.setId(UUID.randomUUID().toString());

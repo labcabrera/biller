@@ -155,11 +155,6 @@ public class BillDetailProcessor {
 				detail.setVatValue(BigDecimal.ZERO);
 				detail.setValue(netValue);
 				break;
-			case LIQUIDATION_ADDED:
-				detail.setVatPercent(vatPercent);
-				detail.setVatValue(netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN));
-				detail.setValue(detail.getNetValue().add(detail.getVatValue()));
-				break;
 			case LIQUIDATION_INCLUDED:
 				BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent).divide(MathUtils.HUNDRED);
 				BigDecimal baseImponible = netValue.divide(divisor, 2, RoundingMode.HALF_EVEN);
@@ -168,6 +163,11 @@ public class BillDetailProcessor {
 				detail.setVatValue(vatValue);
 				detail.setValue(netValue);
 				detail.setNetValue(baseImponible);
+				break;
+			case LIQUIDATION_ADDED:
+				detail.setVatPercent(vatPercent);
+				detail.setVatValue(netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN));
+				detail.setValue(detail.getNetValue().add(detail.getVatValue()));
 				break;
 			}
 			detail.setLiquidationIncluded(true);
