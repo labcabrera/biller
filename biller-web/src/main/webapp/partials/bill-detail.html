@@ -114,7 +114,7 @@
 					<div class="tab-pane active" id="liquidationDetailTab">
 						<div class="m-top-15">
 							<table class="table">
-								<tr>
+								<tr class="success">
 									<th>Concepto</th>
 									<th class="data-amount">Unidades</th>
 									<th class="data-amount">Base</th>
@@ -122,7 +122,7 @@
 									<th class="data-amount">Total</th>
 									<th></th>
 								</tr>
-								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: true}">
+								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: true}" ng-if="detail.concept != 'MANUAL'">
 									<td>{{detail.name}}</td>
 									<td class="data-amount">{{detail.units}}</td>
 									<td class="data-amount">{{detail.netValue}}</td>
@@ -130,20 +130,24 @@
 									<td class="data-amount">{{detail.value}}</td>
 									<td></td>
 								</tr>
-								<tr>
+								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: true}" ng-if="detail.concept == 'MANUAL'">
+									<td>{{detail.name}}</td>
+									<td class="data-amount">{{detail.units}}</td>
+									<td class="data-amount">{{detail.netValue}}</td>
+									<td class="data-amount">{{detail.vatValue}}</td>
+									<td class="data-amount">{{detail.value}}</td>
+									<td>
+										<a ng-if="entity.currentState.stateDefinition.id == 'Draft'">
+											<span class="glyphicon glyphicon-pencil"></span>
+										</a>
+									</td>
+								</tr>
+								<tr class="success">
 									<td><b>Total</b></td>
 									<td></td>
 									<td></td>
 									<td></td>
 									<td class="data-amount"><b>{{entity.liquidationTotalAmount}}</b></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td><b>Ajustes operativos</b></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td class="data-amount"><b>{{entity.adjustmentAmount}}</b></td>
 									<td></td>
 								</tr>
 								<tr ng-repeat="i in entity.billRawData | filter: { concept: 'Credit' }">
@@ -162,17 +166,22 @@
 									<td class="data-amount"><b>{{entity.storeCash}}</b></td>
 									<td></td>
 								</tr>
-								<tr ng-if="entity.liquidationOuterAmount > 0">
+								<tr class="success" ng-if="entity.liquidationOuterAmount > 0">
 									<td colspan="4"><b>Ajustes fuera de liquidación</b></td>
 									<td class="data-amount"><b>{{entity.liquidationOuterAmount}}</b></td>
+									<td></td>
 								</tr>
 								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: false}">
 									<td>{{detail.name}}</td>
 									<td class="data-amount">{{detail.units}}</td>
+									<td class="data-amount">-</td>
+									<td class="data-amount">-</td>
 									<td class="data-amount">{{detail.value}}</td>
-									<td class="data-amount"></td>
-									<td class="data-amount"></td>
-									<td></td>
+									<td>
+										<a ng-if="entity.currentState.stateDefinition.id == 'Draft'">
+											<span class="glyphicon glyphicon-pencil"></span>
+										</a>
+									</td>
 								</tr>
 							</table>
 							<div class="btn-toolbar m-top-40" role="toolbar">

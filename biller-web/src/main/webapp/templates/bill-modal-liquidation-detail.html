@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">{{'liquidationDetail.edit'}}</h4>
+				<h4 class="modal-title">{{'liquidationDetailEdit' | translate}}</h4>
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal" role="form">
@@ -28,13 +28,6 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<div class="col-sm-8 col-sm-offset-2">
-							<div class="checkbox">
-								<label><input type="checkbox" ng-model="detail.liquidationIncluded">{{'liquidationIncluded' | translate}}</label>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
 						<label class="col-sm-2 control-label">{{'units' | translate}}</label>
 						<div class="col-sm-4">
 							<number-only-input input-value="detail.units" />
@@ -44,6 +37,13 @@
 						<label class="col-sm-2 control-label">{{'amount' | translate}}</label>
 						<div class="col-sm-4">
 							<number-only-input input-value="detail.value"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-8 col-sm-offset-2">
+							<div class="checkbox">
+								<label><input type="checkbox" ng-model="detail.liquidationIncluded">{{'liquidationIncluded' | translate}}</label>
+							</div>
 						</div>
 					</div>
 				</form>

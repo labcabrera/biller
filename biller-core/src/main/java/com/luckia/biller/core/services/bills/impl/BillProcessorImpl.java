@@ -316,24 +316,25 @@ public class BillProcessorImpl implements BillProcessor {
 		BigDecimal netValue = BigDecimal.ZERO;
 		BigDecimal vatValue = BigDecimal.ZERO;
 		BigDecimal value = BigDecimal.ZERO;
-		switch (bill.getModel().getVatLiquidationType()) {
-		case EXCLUDED:
-			vatPercent = BigDecimal.ZERO;
-			value = baseValue = netValue = receivedValue;
-			break;
-		case LIQUIDATION_INCLUDED:
-			vatPercent = new BigDecimal("21"); // TODO resolver
-			BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent).divide(MathUtils.HUNDRED);
-			netValue = receivedValue.divide(divisor, 2, RoundingMode.HALF_EVEN);
-			vatValue = receivedValue.subtract(netValue);
-			value = netValue.add(vatValue);
-			break;
-		case LIQUIDATION_ADDED:
-			vatPercent = new BigDecimal("21"); // TODO resolver
-			netValue = receivedValue;
-			vatValue = netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
-			value = netValue.add(vatValue);
-			break;
+		value = baseValue = netValue = receivedValue;
+		if (detail.getLiquidationIncluded()) {
+			switch (bill.getModel().getVatLiquidationType()) {
+			case LIQUIDATION_INCLUDED:
+				vatPercent = new BigDecimal("21"); // TODO resolver
+				BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent).divide(MathUtils.HUNDRED);
+				netValue = receivedValue.divide(divisor, 2, RoundingMode.HALF_EVEN);
+				vatValue = receivedValue.subtract(netValue);
+				value = netValue.add(vatValue);
+				break;
+			case LIQUIDATION_ADDED:
+				vatPercent = new BigDecimal("21"); // TODO resolver
+				netValue = receivedValue;
+				vatValue = netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+				value = netValue.add(vatValue);
+				break;
+			default:
+				break;
+			}
 		}
 		detail.setBaseValue(baseValue);
 		detail.setNetValue(netValue);
