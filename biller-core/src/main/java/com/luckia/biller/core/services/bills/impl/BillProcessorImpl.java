@@ -82,7 +82,7 @@ public class BillProcessorImpl implements BillProcessor {
 		Bill bill = new Bill();
 		bill.setId(UUID.randomUUID().toString());
 		bill.setBillDate(range.getMaximum());
-		bill.setDetails(new ArrayList<BillDetail>());
+		bill.setBillDetails(new ArrayList<BillDetail>());
 		bill.setSender(store);
 		bill.setModel(store.getBillingModel());
 		bill.setDateFrom(range.getMinimum());
@@ -109,7 +109,7 @@ public class BillProcessorImpl implements BillProcessor {
 	public void processDetails(Bill bill) {
 		EntityManager entityManager = entityManagerProvider.get();
 		billDetailProcessor.process(bill);
-		for (BillDetail i : bill.getDetails()) {
+		for (BillDetail i : bill.getBillDetails()) {
 			entityManager.merge(i);
 		}
 		for (BillRawData i : bill.getBillRawData()) {
@@ -129,7 +129,7 @@ public class BillProcessorImpl implements BillProcessor {
 	@Transactional
 	public void processResults(Bill bill) {
 		BigDecimal netAmount = BigDecimal.ZERO;
-		for (BillDetail detail : bill.getDetails()) {
+		for (BillDetail detail : bill.getBillDetails()) {
 			netAmount = netAmount.add(detail.getValue());
 		}
 		BigDecimal vatPercent = settingsService.getBillingSettings().getValue("vat", BigDecimal.class);
@@ -172,7 +172,7 @@ public class BillProcessorImpl implements BillProcessor {
 			}
 		}
 		// Despues comprobamos los conceptos de facturacion que aplican a la liquidacion
-		for (BillDetail detail : bill.getDetails()) {
+		for (BillDetail detail : bill.getBillDetails()) {
 			if (detail.getConcept() != null) {
 				BigDecimal partial = detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO;
 				switch (detail.getConcept()) {
@@ -265,16 +265,16 @@ public class BillProcessorImpl implements BillProcessor {
 		rectified.setDateFrom(bill.getDateFrom());
 		rectified.setDateTo(bill.getDateTo());
 		rectified.setBillType(BillType.Rectified);
-		rectified.setDetails(new ArrayList<BillDetail>());
+		rectified.setBillDetails(new ArrayList<BillDetail>());
 		rectified.setLiquidationDetails(new ArrayList<BillLiquidationDetail>());
 		rectified.setParent(bill);
 		auditService.processCreated(rectified);
 		entityManager.persist(rectified);
-		for (BillDetail detail : bill.getDetails()) {
+		for (BillDetail detail : bill.getBillDetails()) {
 			BillDetail copy = detail.clone();
 			copy.setBill(rectified);
 			copy.setId(UUID.randomUUID().toString());
-			rectified.getDetails().add(copy);
+			rectified.getBillDetails().add(copy);
 			entityManager.persist(rectified);
 		}
 		entityManager.merge(rectified);
@@ -300,7 +300,7 @@ public class BillProcessorImpl implements BillProcessor {
 			bill = entityManager.find(Bill.class, detail.getBill().getId());
 			detail.setId(UUID.randomUUID().toString());
 			entityManager.persist(detail);
-			bill.getDetails().add(detail);
+			bill.getBillDetails().add(detail);
 		} else {
 			BillDetail current = entityManager.find(BillDetail.class, detail.getId());
 			current.merge(detail);
@@ -318,7 +318,7 @@ public class BillProcessorImpl implements BillProcessor {
 	public Bill removeDetail(BillDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Bill bill = detail.getBill();
-		bill.getDetails().remove(detail);
+		bill.getBillDetails().remove(detail);
 		entityManager.remove(detail);
 		entityManager.flush();
 		bill = entityManager.find(Bill.class, detail.getBill().getId());
@@ -333,7 +333,7 @@ public class BillProcessorImpl implements BillProcessor {
 		LOG.info("Eliminando factura {}", bill);
 		// Eliminamos los detalles
 		EntityManager entityManager = entityManagerProvider.get();
-		for (Object i : bill.getDetails()) {
+		for (Object i : bill.getBillDetails()) {
 			entityManager.remove(i);
 		}
 		for (Object i : bill.getLiquidationDetails()) {

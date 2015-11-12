@@ -133,10 +133,10 @@ public class BillDetailProcessor {
 		detail.setPercent(percent);
 		detail.setUnits(BigDecimal.ONE);
 		detail.setName(billDetailNameProvider.getName(detail));
-		if (bill.getDetails() == null) {
-			bill.setDetails(new ArrayList<BillDetail>());
+		if (bill.getBillDetails() == null) {
+			bill.setBillDetails(new ArrayList<BillDetail>());
 		}
-		bill.getDetails().add(detail);
+		bill.getBillDetails().add(detail);
 	}
 
 	private void addLiquidationConcept(Bill bill, BillConcept concept, BigDecimal percent, Map<BillConcept, BigDecimal> billingData) {

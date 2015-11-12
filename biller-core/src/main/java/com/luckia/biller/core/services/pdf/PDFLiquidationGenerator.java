@@ -13,15 +13,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
@@ -120,7 +120,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 				}
 			}
 			// En segundo lugar computamos los detalles de la factura que aplican a la liquidacion (ajustes operativos y ajustes manuales)
-			for (BillDetail detail : bill.getDetails()) {
+			for (BillDetail detail : bill.getBillDetails()) {
 				if (detail.getConcept() != null) {
 					switch (detail.getConcept()) {
 					case Adjustment:

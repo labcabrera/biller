@@ -17,8 +17,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -49,9 +47,6 @@ import com.luckia.biller.core.jpa.Mergeable;
 @DiscriminatorValue("B")
 @SuppressWarnings("serial")
 @ChangeTracking(ChangeTrackingType.DEFERRED)
-@NamedQueries({
-		@NamedQuery(name = "Bill.selectPendingByReceiverInRange", query = "select b from Bill b where b.receiver = :receiver and b.dateFrom >= :from and b.dateTo <= :to and b.liquidation is null"),
-		@NamedQuery(name = "Bill.selectByStoreInRange", query = "select b from Bill b where b.sender = :sender and b.dateFrom >= :from and b.dateTo <= :to") })
 public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	/**
@@ -73,8 +68,11 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	 * Lista de detalles que componen la factura
 	 */
 	@OneToMany(cascade = CascadeType.DETACH, mappedBy = "bill")
-	private List<BillDetail> details;
+	private List<BillDetail> billDetails;
 
+	/**
+	 * Lista de detalles que componen la liquidacion
+	 */
 	@OneToMany(cascade = CascadeType.DETACH, mappedBy = "bill")
 	private List<BillLiquidationDetail> liquidationDetails;
 
@@ -146,12 +144,12 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 		this.billType = billType;
 	}
 
-	public List<BillDetail> getDetails() {
-		return details;
+	public List<BillDetail> getBillDetails() {
+		return billDetails;
 	}
 
-	public void setDetails(List<BillDetail> details) {
-		this.details = details;
+	public void setBillDetails(List<BillDetail> billDetails) {
+		this.billDetails = billDetails;
 	}
 
 	public BigDecimal getNetAmount() {

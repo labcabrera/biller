@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<entity-mappings
+	xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1">
+
+	<named-query name="Bill.selectPendingByReceiverInRange">
+		<query><![CDATA[
+			select b from Bill b
+			where b.receiver = :receiver
+			and b.dateFrom >= :from
+			and b.dateTo <= :to
+			and b.liquidation is null
+			]]>
+		</query>
+	</named-query>
+	
+	<named-query name="Bill.selectByStoreInRange">
+		<query><![CDATA[
+			select b from Bill b
+			where b.sender = :sender
+			and b.dateFrom >= :from
+			and b.dateTo <= :to
+			]]>
+		</query>
+	</named-query>
+
+</entity-mappings>

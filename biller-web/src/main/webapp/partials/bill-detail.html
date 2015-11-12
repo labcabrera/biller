@@ -111,7 +111,7 @@
 				<div class="tab-content">
 				
 					<!-- Pestaña de detalles de liquidacion -->
-					<div class="tab-pane" id="liquidationDetailTab">
+					<div class="tab-pane active" id="liquidationDetailTab">
 						<div class="m-top-15">
 							<table class="table">
 								<tr>
@@ -172,7 +172,7 @@
 					</div>
 				
 					<!-- Pestaña de detalles de la factura -->
-					<div class="tab-pane active" id="detailTab">
+					<div class="tab-pane" id="detailTab">
 						<div class="m-top-15">
 							<div class="col-sm-12">
 								<table class="table">
@@ -216,6 +216,9 @@
 										<td></td>
 									</tr>
 								</table>
+								<div class="btn-toolbar m-top-40" role="toolbar">
+									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">{{'addBillDetail' | translate}}</button>
+								</div>
 							</div>
 						</div>
 					</div>

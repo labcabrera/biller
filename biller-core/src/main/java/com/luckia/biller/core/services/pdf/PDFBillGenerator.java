@@ -1,6 +1,5 @@
 package com.luckia.biller.core.services.pdf;
 
-import java.awt.Color;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,16 +8,17 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
 
@@ -79,7 +79,7 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 		cells.add(createCell("Precio unidad", Element.ALIGN_RIGHT, boldFont));
 		cells.add(createCell("Desc. (%)", Element.ALIGN_RIGHT, boldFont));
 		cells.add(createCell("Importe", Element.ALIGN_RIGHT, boldFont));
-		for (BillDetail detail : bill.getDetails()) {
+		for (BillDetail detail : bill.getBillDetails()) {
 			cells.add(createCell(detail.getName(), Element.ALIGN_LEFT, documentFont));
 			cells.add(createCell(String.valueOf(detail.getUnits()), Element.ALIGN_RIGHT, documentFont));
 			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
@@ -143,7 +143,7 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 	private void printLineSeparator(Document document, PdfWriter writer, float height) {
 		PdfContentByte cb = writer.getDirectContent();
 		cb.setLineWidth(1.0f);
-		cb.setColorFill(Color.RED);
+		cb.setColorFill(BaseColor.RED);
 		cb.setLineDash(new float[] { 2f, 3f }, 1f);
 		float x = 0f;
 		float y = height;
