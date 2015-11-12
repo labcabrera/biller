@@ -22,7 +22,7 @@
 		<javax.servlet>2.5</javax.servlet>
 		<joda.time.version>2.9</joda.time.version>
 		<junit.version>4.8.2</junit.version>
-		<guice.version>3.0</guice.version>
+		<guice.version>4.0</guice.version>
 		<logback.version>1.0.13</logback.version>
 		<mysql.version>5.1.26</mysql.version>
 		<poi.version>3.9</poi.version>
