@@ -125,25 +125,11 @@
 								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: true}">
 									<td>{{detail.name}}</td>
 									<td class="data-amount">{{detail.units}}</td>
-									<td class="data-amount">{{detail.value}}</td>
-									<td class="data-amount"></td>
-									<td class="data-amount"></td>
-									<td></td>
-								</tr>
-								<!--
-								<tr ng-repeat="detail in entity.liquidationDetails">
-									<td>{{detail.name}}</td>
-									<td class="data-amount">{{detail.units}}</td>
+									<td class="data-amount">{{detail.netValue}}</td>
+									<td class="data-amount">{{detail.vatValue}}</td>
 									<td class="data-amount">{{detail.value}}</td>
 									<td></td>
 								</tr>
-								<tr ng-repeat="detail in entity.details" ng-if="detail.concept == 'ManualWithLiquidation'">
-									<td>{{detail.name}}</td>
-									<td class="data-amount">{{detail.units}}</td>
-									<td class="data-amount">{{detail.value}}</td>
-									<td></td>
-								</tr>
-								-->
 								<tr>
 									<td><b>Total</b></td>
 									<td></td>

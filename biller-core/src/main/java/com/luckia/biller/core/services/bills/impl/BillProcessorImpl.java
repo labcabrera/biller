@@ -142,14 +142,6 @@ public class BillProcessorImpl implements BillProcessor {
 		bill.setVatPercent(vatPercent);
 		bill.setVatAmount(vatAmount);
 
-		Boolean vatApplies = false;
-		BigDecimal vat = BigDecimal.ZERO;
-		if (bill.getModel().getVatLiquidationType() != null && bill.getModel().getVatLiquidationType() == VatLiquidationType.LIQUIDATION_INCLUDED) {
-			vatApplies = true;
-			// TODO resolver
-			vat = new BigDecimal("21");
-		}
-
 		// Procesamos la liquidacion
 		BigDecimal liquidationBetAmount = BigDecimal.ZERO;
 		BigDecimal liquidationSatAmount = BigDecimal.ZERO;
@@ -159,10 +151,7 @@ public class BillProcessorImpl implements BillProcessor {
 
 		// Primero calculamos los conceptos de liquidacion
 		for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
-			BigDecimal partialBase = detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO;
-			BigDecimal partialVat = partialBase.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
-			BigDecimal partialTotal = partialBase.add(partialVat);
-			detail.setBaseValue(partialBase);
+			BigDecimal partial = detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO;
 			if (detail.getConcept() == null) {
 				LOG.warn("Missing concept in bill {}", bill);
 			} else if (detail.getLiquidationIncluded() == null || detail.getLiquidationIncluded()) {
@@ -171,28 +160,26 @@ public class BillProcessorImpl implements BillProcessor {
 				case GGR:
 				case NGR:
 				case NR:
-					liquidationBetAmount = liquidationBetAmount.add(partialBase);
+					liquidationBetAmount = liquidationBetAmount.add(partial);
 					break;
 				case SatMonthlyFees:
 				case CommercialMonthlyFees:
-					liquidationSatAmount = liquidationSatAmount.add(partialBase);
+					liquidationSatAmount = liquidationSatAmount.add(partial);
 					break;
 				case PricePerLocation:
-					liquidationPricePerLocation = liquidationPricePerLocation.add(partialBase);
+					liquidationPricePerLocation = liquidationPricePerLocation.add(partial);
 					break;
 				case MANUAL:
-					liquidationManualAmount = liquidationManualAmount.add(partialBase);
+					liquidationManualAmount = liquidationManualAmount.add(partial);
 					break;
 				default:
 					LOG.warn("Ignorando concepto no esperado en la liquidacion: {}", detail.getConcept());
 					break;
 				}
 			} else if (detail.getLiquidationIncluded() != null && !detail.getLiquidationIncluded()) {
-				liquidationOuterAmount = liquidationOuterAmount.add(partialBase);
+				liquidationOuterAmount = liquidationOuterAmount.add(partial);
 			}
-			entityManager.merge(detail);
 		}
-
 		BigDecimal totalLiquidationAmount = liquidationBetAmount.add(liquidationSatAmount).add(liquidationPricePerLocation).add(liquidationManualAmount);
 		bill.setLiquidationBetAmount(liquidationBetAmount);
 		bill.setLiquidationSatAmount(liquidationSatAmount);
@@ -321,12 +308,21 @@ public class BillProcessorImpl implements BillProcessor {
 	@Transactional
 	public Bill mergeLiquidationDetail(BillLiquidationDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
+		Bill bill = entityManager.find(Bill.class, detail.getBill().getId());
 		Boolean isNew = detail.getId() == null;
-		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
-		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
-		Bill bill;
+		Boolean vatApplies = bill.getModel().vatLiquidationApplies();
+		BigDecimal units = detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null;
+		BigDecimal vatPercent = new BigDecimal("21"); // TODO resolver
+		BigDecimal netValue = detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null;
+		BigDecimal vatValue = vatApplies ? netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN) : BigDecimal.ZERO;
+		BigDecimal value = netValue.add(vatValue);
+		detail.setBaseValue(netValue);
+		detail.setNetValue(netValue);
+		detail.setVatValue(vatValue);
+		detail.setValue(value);
+		detail.setVatPercent(vatApplies ? vatPercent : BigDecimal.ZERO);
+		detail.setUnits(units);
 		if (isNew) {
-			bill = entityManager.find(Bill.class, detail.getBill().getId());
 			detail.setId(UUID.randomUUID().toString());
 			entityManager.persist(detail);
 			bill.getLiquidationDetails().add(detail);

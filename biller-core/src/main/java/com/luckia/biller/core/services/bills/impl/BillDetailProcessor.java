@@ -20,7 +20,6 @@ import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
-import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.BillRawData;
 import com.luckia.biller.core.model.BillingModel;
@@ -76,6 +75,7 @@ public class BillDetailProcessor {
 			if (model.getStoreModel() == null) {
 				model.setStoreModel(new BillingModelAttributes());
 			}
+
 			// Calculamos los conceptos de la facturacion.
 			BigDecimal stakes = billingData.containsKey(BillConcept.Stakes) ? billingData.get(BillConcept.Stakes).divide(vatDivisor, 2, RoundingMode.HALF_EVEN) : null;
 			if (MathUtils.isNotZero(stakes)) {
@@ -95,7 +95,7 @@ public class BillDetailProcessor {
 				for (BillConcept concept : percentConcepts.keySet()) {
 					BigDecimal detailPercent = percentConcepts.get(concept);
 					if (MathUtils.isNotZero(detailPercent)) {
-						addLiquidationConcept(bill, concept, detailPercent, billingData);
+						addLiquidationPercentConcept(bill, concept, detailPercent, billingData, vatPercent);
 					}
 				}
 				// Calculamos los conceptos fijos
@@ -123,40 +123,65 @@ public class BillDetailProcessor {
 		}
 	}
 
-	private void addBillingConcept(Bill bill, BillConcept concept, BigDecimal value, BigDecimal total, BigDecimal percent) {
-		BillDetail detail = new BillDetail();
-		detail.setId(UUID.randomUUID().toString());
-		detail.setConcept(concept);
-		detail.setValue(value);
-		detail.setBill(bill);
-		detail.setBaseValue(total);
-		detail.setPercent(percent);
-		detail.setUnits(BigDecimal.ONE);
-		detail.setName(billDetailNameProvider.getName(detail));
-		if (bill.getBillDetails() == null) {
-			bill.setBillDetails(new ArrayList<BillDetail>());
-		}
-		bill.getBillDetails().add(detail);
-	}
-
-	private void addLiquidationConcept(Bill bill, BillConcept concept, BigDecimal percent, Map<BillConcept, BigDecimal> billingData) {
-		BigDecimal total = billingData.get(concept);
+	private void addBillingConcept(Bill bill, BillConcept concept, BigDecimal total, BigDecimal percent, BigDecimal vatPercent) {
+		// BillDetail detail = new BillDetail();
+		// detail.setId(UUID.randomUUID().toString());
+		// detail.setConcept(concept);
+		// detail.setValue(value);
+		// detail.setBill(bill);
+		// detail.setBaseValue(total);
+		// detail.setPercent(percent);
+		// detail.setUnits(BigDecimal.ONE);
+		// detail.setName(billDetailNameProvider.getName(detail));
+		// if (bill.getBillDetails() == null) {
+		// bill.setBillDetails(new ArrayList<BillDetail>());
+		// }
+		// bill.getBillDetails().add(detail);
+		// BigDecimal total = data.get(concept);
 		if (MathUtils.isNotZero(total)) {
-			BigDecimal value = total.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+			BigDecimal netValue = total.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 			BillLiquidationDetail detail = new BillLiquidationDetail();
 			detail.setId(UUID.randomUUID().toString());
 			detail.setConcept(concept);
-			detail.setValue(value);
+			detail.setNetValue(netValue);
 			detail.setBill(bill);
 			detail.setBaseValue(total);
 			detail.setPercent(percent);
 			detail.setUnits(BigDecimal.ONE);
 			detail.setName(billDetailNameProvider.getName(detail));
-			detail.setLiquidationIncluded(true); // revisar
+			switch (bill.getModel().getVatLiquidationType()) {
+			case EXCLUDED:
+				detail.setVatPercent(BigDecimal.ZERO);
+				detail.setVatValue(BigDecimal.ZERO);
+				detail.setValue(netValue);
+				break;
+			case LIQUIDATION_ADDED:
+				detail.setVatPercent(vatPercent);
+				detail.setVatValue(netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN));
+				detail.setValue(detail.getNetValue().add(detail.getVatValue()));
+				break;
+			case LIQUIDATION_INCLUDED:
+				BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent).divide(MathUtils.HUNDRED);
+				BigDecimal baseImponible = netValue.divide(divisor, 2, RoundingMode.HALF_EVEN);
+				BigDecimal vatValue = netValue.subtract(baseImponible);
+				detail.setVatPercent(vatPercent);
+				detail.setVatValue(vatValue);
+				detail.setValue(netValue);
+				detail.setNetValue(baseImponible);
+				break;
+			}
+			detail.setLiquidationIncluded(true);
 			if (bill.getLiquidationDetails() == null) {
 				bill.setLiquidationDetails(new ArrayList<BillLiquidationDetail>());
 			}
 			bill.getLiquidationDetails().add(detail);
+		}
+	}
+
+	private void addLiquidationPercentConcept(Bill bill, BillConcept concept, BigDecimal percent, Map<BillConcept, BigDecimal> data, BigDecimal vatPercent) {
+		BigDecimal total = data.get(concept);
+		if (MathUtils.isNotZero(total)) {
+			addBillingConcept(bill, concept, total, percent, vatPercent);
 		}
 	}
 

@@ -41,14 +41,23 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 	@Column(name = "UNITS", precision = 18, scale = 2)
 	private BigDecimal units;
 
-	@Column(name = "VALUE", precision = 18, scale = 2)
-	private BigDecimal value;
+	@Column(name = "PERCENT", precision = 18, scale = 2)
+	private BigDecimal percent;
 
 	@Column(name = "BASE_VALUE", precision = 18, scale = 2)
 	private BigDecimal baseValue;
 
-	@Column(name = "PERCENT", precision = 18, scale = 2)
-	private BigDecimal percent;
+	@Column(name = "NET_VALUE", precision = 18, scale = 2)
+	private BigDecimal netValue;
+
+	@Column(name = "VAT_VALUE", precision = 18, scale = 2)
+	private BigDecimal vatValue;
+
+	@Column(name = "VAT_PERCENT", precision = 18, scale = 2)
+	private BigDecimal vatPercent;
+
+	@Column(name = "VALUE", precision = 18, scale = 2)
+	private BigDecimal value;
 
 	public String getId() {
 		return id;
@@ -112,6 +121,30 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 
 	public void setPercent(BigDecimal percent) {
 		this.percent = percent;
+	}
+
+	public BigDecimal getNetValue() {
+		return netValue;
+	}
+
+	public void setNetValue(BigDecimal netValue) {
+		this.netValue = netValue;
+	}
+
+	public BigDecimal getVatValue() {
+		return vatValue;
+	}
+
+	public void setVatValue(BigDecimal vatValue) {
+		this.vatValue = vatValue;
+	}
+
+	public BigDecimal getVatPercent() {
+		return vatPercent;
+	}
+
+	public void setVatPercent(BigDecimal vatPercent) {
+		this.vatPercent = vatPercent;
 	}
 
 	@Override
