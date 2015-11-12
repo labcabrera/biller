@@ -93,10 +93,10 @@
 				});
 			}
 		};
-		$scope.editLiquidationDetail = function(data) {
-			if(data != null && !(typeof data === 'undefined') ) {
+		$scope.editLiquidationDetail = function(id) {
+			if(id != null && !(typeof id === 'undefined') ) {
 				$scope.isSaving = true;
-				$http.get('rest/bills/liquidation/detail/id/' + data).success(function(data) {
+				$http.get('rest/bills/detail/liquidation/id/' + id).success(function(data) {
 					$scope.isSaving = false;
 					$scope.billLiquidationDetail = data;
 					$scope.billLiquidationDetail.bill = { "id": $scope.entity.id };

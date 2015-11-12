@@ -137,7 +137,7 @@
 									<td class="data-amount">{{detail.vatValue}}</td>
 									<td class="data-amount">{{detail.value}}</td>
 									<td>
-										<a ng-if="entity.currentState.stateDefinition.id == 'Draft'">
+										<a ng-if="entity.currentState.stateDefinition.id == 'Draft'" ng-click="editLiquidationDetail(detail.id)">
 											<span class="glyphicon glyphicon-pencil"></span>
 										</a>
 									</td>
