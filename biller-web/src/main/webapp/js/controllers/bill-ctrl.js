@@ -3,7 +3,7 @@
 	var billerModule = angular.module('billerModule');
 
 	/* ----------------------------------------------------------------------------
-	 * FACTURAS
+	 * LISTADO DE FACTURAS
 	 * ----------------------------------------------------------------------------
 	 */
 	billerModule.controller('BillListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', 'messageService', function($scope, $rootScope, $routeParams, $http, $filter, messageService) {
@@ -33,23 +33,24 @@
 		};
 		$scope.search = function() {
 			$scope.currentPage = 1;
-			$http.get($scope.getSearchUrl()).then(function(data) {
-				console.log("data: " + data);
+			$http.get($scope.getSearchUrl()).success(function(data) {
 				$scope.results = data;
-			}, function(data) {
-				console.log("error: " + data);
 			});
 		};
 		$scope.setPage = function(page) {
 		    $scope.currentPage = page;
-		    $http.get($scope.getSearchUrl()).then(function(data) {
+		    $http.get($scope.getSearchUrl()).success(function(data) {
 		    	$scope.results = data;
 		    });
 		};
 		$scope.reset();
 		$scope.search();
 	} ]);
-	
+
+	/* ----------------------------------------------------------------------------
+	 * DETALLE DE FACTURAS
+	 * ----------------------------------------------------------------------------
+	 */
 	billerModule.controller('BillDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$location', '$http', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $location, $http, dialogs, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.message = messageService.getMessage();

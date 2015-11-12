@@ -152,35 +152,6 @@ billerModule.run(function($rootScope, $http, $window) {
 	$rootScope.dateFormat = 'dd-MM-yyyy';
 });
 
-/*
-billerModule.config(['$httpProvider', function($httpProvider) {
-	$httpProvider.interceptors.push('securityInterceptor');
-}]);
-
-billerModule.factory('securityInterceptor', ['$q', '$location', function($q, $location) {  
-    var injector = {
-		request: function(data) {
-    		console.log("http request " + data.url);
-            return data;
-    	},
-    	response: function(data) {
-    		console.log("http response url " + data.config.url + ": " + data.status);
-            return data;
-    	},
-        requestError: function(data) {
-        	console.log("http request error " + data.config.url + ": " + data.statys);
-            return data;
-        },
-        responseError: function(data) {
-        	console.log("http response error url " + data.config.url + ": " + data.status);
-        	return $q.reject(data);
-        }
-    };
-    return injector;
-}]);
-*/
-
-
 /**
 * SECURITY INTERCEPTOR
 */
@@ -197,15 +168,12 @@ billerModule.factory('authInterceptor', ['$rootScope', '$q', '$window', '$locati
 			return config;
 		},
 		requestError: function (rejection) {
-			console.log("authInterceptor request error: " + rejection);
 			return $q.reject(rejection);
 		},
 		response: function (response) {
-			console.log("response: " + response.status);
 			if (response.status === 401 || response.status === 403) {
 				delete $window.sessionStorage.sessionid;
 				alert('you must login first');
-				// handle the case where the user is not authenticated
 			}
 			return response || $q.when(response);
 		},
@@ -218,10 +186,9 @@ billerModule.factory('authInterceptor', ['$rootScope', '$q', '$window', '$locati
 			if (rejection.status === 401) {
 				delete $window.sessionStorage.sessionid;
 				$rootScope.isUserLogged  = $window.sessionStorage.sessionid != null;
-				// handle the case where the user is not authenticated
 			}
 			return $q.reject(rejection);
-		} 
+		}
 };}]);
 
 billerModule.config(['$httpProvider', function ($httpProvider) {

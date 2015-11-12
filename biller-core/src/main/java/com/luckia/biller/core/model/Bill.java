@@ -69,7 +69,9 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	@Enumerated(EnumType.STRING)
 	private BillType billType;
 
-	/** Lista de detalles que componen la factura */
+	/**
+	 * Lista de detalles que componen la factura
+	 */
 	@OneToMany(cascade = CascadeType.DETACH, mappedBy = "bill")
 	private List<BillDetail> details;
 

@@ -53,7 +53,7 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 	private LiquidationResults liquidationResults;
 
 	/**
-	 * Lista de detalles (ajustes operativos) de la liquidación.
+	 * Lista de ajustes incluidos dentro de laliquidación.
 	 */
 	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "liquidation")
 	private List<LiquidationDetail> details;

@@ -14,6 +14,9 @@ import javax.persistence.Table;
 import com.luckia.biller.core.jpa.Mergeable;
 import com.luckia.biller.core.serialization.NotSerializable;
 
+/**
+ * Representa un ajuste realizado en la liquidacion.
+ */
 @Entity
 @Table(name = "B_LIQUIDATION_DETAIL")
 @SuppressWarnings("serial")
@@ -36,6 +39,12 @@ public class LiquidationDetail implements Mergeable<LiquidationDetail>, Serializ
 
 	@Column(name = "VALUE", precision = 18, scale = 2)
 	private BigDecimal value;
+
+	/**
+	 * Indica si el ajuste se aplica dentro del importe de liquidacion o se aplica fuera del importe a liquidar.
+	 */
+	@Column(name = "LIQUIDATION_INCLUDED", nullable = false)
+	private Boolean liquidationIncluded;
 
 	public String getId() {
 		return id;

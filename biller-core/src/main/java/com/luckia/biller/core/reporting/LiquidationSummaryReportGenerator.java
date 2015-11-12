@@ -108,7 +108,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		}
 		rowIndex++;
 		int col = 2;
-		createHeaderCell(sheet, rowIndex, col++, "Total");
+		createHeaderCell(sheet, rowIndex, col++, "TOTAL");
 		createHeaderCell(sheet, rowIndex, col++, totalAmount);
 		createHeaderCell(sheet, rowIndex, col++, totalCashStore);
 		createHeaderCell(sheet, rowIndex, col++, totalAmount);

@@ -90,84 +90,26 @@
 			
 			<div class="m-top-40">
 				<ul class="nav nav-tabs">
-					<li class="active"><a data-target="#detailTab" data-toggle="tab">{{'details' | translate}}</a></li>
+					<li class="active">
+						<a data-target="#liquidationDetailTab" data-toggle="tab">
+							<span>{{'liquidationDetails' | translate}}</span>
+							<span ng-if="entity.liquidationTotalAmount > 0">({{entity.liquidationTotalAmount}})</span>
+						</a>
+					</li>
+					<li>
+						<a data-target="#detailTab" data-toggle="tab">
+							<span>{{'bill' | translate}}</span>
+							<span>({{entity.amount}})</span>
+						</a>
+					</li>
 					<li><a data-target="#ownerTab" data-toggle="tab">{{'owner' | translate}}</a></li>
 					<li><a data-target="#commentsTab" data-toggle="tab">{{'comments' | translate}}</a></li>
-					<li><a data-target="#liquidationDetailTab" data-toggle="tab">{{'liquidationDetails' | translate}} <span ng-if="entity.liquidationTotalAmount > 0">({{entity.liquidationTotalAmount}})</span></a></li>
 					<li><a data-target="#commentsPdfTab" data-toggle="tab">Comentarios PDF</a></li>
-					<li><a data-target="#advancedInfoTab" data-toggle="tab">Inf. técnica</a></li>
+					<li><a data-target="#advancedInfoTab" data-toggle="tab">Raw</a></li>
 					<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
 				</ul> 				
 				<div class="tab-content">
 				
-					<!-- Pestaña de detalles de la factura -->
-					<div class="tab-pane active" id="detailTab">
-						<div class="m-top-15">
-							<div class="col-sm-12">
-								<table class="table">
-									<tr>
-										<th>Concepto</th>
-										<th class="data-amount" title="Ajuste operativo">Ajuste Op.</th>
-										<th class="data-amount">Unidades</th>
-										<th class="data-amount">Importe</th>
-										<th></th>
-									</tr>
-									<tr ng-repeat="detail in entity.details">
-										<td>{{detail.name}}</td>
-										<td class="data-amount"><span ng-if="detail.concept = Adjustment">Si</span></td>
-										<td class="data-amount">{{detail.units}}</td>
-										<td class="data-amount">{{detail.value}}</td>
-										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
-									</tr>
-									<tr>
-										<td><b>Base</b></td>
-										<td></td>
-										<td></td>
-										<td class="data-amount"><b>{{entity.netAmount}}</b></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td><b>IVA ({{entity.vatPercent}} %)</b></td>
-										<td></td>
-										<td></td>
-										<td class="data-amount"><b>{{entity.vatAmount}}</b></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td><b>Total</b></td>
-										<td></td>
-										<td></td>
-										<td class="data-amount"><b>{{entity.amount}}</b></td>
-										<td></td>
-									</tr>
-								</table>
-								<div class="btn-toolbar m-top-40" role="toolbar">
-									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">A&ntilde;adir concepto</button>
-									<button ng-click="rectify()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Rectificar</button>
-									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" href="rest/bills/draft/{{entity.id}}" role="button" ng-disabled="isSaving">Consultar borrador</a>
-									<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled' && entity.currentState.stateDefinition.id != 'Initial'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button" ng-disabled="isSaving">Descargar</a>
-									<button ng-click="draft()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent' || entity.currentState.stateDefinition.id == 'Rectified'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Draft</button>
-									<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Aceptar borrador</button>
-									<button ng-click="recalculate()" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving" >Recalcular</button>
-									<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Enviar</button>
-									<!-- button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'Cancelled'" class="btn btn-sm btn-success pull-right">Rectificar</button -->
-								</div>
-							</div>
-						</div>
-					</div>
-					
-					<!-- Pestaña de titular del establecimiento -->
-					<div class="tab-pane" id="ownerTab">
-						<div ng-include src="'templates/entity-owner-tab.html'"></div>
-					</div>
-					
-					<!-- Pestaña de observaciones -->
-					<div class="tab-pane" id="commentsTab">
-						<div class="m-top-15">
-							<textarea class="form-control" rows="5" ng-model="entity.comments" ng-readonly="isReadOnly"></textarea>
-						</div>
-					</div>
-					
 					<!-- Pestaña de detalles de liquidacion -->
 					<div class="tab-pane" id="liquidationDetailTab">
 						<div class="m-top-15">
@@ -215,6 +157,78 @@
 									<td></td>
 								</tr>
 							</table>
+							<div class="btn-toolbar m-top-40" role="toolbar">
+								<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">A&ntilde;adir concepto</button>
+								<button ng-click="rectify()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Rectificar</button>
+								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" href="rest/bills/draft/{{entity.id}}" role="button" ng-disabled="isSaving">Consultar borrador</a>
+								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled' && entity.currentState.stateDefinition.id != 'Initial'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button" ng-disabled="isSaving">Descargar</a>
+								<button ng-click="draft()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent' || entity.currentState.stateDefinition.id == 'Rectified'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Draft</button>
+								<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Aceptar borrador</button>
+								<button ng-click="recalculate()" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving" >Recalcular</button>
+								<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Enviar</button>
+								<!-- button ng-click="todo()" ng-if="entity.currentState.stateDefinition.id == 'Cancelled'" class="btn btn-sm btn-success pull-right">Rectificar</button -->
+							</div>
+						</div>
+					</div>
+				
+					<!-- Pestaña de detalles de la factura -->
+					<div class="tab-pane active" id="detailTab">
+						<div class="m-top-15">
+							<div class="col-sm-12">
+								<table class="table">
+									<tr>
+										<th>Concepto</th>
+										<th class="data-amount" title="Ajuste operativo">Ajuste Op.</th>
+										<th class="data-amount">Unidades</th>
+										<th class="data-amount">Importe</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="detail in entity.details">
+										<td>{{detail.name}}</td>
+										<td class="data-amount"><span ng-if="detail.concept = Adjustment">Si</span></td>
+										<td class="data-amount">{{detail.units}}</td>
+										<td class="data-amount">{{detail.value}}</td>
+										<td>
+											<a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'">
+												<span class="glyphicon glyphicon-pencil"></span>
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td><b>Base</b></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount"><b>{{entity.netAmount}}</b></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td><b>IVA ({{entity.vatPercent}} %)</b></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount"><b>{{entity.vatAmount}}</b></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td><b>Total</b></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount"><b>{{entity.amount}}</b></td>
+										<td></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Pestaña de titular del establecimiento -->
+					<div class="tab-pane" id="ownerTab">
+						<div ng-include src="'templates/entity-owner-tab.html'"></div>
+					</div>
+					
+					<!-- Pestaña de observaciones -->
+					<div class="tab-pane" id="commentsTab">
+						<div class="m-top-15">
+							<textarea class="form-control" rows="5" ng-model="entity.comments" ng-readonly="isReadOnly"></textarea>
 						</div>
 					</div>
 					
