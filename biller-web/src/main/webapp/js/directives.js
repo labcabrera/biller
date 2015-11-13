@@ -297,6 +297,18 @@
 						}
 					});
 				};
+				$scope.removeLiquidationDetail = function(data) {
+					console.log("removeDetail() " + data);
+					$scope.isSaving = true;
+					$http.post('rest/bills/detail/liquidation/remove/' + data).success(function(data) {
+						$scope.isSaving = false;
+						$scope.message = data;
+						if(data.code == 200) {
+							$scope.bill = data.payload;
+						}
+						$("#editBillLiquidationConceptModal").modal('hide');
+					});
+				};
 			},
 			scope : {
 				bill: "=",

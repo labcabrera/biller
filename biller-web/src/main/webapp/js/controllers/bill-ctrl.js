@@ -108,18 +108,18 @@
 			}
 			$('#editBillLiquidationConceptModal').modal('show');			
 		};
-		$scope.mergeLiquidationDetail = function() {
-			console.log("mergeLiquidationDetail");
-			$scope.isSaving = true;
-			$http.post('rest/bills/detail/liquidation/merge/', $scope.billLiquidationDetail).success(function(data) {
-				$scope.isSaving = false;
-				$scope.message = data;
-				$("#editBillLiquidationConceptModal").modal('hide');
-				if(data.code == 200) {
-					$scope.entity = data.payload;
-				}
-			});
-		};
+//		$scope.mergeLiquidationDetail = function() {
+//			console.log("mergeLiquidationDetail");
+//			$scope.isSaving = true;
+//			$http.post('rest/bills/detail/liquidation/merge/', $scope.billLiquidationDetail).success(function(data) {
+//				$scope.isSaving = false;
+//				$scope.message = data;
+//				$("#editBillLiquidationConceptModal").modal('hide');
+//				if(data.code == 200) {
+//					$scope.entity = data.payload;
+//				}
+//			});
+//		};
 		$scope.editDetail = function(id) {
 			$scope.billDetail.id = $scope.billDetail.value = $scope.billDetail.name = $scope.billDetail.units = null;
 			if(id != null && !(typeof id === 'undefined') ) {
@@ -132,17 +132,6 @@
 			}
 			$('#editBillConceptModal').modal('show');			
 		};
-//		$scope.mergeDetail = function(data) {
-//			$scope.isSaving = true;
-//			$http.post('rest/bills/detail/merge/', $scope.billDetail).success(function(data) {
-//				$scope.isSaving = false;
-//				$scope.message = data;
-//				$("#editBillConceptModal").modal('hide');
-//				if(data.code == 200) {
-//					$scope.entity = data.payload;
-//				}
-//			});
-//		};
 		$scope.confirm = function() {
 			var dlg = dialogs.confirm('Confirmacion de aceptacion','Se va a aceptar la factura');
 			dlg.result.then(function(btn){
