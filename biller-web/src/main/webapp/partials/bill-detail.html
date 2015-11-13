@@ -209,7 +209,7 @@
 										<th class="data-amount">Importe</th>
 										<th></th>
 									</tr>
-									<tr ng-repeat="detail in entity.details">
+									<tr ng-repeat="detail in entity.billDetails">
 										<td>{{detail.name}}</td>
 										<td class="data-amount"><span ng-if="detail.concept = Adjustment">Si</span></td>
 										<td class="data-amount">{{detail.units}}</td>
@@ -293,9 +293,8 @@
 						<div ng-include src="'templates/entity-audit-info.html'"></div>
 					</div>
 					
-					<pre>
-					{{billLiquidationDetail|json}}
-					</pre>
+					<pre>billLiquidationDetail: {{billLiquidationDetail|json}}</pre>
+					<pre>billDetail: {{billDetail|json}}</pre>
 					
 				</div>
 			</div>
@@ -325,6 +324,8 @@
 	<div ng-include src="'templates/bill-modal-liquidation-detail.html'"></div>
 	-->
 	<div add-bill-liquidation-detail bill="entity" detail="billLiquidationDetail" message="message"></div>
+	<div add-bill-detail bill="entity" detail="billDetail" message="message"></div>
+	
 	<div ng-include src="'templates/bill-modal-detail.html'"></div>
 	<div ng-include src="'templates/bill-modal-email.html'"></div>
 </div>

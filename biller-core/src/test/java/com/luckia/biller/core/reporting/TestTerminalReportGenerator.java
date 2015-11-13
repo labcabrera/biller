@@ -16,7 +16,7 @@ public class TestTerminalReportGenerator {
 		injector.getInstance(PersistService.class).start();
 		TerminalReportGenerator service = injector.getInstance(TerminalReportGenerator.class);
 		Company company = new Company();
-		company.setId(171L);
+		company.setId(11084L);
 		service.generate(null, company, null);
 	}
 

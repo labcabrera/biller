@@ -305,5 +305,43 @@
 			}
 		};
 	});
+	
+	billerModule.directive('addBillDetail', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'templates/bill-modal-detail.html',
+			controller : function($scope, $http) {
+				$scope.mergeDetail = function() {
+					$scope.isSaving = true;
+					$http.post('rest/bills/detail/merge/', $scope.detail).success(function(data) {
+						$scope.isSaving = false;
+						$scope.message = data;
+						$("#editBillConceptModal").modal('hide');
+						if(data.code == 200) {
+							$scope.bill = data.payload;
+							$scope.detail.id = $scope.detail.value = $scope.detail.name = $scope.detail.units = null;
+						}
+					});
+					$scope.removeDetail = function(data) {
+						console.log("removeDetail() " + data);
+						$scope.isSaving = true;
+						$http.post('rest/bills/detail/remove/' + data).success(function(data) {
+							$scope.isSaving = false;
+							$scope.message = data;
+							if(data.code == 200) {
+								$scope.bill = data.payload;
+							}
+							$("#editBillConceptModal").modal('hide');
+						});
+					};
+				};
+			},
+			scope : {
+				bill: "=",
+				detail : '=',
+				message: '='
+			}
+		};
+	});
 
 })();

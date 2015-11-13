@@ -1,5 +1,6 @@
 {
 	"addAdjustment": "Añadir ajuste",
+	"addBillDetail": "Añadir ajuste",
 	"address": "Dirección",
 	"admin": "Administración",
 	"amount": "Importe",
@@ -48,6 +49,7 @@
 	"details": "Detalles",
 	"DIALOGS_YES": "Si",
 	"DIALOGS_NO": "No",
+	"editBillDetail": "Ajuste de la factura",
 	"email": "Email",
 	"entities": "Entidades",
 	"execute": "Ejecutar",
@@ -88,6 +90,7 @@
 	"recalculateLiquidation": "Recalcular liquidación",
 	"receiver": "Destinatario",
 	"region": "Región",
+	"remove": "Eliminar",
 	"reports": "Informes",
 	"reset": "Reset",
 	"resultsLowerCase": "resultados",

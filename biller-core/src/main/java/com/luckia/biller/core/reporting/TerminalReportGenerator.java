@@ -18,6 +18,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.eclipse.persistence.config.QueryHints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,9 +66,11 @@ public class TerminalReportGenerator extends BaseReport {
 				query = entityManager.createQuery("select e from TerminalRelation e order by e.code", TerminalRelation.class);
 			}
 
-			query.setHint("eclipselink.join-fetch", "e.store");
-			query.setHint("eclipselink.join-fetch", "e.store.parent");
-			query.setHint("eclipselink.join-fetch", "e.store.address");
+			query.setHint(QueryHints.FETCH, "e.store");
+			query.setHint(QueryHints.FETCH, "e.store.parent");
+			query.setHint(QueryHints.FETCH, "e.store.parent.address");
+			query.setHint(QueryHints.FETCH, "e.store.address");
+			query.setHint(QueryHints.FETCH, "e.store.address.province");
 
 			List<TerminalRelation> relations = query.getResultList();
 			LOG.debug("Encontrados {} terminales", relations.size());
