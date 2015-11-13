@@ -1,6 +1,6 @@
 'use strict';
 
-var billerModule = angular.module('billerModule', [ 'ngRoute', 'billerModule', 'ui.bootstrap', 'dialogs.main', 'pascalprecht.translate']);
+var billerModule = angular.module('billerModule', [ 'ngRoute', 'ngCookies', 'billerModule', 'ui.bootstrap', 'dialogs.main', 'pascalprecht.translate']);
 
 billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $location) {
 	
@@ -81,7 +81,7 @@ billerModule.controller('LanguageCtrl', ['$scope', '$translate', function($scope
 	};
 }]);
 
-billerModule.run(function($rootScope, $http, $window) {
+billerModule.run(function($rootScope, $http, $cookies, $location) {
 	$rootScope.isReadOnly = true;
 	$rootScope.itemsPerPage = 10;
 	$rootScope.groups = function(name) { return $http.get("rest/groups/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
@@ -93,6 +93,10 @@ billerModule.run(function($rootScope, $http, $window) {
 	$rootScope.costcenters = function(name) { return $http.get("rest/costcenters/find?q=name=lk=" + name).then(function(response) { return response.data.results; }); };
 	$rootScope.provinces = function(name) { return $http.get("rest/provinces/find/" + name).then(function(response) { return response.data; }); };
 	$rootScope.regions = function(name, provinceId) { return $http.get("rest/regions/find/" + name + (provinceId != null ? '?province=' + provinceId : '')).then(function(response) { return response.data; }); };
+	try {
+		$rootScope.user = JSON.parse($cookies.get('biller.user'));
+	}catch(e) {
+	}
 
 	$rootScope.edit = function() {
 		$rootScope.isReadOnly = false;
@@ -124,16 +128,10 @@ billerModule.run(function($rootScope, $http, $window) {
 	};
 	
 	$rootScope.logout = function() {
-		console.log("logout");
-		$window.sessionStorage.sessionid = null;
-		$rootScope.user = { "name": ""};
-	};
-
-	$rootScope.todo = function() {
-		$rootScope.displayAlert({
-			"code": 500,
-			"message": "Esta funcionalidad no está implementada"
-		});
+		$cookies.remove('biller.sessionid');
+		$cookies.remove('biller.user');
+		$rootScope.user = null;
+		$location.url('login');
 	};
 	
 	/*
@@ -155,13 +153,11 @@ billerModule.run(function($rootScope, $http, $window) {
 /**
 * SECURITY INTERCEPTOR
 */
-billerModule.factory('authInterceptor', ['$rootScope', '$q', '$window', '$location', function ($rootScope, $q, $window, $location) {
+billerModule.factory('authInterceptor', ['$rootScope', '$q', '$location', '$cookies', function ($rootScope, $q, $location, $cookies) {
 	return {
 		request: function (config) {
 			config.headers = config.headers || {};
-			if ($window.sessionStorage.sessionid) {
-				config.headers.sessionid = $window.sessionStorage.sessionid;
-			}
+			config.headers.sessionid = $cookies.get("biller.sessionid");
 			if (config.method == 'POST' && config.data == null) {
 				config.data = '{}';
 			}
@@ -172,20 +168,14 @@ billerModule.factory('authInterceptor', ['$rootScope', '$q', '$window', '$locati
 		},
 		response: function (response) {
 			if (response.status === 401 || response.status === 403) {
-				delete $window.sessionStorage.sessionid;
-				alert('you must login first');
+				$location.url("forbidden");
 			}
 			return response || $q.when(response);
 		},
 		responseError: function (rejection) {
-			console.log("interceptor response error status: " + rejection.status);
 			if(rejection.status === 403) {
 				$location.url("forbidden");
 				return;
-			}
-			if (rejection.status === 401) {
-				delete $window.sessionStorage.sessionid;
-				$rootScope.isUserLogged  = $window.sessionStorage.sessionid != null;
 			}
 			return $q.reject(rejection);
 		}
@@ -231,7 +221,6 @@ billerModule.directive('numberOnlyInput', function () {
                 if (arr.length === 2 && newValue === '-.') return;
                 var sp = String(newValue).split(".");
                 if(sp.length === 2 && sp[1].length > decimals) {
-                	console.log('No permitimos mas de dos decimales');
                 	scope.inputValue = oldValue;
                 }
                 if (isNaN(newValue)) {
