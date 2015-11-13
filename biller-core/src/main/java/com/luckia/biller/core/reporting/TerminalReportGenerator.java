@@ -64,6 +64,11 @@ public class TerminalReportGenerator extends BaseReport {
 			} else {
 				query = entityManager.createQuery("select e from TerminalRelation e order by e.code", TerminalRelation.class);
 			}
+
+			query.setHint("eclipselink.join-fetch", "e.store");
+			query.setHint("eclipselink.join-fetch", "e.store.parent");
+			query.setHint("eclipselink.join-fetch", "e.store.address");
+
 			List<TerminalRelation> relations = query.getResultList();
 			LOG.debug("Encontrados {} terminales", relations.size());
 			HSSFWorkbook workbook = new HSSFWorkbook();

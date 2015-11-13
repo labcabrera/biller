@@ -30,8 +30,6 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CostCenter;
-import com.luckia.biller.core.model.LegalEntity;
-import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.reporting.LiquidationReportGenerator;
 import com.luckia.biller.core.reporting.LiquidationSummaryReportGenerator;
