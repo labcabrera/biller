@@ -94,10 +94,10 @@
 							<div class="form-group">
 								<label class="col-sm-2 col-sm-offset-3">{{'vatLiquidationType' | translate}}</label>
 								<div class="col-sm-6">
-									<select class="form-control" ng-model="entity.vatLiquidationType">
-										<option value="EXCLUDED">No incluído</option>
-										<option value="LIQUIDATION_INCLUDED">Incluído en el importe de la liquidación</option>
-										<option value="LIQUIDATION_ADDED">Añadido sobre el importe de la liquidación</option>
+									<select class="form-control" ng-model="entity.vatLiquidationType" ng-readonly="isReadOnly">
+										<option value="EXCLUDED">{{'vatLiquidationType.EXCLUDED' | translate}}</option>
+										<option value="LIQUIDATION_INCLUDED">{{'vatLiquidationType.LIQUIDATION_INCLUDED' | translate}}</option>
+										<option value="LIQUIDATION_ADDED">{{'vatLiquidationType.LIQUIDATION_ADDED' | translate}}</option>
 									</select>
 								</div>
 							</div>
@@ -108,7 +108,7 @@
 								</div>
 							</div>
 							<hr class="col-sm-offset-2"/>
-							<h5 class="col-sm-offset-2">Establecimiento</h5>
+							<h5 class="col-sm-offset-2">{{'store' | translate}}</h5>
 							<div class="form-group">
 								<label class="col-sm-2 control-label input-sm">Ventas</label>
 								<div class="col-sm-2">
@@ -124,7 +124,7 @@
 										<span class="input-group-addon">%</span>
 									</div>
 								</div>
-								<label class="col-sm-2 control-label input-sm">Atenci&oacute;n Comercial</label>
+								<label class="col-sm-2 control-label input-sm">{{'commercialService' | translate}}</label>
 								<div class="col-sm-2">
 									<div class="input-group">
 										<input type='text' class="form-control numeric-field" ng-model="entity.storeModel.commercialMonthlyFees" ng-readonly="isReadOnly" />

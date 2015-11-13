@@ -114,7 +114,7 @@
 					<div class="tab-pane active" id="liquidationDetailTab">
 						<div class="m-top-15">
 							<table class="table">
-								<tr class="success">
+								<tr class="active">
 									<th>Concepto</th>
 									<th class="data-amount">Unidades</th>
 									<th class="data-amount">Base</th>
@@ -142,7 +142,7 @@
 										</a>
 									</td>
 								</tr>
-								<tr class="success">
+								<tr class="active">
 									<td><b>Total</b></td>
 									<td></td>
 									<td></td>
@@ -166,7 +166,7 @@
 									<td class="data-amount"><b>{{entity.storeCash}}</b></td>
 									<td></td>
 								</tr>
-								<tr class="success" ng-if="entity.liquidationOuterAmount > 0">
+								<tr class="active" ng-if="entity.liquidationOuterAmount > 0">
 									<td colspan="4"><b>Ajustes fuera de liquidación</b></td>
 									<td class="data-amount"><b>{{entity.liquidationOuterAmount}}</b></td>
 									<td></td>

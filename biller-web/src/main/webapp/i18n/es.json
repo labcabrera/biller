@@ -18,6 +18,7 @@
 	"bills": "Facturas",
 	"cancel": "Cancelar",
 	"code": "Código",
+	"commercialService" : "Atención comercial",
 	"comments": "Obervaciones",
 	"company": "Operadora",
 	"company.showDeleted": "Mostrar eliminadas",
@@ -109,6 +110,9 @@
 	"units": "Unidades",
 	"vat": "IVA/IGIT",
 	"vatLiquidationType": "IVA/IGIC",
+	"vatLiquidationType.EXCLUDED": "No incluído",
+	"vatLiquidationType.LIQUIDATION_INCLUDED": "Incluído en la liquidación",
+	"vatLiquidationType.LIQUIDATION_ADDED": "Añadido sobre el importe de liquidacion",
 	"vatPercent": "IVA (%)",
 	"year": "Año"
 }
