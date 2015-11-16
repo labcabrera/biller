@@ -98,31 +98,20 @@
 			}
 		};
 		$scope.editLiquidationDetail = function(id) {
-			$scope.isSaving = true;
+			var d = $scope.billLiquidationDetail;
 			if(id != null && !(typeof id === 'undefined') ) {
+				$scope.isSaving = true;
 				$http.get('rest/bills/detail/liquidation/id/' + id).success(function(data) {
 					$scope.isSaving = false;
-					$scope.billLiquidationDetail = data;
-					$scope.billLiquidationDetail.bill = { "id": $scope.entity.id };
+					d = data;
+					d.bill = { "id": $scope.entity.id };
 				});	
 			} else {
-				$scope.billLiquidationDetail.id = $scope.billLiquidationDetail.units = $scope.billLiquidationDetail.value = $scope.billLiquidationDetail.name = null;
-				$scope.billLiquidationDetail.liquidationIncluded = true;
+				d.id = d.units = d.value = d.name = d.dummyType = null;
+				d.liquidationIncluded = true;
 			}
 			$('#editBillLiquidationConceptModal').modal('show');			
 		};
-//		$scope.mergeLiquidationDetail = function() {
-//			console.log("mergeLiquidationDetail");
-//			$scope.isSaving = true;
-//			$http.post('rest/bills/detail/liquidation/merge/', $scope.billLiquidationDetail).success(function(data) {
-//				$scope.isSaving = false;
-//				$scope.message = data;
-//				$("#editBillLiquidationConceptModal").modal('hide');
-//				if(data.code == 200) {
-//					$scope.entity = data.payload;
-//				}
-//			});
-//		};
 		$scope.editDetail = function(id) {
 			$scope.billDetail.id = $scope.billDetail.value = $scope.billDetail.name = $scope.billDetail.units = null;
 			if(id != null && !(typeof id === 'undefined') ) {

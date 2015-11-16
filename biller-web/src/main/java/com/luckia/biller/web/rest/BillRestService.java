@@ -8,6 +8,7 @@ package com.luckia.biller.web.rest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import javax.annotation.security.PermitAll;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
@@ -301,6 +302,7 @@ public class BillRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("/draft/{id}")
+	@PermitAll
 	public Response getArtifactBinaryContent(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
