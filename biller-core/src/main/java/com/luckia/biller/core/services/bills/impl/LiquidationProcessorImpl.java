@@ -160,6 +160,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		BigDecimal senderAmount = totalAmount.subtract(receiverAmount);
 		results.setSenderAmount(senderAmount);
 		results.setReceiverAmount(receiverAmount);
+		results.setEffectiveLiquidationAmount(receiverAmount.add(results.getTotalOuterAmount()));
 	}
 
 	@Override

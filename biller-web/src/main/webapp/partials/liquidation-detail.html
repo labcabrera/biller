@@ -124,12 +124,26 @@
 										<td></td>
 									</tr>
 									<tr class="active">
-										<td>{{'outerManualAmount' | translate}}</td>
+										<td colspan="5"><b>{{'receiverPartialAmount' | translate}} {{entity.receiver.name}}</b></td>
+										<td class="data-amount"><b>{{entity.liquidationResults.receiverAmount}}</b></td>
+										<td></td>
+									</tr>
+									<tr class="active">
+										<td><b>{{'outerManualTotalAmount' | translate}}</b></td>
 										<td></td>
 										<td></td>
 										<td></td>
 										<td></td>
-										<td class="data-amount">{{'TODO' | translate}}</td>
+										<td class="data-amount"><b>{{entity.liquidationResults.totalOuterAmount}}</b></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>{{'storeManualOuterAmount' | translate}}</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount">{{entity.liquidationResults.storeManualOuterAmount}}</td>
 										<td></td>
 									</tr>
 									<tr ng-repeat="detail in entity.details | filter: {liquidationIncluded: false}">
@@ -142,8 +156,8 @@
 										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
 									</tr>
 									<tr class="active">
-										<td colspan="5"><b>{{'receiverAmount' | translate}} {{entity.receiver.name}}</b></td>
-										<td class="data-amount">{{entity.liquidationResults.receiverAmount}}</td>
+										<td colspan="5"><b>{{'receiverFinalAmount' | translate}} {{entity.receiver.name}}</b></td>
+										<td class="data-amount">{{entity.liquidationResults.effectiveLiquidationAmount}}</td>
 										<td></td>
 									</tr>
 								</table>

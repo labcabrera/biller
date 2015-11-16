@@ -68,6 +68,9 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	@Column(name = "TOTAL_OUTER_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal totalOuterAmount;
 
+	@Column(name = "LIQUIDATION_EFFECTIVE_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal effectiveLiquidationAmount;
+
 	public BigDecimal getBetAmount() {
 		return betAmount;
 	}
@@ -180,6 +183,14 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 		this.totalOuterAmount = totalOuterAmount;
 	}
 
+	public BigDecimal getEffectiveLiquidationAmount() {
+		return effectiveLiquidationAmount;
+	}
+
+	public void setEffectiveLiquidationAmount(BigDecimal effectiveLiquidationAmount) {
+		this.effectiveLiquidationAmount = effectiveLiquidationAmount;
+	}
+
 	@Override
 	public void merge(LiquidationResults entity) {
 		if (entity != null) {
@@ -194,6 +205,7 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 			this.vatAmount = entity.vatAmount;
 			this.totalAmount = entity.totalAmount;
 			this.storeManualOuterAmount = entity.storeManualOuterAmount;
+			this.effectiveLiquidationAmount = entity.effectiveLiquidationAmount;
 		}
 	}
 
