@@ -262,6 +262,10 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		cells.addAll(createEmptyCells(4));
 		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getSenderAmount()), Element.ALIGN_RIGHT, documentFont));
 
+		cells.add(createCell("Resultado sin ajustes de la liquidación", Element.ALIGN_LEFT, boldFont));
+		cells.addAll(createEmptyCells(4));
+		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getReceiverAmount()), Element.ALIGN_RIGHT, boldFont));
+
 		cells.add(createCell(" ", Element.ALIGN_LEFT, documentFont));
 		cells.addAll(createEmptyCells(5));
 
@@ -293,7 +297,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		}
 		cells.add(createCell(message, Element.ALIGN_LEFT, boldFont));
 		cells.addAll(createEmptyCells(4));
-		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getReceiverAmount()), Element.ALIGN_RIGHT, boldFont));
+		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getEffectiveLiquidationAmount()), Element.ALIGN_RIGHT, boldFont));
 
 		int cols = 6;
 		for (int i = 0; i < cells.size(); i++) {
