@@ -15,6 +15,8 @@ public interface LiquidationProcessor {
 
 	Liquidation processBills(Company company, Range<Date> range);
 
+	void processResults(Liquidation liquidation);
+
 	/**
 	 * Actualiza el estado de la liquidación y genera el PDF asociado.
 	 * 
@@ -24,7 +26,8 @@ public interface LiquidationProcessor {
 	void confirm(Liquidation liquidation);
 
 	/**
-	 * Actualiza el resultado de la liquidación (por ejemplo en el caso en el que hayamos modificado una factura o añadido un ajuste operativo).
+	 * Actualiza el resultado de la liquidación (por ejemplo en el caso en el que hayamos modificado una factura o añadido un ajuste
+	 * operativo).
 	 * 
 	 * @param liquidation
 	 * @return
@@ -37,7 +40,7 @@ public interface LiquidationProcessor {
 
 	/** Borrado fisico de la liquidacion */
 	void remove(Liquidation liquidation);
-	
+
 	Liquidation recalculate(String liquidationId);
 
 }

@@ -158,7 +158,7 @@ public class BillRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("detail/liquidation/id/{id}")
-	public BillLiquidationDetail mergeLiquidationDetail(@PathParam("id") String id) {
+	public BillLiquidationDetail findLiquidationDetail(@PathParam("id") String id) {
 		return entityManagerProvider.get().find(BillLiquidationDetail.class, id);
 	}
 

@@ -7,8 +7,7 @@
 		<div class="col-sm-9">
 			<div id="alertContainer"></div>
 			<h4>
-				<span class="glyphicon glyphicon-list-alt text-muted"></span>
-				<span>{{'liquidation' | translate}}</span>
+				<span class="glyphicon glyphicon-list-alt text-muted"></span> <span>{{'liquidation' | translate}}</span>
 			</h4>
 			<div>
 				<form class="form-horizontal" role="form">
@@ -50,13 +49,13 @@
 					</div>
 				</form>
 			</div>
-			
+
 			<div class="m-top-40">
 				<ul class="nav nav-tabs">
 					<li class="active"><a data-target="#detailTab" data-toggle="tab">{{'bills' | translate}}</a></li>
 					<li><a data-target="#commentsTab" data-toggle="tab">{{'comments' | translate}}</a></li>
 					<li><a data-target="#commentsPdfTab" data-toggle="tab">{{'commentsPdf' | translate}}</a></li>
-				</ul> 				
+				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="detailTab">
 						<div class="m-top-15">
@@ -90,7 +89,7 @@
 										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
 									</tr>
 									<tr class="active">
-										<td colspan="3"><b>{{'total' | translate}} {{entity.sender.name}}</b></td>
+										<td colspan="3"><b>{{'liquidationAmount' | translate}}</b></td>
 										<td class="data-amount">{{entity.liquidationResults.netAmount}}</td>
 										<td class="data-amount">{{entity.liquidationResults.vatAmount}}</td>
 										<td class="data-amount"><b>{{entity.liquidationResults.totalAmount}}</b></td>
@@ -106,7 +105,17 @@
 										<td></td>
 									</tr>
 									<tr>
-										<td>Saldo de caja ajustado</td>
+										<td>{{'manualAdjustments' | translate}}</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount">{{entity.liquidationResults.adjustmentAmount}}</td>
+										<td></td>
+									</tr>
+									<tr>
+									<tr>
+										<td>{{'cashStoreEffectiveAmount' | translate}}</td>
 										<td></td>
 										<td></td>
 										<td></td>
@@ -114,8 +123,26 @@
 										<td class="data-amount">{{entity.liquidationResults.cashStoreAdjustmentAmount}}</td>
 										<td></td>
 									</tr>
-									<tr>
-										<td colspan="5"><b>Resultado a percibir por {{entity.receiver.name}}</b></td>
+									<tr class="active">
+										<td>{{'outerManualAmount' | translate}}</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount">{{'TODO' | translate}}</td>
+										<td></td>
+									</tr>
+									<tr ng-repeat="detail in entity.details | filter: {liquidationIncluded: false}">
+										<td>{{detail.name}}</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="data-amount">{{detail.value}}</td>
+										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+									</tr>
+									<tr class="active">
+										<td colspan="5"><b>{{'receiverAmount' | translate}} {{entity.receiver.name}}</b></td>
 										<td class="data-amount">{{entity.liquidationResults.receiverAmount}}</td>
 										<td></td>
 									</tr>
@@ -126,15 +153,21 @@
 								</div>
 							</div>
 							<div class="btn-toolbar" role="toolbar">
-								<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">A&ntilde;adir concepto</button>
-								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft'" href="rest/liquidations/draft/{{entity.id}}" role="button" ng-disabled="isSaving">Consultar borrador</a>
-								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button" ng-disabled="isSaving">Descargar</a>
-								<a class="btn btn-primary btn-sm" ng-if="entity.reportFile != null" href="rest/binary/download/{{entity.reportFile.id}}" role="button" ng-disabled="isSaving">Report</a>
+								<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">A&ntilde;adir
+									concepto</button>
+								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft'" href="rest/liquidations/draft/{{entity.id}}" role="button"
+									ng-disabled="isSaving">Consultar borrador</a> <a class="btn btn-primary btn-sm"
+									ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'" href="rest/binary/download/{{entity.pdfFile.id}}"
+									role="button" ng-disabled="isSaving">Descargar</a> <a class="btn btn-primary btn-sm" ng-if="entity.reportFile != null" href="rest/binary/download/{{entity.reportFile.id}}"
+									role="button" ng-disabled="isSaving">Report</a>
 								<button ng-click="recreatePDF()" ng-if="entity.currentState.stateDefinition.id != 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Recrear PDF</button>
-								<button ng-click="draft()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Draft</button>
-								<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Aceptar borrador</button>
+								<button ng-click="draft()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-primary'
+									ng-disabled="isSaving">Draft</button>
+								<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Aceptar
+									borrador</button>
 								<button ng-click="recalculate()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Recalcular</button>
-								<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Enviar</button>
+								<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'"
+									class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Enviar</button>
 							</div>
 						</div>
 					</div>
@@ -170,9 +203,9 @@
 	</div>
 
 	<div add-liquidation-detail liquidation="entity" message="message" detail="liquidationDetail" is-saving="isSaving"></div>
-	
+
 	<pre>{{liquidationDetail | json}}</pre>
-	
+
 	<!-- ventana modal para el envio de correos -->
 	<div class="modal fade" id="sendMailModal" tabindex="-1" role="dialog" aria-labelledby="sendMailLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -186,7 +219,8 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label input-sm">Direcciones</label>
 							<div class="col-sm-8">
-								<input type='text' class="form-control" ng-model="sendMail.value" /> <span class="help-block">Para enviar a m&aacute;s de una direcci&oacute;n separe con punto y coma</span>
+								<input type='text' class="form-control" ng-model="sendMail.value" /> <span class="help-block">Para enviar a m&aacute;s de una direcci&oacute;n separe con punto y
+									coma</span>
 							</div>
 						</div>
 					</form>

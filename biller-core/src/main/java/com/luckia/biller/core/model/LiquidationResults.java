@@ -29,13 +29,6 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	@Column(name = "ADJUSTMENT_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal adjustmentAmount;
 
-	/**
-	 * Parte correspondiente al operador de los ajustes operativos. Recordar que los ajustes operativos se reparten entre Egasa y el
-	 * operador al 50%
-	 */
-	// @Column(name = "ADJUSTMENT_SHARED_AMOUNT", precision = 18, scale = 2)
-	// private BigDecimal adjustmentSharedAmount;
-
 	/** Saldo de caja (antes de los ajustes operativos */
 	@Column(name = "CASH_STORE_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal cashStoreAmount;
@@ -51,6 +44,9 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	@Column(name = "CASH_STORE_ADJUSTMENT_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal cashStoreAdjustmentAmount;
 
+	/**
+	 * Suma de los bases imponibles de todas las mini-liquidaciones.
+	 */
 	@Column(name = "NET_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal netAmount;
 
@@ -59,6 +55,18 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 
 	@Column(name = "TOTAL_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal totalAmount;
+
+	/**
+	 * Suma de los ajustes manuales no incluidos en la liquidacion de todos los establecimientos.
+	 */
+	@Column(name = "STORE_MANUAL_OUTER_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal storeManualOuterAmount;
+
+	/**
+	 * Importe total de ajustes manuales no incluidos en el importe de liquidacion.
+	 */
+	@Column(name = "TOTAL_OUTER_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal totalOuterAmount;
 
 	public BigDecimal getBetAmount() {
 		return betAmount;
@@ -156,6 +164,22 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 		this.totalAmount = totalAmount;
 	}
 
+	public BigDecimal getStoreManualOuterAmount() {
+		return storeManualOuterAmount;
+	}
+
+	public void setStoreManualOuterAmount(BigDecimal storeManualOuterAmount) {
+		this.storeManualOuterAmount = storeManualOuterAmount;
+	}
+
+	public BigDecimal getTotalOuterAmount() {
+		return totalOuterAmount;
+	}
+
+	public void setTotalOuterAmount(BigDecimal totalOuterAmount) {
+		this.totalOuterAmount = totalOuterAmount;
+	}
+
 	@Override
 	public void merge(LiquidationResults entity) {
 		if (entity != null) {
@@ -169,6 +193,7 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 			this.netAmount = entity.netAmount;
 			this.vatAmount = entity.vatAmount;
 			this.totalAmount = entity.totalAmount;
+			this.storeManualOuterAmount = entity.storeManualOuterAmount;
 		}
 	}
 

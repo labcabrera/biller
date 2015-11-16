@@ -98,7 +98,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		liquidation.setBillDate(range.getMaximum());
 		liquidation.setModel(company.getBillingModel());
 		auditService.processCreated(liquidation);
-		internalProcessResults(liquidation);
+		processResults(liquidation);
 		for (Bill bill : liquidation.getBills()) {
 			bill.setLiquidation(liquidation);
 			entityManager.merge(bill);
@@ -109,38 +109,37 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		return liquidation;
 	}
 
-	private void internalProcessResults(Liquidation liquidation) {
-		BigDecimal betAmount = BigDecimal.ZERO;
-		BigDecimal satAmount = BigDecimal.ZERO;
-		BigDecimal storeAmount = BigDecimal.ZERO;
-		BigDecimal manualAmount = BigDecimal.ZERO;
-		BigDecimal cashStore = BigDecimal.ZERO;
-		BigDecimal pricePerLocation = BigDecimal.ZERO;
+	@Override
+	public void processResults(Liquidation liquidation) {
 		BigDecimal netAmount = BigDecimal.ZERO;
 		BigDecimal vatAmount = BigDecimal.ZERO;
 		BigDecimal totalAmount = BigDecimal.ZERO;
+		BigDecimal storeCash = BigDecimal.ZERO;
+		BigDecimal manualAmount = BigDecimal.ZERO;
+		BigDecimal storeManualOuterAmount = BigDecimal.ZERO;
+		BigDecimal liquidationOuterAmount = BigDecimal.ZERO;
+		BigDecimal storeAmount = BigDecimal.ZERO; // TODO no se si esto sigue teniendo sentido
 		for (Bill bill : liquidation.getBills()) {
-			if (bill.getModel() == null) {
-				LOG.warn("Ignorando factura sin modelo de facturacion asociado (posiblemente no este definida a nivel de establecimiento)");
-				continue;
-			}
-			betAmount = betAmount.add(MathUtils.safeNull(bill.getLiquidationBetAmount()));
-			satAmount = satAmount.add(MathUtils.safeNull(bill.getLiquidationSatAmount()));
-			pricePerLocation = pricePerLocation.add(MathUtils.safeNull(bill.getLiquidationPricePerLocation()));
-			manualAmount = manualAmount.add(MathUtils.safeNull(bill.getLiquidationManualAmount()));
 			netAmount = netAmount.add(MathUtils.safeNull(bill.getLiquidationTotalNetAmount()));
 			vatAmount = vatAmount.add(MathUtils.safeNull(bill.getLiquidationTotalVat()));
 			totalAmount = totalAmount.add(MathUtils.safeNull(bill.getLiquidationTotalAmount()));
-			cashStore = cashStore.add(MathUtils.safeNull(bill.getStoreCash()));
+			manualAmount = manualAmount.add(MathUtils.safeNull(bill.getLiquidationManualAmount()));
+			storeCash = storeCash.add(MathUtils.safeNull(bill.getStoreCash()));
+			storeManualOuterAmount = storeManualOuterAmount.add(MathUtils.safeNull(bill.getLiquidationOuterAmount()));
 			if (bill.getModel() != null && BooleanUtils.isTrue(bill.getModel().getIncludeStores())) {
 				storeAmount = storeAmount.add(bill.getAmount());
 			}
 		}
-		for (LiquidationDetail detail : liquidation.getDetails()) {
-			if (detail.getLiquidationIncluded()) {
-				netAmount = netAmount.add(MathUtils.safeNull(detail.getNetValue()));
-				vatAmount = vatAmount.add(MathUtils.safeNull(detail.getVatValue()));
-				totalAmount = totalAmount.add(MathUtils.safeNull(detail.getValue()));
+		if (liquidation.getDetails() != null) {
+			for (LiquidationDetail detail : liquidation.getDetails()) {
+				if (detail.getLiquidationIncluded()) {
+					netAmount = netAmount.add(MathUtils.safeNull(detail.getNetValue()));
+					vatAmount = vatAmount.add(MathUtils.safeNull(detail.getVatValue()));
+					totalAmount = totalAmount.add(MathUtils.safeNull(detail.getValue()));
+					manualAmount = manualAmount.add(MathUtils.safeNull(detail.getValue()));
+				} else {
+					liquidationOuterAmount = liquidationOuterAmount.add(detail.getValue());
+				}
 			}
 		}
 		LiquidationResults results = liquidation.getLiquidationResults();
@@ -148,24 +147,19 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			results = new LiquidationResults();
 			liquidation.setLiquidationResults(results);
 		}
-		results.setBetAmount(betAmount);
 		results.setStoreAmount(storeAmount);
-		results.setSatAmount(satAmount);
-		results.setPricePerLocation(pricePerLocation);
+		results.setTotalOuterAmount(storeManualOuterAmount.add(liquidationOuterAmount));
 		results.setAdjustmentAmount(manualAmount);
-		results.setCashStoreAmount(cashStore);
-		results.setCashStoreAdjustmentAmount(cashStore.add(manualAmount));
+		results.setCashStoreAmount(storeCash);
+		results.setCashStoreAdjustmentAmount(storeCash.subtract(manualAmount));
 		results.setNetAmount(netAmount);
 		results.setVatAmount(vatAmount);
 		results.setTotalAmount(totalAmount);
-		BigDecimal senderAmount = betAmount.add(satAmount);
-		// if (liquidation.getDetails() != null) {
-		// for (LiquidationDetail detail : liquidation.getDetails()) {
-		// senderAmount = senderAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
-		// }
-		// }
+		results.setStoreManualOuterAmount(storeManualOuterAmount);
+		BigDecimal receiverAmount = storeCash.subtract(totalAmount).subtract(manualAmount);
+		BigDecimal senderAmount = totalAmount.subtract(receiverAmount);
 		results.setSenderAmount(senderAmount);
-		results.setReceiverAmount(results.getCashStoreAdjustmentAmount().subtract(senderAmount));
+		results.setReceiverAmount(receiverAmount);
 	}
 
 	@Override
@@ -175,7 +169,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.clear();
 		Liquidation current = entityManager.find(Liquidation.class, liquidation.getId());
-		internalProcessResults(liquidation);
+		processResults(liquidation);
 		entityManager.merge(liquidation);
 		return current;
 	}
@@ -249,6 +243,9 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			default:
 				break;
 			}
+		} else {
+			netValue = sourceValue;
+			value = sourceValue;
 		}
 		detail.setSourceValue(sourceValue);
 		detail.setNetValue(netValue);
