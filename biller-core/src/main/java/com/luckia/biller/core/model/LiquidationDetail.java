@@ -40,6 +40,15 @@ public class LiquidationDetail implements Mergeable<LiquidationDetail>, Serializ
 	@Column(name = "VALUE", precision = 18, scale = 2)
 	private BigDecimal value;
 
+	@Column(name = "SOURCE_VALUE", precision = 18, scale = 2)
+	private BigDecimal sourceValue;
+
+	@Column(name = "NET_VALUE", precision = 18, scale = 2)
+	private BigDecimal netValue;
+
+	@Column(name = "VAT_VALUE", precision = 18, scale = 2)
+	private BigDecimal vatValue;
+
 	/**
 	 * Indica si el ajuste se aplica dentro del importe de liquidacion o se aplica fuera del importe a liquidar.
 	 */
@@ -86,12 +95,48 @@ public class LiquidationDetail implements Mergeable<LiquidationDetail>, Serializ
 		this.value = value;
 	}
 
+	public Boolean getLiquidationIncluded() {
+		return liquidationIncluded;
+	}
+
+	public void setLiquidationIncluded(Boolean liquidationIncluded) {
+		this.liquidationIncluded = liquidationIncluded;
+	}
+
+	public BigDecimal getSourceValue() {
+		return sourceValue;
+	}
+
+	public void setSourceValue(BigDecimal sourceValue) {
+		this.sourceValue = sourceValue;
+	}
+
+	public BigDecimal getNetValue() {
+		return netValue;
+	}
+
+	public void setNetValue(BigDecimal netValue) {
+		this.netValue = netValue;
+	}
+
+	public BigDecimal getVatValue() {
+		return vatValue;
+	}
+
+	public void setVatValue(BigDecimal vatValue) {
+		this.vatValue = vatValue;
+	}
+
 	@Override
 	public void merge(LiquidationDetail entity) {
 		if (entity != null) {
 			this.name = entity.name;
 			this.units = entity.units;
 			this.value = entity.value;
+			this.liquidationIncluded = entity.liquidationIncluded;
+			this.sourceValue = entity.sourceValue;
+			this.netValue = entity.netValue;
+			this.vatValue = entity.vatValue;
 		}
 	}
 }

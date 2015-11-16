@@ -44,8 +44,8 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 	@Column(name = "PERCENT", precision = 18, scale = 2)
 	private BigDecimal percent;
 
-	@Column(name = "BASE_VALUE", precision = 18, scale = 2)
-	private BigDecimal baseValue;
+	@Column(name = "SOURCE_VALUE", precision = 18, scale = 2)
+	private BigDecimal sourceValue;
 
 	@Column(name = "NET_VALUE", precision = 18, scale = 2)
 	private BigDecimal netValue;
@@ -107,12 +107,12 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 		this.name = name;
 	}
 
-	public BigDecimal getBaseValue() {
-		return baseValue;
+	public BigDecimal getSourceValue() {
+		return sourceValue;
 	}
 
-	public void setBaseValue(BigDecimal baseValue) {
-		this.baseValue = baseValue;
+	public void setSourceValue(BigDecimal baseValue) {
+		this.sourceValue = baseValue;
 	}
 
 	public BigDecimal getPercent() {
@@ -149,7 +149,7 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 
 	@Override
 	public String toString() {
-		return String.format("Detail (%s, %s) [Bill: %s] [Name: %s]", concept, value, bill, name);
+		return String.format("Detail (%s, %s) [Bill: %s] [Name: %s] [%s]", concept, value, bill, name, getClass().getSimpleName());
 	}
 
 	@Override

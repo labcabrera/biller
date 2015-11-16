@@ -59,12 +59,12 @@
 			$http.get('rest/bills/' + $routeParams.id).success(function(data) {
 				$scope.entity = data;
 				$scope.billLiquidationDetail = {
-						"bill": {"id": $scope.entity.id },
+						"bill": { "id": $scope.entity.id },
 						"concept": "MANUAL",
 						"liquidationIncluded": true
 				};
 				$scope.billDetail = {
-						"bill": {"id": $scope.entity.id },
+						"bill": { "id": $scope.entity.id },
 						"concept": "MANUAL"
 				};
 			});
@@ -98,15 +98,15 @@
 			}
 		};
 		$scope.editLiquidationDetail = function(id) {
-			var d = $scope.billLiquidationDetail;
 			if(id != null && !(typeof id === 'undefined') ) {
 				$scope.isSaving = true;
 				$http.get('rest/bills/detail/liquidation/id/' + id).success(function(data) {
 					$scope.isSaving = false;
-					d = data;
-					d.bill = { "id": $scope.entity.id };
+					$scope.billLiquidationDetail = data;
+					$scope.billLiquidationDetail.bill = { "id": $scope.entity.id };
 				});	
 			} else {
+				var d = $scope.billLiquidationDetail;
 				d.id = d.units = d.value = d.name = d.dummyType = null;
 				d.liquidationIncluded = true;
 			}

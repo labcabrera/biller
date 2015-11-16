@@ -147,10 +147,14 @@ public class BillProcessorImpl implements BillProcessor {
 		BigDecimal liquidationPricePerLocation = BigDecimal.ZERO;
 		BigDecimal liquidationManualAmount = BigDecimal.ZERO;
 		BigDecimal liquidationOuterAmount = BigDecimal.ZERO;
+		BigDecimal liquidationVatAmount = BigDecimal.ZERO;
+		BigDecimal liquidationNetAmount = BigDecimal.ZERO;
 
 		// Primero calculamos los conceptos de liquidacion
 		for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
-			BigDecimal partial = detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO;
+			BigDecimal partial = MathUtils.safeNull(detail.getValue());
+			BigDecimal vatPartial = MathUtils.safeNull(detail.getVatValue());
+			BigDecimal netPartial = MathUtils.safeNull(detail.getNetValue());
 			if (detail.getConcept() == null) {
 				LOG.warn("Missing concept in bill {}", bill);
 			} else if (detail.getLiquidationIncluded() == null || detail.getLiquidationIncluded()) {
@@ -175,6 +179,8 @@ public class BillProcessorImpl implements BillProcessor {
 					LOG.warn("Ignorando concepto no esperado en la liquidacion: {}", detail.getConcept());
 					break;
 				}
+				liquidationVatAmount = liquidationVatAmount.add(vatPartial);
+				liquidationNetAmount = liquidationNetAmount.add(netPartial);
 			} else if (detail.getLiquidationIncluded() != null && !detail.getLiquidationIncluded()) {
 				liquidationOuterAmount = liquidationOuterAmount.add(partial);
 			}
@@ -182,6 +188,9 @@ public class BillProcessorImpl implements BillProcessor {
 		BigDecimal totalLiquidationAmount = liquidationBetAmount.add(liquidationSatAmount).add(liquidationPricePerLocation).add(liquidationManualAmount);
 		bill.setLiquidationBetAmount(liquidationBetAmount);
 		bill.setLiquidationSatAmount(liquidationSatAmount);
+		bill.setLiquidationTotalAmount(totalLiquidationAmount);
+		bill.setLiquidationTotalNetAmount(liquidationNetAmount);
+		bill.setLiquidationTotalVat(liquidationVatAmount);
 		bill.setLiquidationTotalAmount(totalLiquidationAmount);
 		bill.setLiquidationManualAmount(liquidationManualAmount);
 		bill.setLiquidationOuterAmount(liquidationOuterAmount);
@@ -336,7 +345,7 @@ public class BillProcessorImpl implements BillProcessor {
 				break;
 			}
 		}
-		detail.setBaseValue(baseValue);
+		detail.setSourceValue(baseValue);
 		detail.setNetValue(netValue);
 		detail.setVatValue(vatValue);
 		detail.setValue(value);

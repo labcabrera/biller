@@ -125,8 +125,8 @@
 								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: true}" ng-if="detail.concept != 'MANUAL'">
 									<td>{{detail.name}}</td>
 									<td class="data-amount">{{detail.units}}</td>
-									<td class="data-amount">{{detail.netValue}}</td>
-									<td class="data-amount">{{detail.vatValue}}</td>
+									<td class="data-amount">{{detail.netValue | abs}}</td>
+									<td class="data-amount">{{detail.vatValue | abs}}</td>
 									<td class="data-amount">{{detail.value}}</td>
 									<td></td>
 								</tr>
@@ -143,15 +143,15 @@
 									</td>
 								</tr>
 								<tr class="active">
-									<td><b>Total</b></td>
+									<td><b>{{'total' | translate}}</b></td>
 									<td></td>
-									<td></td>
-									<td></td>
+									<td class="data-amount"><b>{{entity.liquidationTotalNetAmount}}</b></td>
+									<td class="data-amount"><b>{{entity.liquidationTotalVat}}</b></td>
 									<td class="data-amount"><b>{{entity.liquidationTotalAmount}}</b></td>
 									<td></td>
 								</tr>
 								<tr ng-repeat="i in entity.billRawData | filter: { concept: 'Credit' }">
-									<td><b>Crédito</b></td>
+									<td><b>{{'credit' | translate}}</b></td>
 									<td></td>
 									<td></td>
 									<td></td>
@@ -159,7 +159,7 @@
 									<td></td>
 								</tr>
 								<tr>
-									<td><b>Saldo de caja</b></td>
+									<td><b>{{'cashStoreAmount' | translate}}</b></td>
 									<td></td>
 									<td></td>
 									<td></td>

@@ -90,17 +90,14 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	@Column(name = "VAT_PERCENT", precision = 18, scale = 2)
 	private BigDecimal vatPercent;
 
-	/**
-	 * Resultado total de la liquidacion:
-	 * 
-	 * <pre>
-	 * 
-	 * resultado = sum(liquidationDetail) + sum(billDetails|type:manual)
-	 * 
-	 * </pre>
-	 */
 	@Column(name = "LIQUIDATION_TOTAL_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal liquidationTotalAmount;
+
+	@Column(name = "LIQUIDATION_TOTAL_VAT", precision = 18, scale = 2)
+	private BigDecimal liquidationTotalVat;
+
+	@Column(name = "LIQUIDATION_TOTAL_NET_AMOUNT", precision = 18, scale = 2)
+	private BigDecimal liquidationTotalNetAmount;
 
 	@Column(name = "LIQUIDATION_BET_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal liquidationBetAmount;
@@ -256,6 +253,22 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	public void setLiquidationOuterAmount(BigDecimal liquidationOuterAmount) {
 		this.liquidationOuterAmount = liquidationOuterAmount;
+	}
+
+	public BigDecimal getLiquidationTotalVat() {
+		return liquidationTotalVat;
+	}
+
+	public void setLiquidationTotalVat(BigDecimal liquidationTotalVat) {
+		this.liquidationTotalVat = liquidationTotalVat;
+	}
+
+	public BigDecimal getLiquidationTotalNetAmount() {
+		return liquidationTotalNetAmount;
+	}
+
+	public void setLiquidationTotalNetAmount(BigDecimal liquidationTotalNetAmount) {
+		this.liquidationTotalNetAmount = liquidationTotalNetAmount;
 	}
 
 	/*

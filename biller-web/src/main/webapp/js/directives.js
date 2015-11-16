@@ -360,5 +360,46 @@
 			}
 		};
 	});
+	
+	billerModule.directive('addLiquidationDetail', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'templates/liquidation-modal-detail.html',
+			controller : function($scope, $http) {
+				$scope.init = function() {
+					$scope.isSaving = false;
+				};
+				$scope.mergeDetail = function() {
+					$scope.isSaving = true;
+					$http.post('rest/liquidations/detail/merge/', $scope.detail).success(function(data) {
+						$scope.isSaving = false;
+						//$scope.displayAlert(data);
+						$("#editLiquidationConceptModal").modal('hide');
+						if(data.code == 200) {
+							$scope.liquidation = data.payload;
+						}
+					});
+				};
+				$scope.removeDetail = function(id) {
+					$scope.isSaving = true;
+					$http.post('rest/liquidations/detail/remove/' + id).success(function(data) {
+						$scope.isSaving = false;
+						//$scope.displayAlert(data);
+						$("#editLiquidationConceptModal").modal('hide');
+						if(data.code == 200) {
+							$scope.entity = data.payload;
+						}
+					});
+				};
+				$scope.init();
+			},
+			scope : {
+				liquidation: "=",
+				detail: '=',
+				message: '=',
+				isSaving: '='
+			}
+		};
+	});
 
 })();

@@ -28,4 +28,13 @@ public class BillLiquidationDetail extends AbstractBillDetail {
 	public void setLiquidationIncluded(Boolean liquidationIncluded) {
 		this.liquidationIncluded = liquidationIncluded;
 	}
+
+	@Override
+	public void merge(AbstractBillDetail entity) {
+		super.merge(entity);
+		if (entity != null && BillLiquidationDetail.class.isAssignableFrom(entity.getClass())) {
+			BillLiquidationDetail e = (BillLiquidationDetail) entity;
+			this.liquidationIncluded = e.liquidationIncluded;
+		}
+	}
 }

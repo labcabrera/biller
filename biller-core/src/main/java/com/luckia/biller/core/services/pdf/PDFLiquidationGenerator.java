@@ -40,7 +40,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 	private List<Map<String, Object>> betDetails;
 	private List<Map<String, Object>> storeDetails;
 	private List<Map<String, Object>> satDetails;
-	private List<Map<String, Object>> adjustmentDetails;
+	private List<Map<String, Object>> manualDetails;
 	private List<Map<String, Object>> otherDetails;
 
 	@Override
@@ -63,7 +63,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			printDetails("Local", document, liquidation, "Honorarios por apuestas", betDetails);
 			printDetails("Local", document, liquidation, "Honorarios para bares", storeDetails);
 			printDetails("Local", document, liquidation, "Honorarios SAT", satDetails);
-			printDetails("Local", document, liquidation, "Ajustes operativos", adjustmentDetails);
+			printDetails("Local", document, liquidation, "Ajustes operativos", manualDetails);
 			printDetails("Concepto", document, liquidation, "Otros", otherDetails);
 
 			document.close();
@@ -76,7 +76,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		betDetails = new ArrayList<>();
 		storeDetails = new ArrayList<>();
 		satDetails = new ArrayList<>();
-		adjustmentDetails = new ArrayList<>();
+		manualDetails = new ArrayList<>();
 		otherDetails = new ArrayList<>();
 		Map<String, Object> map;
 		for (LiquidationDetail detail : liquidation.getDetails()) {
@@ -93,7 +93,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 				LOG.debug("Inspeccionando detalle {}", i);
 				String desc = billDetailNameProvider.getName(i);
 				BigDecimal value = i.getValue();
-				if (MathUtils.isNotZero(value) && i.getConcept() != null) {
+				if (MathUtils.isNotZero(value) && i.getConcept() != null && i.getLiquidationIncluded()) {
 					switch (i.getConcept()) {
 					case GGR:
 					case NGR:
@@ -113,6 +113,11 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 						map.put("value", value);
 						satDetails.add(map);
 						break;
+					case MANUAL:
+						map = new HashMap<>();
+						map.put("name", i.getName());
+						map.put("value", value);
+						manualDetails.add(map);
 					default:
 						LOG.debug("Ignorando concepto {}", i.getConcept());
 						break;
@@ -127,7 +132,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 						map = new HashMap<>();
 						map.put("name", bill.getSender().getName() + ": " + detail.getName());
 						map.put("value", detail.getValue());
-						adjustmentDetails.add(map);
+						manualDetails.add(map);
 						break;
 					// case ManualWithLiquidation:
 					// map = new HashMap<>();
@@ -187,13 +192,13 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getSatAmount()), Element.ALIGN_RIGHT, documentFont));
 		}
 
-		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getAdjustmentSharedAmount())) {
-			cells.add(createCell("Ajustes operativos", Element.ALIGN_LEFT, documentFont));
-			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getAdjustmentAmount()), Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell("50%", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getAdjustmentSharedAmount()), Element.ALIGN_RIGHT, documentFont));
-		}
+//		if (MathUtils.isNotZero(liquidation.getLiquidationResults().getAdjustmentSharedAmount())) {
+//			cells.add(createCell("Ajustes operativos", Element.ALIGN_LEFT, documentFont));
+//			cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
+//			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getAdjustmentAmount()), Element.ALIGN_RIGHT, documentFont));
+//			cells.add(createCell("50%", Element.ALIGN_RIGHT, documentFont));
+//			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getAdjustmentSharedAmount()), Element.ALIGN_RIGHT, documentFont));
+//		}
 
 		if (liquidation.getDetails() != null) {
 			for (LiquidationDetail detail : liquidation.getDetails()) {

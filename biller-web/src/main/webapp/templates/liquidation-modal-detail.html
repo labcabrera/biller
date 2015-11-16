@@ -3,34 +3,56 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Editar detalle</h4>
+				<h4 class="modal-title">{{'editLiquidationDetail' | translate}}</h4>
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal" role="form">
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Nombre</label>
+						<label class="col-sm-2 control-label">{{'type' | translate}}</label>
 						<div class="col-sm-8">
-							<input type='text' class="form-control" ng-model="liquidationDetail.name" />
+							<select class="form-control"
+								ng-model="detail.dummyType"
+								ng-change="detail.name = (detail.dummyType == 'OTHER' ? '' : detail.dummyType)">
+								<option value="{{'rappel' | translate}}">{{'rappel' | translate}}</option>
+								<option value="{{'credit' | translate}}">{{'credit' | translate}}</option>
+								<option value="{{'loanRecovery' | translate}}">{{'loanRecovery' | translate}}</option>
+								<option value="{{'robbery' | translate}}">{{'robbery' | translate}}</option>
+								<option value="OTHER">{{'other' | translate}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group" ng-if="detail.dummyType == 'OTHER'">
+						<label class="col-sm-2 control-label">{{'name' | translate}}</label>
+						<div class="col-sm-8">
+							<input type='text' class="form-control" ng-model="detail.name" />
+						</div>
+					</div>					
+					<div class="form-group">
+						<label class="col-sm-2 control-label input-sm">{{'units' | translate}}</label>
+						<div class="col-sm-4">
+							<number-only-input input-value="detail.units"/>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Unidades</label>
+						<label class="col-sm-2 control-label input-sm">{{'amount' | translate}}</label>
 						<div class="col-sm-4">
-							<number-only-input input-value="liquidationDetail.units" input-name="liquidationDetail.dummyUnits"/>
+							<number-only-input input-value="detail.value" input-name="detail.value"/>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Importe</label>
-						<div class="col-sm-4">
-							<number-only-input input-value="liquidationDetail.value" input-name="liquidationDetail.dummyValue"/>
+						<div class="col-sm-8 col-sm-offset-2">
+							<div class="checkbox">
+								<label><input type="checkbox" ng-model="detail.liquidationIncluded">{{'liquidationIncluded' | translate}}</label>
+							</div>
 						</div>
 					</div>
 				</form>
 			</div>
+			<pre>{{detail | json}}</pre>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>
-				<button type="button" class="btn btn-default btn-sm" ng-click="removeDetail(billDetail.id)" ng-if="liquidationDetail.id != null">Eliminar</button>
-				<button type="button" class="btn btn-success btn-sm" ng-click="mergeDetail()">Guardar</button>
+				<button type="button" class="btn btn-default btn-sm" ng-disabled="isSaving" data-dismiss="modal">{{'cancel' | translate}}</button>
+				<button type="button" class="btn btn-default btn-sm" ng-click="removeDetail(detail.id)" ng-if="detail.id != null" ng-disabled="isSaving" >{{'remove' | translate}}</button>
+				<button type="button" class="btn btn-success btn-sm" ng-click="mergeDetail()" ng-disabled="isSaving" >{{'save' | translate}}</button>
 			</div>
 		</div>
 	</div>

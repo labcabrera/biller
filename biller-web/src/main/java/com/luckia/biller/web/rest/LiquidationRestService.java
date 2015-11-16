@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import javax.annotation.security.PermitAll;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
@@ -178,6 +179,7 @@ public class LiquidationRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("/draft/{id}")
+	@PermitAll
 	public Response getArtifactBinaryContent(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();

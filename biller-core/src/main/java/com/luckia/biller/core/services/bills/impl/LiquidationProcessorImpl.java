@@ -26,9 +26,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
@@ -114,18 +116,31 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		BigDecimal manualAmount = BigDecimal.ZERO;
 		BigDecimal cashStore = BigDecimal.ZERO;
 		BigDecimal pricePerLocation = BigDecimal.ZERO;
+		BigDecimal netAmount = BigDecimal.ZERO;
+		BigDecimal vatAmount = BigDecimal.ZERO;
+		BigDecimal totalAmount = BigDecimal.ZERO;
 		for (Bill bill : liquidation.getBills()) {
 			if (bill.getModel() == null) {
 				LOG.warn("Ignorando factura sin modelo de facturacion asociado (posiblemente no este definida a nivel de establecimiento)");
 				continue;
 			}
-			betAmount = betAmount.add(bill.getLiquidationBetAmount() != null ? bill.getLiquidationBetAmount() : BigDecimal.ZERO);
-			satAmount = satAmount.add(bill.getLiquidationSatAmount() != null ? bill.getLiquidationSatAmount() : BigDecimal.ZERO);
-			pricePerLocation = pricePerLocation.add(bill.getLiquidationPricePerLocation() != null ? bill.getLiquidationPricePerLocation() : BigDecimal.ZERO);
-			manualAmount = manualAmount.add(bill.getLiquidationManualAmount() != null ? bill.getLiquidationManualAmount() : BigDecimal.ZERO);
-			cashStore = cashStore.add(bill.getStoreCash() != null ? bill.getStoreCash() : BigDecimal.ZERO);
+			betAmount = betAmount.add(MathUtils.safeNull(bill.getLiquidationBetAmount()));
+			satAmount = satAmount.add(MathUtils.safeNull(bill.getLiquidationSatAmount()));
+			pricePerLocation = pricePerLocation.add(MathUtils.safeNull(bill.getLiquidationPricePerLocation()));
+			manualAmount = manualAmount.add(MathUtils.safeNull(bill.getLiquidationManualAmount()));
+			netAmount = netAmount.add(MathUtils.safeNull(bill.getLiquidationTotalNetAmount()));
+			vatAmount = vatAmount.add(MathUtils.safeNull(bill.getLiquidationTotalVat()));
+			totalAmount = totalAmount.add(MathUtils.safeNull(bill.getLiquidationTotalAmount()));
+			cashStore = cashStore.add(MathUtils.safeNull(bill.getStoreCash()));
 			if (bill.getModel() != null && BooleanUtils.isTrue(bill.getModel().getIncludeStores())) {
 				storeAmount = storeAmount.add(bill.getAmount());
+			}
+		}
+		for (LiquidationDetail detail : liquidation.getDetails()) {
+			if (detail.getLiquidationIncluded()) {
+				netAmount = netAmount.add(MathUtils.safeNull(detail.getNetValue()));
+				vatAmount = vatAmount.add(MathUtils.safeNull(detail.getVatValue()));
+				totalAmount = totalAmount.add(MathUtils.safeNull(detail.getValue()));
 			}
 		}
 		LiquidationResults results = liquidation.getLiquidationResults();
@@ -138,16 +153,17 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		results.setSatAmount(satAmount);
 		results.setPricePerLocation(pricePerLocation);
 		results.setAdjustmentAmount(manualAmount);
-		results.setAdjustmentSharedAmount(manualAmount.divide(new BigDecimal("2"), 2, RoundingMode.HALF_EVEN));
 		results.setCashStoreAmount(cashStore);
 		results.setCashStoreAdjustmentAmount(cashStore.add(manualAmount));
-
-		BigDecimal senderAmount = betAmount.add(satAmount).add(results.getAdjustmentSharedAmount());
-		if (liquidation.getDetails() != null) {
-			for (LiquidationDetail detail : liquidation.getDetails()) {
-				senderAmount = senderAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
-			}
-		}
+		results.setNetAmount(netAmount);
+		results.setVatAmount(vatAmount);
+		results.setTotalAmount(totalAmount);
+		BigDecimal senderAmount = betAmount.add(satAmount);
+		// if (liquidation.getDetails() != null) {
+		// for (LiquidationDetail detail : liquidation.getDetails()) {
+		// senderAmount = senderAmount.add(detail.getValue() != null ? detail.getValue() : BigDecimal.ZERO);
+		// }
+		// }
 		results.setSenderAmount(senderAmount);
 		results.setReceiverAmount(results.getCashStoreAdjustmentAmount().subtract(senderAmount));
 	}
@@ -206,9 +222,39 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		Boolean isNew = detail.getId() == null;
 		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
 		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
-		Liquidation liquidation;
+		Liquidation liquidation = entityManager.find(Liquidation.class, detail.getLiquidation().getId());
+		// Obtenemos el modelo de facturacion. Como esta asociado a los establecimientos asumimos que la parte de tratamiento del IVA es
+		// comun a todos y leemos el primer registro. A partir de este valor hacemos el calculo del IVA
+		BillingModel model = liquidation.getBills().iterator().next().getModel();
+		BigDecimal sourceValue = detail.getValue();
+		BigDecimal vatPercent = BigDecimal.ZERO;
+		BigDecimal netValue = BigDecimal.ZERO;
+		BigDecimal vatValue = BigDecimal.ZERO;
+		BigDecimal value = BigDecimal.ZERO;
+		if (detail.getLiquidationIncluded()) {
+			switch (model.getVatLiquidationType()) {
+			case LIQUIDATION_INCLUDED:
+				vatPercent = new BigDecimal("21"); // TODO resolver
+				BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent).divide(MathUtils.HUNDRED);
+				netValue = sourceValue.divide(divisor, 2, RoundingMode.HALF_EVEN);
+				vatValue = sourceValue.subtract(netValue);
+				value = netValue.add(vatValue);
+				break;
+			case LIQUIDATION_ADDED:
+				vatPercent = new BigDecimal("21"); // TODO resolver
+				netValue = sourceValue;
+				vatValue = netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+				value = netValue.add(vatValue);
+				break;
+			default:
+				break;
+			}
+		}
+		detail.setSourceValue(sourceValue);
+		detail.setNetValue(netValue);
+		detail.setVatValue(vatValue);
+		detail.setValue(value);
 		if (isNew) {
-			liquidation = entityManager.find(Liquidation.class, detail.getLiquidation().getId());
 			detail.setId(UUID.randomUUID().toString());
 			entityManager.persist(detail);
 			liquidation.getDetails().add(detail);

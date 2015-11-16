@@ -8,12 +8,12 @@
 			<div id="alertContainer"></div>
 			<h4>
 				<span class="glyphicon glyphicon-list-alt text-muted"></span>
-				<span>Liquidaci&oacute;n</span>
+				<span>{{'liquidation' | translate}}</span>
 			</h4>
 			<div>
 				<form class="form-horizontal" role="form">
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Emisor</label>
+						<label class="col-sm-2 control-label input-sm">{{'sender' | translate}}</label>
 						<div class="col-sm-5">
 							<div class=" input-group">
 								<input type='text' class="form-control" ng-model="entity.sender.name" ng-readonly="true" /> <span class="input-group-addon input-sm"> <a
@@ -22,13 +22,13 @@
 								</span>
 							</div>
 						</div>
-						<label class="col-sm-1 control-label input-sm">C&oacute;digo</label>
+						<label class="col-sm-1 control-label input-sm">{{'code' | translate}}</label>
 						<div class="col-sm-3">
 							<input type='text' class="form-control data-code" ng-model="entity.code" ng-readonly="true" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Destinatario</label>
+						<label class="col-sm-2 control-label input-sm">{{'receiver' | translate}}</label>
 						<div class="col-sm-5">
 							<div class=" input-group">
 								<input type='text' class="form-control" ng-model="entity.receiver.name" ng-readonly="true" /> <span class="input-group-addon input-sm"> <a
@@ -37,13 +37,13 @@
 								</span>
 							</div>
 						</div>
-						<label class="col-sm-1 control-label input-sm">Fecha</label>
+						<label class="col-sm-1 control-label input-sm">{{'date' | translate}}</label>
 						<div class="col-sm-3">
 							<input type="text" class="form-control data-date" datepicker-popup="{{dateFormat}}" ng-model="entity.billDate" ng-readonly="isReadOnly" show-button-bar="false" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Estado</label>
+						<label class="col-sm-2 control-label input-sm">{{'state' | translate}}</label>
 						<div class="col-sm-5">
 							<input type='text' class="form-control" ng-model="entity.currentState.stateDefinition.desc" ng-readonly="true" />
 						</div>
@@ -53,72 +53,56 @@
 			
 			<div class="m-top-40">
 				<ul class="nav nav-tabs">
-					<li class="active"><a data-target="#detailTab" data-toggle="tab">Facturas</a></li>
-					<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
-					<li><a data-target="#commentsPdfTab" data-toggle="tab">Comentarios PDF</a></li>
+					<li class="active"><a data-target="#detailTab" data-toggle="tab">{{'bills' | translate}}</a></li>
+					<li><a data-target="#commentsTab" data-toggle="tab">{{'comments' | translate}}</a></li>
+					<li><a data-target="#commentsPdfTab" data-toggle="tab">{{'commentsPdf' | translate}}</a></li>
 				</ul> 				
 				<div class="tab-content">
 					<div class="tab-pane active" id="detailTab">
 						<div class="m-top-15">
 							<div class="col-sm-12">
 								<table class="table">
-									<tr>
-										<th>Factura</th>
-										<th>Establecimiento</th>
-										<th>Fecha</th>
-										<th>Estado</th>
-										<th class="data-amount">Factura</th>
-										<th class="data-amount">Liquidaci&oacute;n</th>
+									<tr class="active">
+										<th>{{'store' | translate}}</th>
+										<th>{{'state' | translate}}</th>
+										<th class="data-amount">{{'bill' | translate}}</th>
+										<th class="data-amount">{{'netAmount' | translate}}</th>
+										<th class="data-amount">{{'vatAmount' | translate}}</th>
+										<th class="data-amount">{{'liquidation' | translate}}</th>
 										<th></th>
 									</tr>
 									<tr ng-repeat="bill in childs.results">
-										<td><a href="#/bills/id/{{bill.id}}">{{bill.code != null ? bill.code : 'Borrador'}}</a></td>
 										<td><a href="#/bills/id/{{bill.id}}">{{bill.sender.name}}</a></td>
-										<td>{{bill.billDate.substr(0,10)}}</td>
 										<td>{{bill.currentState.stateDefinition.desc}}</td>
 										<td class="data-amount">{{bill.amount}}</td>
+										<td class="data-amount">{{bill.liquidationTotalNetAmount}}</td>
+										<td class="data-amount">{{bill.liquidationTotalVat}}</td>
 										<td class="data-amount">{{bill.liquidationTotalAmount}}</td>
 										<td><a href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
 									</tr>
-									<tr ng-repeat="detail in entity.details">
+									<tr ng-repeat="detail in entity.details | filter: {liquidationIncluded: true}">
 										<td>{{detail.name}}</td>
 										<td></td>
 										<td></td>
-										<td></td>
-										<td></td>
+										<td class="data-amount">{{detail.netValue}}</td>
+										<td class="data-amount">{{detail.vatValue}}</td>
 										<td class="data-amount">{{detail.value}}</td>
 										<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
 									</tr>
-									<tr>
-										<td>Ajustes operativos (50%)</td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td class="data-amount">{{entity.liquidationResults.adjustmentSharedAmount}}</td>
+									<tr class="active">
+										<td colspan="3"><b>{{'total' | translate}} {{entity.sender.name}}</b></td>
+										<td class="data-amount">{{entity.liquidationResults.netAmount}}</td>
+										<td class="data-amount">{{entity.liquidationResults.vatAmount}}</td>
+										<td class="data-amount"><b>{{entity.liquidationResults.totalAmount}}</b></td>
 										<td></td>
 									</tr>
 									<tr>
-										<td colspan="5"><b>Total {{entity.sender.name}}</b></td>
-										<td class="data-amount"><b>{{entity.liquidationResults.senderAmount}}</b></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>Saldo de caja</td>
+										<td>{{'cashStoreAmount' | translate}}</td>
 										<td></td>
 										<td></td>
 										<td></td>
 										<td></td>
 										<td class="data-amount">{{entity.liquidationResults.cashStoreAmount}}</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>Ajustes operativos (100%)</td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td class="data-amount">{{entity.liquidationResults.adjustmentAmount}}</td>
 										<td></td>
 									</tr>
 									<tr>
@@ -185,9 +169,10 @@
 		</div>
 	</div>
 
-	<div ng-include src="'templates/liquidation-modal-detail.html'"></div>
+	<div add-liquidation-detail liquidation="entity" message="message" detail="liquidationDetail" is-saving="isSaving"></div>
 	
-
+	<pre>{{liquidationDetail | json}}</pre>
+	
 	<!-- ventana modal para el envio de correos -->
 	<div class="modal fade" id="sendMailModal" tabindex="-1" role="dialog" aria-labelledby="sendMailLabel" aria-hidden="true">
 		<div class="modal-dialog">

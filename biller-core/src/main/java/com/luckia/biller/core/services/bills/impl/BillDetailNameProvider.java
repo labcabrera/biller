@@ -24,11 +24,11 @@ public class BillDetailNameProvider {
 			conceptName = i18nService.getMessage("bill.concept.name." + detail.getConcept().name());
 		}
 		StringBuffer sb = new StringBuffer(conceptName);
-		if (MathUtils.isNotZero(detail.getBaseValue()) && MathUtils.isNotZero(detail.getPercent())) {
+		if (MathUtils.isNotZero(detail.getSourceValue()) && MathUtils.isNotZero(detail.getPercent())) {
 			sb.append(" (");
 			sb.append(detail.getPercent());
 			sb.append("% sobre un total de ");
-			sb.append(detail.getBaseValue());
+			sb.append(detail.getSourceValue());
 			sb.append(" €)");
 		}
 		// if (MathUtils.isNotZero(detail.getBaseValue()) && detail.getConcept() == BillConcept.Stakes) {

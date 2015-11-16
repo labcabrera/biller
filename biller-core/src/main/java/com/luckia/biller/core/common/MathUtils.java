@@ -46,4 +46,8 @@ public final class MathUtils {
 	private MathUtils() {
 	}
 
+	public static BigDecimal safeNull(BigDecimal value) {
+		return value == null ? BigDecimal.ZERO : value;
+	}
+
 }
