@@ -178,7 +178,7 @@
 									<td class="data-amount">-</td>
 									<td class="data-amount">{{detail.value}}</td>
 									<td>
-										<a ng-if="entity.currentState.stateDefinition.id == 'Draft'">
+										<a ng-if="entity.currentState.stateDefinition.id == 'Draft'" ng-click="editLiquidationDetail(detail.id)">
 											<span class="glyphicon glyphicon-pencil"></span>
 										</a>
 									</td>
@@ -293,9 +293,6 @@
 						<div ng-include src="'templates/entity-audit-info.html'"></div>
 					</div>
 					
-					<pre>billLiquidationDetail: {{billLiquidationDetail|json}}</pre>
-					<pre>billDetail: {{billDetail|json}}</pre>
-					
 				</div>
 			</div>
 		</div>
@@ -320,12 +317,8 @@
 			<div ng-include src="'templates/entity-json-popup.html'"></div>
 		</div>
 	</div>
-	<!--
-	<div ng-include src="'templates/bill-modal-liquidation-detail.html'"></div>
-	-->
-	<div add-bill-liquidation-detail bill="entity" detail="billLiquidationDetail" message="message"></div>
+	<div add-bill-liquidation-detail bill="entity" detail="billLiquidationDetail" message="message" is-saving="isSaving"></div>
 	<div add-bill-detail bill="entity" detail="billDetail" message="message"></div>
-	
 	<div ng-include src="'templates/bill-modal-detail.html'"></div>
 	<div ng-include src="'templates/bill-modal-email.html'"></div>
 </div>

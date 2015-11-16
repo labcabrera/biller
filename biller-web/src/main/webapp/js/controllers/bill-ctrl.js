@@ -98,13 +98,16 @@
 			}
 		};
 		$scope.editLiquidationDetail = function(id) {
+			$scope.isSaving = true;
 			if(id != null && !(typeof id === 'undefined') ) {
-				$scope.isSaving = true;
 				$http.get('rest/bills/detail/liquidation/id/' + id).success(function(data) {
 					$scope.isSaving = false;
 					$scope.billLiquidationDetail = data;
 					$scope.billLiquidationDetail.bill = { "id": $scope.entity.id };
 				});	
+			} else {
+				$scope.billLiquidationDetail.id = $scope.billLiquidationDetail.units = $scope.billLiquidationDetail.value = $scope.billLiquidationDetail.name = null;
+				$scope.billLiquidationDetail.liquidationIncluded = true;
 			}
 			$('#editBillLiquidationConceptModal').modal('show');			
 		};

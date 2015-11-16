@@ -360,7 +360,15 @@ public class BillProcessorImpl implements BillProcessor {
 
 	@Override
 	public Bill removeLiquidationDetail(BillLiquidationDetail detail) {
-		return null;
+		EntityManager entityManager = entityManagerProvider.get();
+		Bill bill = detail.getBill();
+		bill.getLiquidationDetails().remove(detail);
+		entityManager.remove(detail);
+		entityManager.flush();
+		bill = entityManager.find(Bill.class, detail.getBill().getId());
+		entityManager.refresh(bill);
+		processResults(bill);
+		return bill;
 	}
 
 	@Override

@@ -179,6 +179,23 @@ public class BillRestService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/detail/liquidation/remove/{id}")
+	@Transactional
+	public Message<Bill> removeLiquidationDetail(@PathParam("id") String id) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			BillLiquidationDetail detail = entityManager.find(BillLiquidationDetail.class, id);
+			Bill bill = billProcessor.removeLiquidationDetail(detail);
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.remove"), bill);
+		} catch (Exception ex) {
+			LOG.error("Error al actualizar el detalle", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.detail.remove.error"));
+		}
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/merge")
 	@Transactional
 	public Message<Bill> mergeBillDetail(BillDetail detail) {
@@ -211,7 +228,7 @@ public class BillRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/detail/remove/{id}")
 	@Transactional
-	public Message<Bill> removeDetail(@PathParam("id") String id) {
+	public Message<Bill> removeBillDetail(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			BillDetail detail = entityManager.find(BillDetail.class, id);

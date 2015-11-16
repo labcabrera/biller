@@ -46,15 +46,13 @@
 							</div>
 						</div>
 					</div>
+					<pre>{{detail | json}}</pre>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{'cancel' | translate}}</button>
-				<button type="button" class="btn btn-default btn-sm" ng-click="removeLiquidationDetail(billDetail.id)" ng-if="detail.id != null">{{'remove' | translate}}</button>
-				<button type="button" class="btn btn-success btn-sm" ng-click="mergeLiquidationDetail()">{{'save' | translate}}</button>
-			</div>
-			<div>
-				<pre>detail: {{detail | json}}</pre>
+				<button type="button" class="btn btn-default btn-sm" ng-disabled="isSaving" data-dismiss="modal">{{'cancel' | translate}}</button>
+				<button type="button" class="btn btn-default btn-sm" ng-click="removeLiquidationDetail(detail.id)" ng-if="detail.id != null" ng-disabled="isSaving">{{'remove' | translate}}</button>
+				<button type="button" class="btn btn-success btn-sm" ng-click="mergeLiquidationDetail()" ng-disabled="isSaving">{{'save' | translate}}</button>
 			</div>
 		</div>
 	</div>

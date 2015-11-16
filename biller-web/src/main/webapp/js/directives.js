@@ -286,6 +286,9 @@
 			restrict : 'AE',
 			templateUrl : 'templates/bill-modal-liquidation-detail.html',
 			controller : function($scope, $http) {
+				$scope.init = function() {
+					$scope.isSaving = false;
+				};
 				$scope.mergeLiquidationDetail = function() {
 					$scope.isSaving = true;
 					$http.post('rest/bills/detail/liquidation/merge/', $scope.detail).success(function(data) {
@@ -309,11 +312,13 @@
 						$("#editBillLiquidationConceptModal").modal('hide');
 					});
 				};
+				$scope.init();
 			},
 			scope : {
 				bill: "=",
-				detail : '=',
-				message: '='
+				detail: '=',
+				message: '=',
+				isSaving: '='
 			}
 		};
 	});
