@@ -38,6 +38,7 @@
 		<class>com.luckia.biller.core.model.TerminalRelation</class>
 		<class>com.luckia.biller.core.model.User</class>
 		<class>com.luckia.biller.core.model.UserActivity</class>
+		<class>com.luckia.biller.core.model.UserRole</class>
 		<class>com.luckia.biller.core.model.UserSession</class>
 		<shared-cache-mode>NONE</shared-cache-mode>
 	</persistence-unit>

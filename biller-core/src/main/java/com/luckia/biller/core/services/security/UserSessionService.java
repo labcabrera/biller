@@ -43,10 +43,10 @@ public class UserSessionService {
 	// @Named("security.session-expiration-minutes")
 	private Integer sessionExpiration = 30;
 
-	public Message<Map<String, String>> login(String key, String password) {
-		Message<Map<String, String>> result = new Message<>();
+	public Message<Map<String, Object>> login(String key, String password) {
+		Message<Map<String, Object>> result = new Message<>();
 		EntityManager entityManager = entityManagerProvider.get();
-		String qlString = "select e from User e where e.name = :key or e.email = :key";
+		String qlString = "select e from User e where e.alias = :key or e.email = :key";
 		TypedQuery<User> query = entityManager.createQuery(qlString, User.class);
 		List<User> users = query.setParameter("key", key).getResultList();
 		if (users.isEmpty()) {
@@ -56,10 +56,12 @@ public class UserSessionService {
 			String digest = calculatePasswordDigest(password);
 			if (digest.equals(user.getPasswordDigest())) {
 				UserSession session = createSession(user);
-				Map<String, String> map = new LinkedHashMap<>();
+				Map<String, Object> map = new LinkedHashMap<>();
 				map.put("name", user.getName());
+				map.put("alias", user.getAlias());
 				map.put("email", user.getEmail());
 				map.put("session", session.getSession());
+				map.put("roles", user.getRoles());
 				return result.addInfo("login.success").withPayload(map);
 			}
 		}
@@ -87,9 +89,6 @@ public class UserSessionService {
 	public UserSession createSession(User user) {
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.createQuery("delete from UserSession e where e.user = :user").setParameter("user", user).executeUpdate();
-		// SecureRandom random = new SecureRandom();
-		// byte[] rawSession = new byte[32];
-		// random.nextBytes(rawSession);
 		UserSession session = new UserSession();
 		session.setSession(UUID.randomUUID().toString());
 		session.setUser(user);

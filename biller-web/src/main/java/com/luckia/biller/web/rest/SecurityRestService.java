@@ -23,7 +23,7 @@ public class SecurityRestService {
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@PermitAll
-	public Message<Map<String, String>> login(JsonElement request) {
+	public Message<Map<String, Object>> login(JsonElement request) {
 		String key = request.getAsJsonObject().get("user").getAsString();
 		String password = request.getAsJsonObject().get("password").getAsString();
 		return userSessionService.login(key, password);

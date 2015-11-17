@@ -29,7 +29,7 @@ public class SecurityService {
 			return users.get();
 		}
 		try {
-			return entityManagerProvider.get().createNamedQuery("User.selectByName", User.class).setParameter("name", "admin").getSingleResult();
+			return entityManagerProvider.get().createNamedQuery("User.selectByAlias", User.class).setParameter("alias", "admin").getSingleResult();
 		} catch (NoResultException ex) {
 			throw new RuntimeException("Error al obtener el usuario activo", ex);
 		}
