@@ -67,7 +67,7 @@
 			<td class="data-amount"><b>{{entity.liquidationResults.receiverAmount}}</b></td>
 			<td></td>
 		</tr>
-		<tr class="active">
+		<tr class="active" ng-if="entity.liquidationResults.totalOuterAmount > 0">
 			<td><b>{{'outerManualTotalAmount' | translate}}</b></td>
 			<td></td>
 			<td></td>
@@ -76,7 +76,7 @@
 			<td class="data-amount"><b>{{entity.liquidationResults.totalOuterAmount}}</b></td>
 			<td></td>
 		</tr>
-		<tr>
+		<tr ng-if="entity.liquidationResults.storeManualOuterAmount > 0">
 			<td>{{'storeManualOuterAmount' | translate}}</td>
 			<td></td>
 			<td></td>
