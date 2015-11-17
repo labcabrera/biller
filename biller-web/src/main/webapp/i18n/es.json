@@ -133,6 +133,8 @@
 	"userActivity.BILL_LIQUIDATION_DETAIL_MERGE": "Ajuste de liquidación por establecimiento",
 	"userActivity.COST_CENTER_INSERT": "Alta de centro de coste",
 	"userActivity.COST_CENTER_UPDATE": "Actualización de centro de coste",
+	"userActivityViewAll": "Ver todos",
+	"userActivityViewByUser": "Ver operaciones del usuario",
 	"vat": "IVA/IGIT",
 	"vatLiquidationType": "IVA/IGIC",
 	"vatLiquidationType.EXCLUDED": "No incluído",

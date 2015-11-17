@@ -62,12 +62,12 @@
 		};
 	}]);
 	
-	billerModule.controller('UserActivityListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', 'dialogs', function($scope, $rootScope, $routeParams, $http, dialogs) {
+	billerModule.controller('UserActivityListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', 'dialogs', function($scope, $rootScope, $routeParams, $http, $filter, dialogs) {
 		$scope.currentPage = 1;
 		$scope.itemsPerPage = 20;
 		$scope.reset = function() {
 			$scope.searchOptions = {
-//				'code': $routeParams.code,
+				'user': $routeParams.user,
 //				'store': { "id": $routeParams.store, "name": '' },
 //				'company': { "id": $routeParams.company, "name": '' },
 //				'model': { "id": $routeParams.model},
@@ -78,13 +78,13 @@
 		};
 		$scope.getSearchUrl = function() {
 			var predicateBuilder = new PredicateBuilder('');
-//			predicateBuilder.append("code=lk=", $scope.searchOptions.code);
+			predicateBuilder.append("user.name=lk=", $scope.searchOptions.user);
 //			predicateBuilder.append("sender.id==", $scope.searchOptions.store.id);
 //			predicateBuilder.append("receiver.id==", $scope.searchOptions.company.id);
 //			predicateBuilder.append("currentState.stateDefinition.id==", $scope.searchOptions.state);
 //			predicateBuilder.append("model.id==", $scope.searchOptions.model != null ? $scope.searchOptions.model.id : null);
-//			predicateBuilder.append("dateFrom=ge=", $scope.searchOptions.from != null ? $filter('date')($scope.searchOptions.from, "yyyy-MM-dd") : null);
-//			predicateBuilder.append("dateTo=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
+			predicateBuilder.append("date=ge=", $scope.searchOptions.from != null ? $filter('date')($scope.searchOptions.from, "yyyy-MM-dd") : null);
+			predicateBuilder.append("date=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
 			return 'rest/user-activity/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
 		$scope.search = function() {
