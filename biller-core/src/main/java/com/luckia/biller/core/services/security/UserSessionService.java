@@ -122,10 +122,8 @@ public class UserSessionService {
 	public String calculatePasswordDigest(String password) {
 		try {
 			String algorithm = passwordDigestAlgoritm != null ? passwordDigestAlgoritm : "SHA-256";
-			// byte[] rawSalt = Hex.decodeHex(salt.toCharArray());
 			MessageDigest digest = MessageDigest.getInstance(algorithm);
 			digest.reset();
-			// digest.update(rawSalt);
 			byte[] rawDigest = digest.digest(password.getBytes("UTF-8"));
 			return new String(Hex.encodeHex(rawDigest));
 		} catch (Exception ex) {

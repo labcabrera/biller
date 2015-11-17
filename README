@@ -6,4 +6,7 @@ TODO:
 	- Migración de MANUAL_WITH_LIQUIDATION y MANUAL_WITHOUT_LIQUIDATION (2 registros solamente)
 	- Sacar named queries a orm.xml
 	- No generar el PDF de las facturas que están a cero
+	- Administrador de roles y permisos
+	- Administración tareas programadas
+	- Meter gradle
 
