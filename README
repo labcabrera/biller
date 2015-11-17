@@ -1,28 +1,5 @@
 TODO:
-	MODELO:
-	- Definir como se almacenan la informacion de facturacion en el sistema (consolidada de LIS)
-	- Relaciones entre terminales y locales. Puede darse el caso de que un terminal cambie de
-	  local. Dependiendo de la comunidad autonoma puede mantenerse el identificador del terminal
-	  o cambiar.
-	- Sistema para obtener la relacion entre terminales y locales de LIS.
-
-	VISTA:
-	- Definir sistema para devolver resultados de busqueda (resultados, pagina actual, etc.)
-	- Buscar opciones para utilizar Search Box en lugar de selects
-	- Carga dinámica de options desde un servicio rest
-	- Estilos de select y fechas:
-		http://silviomoreto.github.io/bootstrap-select/
-
-- Serializacion condicional de los diferentes tipos de LegalEntities
-
-
-Ejemplo de paginación con un servicio REST con AngularJS
-	http://nadeemkhedr.wordpress.com/2013/09/01/build-angularjs-grid-with-server-side-paging-sorting-filtering/
-	
-Temas de bootstrap
-	http://startbootstrap.com/
-	http://bootswatch.com/
-
-Iconos para bootstrap:	
-	http://fortawesome.github.io/Font-Awesome/
+	- Historico en la relacion de terminales y locales
+	- Optimización serializadores
+	- Optimizacion relaciones JPA
 
