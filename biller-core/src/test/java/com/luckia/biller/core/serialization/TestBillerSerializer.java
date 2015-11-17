@@ -16,14 +16,14 @@ import org.junit.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Bill;
 
 public class TestBillerSerializer {
 
 	@Test
 	public void test() {
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 		Serializer serializer = injector.getInstance(Serializer.class);

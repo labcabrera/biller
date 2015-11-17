@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
@@ -18,6 +19,7 @@ public class CostCenterEntityService extends EntityService<CostCenter> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.COST_CENTER_MERGE)
 	public Message<CostCenter> merge(CostCenter entity) {
 		Message<CostCenter> validationResult = validate(entity);
 		if (validationResult.hasErrors()) {
@@ -32,14 +34,12 @@ public class CostCenterEntityService extends EntityService<CostCenter> {
 			auditService.processCreated(current);
 			entityManager.persist(current);
 			message = i18nService.getMessage("costCenter.persist");
-			auditService.addUserActivity(UserActivityType.COST_CENTER_INSERT, entity);
 		} else {
 			current = entityManager.find(CostCenter.class, entity.getId());
 			current.merge(entity);
 			auditService.processModified(current);
 			entityManager.merge(current);
 			message = i18nService.getMessage("costCenter.merge");
-			auditService.addUserActivity(UserActivityType.COST_CENTER_UPDATE, entity);
 		}
 		return new Message<CostCenter>(Message.CODE_SUCCESS, message, current);
 	}

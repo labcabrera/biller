@@ -13,14 +13,14 @@ import org.junit.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Liquidation;
 
 public class ZipFileServiceTest {
 
 	@Test
 	public void test() throws FileNotFoundException {
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 

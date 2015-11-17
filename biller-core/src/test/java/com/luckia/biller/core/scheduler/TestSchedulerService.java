@@ -15,13 +15,13 @@ import org.quartz.spi.MutableTrigger;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 
 public class TestSchedulerService {
 
 	@Test
 	public void test() throws Exception {
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		SchedulerService service = injector.getInstance(SchedulerService.class);
 
 		String cron = "0 0/1 * 1/1 * ? *";

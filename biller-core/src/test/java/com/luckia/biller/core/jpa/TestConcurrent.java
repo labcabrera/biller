@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
@@ -20,7 +20,7 @@ import com.luckia.biller.core.services.bills.LiquidationProcessor;
 public class TestConcurrent {
 	@Test
 	public void test() throws InterruptedException {
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
 		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);

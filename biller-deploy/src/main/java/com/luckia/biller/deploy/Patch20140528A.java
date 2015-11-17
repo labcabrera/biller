@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
@@ -43,7 +43,7 @@ public class Patch20140528A extends PatchSupport implements Runnable {
 		}
 		try {
 			LOG.info("Ejecutando patch");
-			Injector injector = Guice.createInjector(new LuckiaCoreModule());
+			Injector injector = Guice.createInjector(new BillerModule());
 			injector.getInstance(PersistService.class).start();
 			Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 			BillProcessor billProcessor = injector.getInstance(BillProcessor.class);

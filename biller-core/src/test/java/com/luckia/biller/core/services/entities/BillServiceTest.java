@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
@@ -18,7 +18,7 @@ public class BillServiceTest {
 
 	@Test
 	public void test() {
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		BillEntityService billService = injector.getInstance(BillEntityService.class);
 		SearchParams searchParams = new SearchParams();
 		searchParams.setCurrentPage(1);

@@ -7,13 +7,13 @@ import org.quartz.JobExecutionException;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 
 public class TestBillerJob {
 
 	@Test
 	public void test() throws JobExecutionException {
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		BillingJob job = injector.getInstance(BillingJob.class);
 		job.injector = injector;
 

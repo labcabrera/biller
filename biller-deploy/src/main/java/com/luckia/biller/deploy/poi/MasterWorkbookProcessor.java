@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.AppSettings;
 import com.luckia.biller.core.model.BillingModel;
@@ -70,7 +70,7 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 
 	public static void main(String... args) throws IOException {
 		InputStream in = new FileInputStream(DATABASE_FILE);
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		MasterWorkbookProcessor processor = injector.getInstance(MasterWorkbookProcessor.class);
 		processor.process(in, true);
 	}

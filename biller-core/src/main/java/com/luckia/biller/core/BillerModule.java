@@ -8,8 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.persist.jpa.JpaPersistModule;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.lis.LisModule;
+import com.luckia.biller.core.services.UserActivityInterceptor;
 import com.luckia.biller.core.services.bills.BillDataProvider;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
@@ -28,9 +31,9 @@ import com.luckia.biller.core.validation.LegalEntityValidator;
  * <li>Registra el módulo de validacion de Apache BVal (JSR 303)</li>
  * </ul>
  */
-public class LuckiaCoreModule extends AbstractModule {
+public class BillerModule extends AbstractModule {
 
-	private static final Logger LOG = LoggerFactory.getLogger(LuckiaCoreModule.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BillerModule.class);
 
 	/*
 	 * (non-Javadoc)
@@ -48,6 +51,9 @@ public class LuckiaCoreModule extends AbstractModule {
 		bind(RappelStoreProcessor.class).to(RappelStoreProcessorImpl.class);
 		bind(BillDataProvider.class).to(LISBillDataProvider.class);
 		bind(LegalEntityValidator.class);
+		UserActivityInterceptor userActivityInterceptor = new UserActivityInterceptor();
+		requestInjection(userActivityInterceptor);
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(RegisterActivity.class), userActivityInterceptor);
 		LOG.debug("Configured Luckia core module");
 	}
 

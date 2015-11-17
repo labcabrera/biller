@@ -28,12 +28,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.CommonState;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
@@ -110,6 +112,7 @@ public class BillRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
 	@Transactional
+	@RegisterActivity(type = UserActivityType.BILL_MERGE)
 	public Message<Bill> merge(Bill bill) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();

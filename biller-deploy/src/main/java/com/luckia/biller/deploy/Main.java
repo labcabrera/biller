@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.IdCard;
@@ -51,7 +51,7 @@ public class Main {
 	public void run(boolean generateBootstrap, boolean generateBills) {
 		try {
 			System.out.println("Biller deployment module");
-			injector = Guice.createInjector(new LuckiaCoreModule());
+			injector = Guice.createInjector(new BillerModule());
 			if (generateBootstrap) {
 				System.out.println("Executing bootstrap");
 				Bootstrap.main();
@@ -120,7 +120,7 @@ public class Main {
 	}
 
 	public void executePatch20140522() {
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		LOG.info("--------------------------- EJECUTANDO PATCH ---------------------------");
 		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 		BillProcessor billProcessor = injector.getInstance(BillProcessor.class);

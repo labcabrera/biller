@@ -7,14 +7,14 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.scheduler.RappelLiquidationJob;
 
 public class TestRappelStoreService {
 
 	@Test
 	public void test() {
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		RappelLiquidationJob job = injector.getInstance(RappelLiquidationJob.class);
 		job.setInjector(injector);
 		Date date = new DateTime(2014, 12, 31, 0, 0, 0, 0).toDate();

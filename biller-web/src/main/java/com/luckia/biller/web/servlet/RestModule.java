@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.web.json.GsonMessageBodyHandler;
 import com.luckia.biller.web.rest.AdminRestService;
 import com.luckia.biller.web.rest.BillRestService;
@@ -45,7 +45,7 @@ public class RestModule implements Module {
 	@Override
 	public void configure(final Binder binder) {
 		LOG.debug("Configuring Guice Module");
-		binder.install(new LuckiaCoreModule());
+		binder.install(new BillerModule());
 		// Components
 		binder.bind(RestPersistFilter.class);
 		binder.bind(GsonMessageBodyHandler.class);

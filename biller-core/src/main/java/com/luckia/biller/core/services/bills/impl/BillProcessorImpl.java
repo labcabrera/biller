@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Injector;
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.common.MathUtils;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
@@ -238,6 +239,7 @@ public class BillProcessorImpl implements BillProcessor {
 	 */
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.BILL_CONFIRM)
 	public void confirmBill(Bill bill) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -329,6 +331,7 @@ public class BillProcessorImpl implements BillProcessor {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.BILL_LIQUIDATION_DETAIL_MERGE)
 	public Bill mergeLiquidationDetail(BillLiquidationDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Bill bill = entityManager.find(Bill.class, detail.getBill().getId());
@@ -379,7 +382,6 @@ public class BillProcessorImpl implements BillProcessor {
 		entityManager.flush();
 		entityManager.refresh(bill);
 		processResults(bill);
-		auditService.addUserActivity(UserActivityType.BILL_LIQUIDATION_DETAIL_MERGE, detail);
 		return bill;
 	}
 
@@ -412,6 +414,7 @@ public class BillProcessorImpl implements BillProcessor {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.BILL_REMOVE)
 	public void remove(Bill bill) {
 		LOG.info("Eliminando factura {}", bill);
 		// Eliminamos los detalles

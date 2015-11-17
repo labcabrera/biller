@@ -12,14 +12,17 @@ import javax.validation.ConstraintViolation;
 import org.apache.commons.lang3.Validate;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Rappel;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 
 public class BillingModelEntityService extends EntityService<BillingModel> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.BILLING_MODEL_MERGE)
 	public Message<BillingModel> merge(BillingModel entity) {
 		EntityManager entityManager = entityManagerProvider.get();
 		BillingModel current;
@@ -42,6 +45,7 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.BILLING_MODEL_REMOVE)
 	public Message<BillingModel> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		BillingModel current = entityManager.find(BillingModel.class, primaryKey);
@@ -51,6 +55,7 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 	}
 
 	@Transactional
+	@RegisterActivity(type = UserActivityType.BILLING_MODEL_RAPEL_MERGE)
 	public Message<BillingModel> mergeRappelDetail(Rappel entity) {
 		try {
 			// TODO deberiamos tener un constructor de mensajes a partir de errores de validacion en lugar de tomar solo el primer mensaje
@@ -83,6 +88,7 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 	}
 
 	@Transactional
+	@RegisterActivity(type = UserActivityType.BILLING_MODEL_RAPEL_REMOVE)
 	public Message<BillingModel> removeRappelDetail(Long primaryKey) {
 		try {
 			Validate.notNull(primaryKey);

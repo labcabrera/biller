@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
@@ -25,7 +25,7 @@ public class Patch20140523A {
 
 	public static void main(String[] args) {
 		LOG.info("Ejecutando patch");
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
 		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 		EntityManager entityManager = entityManagerProvider.get();

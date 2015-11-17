@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.IdCard;
 import com.luckia.biller.core.model.IdCardType;
@@ -30,7 +30,7 @@ public class TestLegalEntityValidation {
 	public void test() {
 		Locale locale = new Locale("es", "ES");
 		ResourceBundle messages = ResourceBundle.getBundle("com.luckia.biller.core.i18n.messages", locale);
-		Injector injector = Guice.createInjector(new LuckiaCoreModule());
+		Injector injector = Guice.createInjector(new BillerModule());
 		Validator validator = injector.getInstance(Validator.class);
 		LegalEntity legalEntity = new LegalEntity();
 		legalEntity.setName("name");

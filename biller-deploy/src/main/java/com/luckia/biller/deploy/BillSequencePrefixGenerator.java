@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
-import com.luckia.biller.core.LuckiaCoreModule;
+import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Store;
 
 /**
@@ -23,7 +23,7 @@ public class BillSequencePrefixGenerator implements Runnable {
 	private static final Logger LOG = LoggerFactory.getLogger(BillSequencePrefixGenerator.class);
 
 	public static void main(String[] args) {
-		Guice.createInjector(new LuckiaCoreModule()).getInstance(BillSequencePrefixGenerator.class).run();
+		Guice.createInjector(new BillerModule()).getInstance(BillSequencePrefixGenerator.class).run();
 	}
 
 	@Inject

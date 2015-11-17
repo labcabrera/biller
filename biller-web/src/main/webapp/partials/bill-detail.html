@@ -270,19 +270,17 @@
 					
 					<div class="tab-pane" id="advancedInfoTab">
 						<div class="m-top-15">
-							<table>
+							<table class="table table-condensed">
 								<thead>
 									<tr>
-										<td><b>Concepto</b></td>
-										<td class="data-amount"><b>Importe</b></td>
+										<td><b>{{'concept' | translate}}</b></td>
+										<td class="data-amount"><b>{{'amount' | translate}}</b></td>
 									</tr>
-								<thead>
+								</thead>
 								<tbody>
 									<tr ng-repeat="i in entity.billRawData">
 										<td>{{'concept.' + i.concept | translate}}</td>
-										<td></td>
 										<td class="data-amount">{{i.amount}}</td>
-										<td></td>
 									</tr>
 								</tbody>
 							</table>
@@ -303,14 +301,14 @@
 			<div class="m-top-40">
 				<h4>Facturación</h4>
 				<ul class="list-unstyled">
-					<li><a href="#/bills">Ver facturas</a></li>
-					<li><a href="#/bills?store={{entity.sender.id}}">Ver facturas de este establecimiento</a></li>
-					<li><a href="#/bills?state=Draft">Ver facturas pendientes</a></li>
+					<li><a href="#/bills">{{'billsViewAll' | translate}}</a></li>
+					<li><a href="#/bills?store={{entity.sender.id}}">{{'billsViewByStore' | translate}}</a></li>
+					<li><a href="#/bills?state=Draft">{{'billsViewByPending' | translate}}</a></li>
 				</ul>
 				<div ng-if="entity.liquidation != null">
-					<h4>Liquidaci&oacute;n</h4>
+					<h4>{{'liquidation' | translate}}</h4>
 					<ul class="list-unstyled">
-						<li><a href="#/liquidations/id/{{entity.liquidation.id}}">Ver liquidaci&oacute;n de esta factura</a></li>
+						<li><a href="#/liquidations/id/{{entity.liquidation.id}}">{{'liquidationViewByBill' | translate}}</a></li>
 					</ul>
 				</div>
 			</div>
