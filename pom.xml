@@ -29,15 +29,12 @@
 		<quartz.version>2.2.2</quartz.version>
 		<resteasy.version>3.0.7.Final</resteasy.version>
 		<slf4j.version>1.7.2</slf4j.version>
-		<!-- deprecated <jersey-version>1.17.1</jersey-version> <javax.persistence.version>2.1.0</javax.persistence.version> 
-			<hsqldb.version>2.2.9</hsqldb.version> <jetty.version>7.6.10.v20130312</jetty.version> 
-			<mvel.version>2.1.6.Final</mvel.version> -->
 	</properties>
 
 	<modules>
 		<module>biller-core</module>
 		<module>biller-web</module>
-		<!-- module>biller-deploy</module -->
+		<module>biller-deploy</module>
 	</modules>
 
 	<repositories>

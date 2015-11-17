@@ -136,6 +136,8 @@
 	"userActivityTitle": "Registro de operaciones",
 	"userActivityDetailTitle": "Actividad de usuario",
 	"userActivity.BILL_LIQUIDATION_DETAIL_MERGE": "Ajuste de liquidación por establecimiento",
+	"userActivity.BILL_CONFIRM": "Confirmación de factura",
+	"userActivity.BILLING_MODEL_MERGE": "Actualización de modelo de facturación",
 	"userActivity.COST_CENTER_MERGE": "Actualización de centro de coste",
 	"userActivityViewAll": "Ver todos",
 	"userActivityViewByUser": "Ver operaciones del usuario",
