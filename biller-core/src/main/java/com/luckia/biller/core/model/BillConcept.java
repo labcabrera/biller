@@ -27,63 +27,65 @@ public enum BillConcept {
 	/**
 	 * Importe apostado. Importe de los tickets de aa.dd. vendidos en un local para el periodo determinado.
 	 */
-	Stakes,
+	STAKES,
 
 	/** Bonus fijo */
-	Bonus,
+	@Deprecated
+	BONUS,
 
 	/** Gastos mensuales de atención comercial */
-	CommercialMonthlyFees,
+	COMMERCIAL_MONTHLY_FEES,
 
 	/** Gastos mensuales de co-explotacion */
-	CoOperatingMonthlyFees,
+	COOPERATING_MONTHLY_FEES,
 
 	/** Gastos mensuales de servicio de atencion al cliente */
-	SatMonthlyFees,
+	SAT_MONTHLY_FEES,
 
 	/** Coste por ubicacion */
-	PricePerLocation,
+	PRICE_PER_LOCATION,
 
 	/** Saldo de caja */
-	StoreCash,
+	STORE_CASH,
 
 	/** Credito */
-	Credit,
+	CREDIT,
 
 	/** Ajuste manual */
 	MANUAL,
 
 	/** Ajuste operativo */
 	@Deprecated
-	Adjustment,
+	ADJUSTMENT,
 
 	/**
 	 * Ajuste manual incluído en la liquidación
 	 */
 	@Deprecated
-	ManualWithLiquidation,
+	MANUAL_WITH_LIQUIDATION,
 
 	/**
 	 * Ajuste manual no incluído en la liquidación
 	 */
 	@Deprecated
-	ManualWithoutLiquidation,
+	MANUAL_WITHOUT_LIQUIDATION,
 
 	/** Cualquier otro concepto de facturacion que no este incluido en el modelo */
-	Other,
+	@Deprecated
+	OTHER,
 
 	/** Total apostado. */
-	TotalBetAmount,
+	TOTAL_BET_AMOUNT,
 
 	/** Cancelaciones. */
-	Cance1lled,
+	CANCELLED,
 
 	/** Total premiado */
-	TotalWinAmount,
+	TOTAL_WIN_AMOUNT,
 
 	/** Total imputable */
-	TotalAttributable,
+	TOTAL_ATTRIBUTABLE,
 
 	/** Margen */
-	Margin;
+	MARGIN;
 }

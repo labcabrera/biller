@@ -78,12 +78,12 @@ public class BillDetailProcessor {
 			}
 
 			// Calculamos los conceptos de la facturacion.
-			BigDecimal stakes = billingData.containsKey(BillConcept.Stakes) ? billingData.get(BillConcept.Stakes).divide(vatDivisor, 2, RoundingMode.HALF_EVEN) : null;
+			BigDecimal stakes = billingData.containsKey(BillConcept.STAKES) ? billingData.get(BillConcept.STAKES).divide(vatDivisor, 2, RoundingMode.HALF_EVEN) : null;
 			if (MathUtils.isNotZero(stakes)) {
 				if (MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {
 					BigDecimal percent = model.getStoreModel().getStakesPercent();
 					BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
-					addLiquidationPercentConcept(bill, BillConcept.Stakes, value, stakes, percent);
+					addLiquidationPercentConcept(bill, BillConcept.STAKES, value, stakes, percent);
 				}
 
 				// Calculamos los conceptos de la liquidacion definidos a nivel de los porcentajes de las variables del terminal:
@@ -91,7 +91,7 @@ public class BillDetailProcessor {
 				percentConcepts.put(BillConcept.NGR, model.getCompanyModel().getNgrPercent());
 				percentConcepts.put(BillConcept.GGR, model.getCompanyModel().getGgrPercent());
 				percentConcepts.put(BillConcept.NR, model.getCompanyModel().getNrPercent());
-				percentConcepts.put(BillConcept.Stakes, model.getCompanyModel().getStakesPercent());
+				percentConcepts.put(BillConcept.STAKES, model.getCompanyModel().getStakesPercent());
 				for (BillConcept concept : percentConcepts.keySet()) {
 					BigDecimal detailPercent = percentConcepts.get(concept);
 					if (MathUtils.isNotZero(detailPercent)) {
@@ -104,14 +104,14 @@ public class BillDetailProcessor {
 				LOG.debug("No generamos resultados de liquidacion de {}: carece de operaciones en el rango de facturacion", store.getName());
 			}
 			// Almacenamos el saldo de caja
-			bill.setStoreCash(billingData.containsKey(BillConcept.StoreCash) ? billingData.get(BillConcept.StoreCash).setScale(2, RoundingMode.HALF_EVEN) : BigDecimal.ZERO);
+			bill.setStoreCash(billingData.containsKey(BillConcept.STORE_CASH) ? billingData.get(BillConcept.STORE_CASH).setScale(2, RoundingMode.HALF_EVEN) : BigDecimal.ZERO);
 		}
 	}
 
 	private void processLiquidationFixedConcepts(Bill bill, BillingModel model, Range<Date> range, List<String> terminals) {
 		Map<BillConcept, BigDecimal> fixedConcepts = new LinkedHashMap<BillConcept, BigDecimal>();
-		fixedConcepts.put(BillConcept.CommercialMonthlyFees, model.getCompanyModel().getCommercialMonthlyFees());
-		fixedConcepts.put(BillConcept.SatMonthlyFees, model.getCompanyModel().getSatMonthlyFees());
+		fixedConcepts.put(BillConcept.COMMERCIAL_MONTHLY_FEES, model.getCompanyModel().getCommercialMonthlyFees());
+		fixedConcepts.put(BillConcept.SAT_MONTHLY_FEES, model.getCompanyModel().getSatMonthlyFees());
 		for (BillConcept concept : fixedConcepts.keySet()) {
 			BigDecimal value = fixedConcepts.get(concept);
 			if (MathUtils.isNotZeroPositive(value)) {
@@ -119,7 +119,7 @@ public class BillDetailProcessor {
 			}
 		}
 		if (MathUtils.isNotZero(model.getCompanyModel().getPricePerLocation())) {
-			addLiquidationFixedConcept(bill, BillConcept.PricePerLocation, model.getCompanyModel().getPricePerLocation().negate());
+			addLiquidationFixedConcept(bill, BillConcept.PRICE_PER_LOCATION, model.getCompanyModel().getPricePerLocation().negate());
 		}
 	}
 

@@ -87,17 +87,17 @@ public class LISBillDataProvider implements BillDataProvider {
 			BigDecimal gastosOperativos = coOperatingMonthlyFees;
 			BigDecimal nr = ngr.subtract(gastosOperativos);
 			BigDecimal storeCash = stakes.subtract(totalWinAmount).add(totalCredit);
-			map.put(BillConcept.TotalBetAmount, totalBetAmount);
-			map.put(BillConcept.Cance1lled, totalCancelledAmount);
-			map.put(BillConcept.TotalWinAmount, totalWinAmount);
-			map.put(BillConcept.TotalAttributable, totalAttributable);
-			map.put(BillConcept.Margin, stakes.subtract(totalAttributable));
-			map.put(BillConcept.Stakes, stakes);
+			map.put(BillConcept.TOTAL_BET_AMOUNT, totalBetAmount);
+			map.put(BillConcept.CANCELLED, totalCancelledAmount);
+			map.put(BillConcept.TOTAL_WIN_AMOUNT, totalWinAmount);
+			map.put(BillConcept.TOTAL_ATTRIBUTABLE, totalAttributable);
+			map.put(BillConcept.MARGIN, stakes.subtract(totalAttributable));
+			map.put(BillConcept.STAKES, stakes);
 			map.put(BillConcept.GGR, ggr);
 			map.put(BillConcept.NGR, ngr);
 			map.put(BillConcept.NR, nr);
-			map.put(BillConcept.StoreCash, storeCash);
-			map.put(BillConcept.Credit, totalCredit);
+			map.put(BillConcept.STORE_CASH, storeCash);
+			map.put(BillConcept.CREDIT, totalCredit);
 			LOG.debug("Terminales procesados: {}", Arrays.toString(terminals.toArray()));
 			LOG.debug("Stakes: {}; GGR: {}; NGR: {}; NR: {}; CoOpFees: {}; StoreCash: {}", stakes, ggr, ngr, nr, gastosOperativos, storeCash);
 		}

@@ -26,7 +26,7 @@ public class BillRawData {
 
 	@Id
 	@Column(name = "CONCEPT", nullable = false, length = 45)
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	private BillConcept concept;
 
 	@Column(name = "CONCEPT_AMOUNT", nullable = false, precision = 18, scale = 2)

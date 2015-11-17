@@ -54,7 +54,7 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 				terminals.add(terminalRelation.getCode());
 			}
 			Map<BillConcept, BigDecimal> billingData = billDataProvider.retreive(range, terminals);
-			BigDecimal baseValue = billingData.get(BillConcept.Stakes);
+			BigDecimal baseValue = billingData.get(BillConcept.STAKES);
 			Rappel rappel = getRappelBonusAmount(store, baseValue, BigDecimal.ZERO);
 			RappelStoreBonus bonus = new RappelStoreBonus();
 			bonus.setId(UUID.randomUUID().toString());

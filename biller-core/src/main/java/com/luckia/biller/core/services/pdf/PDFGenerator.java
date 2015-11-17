@@ -1,6 +1,5 @@
 package com.luckia.biller.core.services.pdf;
 
-import java.awt.Color;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.NumberFormat;

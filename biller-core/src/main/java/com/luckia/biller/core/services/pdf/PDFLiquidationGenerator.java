@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,17 +22,15 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
-import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
-import com.luckia.biller.core.services.bills.impl.BillDetailNameProvider;
 
 public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PDFLiquidationGenerator.class);
 
-	@Inject
-	private BillDetailNameProvider billDetailNameProvider;
+	// @Inject
+	// private BillDetailNameProvider billDetailNameProvider;
 
 	private List<Map<String, Object>> betDetails;
 	private List<Map<String, Object>> storeDetails;
@@ -92,63 +88,6 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			map.put("name", bill.getSender().getName());
 			map.put("value", bill.getLiquidationTotalAmount());
 			betDetails.add(map);
-
-			// for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
-			// LOG.debug("Inspeccionando detalle {}", i);
-			// String desc = billDetailNameProvider.getName(i);
-			// BigDecimal value = i.getValue();
-			// if (MathUtils.isNotZero(value) && i.getConcept() != null && i.getLiquidationIncluded()) {
-			// switch (i.getConcept()) {
-			// case GGR:
-			// case NGR:
-			// case NR:
-			// case Stakes:
-			// LOG.debug("Honorario por apuestas: {} ({})", i.getConcept(), value);
-			// map = new HashMap<>();
-			// map.put("name", bill.getSender().getName() + ": " + desc);
-			// map.put("value", value);
-			// betDetails.add(map);
-			// break;
-			// case SatMonthlyFees:
-			// case CommercialMonthlyFees:
-			// LOG.debug("Honorario SAT: {} ({})", i.getConcept(), value);
-			// map = new HashMap<>();
-			// map.put("name", bill.getSender().getName() + ": " + desc);
-			// map.put("value", value);
-			// satDetails.add(map);
-			// break;
-			// case MANUAL:
-			// map = new HashMap<>();
-			// map.put("name", i.getName());
-			// map.put("value", value);
-			// manualDetails.add(map);
-			// default:
-			// LOG.debug("Ignorando concepto {}", i.getConcept());
-			// break;
-			// }
-			// }
-			// }
-			// En segundo lugar computamos los detalles de la factura que aplican a la liquidacion (ajustes operativos y ajustes manuales)
-			for (BillDetail detail : bill.getBillDetails()) {
-				if (detail.getConcept() != null) {
-					switch (detail.getConcept()) {
-					case Adjustment:
-						map = new HashMap<>();
-						map.put("name", bill.getSender().getName() + ": " + detail.getName());
-						map.put("value", detail.getValue());
-						manualDetails.add(map);
-						break;
-					// case ManualWithLiquidation:
-					// map = new HashMap<>();
-					// map.put("name", bill.getSender().getName() + ": " + detail.getName());
-					// map.put("value", detail.getValue());
-					// otherDetails.add(map);
-					// break;
-					default:
-						break;
-					}
-				}
-			}
 		}
 	}
 

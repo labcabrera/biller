@@ -53,16 +53,16 @@ public class MockBillDataProvider implements BillDataProvider {
 		BigDecimal storeCash = stakes.subtract(totalWinAmount);
 
 		Map<BillConcept, BigDecimal> map = new HashMap<BillConcept, BigDecimal>();
-		map.put(BillConcept.TotalBetAmount, totalBetAmount);
-		map.put(BillConcept.Cance1lled, totalCancelledAmount);
-		map.put(BillConcept.TotalWinAmount, totalCancelledAmount);
-		map.put(BillConcept.TotalAttributable, totalCancelledAmount);
-		map.put(BillConcept.Margin, stakes.subtract(totalAttributable));
-		map.put(BillConcept.Stakes, stakes);
+		map.put(BillConcept.TOTAL_BET_AMOUNT, totalBetAmount);
+		map.put(BillConcept.CANCELLED, totalCancelledAmount);
+		map.put(BillConcept.TOTAL_WIN_AMOUNT, totalCancelledAmount);
+		map.put(BillConcept.TOTAL_ATTRIBUTABLE, totalCancelledAmount);
+		map.put(BillConcept.MARGIN, stakes.subtract(totalAttributable));
+		map.put(BillConcept.STAKES, stakes);
 		map.put(BillConcept.GGR, ggr);
 		map.put(BillConcept.NGR, ngr);
 		map.put(BillConcept.NR, nr);
-		map.put(BillConcept.StoreCash, storeCash);
+		map.put(BillConcept.STORE_CASH, storeCash);
 		return map;
 	}
 

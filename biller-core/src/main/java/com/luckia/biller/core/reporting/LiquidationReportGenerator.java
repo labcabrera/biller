@@ -207,12 +207,12 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, bill.getNetAmount());
 			createCell(sheet, currentRow, cell++, bill.getVatAmount());
 			cell++;
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalBetAmount));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Cance1lled));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Stakes));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalWinAmount));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TotalAttributable));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.Margin));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_BET_AMOUNT));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.CANCELLED));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.STAKES));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_WIN_AMOUNT));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_ATTRIBUTABLE));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.MARGIN));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.GGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NR));
@@ -221,12 +221,13 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NR));
 			cell++;
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Stakes));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SatMonthlyFees));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CommercialMonthlyFees));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.STAKES));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SAT_MONTHLY_FEES));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.COMMERCIAL_MONTHLY_FEES));
 			createCell(sheet, currentRow, cell++, bill.getModel().getCompanyModel().getCoOperatingMonthlyFees());
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.PricePerLocation));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.Adjustment));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.PRICE_PER_LOCATION));
+			// los ajustes ahora no se reflejan aqui
+			createCell(sheet, currentRow, cell++, BigDecimal.ZERO);
 			cell++;
 			StringBuffer sb = new StringBuffer();
 			if (Store.class.isAssignableFrom(bill.getSender().getClass())) {
