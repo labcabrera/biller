@@ -20,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.eclipse.persistence.annotations.ChangeTracking;
@@ -73,12 +74,14 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	 * Lista de detalles que componen la factura
 	 */
 	@OneToMany(cascade = CascadeType.DETACH, mappedBy = "bill")
+	@OrderBy("value DESC")
 	private List<BillDetail> billDetails;
 
 	/**
 	 * Lista de detalles que componen la liquidacion
 	 */
 	@OneToMany(cascade = CascadeType.DETACH, mappedBy = "bill")
+	@OrderBy("value DESC")
 	private List<BillLiquidationDetail> liquidationDetails;
 
 	@Column(name = "NET_AMOUNT", precision = 18, scale = 2)

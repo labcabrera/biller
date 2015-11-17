@@ -7,6 +7,7 @@ package com.luckia.biller.web.rest;
 
 import java.io.InputStream;
 
+import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
@@ -25,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.services.FileService;
 
+/**
+ * Servicio de descarga de ficheros.
+ */
 @Path("/binary")
 public class BinaryRestService {
 
@@ -37,6 +41,7 @@ public class BinaryRestService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@PermitAll
 	@Path("download/{id}")
 	public Response getArtifactBinaryContent(@PathParam("id") Long id) throws Exception {
 		try {

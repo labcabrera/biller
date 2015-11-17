@@ -2,4 +2,8 @@ TODO:
 	- Historico en la relacion de terminales y locales
 	- Optimización serializadores
 	- Optimizacion relaciones JPA
+	- Revisión seguridad descargas (no usan ahora el sessionid y tienen el @PermitAll)
+	- Migración de MANUAL_WITH_LIQUIDATION y MANUAL_WITHOUT_LIQUIDATION (2 registros solamente)
+	- Sacar named queries a orm.xml
+	- No generar el PDF de las facturas que están a cero
 
