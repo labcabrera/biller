@@ -1,0 +1,107 @@
+<div class="col-sm-12">
+	<table class="table">
+		<tr class="active">
+			<th>{{'store' | translate}}</th>
+			<th>{{'state' | translate}}</th>
+			<th class="data-amount">{{'bill' | translate}}</th>
+			<th class="data-amount">{{'netAmount' | translate}}</th>
+			<th class="data-amount">{{'vatAmount' | translate}}</th>
+			<th class="data-amount">{{'liquidation' | translate}}</th>
+			<th></th>
+		</tr>
+		<tr ng-repeat="bill in childs.results">
+			<td><a href="#/bills/id/{{bill.id}}">{{bill.sender.name}}</a></td>
+			<td>{{bill.currentState.stateDefinition.desc}}</td>
+			<td class="data-amount">{{bill.amount}}</td>
+			<td class="data-amount">{{bill.liquidationTotalNetAmount}}</td>
+			<td class="data-amount">{{bill.liquidationTotalVat}}</td>
+			<td class="data-amount">{{bill.liquidationTotalAmount}}</td>
+			<td><a href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+		</tr>
+		<tr ng-repeat="detail in entity.details | filter: {liquidationIncluded: true}">
+			<td>{{detail.name}}</td>
+			<td></td>
+			<td></td>
+			<td class="data-amount">{{detail.netValue}}</td>
+			<td class="data-amount">{{detail.vatValue}}</td>
+			<td class="data-amount">{{detail.value}}</td>
+			<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+		</tr>
+		<tr class="active">
+			<td colspan="3"><b>{{'liquidationAmount' | translate}}</b></td>
+			<td class="data-amount">{{entity.liquidationResults.netAmount}}</td>
+			<td class="data-amount">{{entity.liquidationResults.vatAmount}}</td>
+			<td class="data-amount"><b>{{entity.liquidationResults.totalAmount}}</b></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td data-toggle="tooltip" data-placement="bottom" title="{{'cashStoreAmountTooltip' | translate}}" >{{'cashStoreAmount' | translate}}</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="data-amount">{{entity.liquidationResults.cashStoreAmount}}</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>{{'manualAdjustments' | translate}}</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="data-amount">{{entity.liquidationResults.adjustmentAmount}}</td>
+			<td></td>
+		</tr>
+		<tr>
+		<tr>
+			<td data-toggle="tooltip" data-placement="bottom" title="{{'cashStoreEffectiveAmountTooltip' | translate}}">{{'cashStoreEffectiveAmount' | translate}}</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="data-amount">{{entity.liquidationResults.cashStoreAdjustmentAmount}}</td>
+			<td></td>
+		</tr>
+		<tr class="active">
+			<td colspan="5"><b>{{'receiverPartialAmount' | translate}} {{entity.receiver.name}}</b></td>
+			<td class="data-amount"><b>{{entity.liquidationResults.receiverAmount}}</b></td>
+			<td></td>
+		</tr>
+		<tr class="active">
+			<td><b>{{'outerManualTotalAmount' | translate}}</b></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="data-amount"><b>{{entity.liquidationResults.totalOuterAmount}}</b></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>{{'storeManualOuterAmount' | translate}}</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="data-amount">{{entity.liquidationResults.storeManualOuterAmount}}</td>
+			<td></td>
+		</tr>
+		<tr ng-repeat="detail in entity.details | filter: {liquidationIncluded: false}">
+			<td>{{detail.name}}</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="data-amount">{{detail.value}}</td>
+			<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+		</tr>
+		<tr class="active">
+			<td colspan="5"><b>{{'receiverFinalAmount' | translate}} {{entity.receiver.name}}</b></td>
+			<td class="data-amount">{{entity.liquidationResults.effectiveLiquidationAmount}}</td>
+			<td></td>
+		</tr>
+	</table>
+	<div ng-if="childs.totalPages > 0" class="m-bot-20">
+		<pagination total-items="childs.totalItems" page="childs.currentPage" items-per-page="childs.itemsPerPage" on-select-page="setPage(page)" max-size="10"
+			boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
+	</div>
+</div>

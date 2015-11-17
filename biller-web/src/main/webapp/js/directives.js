@@ -401,5 +401,18 @@
 			}
 		};
 	});
+	
+	billerModule.directive('liquidationDetails', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/liquidation-details.html',
+			controller : function($scope, $http) {
+			},
+			scope : {
+				childs: "=",
+				entity: '='
+			}
+		};
+	});
 
 })();
