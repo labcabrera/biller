@@ -47,25 +47,25 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	private String name;
 
 	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "stakesPercent", column = @Column(name = "STORE_STAKES_PERCENT", precision = 6, scale = 2)),
-			@AttributeOverride(name = "ggrPercent", column = @Column(name = "STORE_GGR_PERCENT", precision = 6, scale = 2)),
-			@AttributeOverride(name = "ngrPercent", column = @Column(name = "STORE_NGR_PERCENT", precision = 6, scale = 2)),
-			@AttributeOverride(name = "nrPercent", column = @Column(name = "STORE_NR_PERCENT", precision = 6, scale = 2)),
-			@AttributeOverride(name = "coOperatingMonthlyFees", column = @Column(name = "STORE_COOPERATING_FEES", precision = 18, scale = 2)),
-			@AttributeOverride(name = "commercialMonthlyFees", column = @Column(name = "STORE_COMMERCIAL_FEES", precision = 18, scale = 2)),
-			@AttributeOverride(name = "satMonthlyFees", column = @Column(name = "STORE_SAT_FEES", precision = 18, scale = 2)),
-			@AttributeOverride(name = "pricePerLocation", column = @Column(name = "STORE_PRICE_PER_LOCATION", precision = 18, scale = 2)) })
+	@AttributeOverrides({ @AttributeOverride(name = "stakesPercent", column = @Column(name = "STORE_STAKES_PERCENT", precision = 6, scale = 2) ),
+			@AttributeOverride(name = "ggrPercent", column = @Column(name = "STORE_GGR_PERCENT", precision = 6, scale = 2) ),
+			@AttributeOverride(name = "ngrPercent", column = @Column(name = "STORE_NGR_PERCENT", precision = 6, scale = 2) ),
+			@AttributeOverride(name = "nrPercent", column = @Column(name = "STORE_NR_PERCENT", precision = 6, scale = 2) ),
+			@AttributeOverride(name = "coOperatingMonthlyFees", column = @Column(name = "STORE_COOPERATING_FEES", precision = 18, scale = 2) ),
+			@AttributeOverride(name = "commercialMonthlyFees", column = @Column(name = "STORE_COMMERCIAL_FEES", precision = 18, scale = 2) ),
+			@AttributeOverride(name = "satMonthlyFees", column = @Column(name = "STORE_SAT_FEES", precision = 18, scale = 2) ),
+			@AttributeOverride(name = "pricePerLocation", column = @Column(name = "STORE_PRICE_PER_LOCATION", precision = 18, scale = 2) ) })
 	private BillingModelAttributes storeModel;
 
 	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "stakesPercent", column = @Column(name = "COMPANY_STAKES_PERCENT", precision = 6, scale = 2)),
-			@AttributeOverride(name = "ggrPercent", column = @Column(name = "COMPANY_GGR_PERCENT", precision = 6, scale = 2)),
-			@AttributeOverride(name = "ngrPercent", column = @Column(name = "COMPANY_NGR_PERCENT", precision = 6, scale = 2)),
-			@AttributeOverride(name = "nrPercent", column = @Column(name = "COMPANY_NR_PERCENT", precision = 6, scale = 2)),
-			@AttributeOverride(name = "coOperatingMonthlyFees", column = @Column(name = "COMPANY_COOPERATING_FEES", precision = 18, scale = 2)),
-			@AttributeOverride(name = "commercialMonthlyFees", column = @Column(name = "COMPANY_COMMERCIAL_FEES", precision = 18, scale = 2)),
-			@AttributeOverride(name = "satMonthlyFees", column = @Column(name = "COMPANY_SAT_FEES", precision = 18, scale = 2)),
-			@AttributeOverride(name = "pricePerLocation", column = @Column(name = "COMPANY_PRICE_PER_LOCATION", precision = 18, scale = 2)) })
+	@AttributeOverrides({ @AttributeOverride(name = "stakesPercent", column = @Column(name = "COMPANY_STAKES_PERCENT", precision = 6, scale = 2) ),
+			@AttributeOverride(name = "ggrPercent", column = @Column(name = "COMPANY_GGR_PERCENT", precision = 6, scale = 2) ),
+			@AttributeOverride(name = "ngrPercent", column = @Column(name = "COMPANY_NGR_PERCENT", precision = 6, scale = 2) ),
+			@AttributeOverride(name = "nrPercent", column = @Column(name = "COMPANY_NR_PERCENT", precision = 6, scale = 2) ),
+			@AttributeOverride(name = "coOperatingMonthlyFees", column = @Column(name = "COMPANY_COOPERATING_FEES", precision = 18, scale = 2) ),
+			@AttributeOverride(name = "commercialMonthlyFees", column = @Column(name = "COMPANY_COMMERCIAL_FEES", precision = 18, scale = 2) ),
+			@AttributeOverride(name = "satMonthlyFees", column = @Column(name = "COMPANY_SAT_FEES", precision = 18, scale = 2) ),
+			@AttributeOverride(name = "pricePerLocation", column = @Column(name = "COMPANY_PRICE_PER_LOCATION", precision = 18, scale = 2) ) })
 	private BillingModelAttributes companyModel;
 
 	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, mappedBy = "model")
@@ -190,6 +190,7 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 			}
 			this.name = entity.name;
 			this.vatLiquidationType = entity.vatLiquidationType;
+			this.receiver = entity.receiver;
 		}
 	}
 

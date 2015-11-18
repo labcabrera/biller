@@ -430,5 +430,16 @@
 			}
 		};
 	});
+	
+	billerModule.directive('billingModelDetail', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/billing-model-details.html',
+			scope : {
+				entity: '=',
+				isReadOnly: '='
+			}
+		};
+	});
 
 })();
