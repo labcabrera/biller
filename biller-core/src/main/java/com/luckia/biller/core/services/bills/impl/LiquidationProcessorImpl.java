@@ -151,12 +151,12 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		results.setTotalOuterAmount(storeManualOuterAmount.add(liquidationOuterAmount));
 		results.setAdjustmentAmount(manualAmount);
 		results.setCashStoreAmount(storeCash);
-		results.setCashStoreAdjustmentAmount(storeCash.subtract(manualAmount));
+		// results.setCashStoreAdjustmentAmount(storeCash.subtract(manualAmount));
 		results.setNetAmount(netAmount);
 		results.setVatAmount(vatAmount);
 		results.setTotalAmount(totalAmount);
 		results.setStoreManualOuterAmount(storeManualOuterAmount);
-		BigDecimal receiverAmount = storeCash.subtract(totalAmount).subtract(manualAmount);
+		BigDecimal receiverAmount = storeCash.subtract(totalAmount);
 		BigDecimal senderAmount = totalAmount.subtract(receiverAmount);
 		results.setSenderAmount(senderAmount);
 		results.setReceiverAmount(receiverAmount);

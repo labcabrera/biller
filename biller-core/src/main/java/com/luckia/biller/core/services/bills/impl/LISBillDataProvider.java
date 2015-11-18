@@ -35,7 +35,7 @@ public class LISBillDataProvider implements BillDataProvider {
 
 	@Inject
 	@Lis
-	private Provider<EntityManager> entityManagerProvider;
+	private Provider<EntityManager> entityManagerProvider;	
 	@Inject
 	private ProvinceTaxesService provinceTaxesService;
 
