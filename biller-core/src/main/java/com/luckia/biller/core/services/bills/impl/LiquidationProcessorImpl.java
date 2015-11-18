@@ -98,7 +98,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		BillingModel model = bills.iterator().next().getModel();
 		LegalEntity LiquidationReceiver = model.getReceiver() != null ? model.getReceiver() : liquidationReceiverProvider.getReceiver();
 		Liquidation liquidation = new Liquidation();
-		// liquidation.setId(UUID.randomUUID().toString());
+		liquidation.setModel(model);
 		liquidation.setSender(company);
 		liquidation.setReceiver(LiquidationReceiver);
 		liquidation.setBills(bills);
@@ -156,19 +156,17 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			liquidation.setLiquidationResults(results);
 		}
 		results.setStoreAmount(storeAmount);
+		results.setStoreManualOuterAmount(storeManualOuterAmount);
 		results.setTotalOuterAmount(storeManualOuterAmount.add(liquidationOuterAmount));
 		results.setAdjustmentAmount(liquidationManualAmount);
 		results.setCashStoreAmount(storeCash);
-		// results.setCashStoreAdjustmentAmount(storeCash.subtract(manualAmount));
+		results.setCashStoreAdjustmentAmount(storeCash.add(storeManualOuterAmount).add(liquidationOuterAmount));
 		results.setNetAmount(netAmount);
 		results.setVatAmount(vatAmount);
 		results.setTotalAmount(totalAmount);
-		// results.setStoreManualOuterAmount(storeManualOuterAmount);
-		BigDecimal receiverAmount = storeCash.subtract(totalAmount);
-		BigDecimal senderAmount = totalAmount.subtract(receiverAmount);
-		results.setSenderAmount(senderAmount);
-		results.setReceiverAmount(receiverAmount);
-		results.setEffectiveLiquidationAmount(receiverAmount.add(results.getTotalOuterAmount()));
+		results.setReceiverAmount(storeCash.subtract(totalAmount));
+		results.setEffectiveLiquidationAmount(results.getReceiverAmount().add(results.getTotalOuterAmount()));
+		results.setSenderAmount(results.getCashStoreAdjustmentAmount().subtract(results.getEffectiveLiquidationAmount()));
 	}
 
 	@Override
@@ -229,7 +227,12 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		Liquidation liquidation = entityManager.find(Liquidation.class, detail.getLiquidation().getId());
 		// Obtenemos el modelo de facturacion. Como esta asociado a los establecimientos asumimos que la parte de tratamiento del IVA es
 		// comun a todos y leemos el primer registro. A partir de este valor hacemos el calculo del IVA
-		BillingModel model = liquidation.getBills().iterator().next().getModel();
+		BillingModel model = liquidation.getModel();
+		if (model == null) {
+			model = liquidation.getBills().iterator().next().getModel();
+			liquidation.setModel(model);
+			entityManager.merge(liquidation);
+		}
 		BigDecimal sourceValue = detail.getValue();
 		BigDecimal vatPercent = BigDecimal.ZERO;
 		BigDecimal netValue = BigDecimal.ZERO;

@@ -18,7 +18,7 @@
 			<td class="data-amount">{{bill.liquidationTotalAmount}}</td>
 			<td><a href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
 		</tr>
-		<tr ng-repeat="detail in entity.details | filter: {liquidationIncluded: true}">
+		<tr ng-repeat="detail in entity.details | filter: {liquidationIncluded: true}" class="text-info">
 			<td>{{detail.name}}</td>
 			<td></td>
 			<td></td>
@@ -43,31 +43,6 @@
 			<td class="data-amount">{{entity.liquidationResults.cashStoreAmount}}</td>
 			<td></td>
 		</tr>
-		<!--
-		<tr>
-			<td>{{'manualAdjustments' | translate}}</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td class="data-amount">{{entity.liquidationResults.adjustmentAmount}}</td>
-			<td></td>
-		</tr>
-		<tr>
-		<tr>
-			<td data-toggle="tooltip" data-placement="bottom" title="{{'cashStoreEffectiveAmountTooltip' | translate}}">{{'cashStoreEffectiveAmount' | translate}}</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td class="data-amount">{{entity.liquidationResults.cashStoreAdjustmentAmount}}</td>
-			<td></td>
-		</tr>
-		<tr class="active">
-			<td colspan="5"><b>{{'receiverPartialAmount' | translate}} {{entity.receiver.name}}</b></td>
-			<td class="data-amount"><b>{{entity.liquidationResults.receiverAmount}}</b></td>
-			<td></td>
-		</tr>
 		<tr class="active" ng-if="entity.liquidationResults.totalOuterAmount > 0">
 			<td><b>{{'outerManualTotalAmount' | translate}}</b></td>
 			<td></td>
@@ -77,7 +52,6 @@
 			<td class="data-amount"><b>{{entity.liquidationResults.totalOuterAmount}}</b></td>
 			<td></td>
 		</tr>
-		-->
 		<tr data-toggle="tooltip" data-placement="bottom" title="{{'storeManualOuterAmountTooltip' | translate}}" ng-if="entity.liquidationResults.storeManualOuterAmount > 0">
 			<td>{{'storeManualOuterAmount' | translate}}</td>
 			<td></td>
@@ -87,7 +61,7 @@
 			<td class="data-amount">{{entity.liquidationResults.storeManualOuterAmount}}</td>
 			<td></td>
 		</tr>
-		<tr ng-repeat="detail in entity.details | filter: {liquidationIncluded: false}">
+		<tr ng-repeat="detail in entity.details | filter: {liquidationIncluded: false}" class="text-info">
 			<td>{{detail.name}}</td>
 			<td></td>
 			<td></td>

@@ -34,8 +34,10 @@ import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.LegalEntity;
+import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Person;
 import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.model.VatLiquidationType;
 
 public abstract class PDFGenerator<T> {
 
@@ -83,10 +85,29 @@ public abstract class PDFGenerator<T> {
 		String dateFormated = new SimpleDateFormat(dateFormat).format(abstractBill.getBillDate());
 		String monthFormated = StringUtils.capitalize(new SimpleDateFormat(monthFormat, locale).format(abstractBill.getBillDate()));
 		Boolean isBill = abstractBill.getClass().isAssignableFrom(Bill.class);
-		String billTitleLabel = isBill ? i18nService.getMessage("pdf.label.billTitle") : i18nService.getMessage("pdf.label.liquidationTitle");
 		String billCodeLabel = isBill ? i18nService.getMessage("pdf.label.billCodeLabel") : i18nService.getMessage("pdf.label.liquidationCodeLabel");
 		String billPeriodLabel = isBill ? i18nService.getMessage("pdf.label.billPeriodLabel") : i18nService.getMessage("pdf.label.liquidationPeriodLabel");
 		String billDateLabel = i18nService.getMessage("pdf.label.billDate");
+
+		String billTitleLabel;
+		if (isBill) {
+			billTitleLabel = i18nService.getMessage("pdf.label.billTitle");
+		} else {
+			// Dependiendo de si es una co-explotacion o una factura mostramos un titulo u otro
+			Liquidation liquidation = (Liquidation) abstractBill;
+			VatLiquidationType vatType = VatLiquidationType.EXCLUDED;
+			if (liquidation.getModel() != null && liquidation.getModel().getVatLiquidationType() != null) {
+				vatType = liquidation.getModel().getVatLiquidationType();
+			}
+			switch (vatType) {
+			case EXCLUDED:
+				billTitleLabel = i18nService.getMessage("pdf.label.liquidationTitle");
+				break;
+			default:
+				billTitleLabel = i18nService.getMessage("pdf.label.liquidationTitleWithVat");
+				break;
+			}
+		}
 
 		List<PdfPCell> cells = new ArrayList<>();
 		cells.add(createCell(billCodeLabel, Element.ALIGN_LEFT, documentFont));
@@ -116,8 +137,7 @@ public abstract class PDFGenerator<T> {
 	}
 
 	/**
-	 * En caso de que la factura o liquidacion esten en estado <code>BillDraft</code> muestra una marca de agua indicando que el documento
-	 * es un borrador.
+	 * En caso de que la factura o liquidacion esten en estado <code>BillDraft</code> muestra una marca de agua indicando que el documento es un borrador.
 	 * 
 	 * @param document
 	 * @param writer
