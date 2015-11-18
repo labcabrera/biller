@@ -11,3 +11,4 @@ TODO:
 	- Meter gradle
 	- Destinatario de la liquidación
 	- Eliminar los conceptos de ajuste de caja del modelo
+	- PATCH: actualizar el liquidation.model que ahora esta a null
