@@ -98,6 +98,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		BillingModel model = bills.iterator().next().getModel();
 		LegalEntity LiquidationReceiver = model.getReceiver() != null ? model.getReceiver() : liquidationReceiverProvider.getReceiver();
 		Liquidation liquidation = new Liquidation();
+		liquidation.setId(UUID.randomUUID().toString());
 		liquidation.setModel(model);
 		liquidation.setSender(company);
 		liquidation.setReceiver(LiquidationReceiver);

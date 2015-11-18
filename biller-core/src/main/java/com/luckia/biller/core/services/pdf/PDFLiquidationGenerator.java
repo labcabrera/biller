@@ -117,12 +117,6 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		cells.addAll(createEmptyCells(4));
 		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreAmount()), Element.ALIGN_RIGHT, boldFont));
 
-		// if (MathUtils.isNotZero(liquidation.getLiquidationResults().getStoreManualOuterAmount())) {
-		// cells.add(createCell("Ajustes de los establecimientos", Element.ALIGN_LEFT, documentFont));
-		// cells.addAll(createEmptyCells(4));
-		// cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getStoreManualOuterAmount()), Element.ALIGN_RIGHT, documentFont));
-		// }
-
 		// Ajustes manuales externos a la liquidacion
 		for (Entry<BillConcept, PDFLiquidationDetail> entry : outerDetails.entrySet()) {
 			if (MathUtils.isNotZero(entry.getValue().getAmount())) {
@@ -135,9 +129,11 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			}
 		}
 
-		cells.add(createCell("Saldo de caja ajustado", Element.ALIGN_LEFT, boldFont));
-		cells.addAll(createEmptyCells(4));
-		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreAdjustmentAmount()), Element.ALIGN_RIGHT, boldFont));
+		if (!outerDetails.isEmpty()) {
+			cells.add(createCell("Saldo de caja ajustado", Element.ALIGN_LEFT, boldFont));
+			cells.addAll(createEmptyCells(4));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreAdjustmentAmount()), Element.ALIGN_RIGHT, boldFont));
+		}
 
 		cells.add(createCell("Total liquidación a percibir por " + senderName, Element.ALIGN_LEFT, documentFont));
 		cells.addAll(createEmptyCells(4));

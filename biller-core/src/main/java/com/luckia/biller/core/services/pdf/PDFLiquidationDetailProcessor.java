@@ -1,7 +1,9 @@
 package com.luckia.biller.core.services.pdf;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
@@ -72,7 +74,7 @@ public class PDFLiquidationDetailProcessor {
 			}
 
 		}
-		return result;
+		return cleanEmptyResults(result);
 	}
 
 	public Map<BillConcept, PDFLiquidationDetail> loadOuterDetails(Liquidation liquidation) {
@@ -113,7 +115,7 @@ public class PDFLiquidationDetailProcessor {
 				addConcept(result, targetConcept, detail);
 			}
 		}
-		return result;
+		return cleanEmptyResults(result);
 	}
 
 	private void addConcept(Map<BillConcept, PDFLiquidationDetail> map, BillConcept concept, BillLiquidationDetail detail) {
@@ -126,5 +128,15 @@ public class PDFLiquidationDetailProcessor {
 	private void addConcept(Map<BillConcept, PDFLiquidationDetail> map, BillConcept concept, LiquidationDetail detail) {
 		PDFLiquidationDetail i = map.get(concept);
 		i.setAmount(i.getAmount().add(MathUtils.safeNull(detail.getValue())));
+	}
+
+	private Map<BillConcept, PDFLiquidationDetail> cleanEmptyResults(Map<BillConcept, PDFLiquidationDetail> map) {
+		for (Iterator<Entry<BillConcept, PDFLiquidationDetail>> iterator = map.entrySet().iterator(); iterator.hasNext();) {
+			Entry<BillConcept, PDFLiquidationDetail> entry = iterator.next();
+			if (MathUtils.isZero(entry.getValue().getAmount())) {
+				iterator.remove();
+			}
+		}
+		return map;
 	}
 }
