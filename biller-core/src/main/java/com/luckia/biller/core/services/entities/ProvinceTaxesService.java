@@ -12,19 +12,21 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.ProvinceTaxes;
 import com.luckia.biller.core.model.common.Message;
 
 /**
- * Servicio encargado de obtener la tasa de juego asociado a una factura. En teoria este valor dependera de la comunidad autonoma, aunque de
- * momento aplicamos el 10% para todas las facturas.
+ * Servicio encargado de obtener la tasa de juego asociado a una factura. En teoria este valor dependera de la comunidad autonoma, aunque de momento aplicamos el 10% para todas las
+ * facturas.
  */
 public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 
@@ -68,8 +70,14 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 		if (entity != null && entity.getVatPercent() != null) {
 			return entity.getVatPercent();
 		} else {
+			LOG.warn("Missing province vat percent {}", entity.getProvince().getName());
 			return DEFAULT_VAT;
 		}
+	}
+
+	public BigDecimal getVatPercent(Liquidation liquidation) {
+		Validate.isTrue(!liquidation.getBills().isEmpty(), "Liquidation has no bills. Cant resolve province vat percent");
+		return getVatPercent(liquidation.getBills().iterator().next());
 	}
 
 	private ProvinceTaxes resolveTaxes(AbstractBill bill) {

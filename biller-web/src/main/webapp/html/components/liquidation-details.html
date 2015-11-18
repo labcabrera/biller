@@ -43,6 +43,7 @@
 			<td class="data-amount">{{entity.liquidationResults.cashStoreAmount}}</td>
 			<td></td>
 		</tr>
+		<!--
 		<tr>
 			<td>{{'manualAdjustments' | translate}}</td>
 			<td></td>
@@ -76,7 +77,8 @@
 			<td class="data-amount"><b>{{entity.liquidationResults.totalOuterAmount}}</b></td>
 			<td></td>
 		</tr>
-		<tr ng-if="entity.liquidationResults.storeManualOuterAmount > 0">
+		-->
+		<tr data-toggle="tooltip" data-placement="bottom" title="{{'storeManualOuterAmountTooltip' | translate}}" ng-if="entity.liquidationResults.storeManualOuterAmount > 0">
 			<td>{{'storeManualOuterAmount' | translate}}</td>
 			<td></td>
 			<td></td>
@@ -92,11 +94,15 @@
 			<td></td>
 			<td></td>
 			<td class="data-amount">{{detail.value}}</td>
-			<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+			<td>
+				<a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'">
+					<span class="glyphicon glyphicon-pencil"></span>
+				</a>
+			</td>
 		</tr>
-		<tr class="active">
+		<tr class="active" data-toggle="tooltip" data-placement="bottom" title="{{'effectiveLiquidationAmountTooltip' | translate}}">
 			<td colspan="5"><b>{{'receiverFinalAmount' | translate}} {{entity.receiver.name}}</b></td>
-			<td class="data-amount">{{entity.liquidationResults.effectiveLiquidationAmount}}</td>
+			<td class="data-amount"><b>{{entity.liquidationResults.effectiveLiquidationAmount}}</b></td>
 			<td></td>
 		</tr>
 	</table>

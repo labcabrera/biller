@@ -44,6 +44,7 @@ import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
+import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
 
 /**
@@ -71,6 +72,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	private LiquidationReceiverProvider liquidationReceiverProvider;
 	@Inject
 	private Injector injector;
+	@Inject
+	private ProvinceTaxesService provincesTaxesService;
 
 	/*
 	 * (non-Javadoc)
@@ -116,7 +119,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		BigDecimal vatAmount = BigDecimal.ZERO;
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		BigDecimal storeCash = BigDecimal.ZERO;
-		BigDecimal manualAmount = BigDecimal.ZERO;
+		BigDecimal liquidationManualAmount = BigDecimal.ZERO;
 		BigDecimal storeManualOuterAmount = BigDecimal.ZERO;
 		BigDecimal liquidationOuterAmount = BigDecimal.ZERO;
 		BigDecimal storeAmount = BigDecimal.ZERO; // TODO no se si esto sigue teniendo sentido
@@ -124,7 +127,6 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			netAmount = netAmount.add(MathUtils.safeNull(bill.getLiquidationTotalNetAmount()));
 			vatAmount = vatAmount.add(MathUtils.safeNull(bill.getLiquidationTotalVat()));
 			totalAmount = totalAmount.add(MathUtils.safeNull(bill.getLiquidationTotalAmount()));
-			manualAmount = manualAmount.add(MathUtils.safeNull(bill.getLiquidationManualAmount()));
 			storeCash = storeCash.add(MathUtils.safeNull(bill.getStoreCash()));
 			storeManualOuterAmount = storeManualOuterAmount.add(MathUtils.safeNull(bill.getLiquidationOuterAmount()));
 			if (bill.getModel() != null && BooleanUtils.isTrue(bill.getModel().getIncludeStores())) {
@@ -137,7 +139,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 					netAmount = netAmount.add(MathUtils.safeNull(detail.getNetValue()));
 					vatAmount = vatAmount.add(MathUtils.safeNull(detail.getVatValue()));
 					totalAmount = totalAmount.add(MathUtils.safeNull(detail.getValue()));
-					manualAmount = manualAmount.add(MathUtils.safeNull(detail.getValue()));
+					liquidationManualAmount = liquidationManualAmount.add(MathUtils.safeNull(detail.getValue()));
 				} else {
 					liquidationOuterAmount = liquidationOuterAmount.add(detail.getValue());
 				}
@@ -150,13 +152,13 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		}
 		results.setStoreAmount(storeAmount);
 		results.setTotalOuterAmount(storeManualOuterAmount.add(liquidationOuterAmount));
-		results.setAdjustmentAmount(manualAmount);
+		results.setAdjustmentAmount(liquidationManualAmount);
 		results.setCashStoreAmount(storeCash);
 		// results.setCashStoreAdjustmentAmount(storeCash.subtract(manualAmount));
 		results.setNetAmount(netAmount);
 		results.setVatAmount(vatAmount);
 		results.setTotalAmount(totalAmount);
-		results.setStoreManualOuterAmount(storeManualOuterAmount);
+		// results.setStoreManualOuterAmount(storeManualOuterAmount);
 		BigDecimal receiverAmount = storeCash.subtract(totalAmount);
 		BigDecimal senderAmount = totalAmount.subtract(receiverAmount);
 		results.setSenderAmount(senderAmount);
@@ -213,6 +215,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 */
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.LIQUIDATION_MERGE_DETAIL)
 	public Liquidation mergeDetail(LiquidationDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Boolean isNew = detail.getId() == null;
@@ -230,14 +233,14 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		if (detail.getLiquidationIncluded()) {
 			switch (model.getVatLiquidationType()) {
 			case LIQUIDATION_INCLUDED:
-				vatPercent = new BigDecimal("21"); // TODO resolver
+				vatPercent = provincesTaxesService.getVatPercent(liquidation);
 				BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent).divide(MathUtils.HUNDRED);
 				netValue = sourceValue.divide(divisor, 2, RoundingMode.HALF_EVEN);
 				vatValue = sourceValue.subtract(netValue);
 				value = netValue.add(vatValue);
 				break;
 			case LIQUIDATION_ADDED:
-				vatPercent = new BigDecimal("21"); // TODO resolver
+				vatPercent = provincesTaxesService.getVatPercent(liquidation);
 				netValue = sourceValue;
 				vatValue = netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 				value = netValue.add(vatValue);
@@ -289,6 +292,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.LIQUIDATION_REMOVE)
 	public void remove(Liquidation liquidation) {
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.createQuery("update Bill e set e.liquidation = null where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
