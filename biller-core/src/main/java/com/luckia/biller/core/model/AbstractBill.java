@@ -11,6 +11,7 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -21,6 +22,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.luckia.biller.core.jpa.UUIDSequence;
+
 /**
  * Generalización de los siguientes tipos:
  * <ul>
@@ -29,8 +32,8 @@ import javax.persistence.TemporalType;
  * <li>Liquidaciones de rappel: {@link RappelLiquidation}</li>
  * </ul>
  * <p>
- * Esta clase define todos los elementos comunes tales como la fecha e intervalo de facturación, emisor y destinatario, estado (borrador,
- * aceptado, enviado, etc), comentarios o importe entre otros.
+ * Esta clase define todos los elementos comunes tales como la fecha e intervalo de facturación, emisor y destinatario, estado (borrador, aceptado, enviado, etc), comentarios o
+ * importe entre otros.
  * </p>
  */
 @Entity
@@ -42,6 +45,7 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 
 	@Id
 	@Column(name = "ID", length = 36)
+	@GeneratedValue(generator = UUIDSequence.UUIDSEQUENCE)
 	protected String id;
 
 	/**

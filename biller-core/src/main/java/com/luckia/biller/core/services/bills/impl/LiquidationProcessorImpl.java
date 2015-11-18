@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Injector;
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.common.MathUtils;
+import com.luckia.biller.core.common.NoAvailableDataException;
 import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
@@ -90,12 +91,16 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		query.setParameter("from", range.getMinimum());
 		query.setParameter("to", range.getMaximum());
 		List<Bill> bills = query.getResultList();
+		if (bills.isEmpty()) {
+			throw new NoAvailableDataException();
+		}
 		LOG.debug("Encontradas {} facturas pendientes asociadas a la liquidacion", bills.size());
-		LegalEntity egasa = liquidationReceiverProvider.getReceiver();
+		BillingModel model = bills.iterator().next().getModel();
+		LegalEntity LiquidationReceiver = model.getReceiver() != null ? model.getReceiver() : liquidationReceiverProvider.getReceiver();
 		Liquidation liquidation = new Liquidation();
-		liquidation.setId(UUID.randomUUID().toString());
+		// liquidation.setId(UUID.randomUUID().toString());
 		liquidation.setSender(company);
-		liquidation.setReceiver(egasa);
+		liquidation.setReceiver(LiquidationReceiver);
 		liquidation.setBills(bills);
 		liquidation.setDateFrom(range.getMinimum());
 		liquidation.setDateTo(range.getMaximum());
