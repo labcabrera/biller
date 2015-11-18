@@ -1,0 +1,23 @@
+dependencies {
+	compile 'com.google.inject:guice:4.0'
+	compile 'com.google.inject.extensions:guice-persist:4.0'
+	compile 'com.google.code.gson:gson:2.4'
+	compile 'commons-io:commons-io:2.4'
+	compile 'javax.validation:validation-api:1.1.0.Final'
+	compile 'joda-time:joda-time:2.9'
+	compile 'mysql:mysql-connector-java:5.1.37'
+	compile 'org.apache.poi:poi-ooxml:3.13'
+	compile 'org.apache.bval:bval-guice:0.5'
+	compile 'org.eclipse.persistence:eclipselink:2.6.1'
+	compile 'org.quartz-scheduler:quartz:2.2.2'
+	compile 'org.apache.commons:commons-email:1.4'
+	compile 'com.itextpdf:itextpdf:5.5.7'
+	compile 'org.slf4j:slf4j-api:'
+}
+
+if (project.hasProperty('profile')) {
+    println "Target environment: $profile"
+    sourceSets.main.resources.srcDir "src/main/profile/$profile"
+} else {
+	sourceSets.main.resources.srcDir "src/main/profile/local"
+}

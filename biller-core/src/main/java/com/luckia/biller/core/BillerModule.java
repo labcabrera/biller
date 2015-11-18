@@ -1,6 +1,5 @@
 package com.luckia.biller.core;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.bval.guice.ValidationModule;
@@ -63,8 +62,8 @@ public class BillerModule extends AbstractModule {
 		Properties properties = new Properties();
 		try {
 			propertiesTmp.load(getClassLoader().getResourceAsStream(Constants.PROPERTIES_FILE));
-		} catch (IOException ex) {
-			throw new RuntimeException("Cant read application properties", ex);
+		} catch (Exception ex) {
+			throw new RuntimeException(String.format("Cant read application properties '%s' in classpath", Constants.PROPERTIES_FILE), ex);
 		}
 		for (Object i : propertiesTmp.keySet()) {
 			String key = (String) i;
