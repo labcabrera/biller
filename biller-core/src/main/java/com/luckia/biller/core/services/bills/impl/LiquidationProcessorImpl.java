@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Injector;
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.common.MathUtils;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
@@ -37,6 +38,7 @@ import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.LiquidationResults;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
@@ -73,8 +75,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.impl.LiquidationProcessor#process(com.luckia.biller.core.model.Company,
-	 * org.apache.commons.lang3.Range)
+	 * @see com.luckia.biller.core.services.bills.impl.LiquidationProcessor#process(com.luckia.biller.core.model.Company, org.apache.commons.lang3.Range)
 	 */
 	@Override
 	@Transactional
@@ -273,12 +274,17 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 */
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.LIQUIDATION_REMOVE_DETAIL)
 	public Liquidation removeDetail(LiquidationDetail detail) {
+		LOG.debug("Eliminando detalle de liquidacion");
 		EntityManager entityManager = entityManagerProvider.get();
-		Liquidation liquidation = detail.getLiquidation();
-		liquidation.getDetails().remove(detail);
-		entityManager.remove(detail);
-		return updateLiquidationResults(liquidation);
+		LiquidationDetail currentDetail = entityManager.find(LiquidationDetail.class, detail.getId());
+		Liquidation currentLiquidation = currentDetail.getLiquidation();
+		currentDetail.getLiquidation().getDetails().remove(currentDetail);
+		entityManager.remove(currentDetail);
+		entityManager.flush();
+		entityManager.refresh(currentLiquidation);
+		return updateLiquidationResults(currentLiquidation);
 	}
 
 	@Override
@@ -291,8 +297,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	}
 
 	/**
-	 * Comprobamos que todas las facturas de la liquidacion han sido aceptadas. En caso de que alguna factura no esté aceptada eleva un
-	 * {@link ValidationException}
+	 * Comprobamos que todas las facturas de la liquidacion han sido aceptadas. En caso de que alguna factura no esté aceptada eleva un {@link ValidationException}
 	 * 
 	 * @param liquidation
 	 */

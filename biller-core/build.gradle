@@ -15,6 +15,9 @@ dependencies {
 	compile 'org.slf4j:slf4j-api:'
 }
 
+/**
+ * Activacion del profile si compilamos con la opcion "-Pname"
+ */
 if (project.hasProperty('profile')) {
     println "Target environment: $profile"
     sourceSets.main.resources.srcDir "src/main/profile/$profile"

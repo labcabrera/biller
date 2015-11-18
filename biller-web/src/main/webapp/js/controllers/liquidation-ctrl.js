@@ -109,32 +109,9 @@
 				var d = $scope.liquidationDetail;
 				d.id = d.units = d.value = d.name = d.dummyType = null;
 				d.liquidationIncluded = true;
-				//$scope.liquidationDetail = { "liquidation" : { "id" : $scope.entity.id }, "units":"", value: "" };			
 			}
 			$('#editLiquidationConceptModal').modal('show');
 		};
-//		$scope.mergeDetail = function(data) {
-//			$scope.isSaving = true;
-//			$http.post('rest/liquidations/detail/merge/', $scope.liquidationDetail).success(function(data) {
-//				$scope.isSaving = false;
-//				$scope.displayAlert(data);
-//				$("#editLiquidationConceptModal").modal('hide');
-//				if(data.code == 200) {
-//					$scope.entity = data.payload;
-//				}
-//			});
-//		};
-//		$scope.removeDetail = function(data) {
-//			$scope.isSaving = true;
-//			$http.post('rest/liquidations/detail/remove/' + $scope.liquidationDetail.id).success(function(data) {
-//				$scope.isSaving = false;
-//				$scope.displayAlert(data);
-//				$("#editLiquidationConceptModal").modal('hide');
-//				if(data.code == 200) {
-//					$scope.entity = data.payload;
-//				}
-//			});
-//		};
 		$scope.recalculate = function() {
 			var dlg = dialogs.confirm('Confirmacion','Desea recalcular la liquidacion? Los ajustes manuales se perderan');
 			dlg.result.then(function(btn){

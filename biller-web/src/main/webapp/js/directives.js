@@ -387,7 +387,7 @@
 						//$scope.displayAlert(data);
 						$("#editLiquidationConceptModal").modal('hide');
 						if(data.code == 200) {
-							$scope.entity = data.payload;
+							$scope.liquidation = data.payload;
 						}
 					});
 				};
@@ -407,10 +407,26 @@
 			restrict : 'AE',
 			templateUrl : 'html/components/liquidation-details.html',
 			controller : function($scope, $http) {
+				$scope.editDetail = function(data) {
+					if(data != null && !(typeof data === 'undefined') ) {
+						$scope.isSaving = true;
+						$http.get('rest/liquidations/detail/id/' + data).success(function(data) {
+							$scope.isSaving = false;
+							$scope.liquidationDetail = data;
+							$scope.liquidationDetail.liquidation = { "id": $scope.entity.id };
+						});	
+					} else {
+						var d = $scope.liquidationDetail;
+						d.id = d.units = d.value = d.name = d.dummyType = null;
+						d.liquidationIncluded = true;
+					}
+					$('#editLiquidationConceptModal').modal('show');
+				};
 			},
 			scope : {
 				childs: "=",
-				entity: '='
+				entity: '=',
+				liquidationDetail: '='
 			}
 		};
 	});

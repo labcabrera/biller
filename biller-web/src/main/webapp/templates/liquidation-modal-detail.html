@@ -49,6 +49,7 @@
 				</form>
 			</div>
 			<pre>{{detail | json}}</pre>
+			<pre>{{entity | json}}</pre>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default btn-sm" ng-disabled="isSaving" data-dismiss="modal">{{'cancel' | translate}}</button>
 				<button type="button" class="btn btn-default btn-sm" ng-click="removeDetail(detail.id)" ng-if="detail.id != null" ng-disabled="isSaving" >{{'remove' | translate}}</button>

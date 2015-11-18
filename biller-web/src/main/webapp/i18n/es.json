@@ -1,6 +1,7 @@
 {
 	"addAdjustment": "Añadir ajuste",
 	"addBillDetail": "Añadir ajuste",
+	"addLiquidationDetail": "Añadir ajuste",
 	"address": "Dirección",
 	"admin": "Administración",
 	"amount": "Importe",
@@ -56,6 +57,7 @@
 	"dateFrom": "Desde",
 	"dateTo": "Hasta",
 	"details": "Detalles",
+	"download": "Descargar",
 	"DIALOGS_YES": "Si",
 	"DIALOGS_NO": "No",
 	"editBillDetail": "Ajuste de la factura",
@@ -148,5 +150,6 @@
 	"vatLiquidationType.LIQUIDATION_ADDED": "Añadido sobre el importe de liquidacion",
 	"vatPercent": "IVA (%)",
 	"vatAmount": "IVA",
+	"viewLiquidationDraft": "Consultar borrador",
 	"year": "Año"
 }
