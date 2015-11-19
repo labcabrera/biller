@@ -11,10 +11,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillType;
+import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Owner;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.serialization.entities.BillSerializer;
 import com.luckia.biller.core.serialization.entities.BillTypeSerializer;
+import com.luckia.biller.core.serialization.entities.LiquidationSerializer;
 import com.luckia.biller.core.serialization.entities.OwnerSerializer;
 
 /**
@@ -35,6 +37,7 @@ public class Serializer {
 		builder.registerTypeAdapter(BigDecimal.class, new BigDecimalSerializer());
 		builder.registerTypeAdapter(BillType.class, new BillTypeSerializer());
 		builder.registerTypeAdapter(Bill.class, new BillSerializer());
+		builder.registerTypeAdapter(Liquidation.class, new LiquidationSerializer());
 		return builder;
 	}
 

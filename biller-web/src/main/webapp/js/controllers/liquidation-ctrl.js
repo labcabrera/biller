@@ -74,6 +74,21 @@
 				});
 			});
 		};
+		$scope.confirmPendingBills = function() {
+			var dlg = dialogs.confirm('Confirmacion','Se van a aceptar todas las facturas pendientes de la liquidacion');
+			dlg.result.then(function(btn){
+				$scope.isSaving = true;
+				$http.post('rest/liquidations/bills/confirm/' + $scope.entity.id).success(function(data) {
+					$scope.displayAlert(data);
+					if(data.code == 200) {
+						$http.get('rest/bills/find?q=liquidation.id==' + $routeParams.id + "&n=15").success(function(data) {
+							$scope.childs = data;
+						});
+					}
+					$scope.isSaving = false;
+				});
+			});
+		};
 		$scope.update = function() {
 			$scope.isSaving = true;
 			$http.post('rest/liquidations/merge/', $scope.entity).success(function(data) {

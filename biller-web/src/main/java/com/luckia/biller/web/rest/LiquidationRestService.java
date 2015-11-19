@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Provider;
@@ -33,6 +34,7 @@ import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
+import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
@@ -42,6 +44,7 @@ import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.FileService;
 import com.luckia.biller.core.services.LiquidationMailService;
 import com.luckia.biller.core.services.StateMachineService;
+import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.LiquidationEntityService;
 import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
@@ -70,6 +73,8 @@ public class LiquidationRestService {
 	private FileService fileService;
 	@Inject
 	private StateMachineService stateMachineService;
+	@Inject
+	private BillProcessor billProcessor;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -133,6 +138,28 @@ public class LiquidationRestService {
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
 			liquidationProcessor.confirm(liquidation);
 			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.confirm.success"), liquidation);
+		} catch (ValidationException ex) {
+			return new Message<>(Message.CODE_GENERIC_ERROR, ex.getMessage());
+		} catch (Exception ex) {
+			LOG.error("Error al confirmar la liquidacion", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("liquidation.confirm.error"));
+		}
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("bills/confirm/{id}")
+	public Message<List<Bill>> confirmAllPendingBills(@PathParam("id") String id) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			entityManager.getEntityManagerFactory().getCache().evictAll();
+			Liquidation liquidation = entityManager.find(Liquidation.class, id);
+			for (Bill bill : liquidation.getBills()) {
+				if (CommonState.Draft.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
+					billProcessor.confirmBill(bill);
+				}
+			}
+			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.confirm.pending.bills.success"), liquidation.getBills());
 		} catch (ValidationException ex) {
 			return new Message<>(Message.CODE_GENERIC_ERROR, ex.getMessage());
 		} catch (Exception ex) {

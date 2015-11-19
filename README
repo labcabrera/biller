@@ -1,3 +1,5 @@
+FIX
+	- Revisar reporte de liquidaciones tras cambio de modelo
 TODO:
 	- Historico en la relacion de terminales y locales
 	- Optimización serializadores
@@ -12,4 +14,4 @@ TODO:
 	- Destinatario de la liquidación
 	- Eliminar los conceptos de ajuste de caja del modelo
 	- PATCH: actualizar el liquidation.model que ahora esta a null
-	- Paginacion de actividad de usuarios
+	- Eliminar la facturas sin resultado

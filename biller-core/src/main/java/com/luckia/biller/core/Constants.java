@@ -34,6 +34,8 @@ public final class Constants {
 	public static final String CONFIG_SECTION_JPA_BILLER = "jpa-biller";
 	public static final String CONFIG_SECTION_JPA_LIS = "jpa-lis";
 
+	public static final String I18N_BUNDLE = "i18n";
+
 	/**
 	 * Constructor privado para evitar que se generen instancias de esta clase.
 	 */

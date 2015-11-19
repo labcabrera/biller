@@ -13,6 +13,8 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.Constants;
+
 /**
  * Servicio encargado de obtener los mensajes de la aplicacion. Los mensajes se recuperan desde el bundle
  * <code>luckia-messages.properties</code>.
@@ -29,7 +31,7 @@ public class I18nService {
 	 */
 	public I18nService() {
 		Locale locale = new Locale("es", "ES");
-		messages = ResourceBundle.getBundle("luckia-messages", locale);
+		messages = ResourceBundle.getBundle(Constants.I18N_BUNDLE, locale);
 	}
 
 	/**

@@ -14,10 +14,9 @@ public class LiquidationSerializer extends AbstractEntitySerializer implements J
 	@Override
 	public JsonElement serialize(Liquidation src, Type typeOfSrc, JsonSerializationContext context) {
 		JsonObject result = context.serialize(src, InternalLiquidation.class).getAsJsonObject();
-		// clean(result, "sender", Arrays.asList("id", "name"));
-		// clean(result, "receiver", Arrays.asList("id", "name"));
-		// clean(result, "liquidation", Arrays.asList("id"));
-		// clean(result, "model", Arrays.asList("id", "name"));
+		clean(result, "sender", Arrays.asList("id", "name"));
+		clean(result, "receiver", Arrays.asList("id", "name"));
+		clean(result, "model", Arrays.asList("id", "name"));
 		return result;
 	}
 

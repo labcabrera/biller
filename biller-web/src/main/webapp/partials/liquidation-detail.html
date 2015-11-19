@@ -58,26 +58,7 @@
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="detailTab">
-						<div class="m-top-15">
-							<div liquidation-details entity="entity" childs="childs" liquidation-detail="liquidationDetail"></div>
-							<div class="btn-toolbar" role="toolbar">
-								<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary'
-									ng-disabled="isSaving">{{'addLiquidationDetail' | translate}}</button>
-								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft'" href="rest/liquidations/draft/{{entity.id}}"
-									role="button" ng-disabled="isSaving">{{'viewLiquidationDraft' | translate}}</a> <a class="btn btn-primary btn-sm"
-									ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'" href="rest/binary/download/{{entity.pdfFile.id}}"
-									role="button" ng-disabled="isSaving">{{'download' | translate}}</a> <a class="btn btn-primary btn-sm" ng-if="entity.reportFile != null" href="rest/binary/download/{{entity.reportFile.id}}"
-									role="button" ng-disabled="isSaving">Report</a>
-								<button ng-click="recreatePDF()" ng-if="entity.currentState.stateDefinition.id != 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Recrear PDF</button>
-								<button ng-click="draft()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-primary'
-									ng-disabled="isSaving">Draft</button>
-								<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Aceptar
-									borrador</button>
-								<button ng-click="recalculate()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Recalcular</button>
-								<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'"
-									class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Enviar</button>
-							</div>
-						</div>
+						<div ng-include src="'html/components/liquidation-detail-buttons.html'"></div>
 					</div>
 					<!-- Pestaña de observaciones -->
 					<div class="tab-pane" id="commentsTab">

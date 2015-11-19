@@ -1,6 +1,5 @@
 package com.luckia.biller.core;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.bval.guice.ValidationModule;
@@ -44,7 +43,7 @@ public class BillerModule extends AbstractModule {
 	 */
 	@Override
 	public void configure() {
-		LOG.debug("Configuring Luckia core module");
+		LOG.debug("Configuring Biller core module");
 		SettingsManager settingsManager = new SettingsManager().load(Constants.APP_CONFIG_FILE);
 		bind(SettingsManager.class).toInstance(settingsManager);
 		Names.bindProperties(binder(), settingsManager.getProperties(Constants.CONFIG_SECTION_GLOBAL));
@@ -59,7 +58,7 @@ public class BillerModule extends AbstractModule {
 		UserActivityInterceptor userActivityInterceptor = new UserActivityInterceptor();
 		requestInjection(userActivityInterceptor);
 		bindInterceptor(Matchers.any(), Matchers.annotatedWith(RegisterActivity.class), userActivityInterceptor);
-		LOG.debug("Configured Luckia core module");
+		LOG.debug("Configured Biller core module");
 	}
 
 	protected void installJpaModule(SettingsManager settingsManager) {
@@ -67,10 +66,5 @@ public class BillerModule extends AbstractModule {
 		JpaPersistModule module = new JpaPersistModule(Constants.PERSISTENCE_UNIT_NAME);
 		module.properties(properties);
 		install(module);
-		try {
-			properties.storeToXML(System.out, "");
-		} catch (Exception ex) {
-
-		}
 	}
 }
