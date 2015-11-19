@@ -17,7 +17,7 @@
 			ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'"
 			href="rest/binary/download/{{entity.pdfFile.id}}"
 			role="button"
-			ng-disabled="isSaving">{{'download' | translate}}</a>
+			ng-disabled="isSaving">{{'downloadPdf' | translate}}</a>
 		<a
 			class="btn btn-primary btn-sm"
 			ng-if="entity.reportFile != null"
@@ -28,7 +28,7 @@
 			ng-click="recreatePDF()"
 			ng-if="entity.currentState.stateDefinition.id != 'Draft'"
 			class='btn btn-sm btn-primary'
-			ng-disabled="isSaving">Recrear PDF</button>
+			ng-disabled="isSaving">{{'recreatePdf' | translate}}</button>
 		<button
 			ng-click="draft()"
 			ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'"
