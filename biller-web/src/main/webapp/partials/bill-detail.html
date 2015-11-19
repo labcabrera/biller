@@ -104,9 +104,9 @@
 					</li>
 					<li><a data-target="#ownerTab" data-toggle="tab">{{'owner' | translate}}</a></li>
 					<li><a data-target="#commentsTab" data-toggle="tab">{{'comments' | translate}}</a></li>
-					<li><a data-target="#commentsPdfTab" data-toggle="tab">Comentarios PDF</a></li>
-					<li><a data-target="#advancedInfoTab" data-toggle="tab">Raw</a></li>
-					<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
+					<li><a data-target="#commentsPdfTab" data-toggle="tab">{{'commentsPdf' | translate}}</a></li>
+					<li><a data-target="#advancedInfoTab" data-toggle="tab">{{'rawData' | translate}}</a></li>
+					<li><a data-target="#auditTab" data-toggle="tab">{{'auditData' | translate}}</a></li>
 				</ul> 				
 				<div class="tab-content">
 				
@@ -115,11 +115,11 @@
 						<div class="m-top-15">
 							<table class="table">
 								<tr class="active">
-									<th>Concepto</th>
-									<th class="data-amount">Unidades</th>
-									<th class="data-amount">Base</th>
-									<th class="data-amount">IVA</th>
-									<th class="data-amount">Total</th>
+									<th>{{'concept' | translate}}</th>
+									<th class="data-amount">{{'units' | translate}}</th>
+									<th class="data-amount">{{'netValue' | translate}}</th>
+									<th class="data-amount">{{'vat' | translate}}</th>
+									<th class="data-amount">{{'total' | translate}}</th>
 									<th></th>
 								</tr>
 								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: true}" ng-if="detail.concept != 'MANUAL'">
@@ -184,16 +184,7 @@
 									</td>
 								</tr>
 							</table>
-							<div class="btn-toolbar m-top-40" role="toolbar">
-								<button ng-click="editLiquidationDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">{{'addAdjustment' | translate}}</button>
-								<button ng-click="rectify()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Rectificar</button>
-								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" href="rest/bills/draft/{{entity.id}}" role="button" ng-disabled="isSaving">Consultar borrador</a>
-								<a class="btn btn-primary btn-sm" ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled' && entity.currentState.stateDefinition.id != 'Initial'" href="rest/binary/download/{{entity.pdfFile.id}}" role="button" ng-disabled="isSaving">Descargar</a>
-								<button ng-click="draft()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent' || entity.currentState.stateDefinition.id == 'Rectified'" class='btn btn-sm btn-primary' ng-disabled="isSaving">Draft</button>
-								<button ng-click="confirm()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Aceptar borrador</button>
-								<button ng-click="recalculate()" ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving" >Recalcular</button>
-								<button ng-click="editSendMail()" ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'" class='btn btn-sm btn-success pull-right' ng-disabled="isSaving">Enviar</button>
-							</div>
+							<div ng-include src="'html/components/bill-detail-buttons.html'"></div>
 						</div>
 					</div>
 				

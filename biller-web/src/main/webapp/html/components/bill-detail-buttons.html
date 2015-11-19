@@ -1,0 +1,44 @@
+<div class="btn-toolbar m-top-40" role="toolbar">
+	<button
+		ng-click="editLiquidationDetail()"
+		ng-if="entity.currentState.stateDefinition.id == 'Draft'"
+		class='btn btn-sm btn-primary'
+		ng-disabled="isSaving">{{'addAdjustment' | translate}}</button>
+	<button
+		ng-click="rectify()"
+		ng-if="entity.currentState.stateDefinition.id == 'Confirmed'"
+		class='btn btn-sm btn-primary'
+		ng-disabled="isSaving">{{'rectify' | translate}}</button>
+	<a
+		class="btn btn-primary btn-sm"
+		ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'"
+		href="rest/bills/draft/{{entity.id}}"
+		role="button"
+		ng-disabled="isSaving">{{'viewDraft' | translate}}</a>
+	<a
+		class="btn btn-primary btn-sm"
+		ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled' && entity.currentState.stateDefinition.id != 'Initial'"
+		href="rest/binary/download/{{entity.pdfFile.id}}"
+		role="button"
+		ng-disabled="isSaving">{{'download' | translate}}</a>
+	<button
+		ng-click="draft()"
+		ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent' || entity.currentState.stateDefinition.id == 'Rectified'"
+		class='btn btn-sm btn-primary'
+		ng-disabled="isSaving">{{'convertToDraft' | translate}}</button>
+	<button
+		ng-click="confirm()"
+		ng-if="entity.currentState.stateDefinition.id == 'Draft'"
+		class='btn btn-sm btn-success pull-right'
+		ng-disabled="isSaving">{{'confirmDraft' | translate}}</button>
+	<button
+		ng-click="recalculate()"
+		ng-if="entity.currentState.stateDefinition.id == 'Draft' || entity.currentState.stateDefinition.id == 'Initial'"
+		class='btn btn-sm btn-success pull-right'
+		ng-disabled="isSaving" >{{'recalculate' | translate}}</button>
+	<button
+		ng-click="editSendMail()"
+		ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'"
+		class='btn btn-sm btn-success pull-right'
+		ng-disabled="isSaving">{{'send' | translate}}</button>
+</div>

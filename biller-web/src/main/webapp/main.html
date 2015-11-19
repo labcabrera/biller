@@ -78,18 +78,24 @@
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown" ng-controller="LanguageCtrl">
-							<a href="#" class="dropdown-toggle f16" role="button" aria-expanded="false">
-								<span ng-class="{'flag gb' : getLanguage() == 'en', 'flag es' : getLanguage() == 'es', 'flag it' : getLanguage() == 'it'}"></span>
+							<a href="#" class="dropdown-toggle" role="button" aria-expanded="false">
 								<span class="hidden-xs hidden-sm">{{getLanguage() | translate}}</span><span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a class="f16" ng-click="changeLanguage('es')" ng-class="{'active' : getLanguage() == 'es'}"><span class="flag es"></span> {{'es' | translate}}</a></li>
-								<li><a class="f16" ng-click="changeLanguage('en')" ng-class="{'active' : getLanguage() == 'en'}"><span class="flag gb"></span> {{'en' | translate}}</a></li>
+								<li><a ng-click="changeLanguage('es')" ng-class="{'active' : getLanguage() == 'es'}">{{'language.es' | translate}}</a></li>
+								<li><a ng-click="changeLanguage('en')" ng-class="{'active' : getLanguage() == 'en'}">{{'language.en' | translate}}</a></li>
+								<li><a ng-click="changeLanguage('ga')" ng-class="{'active' : getLanguage() == 'ga'}">{{'language.ga' | translate}}</a></li>
 							</ul>
 						</li>
-						<li ng-if="user != null"><a href="">{{user.name}}</a></li>
-						<li ng-if="user != null"><a ng-click="logout()" href="">{{'logout' | translate}}</a></li>
+						<li ng-if="user != null" class="droopdown">
+							<a href="#" class="dropdown-toggle" role="button" aria-expanded="false">{{user.name}} <span class="caret"></a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a ng-click="logout()">{{'logout' | translate}}</a></li>
+								<li><a href="#">{{'profile' | translate}}</a></li>
+							</ul>
+						</li>
 						<li ng-if="user == null"><a href="#/login">{{'login' | translate}}</a></li>
+						
 					</ul>
 				</div>
 			</div>
