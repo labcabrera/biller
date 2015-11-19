@@ -183,6 +183,7 @@
 	"vatLiquidationType.LIQUIDATION_ADDED": "Añadido sobre el importe de liquidacion",
 	"vatPercent": "IVA (%)",
 	"vatAmount": "IVA",
+	"viewBillsCreatedWithThisModel": "Ver facturas generadas con este modelo",
 	"viewDraft": "Consultar borrador",
 	"viewLiquidationDraft": "Consultar borrador",
 	"viewReport": "Report",

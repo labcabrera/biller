@@ -79,7 +79,7 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	 * Flag que determina si las facturas se incluyen dentro de la liquidacion de un operador.
 	 */
 	@Column(name = "INCLUDE_STORES")
-	private Boolean includeStores;
+	private Boolean includeStoresInZipFile;
 
 	/**
 	 * Tipo de calculo del IVA aplicado.
@@ -145,12 +145,12 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 		this.auditData = auditData;
 	}
 
-	public Boolean getIncludeStores() {
-		return includeStores;
+	public Boolean getIncludeStoresInZipFile() {
+		return includeStoresInZipFile;
 	}
 
-	public void setIncludeStores(Boolean includeStores) {
-		this.includeStores = includeStores;
+	public void setIncludeStoresInZipFile(Boolean includeStoresInZipFile) {
+		this.includeStoresInZipFile = includeStoresInZipFile;
 	}
 
 	public VatLiquidationType getVatLiquidationType() {
@@ -188,6 +188,7 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 				}
 				storeModel.merge(entity.storeModel);
 			}
+			this.includeStoresInZipFile = entity.includeStoresInZipFile;
 			this.name = entity.name;
 			this.vatLiquidationType = entity.vatLiquidationType;
 			this.receiver = entity.receiver;

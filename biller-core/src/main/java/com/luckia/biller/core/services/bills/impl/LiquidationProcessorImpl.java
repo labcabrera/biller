@@ -18,7 +18,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.validation.ValidationException;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -128,16 +127,12 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		BigDecimal liquidationManualAmount = BigDecimal.ZERO;
 		BigDecimal storeManualOuterAmount = BigDecimal.ZERO;
 		BigDecimal liquidationOuterAmount = BigDecimal.ZERO;
-		BigDecimal storeAmount = BigDecimal.ZERO; // TODO no se si esto sigue teniendo sentido
 		for (Bill bill : liquidation.getBills()) {
 			netAmount = netAmount.add(MathUtils.safeNull(bill.getLiquidationTotalNetAmount()));
 			vatAmount = vatAmount.add(MathUtils.safeNull(bill.getLiquidationTotalVat()));
 			totalAmount = totalAmount.add(MathUtils.safeNull(bill.getLiquidationTotalAmount()));
 			storeCash = storeCash.add(MathUtils.safeNull(bill.getStoreCash()));
 			storeManualOuterAmount = storeManualOuterAmount.add(MathUtils.safeNull(bill.getLiquidationOuterAmount()));
-			if (bill.getModel() != null && BooleanUtils.isTrue(bill.getModel().getIncludeStores())) {
-				storeAmount = storeAmount.add(bill.getAmount());
-			}
 		}
 		if (liquidation.getDetails() != null) {
 			for (LiquidationDetail detail : liquidation.getDetails()) {
@@ -156,7 +151,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			results = new LiquidationResults();
 			liquidation.setLiquidationResults(results);
 		}
-		results.setStoreAmount(storeAmount);
+		results.setStoreAmount(BigDecimal.ZERO); // TODO eliminar porque no veo para que utiliza
 		results.setStoreManualOuterAmount(storeManualOuterAmount);
 		results.setTotalOuterAmount(storeManualOuterAmount.add(liquidationOuterAmount));
 		results.setAdjustmentAmount(liquidationManualAmount);

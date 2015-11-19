@@ -63,10 +63,10 @@
 	<div class="col-sm-3">
 		<div ng-include="'templates/entity-toolbar.html'"></div>
 		<div class="m-top-40">
-			<h4>Modelos de facturaci&oacute;n</h4>
+			<h4>{{'billingModels' | translate}}</h4>
 			<ul class="list-unstyled">
-				<li><a href="#/models">Modelos de facturaci&oacute;n</a></li>
-				<li><a href="#/bills?model={{entity.id}}">Facturas emitidas con este modelo</a></li>
+				<li><a href="#/models">{{'billingModels' | translate}}</a></li>
+				<li><a href="#/bills?model={{entity.id}}">{{'viewBillsCreatedWithThisModel' | translate}}</a></li>
 			</ul>
 		</div>
 		<div ng-include src="'templates/entity-json-popup.html'"></div>
