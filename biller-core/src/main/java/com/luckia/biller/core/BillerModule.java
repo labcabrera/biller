@@ -1,5 +1,6 @@
 package com.luckia.biller.core;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.bval.guice.ValidationModule;
@@ -8,8 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
+import com.google.inject.name.Names;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.luckia.biller.core.common.RegisterActivity;
+import com.luckia.biller.core.common.SettingsManager;
 import com.luckia.biller.core.lis.LisModule;
 import com.luckia.biller.core.services.UserActivityInterceptor;
 import com.luckia.biller.core.services.bills.BillDataProvider;
@@ -42,7 +45,10 @@ public class BillerModule extends AbstractModule {
 	@Override
 	public void configure() {
 		LOG.debug("Configuring Luckia core module");
-		installJpaModule();
+		SettingsManager settingsManager = new SettingsManager().load(Constants.APP_CONFIG_FILE);
+		bind(SettingsManager.class).toInstance(settingsManager);
+		Names.bindProperties(binder(), settingsManager.getProperties(Constants.CONFIG_SECTION_GLOBAL));
+		installJpaModule(settingsManager);
 		install(new ValidationModule());
 		install(new LisModule());
 		bind(BillProcessor.class).to(BillProcessorImpl.class);
@@ -56,27 +62,15 @@ public class BillerModule extends AbstractModule {
 		LOG.debug("Configured Luckia core module");
 	}
 
-	protected void installJpaModule() {
+	protected void installJpaModule(SettingsManager settingsManager) {
+		Properties properties = settingsManager.getProperties(Constants.CONFIG_SECTION_JPA_BILLER);
 		JpaPersistModule module = new JpaPersistModule(Constants.PERSISTENCE_UNIT_NAME);
-		Properties propertiesTmp = new Properties();
-		Properties properties = new Properties();
-		try {
-			propertiesTmp.load(getClassLoader().getResourceAsStream(Constants.PROPERTIES_FILE));
-		} catch (Exception ex) {
-			throw new RuntimeException(String.format("Cant read application properties '%s' in classpath", Constants.PROPERTIES_FILE), ex);
-		}
-		for (Object i : propertiesTmp.keySet()) {
-			String key = (String) i;
-			if (key.startsWith(Constants.PROPERTIES_JPA_PREFIX)) {
-				properties.put(key.substring(Constants.PROPERTIES_JPA_PREFIX.length()), propertiesTmp.get(key));
-
-			}
-		}
 		module.properties(properties);
 		install(module);
-	}
+		try {
+			properties.storeToXML(System.out, "");
+		} catch (Exception ex) {
 
-	protected ClassLoader getClassLoader() {
-		return getClass().getClassLoader();
+		}
 	}
 }

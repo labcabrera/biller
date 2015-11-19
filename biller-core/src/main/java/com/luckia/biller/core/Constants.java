@@ -16,23 +16,23 @@ public final class Constants {
 	public static final String LIS = "LIS";
 
 	/**
-	 * Persistence unit de la aplicación
+	 * Persistence unit name de la aplicación
 	 */
 	public static final String PERSISTENCE_UNIT_NAME = "com.luckia.biller";
 
 	/**
-	 * Persistence unit de la base de datos de LIS
+	 * Persistence unit name de la base de datos de LIS
 	 */
 	public static final String PERSISTENCE_UNIT_NAME_LIS = "com.luckia.lis";
 
 	/**
-	 * Nombre del fichero de propiedades de la aplicación
+	 * Nombre del fichero de configuracion de la aplicación
 	 */
-	public static final String PROPERTIES_FILE = "com.luckia.biller.properties";
+	public static final String APP_CONFIG_FILE = "biller.config";
 
-	public static final String PROPERTIES_JPA_PREFIX = "mysql.";
-
-	public static final String PROPERTIES_LIS_PREFIX = "lis.";
+	public static final String CONFIG_SECTION_GLOBAL = "global";
+	public static final String CONFIG_SECTION_JPA_BILLER = "jpa-biller";
+	public static final String CONFIG_SECTION_JPA_LIS = "jpa-lis";
 
 	/**
 	 * Constructor privado para evitar que se generen instancias de esta clase.

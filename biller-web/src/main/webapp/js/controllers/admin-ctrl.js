@@ -67,22 +67,12 @@
 		$scope.itemsPerPage = 20;
 		$scope.reset = function() {
 			$scope.searchOptions = {
-				'user': $routeParams.user,
-//				'store': { "id": $routeParams.store, "name": '' },
-//				'company': { "id": $routeParams.company, "name": '' },
-//				'model': { "id": $routeParams.model},
-//				'state': $routeParams.state,
-//				'from': '',
-//				'to':  ''
+				'user': $routeParams.user
 			};
 		};
 		$scope.getSearchUrl = function() {
 			var predicateBuilder = new PredicateBuilder('');
 			predicateBuilder.append("user.name=lk=", $scope.searchOptions.user);
-//			predicateBuilder.append("sender.id==", $scope.searchOptions.store.id);
-//			predicateBuilder.append("receiver.id==", $scope.searchOptions.company.id);
-//			predicateBuilder.append("currentState.stateDefinition.id==", $scope.searchOptions.state);
-//			predicateBuilder.append("model.id==", $scope.searchOptions.model != null ? $scope.searchOptions.model.id : null);
 			predicateBuilder.append("date=ge=", $scope.searchOptions.from != null ? $filter('date')($scope.searchOptions.from, "yyyy-MM-dd") : null);
 			predicateBuilder.append("date=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
 			return 'rest/user-activity/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
@@ -92,6 +82,12 @@
 			$http.get($scope.getSearchUrl()).success(function(data) {
 				$scope.results = data;
 			});
+		};
+		$scope.setPage = function(page) {
+		    $scope.currentPage = page;
+		    $http.get($scope.getSearchUrl()).success(function(data) {
+		    	$scope.results = data;
+		    });
 		};
 		$scope.reset();
 		$scope.search();
