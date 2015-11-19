@@ -1,6 +1,7 @@
 'use strict';
 
-var billerModule = angular.module('billerModule', [ 'ngRoute', 'ngCookies', 'billerModule', 'ui.bootstrap', 'dialogs.main', 'pascalprecht.translate']);
+var billerModule = angular.module('billerModule', [ 'ngRoute', 'ngCookies', 'billerModule', 'ui.bootstrap', 'dialogs.main', 'tc.chartjs', 'pascalprecht.translate']);
+//var billerModule = angular.module('billerModule', [ 'ngRoute', 'ngCookies', 'billerModule', 'ui.bootstrap', 'dialogs.main', 'pascalprecht.translate']);
 
 billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $location) {
 	
@@ -44,6 +45,7 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/admin/recalculate/liquidation', { templateUrl : 'html/admin/recalculate-liquidation.html', controller: 'BillRecalculationCtrl'
 	}).when('/admin/user-activity', { templateUrl : 'html/admin/user-activity/user-activity-list.html', controller: 'UserActivityListCtrl'
 	}).when('/admin/user-activity/id/:id', { templateUrl : 'html/admin/user-activity/user-activity-detail.html', controller: 'UserActivityCtrl'
+	}).when('/dashboard/companies', { templateUrl : 'html/dashboard/dashboard-panel.html', controller : 'DashboardCtrl'
 	}).when('/login', { templateUrl : 'partials/login.html', controller: 'LoginCtrl'
 	}).when('/index', { templateUrl : 'static/index.html'
 	}).when('/sequence-prefix', { templateUrl : 'static/sequence-prefix.html'

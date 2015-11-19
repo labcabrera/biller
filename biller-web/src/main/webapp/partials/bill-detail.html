@@ -112,80 +112,8 @@
 				
 					<!-- Pestaña de detalles de liquidacion -->
 					<div class="tab-pane active" id="liquidationDetailTab">
-						<div class="m-top-15">
-							<table class="table">
-								<tr class="active">
-									<th>{{'concept' | translate}}</th>
-									<th class="data-amount">{{'units' | translate}}</th>
-									<th class="data-amount">{{'netValue' | translate}}</th>
-									<th class="data-amount">{{'vat' | translate}}</th>
-									<th class="data-amount">{{'total' | translate}}</th>
-									<th></th>
-								</tr>
-								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: true}" ng-if="detail.concept != 'MANUAL'">
-									<td>{{detail.name}}</td>
-									<td class="data-amount">{{detail.units}}</td>
-									<td class="data-amount">{{detail.netValue | abs}}</td>
-									<td class="data-amount">{{detail.vatValue | abs}}</td>
-									<td class="data-amount">{{detail.value}}</td>
-									<td></td>
-								</tr>
-								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: true}" ng-if="detail.concept == 'MANUAL'" class="text-info">
-									<td>{{detail.name}}</td>
-									<td class="data-amount">{{detail.units}}</td>
-									<td class="data-amount">{{detail.netValue}}</td>
-									<td class="data-amount">{{detail.vatValue}}</td>
-									<td class="data-amount">{{detail.value}}</td>
-									<td>
-										<a ng-if="entity.currentState.stateDefinition.id == 'Draft'" ng-click="editLiquidationDetail(detail.id)">
-											<span class="glyphicon glyphicon-pencil"></span>
-										</a>
-									</td>
-								</tr>
-								<tr class="active">
-									<td><b>{{'total' | translate}}</b></td>
-									<td></td>
-									<td class="data-amount"><b>{{entity.liquidationTotalNetAmount}}</b></td>
-									<td class="data-amount"><b>{{entity.liquidationTotalVat}}</b></td>
-									<td class="data-amount"><b>{{entity.liquidationTotalAmount}}</b></td>
-									<td></td>
-								</tr>
-								<tr ng-repeat="i in entity.billRawData | filter: { concept: 'Credit' }">
-									<td><b>{{'credit' | translate}}</b></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td class="data-amount"><b>{{i.amount}}</b></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td><b>{{'cashStoreAmount' | translate}}</b></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td class="data-amount"><b>{{entity.storeCash}}</b></td>
-									<td></td>
-								</tr>
-								<tr class="active" ng-if="entity.liquidationOuterAmount > 0">
-									<td colspan="4"><b>Ajustes fuera de liquidación</b></td>
-									<td class="data-amount"><b>{{entity.liquidationOuterAmount}}</b></td>
-									<td></td>
-								</tr>
-								<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: false}" class="text-info">
-									<td>{{detail.name}}</td>
-									<td class="data-amount">{{detail.units}}</td>
-									<td class="data-amount">-</td>
-									<td class="data-amount">-</td>
-									<td class="data-amount">{{detail.value}}</td>
-									<td>
-										<a ng-if="entity.currentState.stateDefinition.id == 'Draft'" ng-click="editLiquidationDetail(detail.id)">
-											<span class="glyphicon glyphicon-pencil"></span>
-										</a>
-									</td>
-								</tr>
-							</table>
-							<div ng-include src="'html/components/bill-detail-buttons.html'"></div>
-						</div>
+						<div bill-liquidation-detail entity="entity" detail="billLiquidationDetail"></div>
+						<div ng-include src="'html/components/bill-detail-buttons.html'"></div>
 					</div>
 				
 					<!-- Pestaña de detalles de la factura -->
@@ -194,10 +122,10 @@
 							<div class="col-sm-12">
 								<table class="table">
 									<tr>
-										<th>Concepto</th>
+										<th>{{'concept' | translate}}</th>
 										<th class="data-amount" title="Ajuste operativo">Ajuste Op.</th>
-										<th class="data-amount">Unidades</th>
-										<th class="data-amount">Importe</th>
+										<th class="data-amount">{{'units' | translate}}</th>
+										<th class="data-amount">{{'amount' | translate}}</th>
 										<th></th>
 									</tr>
 									<tr ng-repeat="detail in entity.billDetails">
@@ -281,7 +209,6 @@
 					<div class="tab-pane" id="auditTab">
 						<div ng-include src="'templates/entity-audit-info.html'"></div>
 					</div>
-					
 				</div>
 			</div>
 		</div>
@@ -290,14 +217,14 @@
 		<div class="col-sm-3">
 			<div ng-include src="'templates/entity-toolbar.html'"></div>
 			<div class="m-top-40">
-				<h4>Facturación</h4>
+				<h4>{{'bills' | translate}}</h4>
 				<ul class="list-unstyled">
 					<li><a href="#/bills">{{'billsViewAll' | translate}}</a></li>
 					<li><a href="#/bills?store={{entity.sender.id}}">{{'billsViewByStore' | translate}}</a></li>
 					<li><a href="#/bills?state=Draft">{{'billsViewByPending' | translate}}</a></li>
 				</ul>
 				<div ng-if="entity.liquidation != null">
-					<h4>{{'liquidation' | translate}}</h4>
+					<h4>{{'liquidations' | translate}}</h4>
 					<ul class="list-unstyled">
 						<li><a href="#/liquidations/id/{{entity.liquidation.id}}">{{'liquidationViewByBill' | translate}}</a></li>
 					</ul>

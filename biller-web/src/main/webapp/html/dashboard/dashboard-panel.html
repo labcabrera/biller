@@ -1,0 +1,22 @@
+<div>
+	<div class="panel panel-primary text-center">
+		<div class="panel-heading">
+			<span class="main-title"><span class="glyphicon glyphicon glyphicon-dashboard"></span> {{'dashboard' | translate}}</span>
+		</div>
+	</div>
+
+	<!-- ALERTS -->
+	<div dashboard-alert-pending-contracts rest-path="/dashboard/contract/pending"></div>
+
+	<!-- LINE CHARTS -->
+	<div bar-line-chart rest-path="rest/dashboard/company/evolution/amount" chart-type="bar" panel-name="{{'dashboardStoreEvolutionAmount' | translate}}"></div>
+
+	<!-- PIE CHARTS -->
+	<div class="row">
+		<div class="col-sm-6">
+			<div pie-chart rest-path="rest/dashboard/company/storeDistribution" panel-name="{{'dashboardStoreDistribution' | translate}}"></div>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+
+</div>

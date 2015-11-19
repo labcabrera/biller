@@ -1,0 +1,5 @@
+
+<select class="form-control" ng-init="ngModel=-1" ng-model="ngModel">
+	<option value="-1" selected>{{'all' | translate}}</option>
+	<option ng-repeat="n in [] | range:currentYear-10:currentYear:true" value="{{n}}">{{n}}</option>
+</select>

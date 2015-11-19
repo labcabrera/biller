@@ -441,5 +441,35 @@
 			}
 		};
 	});
+	
+	billerModule.directive('billLiquidationDetail', function() {
+		return {
+			restrict : 'AE',
+			controller : function($scope, $http) {
+				$scope.editLiquidationDetail = function(id) {
+					console.log("id: " + id)
+					if(id != null && !(typeof id === 'undefined') ) {
+						$scope.isSaving = true;
+						$http.get('rest/bills/detail/liquidation/id/' + id).success(function(data) {
+							console.log("data: " + data);
+							$scope.detail = data;
+							$scope.detail.bill = { "id": $scope.entity.id };
+							$scope.isSaving = false;
+						});	
+					} else {
+						var d = $scope.detail;
+						d.id = d.units = d.value = d.name = d.dummyType = null;
+						d.liquidationIncluded = true;
+					}
+					$('#editBillLiquidationConceptModal').modal('show');			
+				};
+			},
+			templateUrl : 'html/components/bill-liquidation-detail.html',
+			scope : {
+				entity: '=',
+				detail: '='
+			}
+		};
+	});
 
 })();

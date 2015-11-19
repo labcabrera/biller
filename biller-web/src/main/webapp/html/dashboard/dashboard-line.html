@@ -1,0 +1,26 @@
+<div class="panel panel-info" ng-hide="close">
+	<div class="panel-heading">
+		{{panelName}}
+		<button type="button btn-sm" class="close" ng-click="close=true">
+			<span class=" glyphicon glyphicon-remove"></span>
+		</button>
+		<button type="button btn-sm" class="close" ng-click="collapse=!collapse">
+			<span class="glyphicon glyphicon-minus"></span>
+		</button>
+	</div>
+	<div class="panel-body" collapse="collapse">
+		<div class="row">
+			<div class="col-sm-10">
+				<div ng-show="hasData">
+					<canvas tc-chartjs chart-type="{{chartType}}" chart-data="myData" chart-options="myOptions" chart-legend="aaaaaa" width="780" height="250"></canvas>
+				</div>
+				<div class="center top-10" ng-show="!hasData">
+					<label>{{'dashboardNoData' | translate}}</label>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<div chart-year ng-model="year"></div>
+			</div>
+		</div>
+	</div>
+</div>

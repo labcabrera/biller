@@ -14,6 +14,7 @@ import com.luckia.biller.web.rest.BinaryRestService;
 import com.luckia.biller.web.rest.CompanyGroupRestService;
 import com.luckia.biller.web.rest.CompanyRestService;
 import com.luckia.biller.web.rest.CostCenterRestService;
+import com.luckia.biller.web.rest.DashboardRestService;
 import com.luckia.biller.web.rest.LiquidationRestService;
 import com.luckia.biller.web.rest.OwnerRestService;
 import com.luckia.biller.web.rest.ProvinceTaxesRestService;
@@ -59,6 +60,7 @@ public class RestModule implements Module {
 		binder.bind(CompanyGroupRestService.class);
 		binder.bind(CompanyRestService.class);
 		binder.bind(CostCenterRestService.class);
+		binder.bind(DashboardRestService.class);
 		binder.bind(LiquidationRestService.class);
 		binder.bind(OwnerRestService.class);
 		binder.bind(ProvincesRestService.class);
