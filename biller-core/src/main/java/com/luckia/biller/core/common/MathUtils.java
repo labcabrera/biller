@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 public final class MathUtils {
 
 	public static final BigDecimal HUNDRED = new BigDecimal("100.00");
+	public static final BigDecimal THOUSAND = new BigDecimal("1000.00");
 
 	/**
 	 * Devuelve <code>true</code> cuando el valor recibido es <code>null</code> o cero.

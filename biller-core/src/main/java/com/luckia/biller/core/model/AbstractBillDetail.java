@@ -9,14 +9,22 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.luckia.biller.core.jpa.Mergeable;
+import com.luckia.biller.core.jpa.UUIDSequence;
 import com.luckia.biller.core.serialization.NotSerializable;
 
+/**
+ * Entidad abstracta para guardar los ajustes tanto de la factura de un establecimiento como de su miniliquidacion.
+ * 
+ * @see BillDetail
+ * @see BillLiquidationDetail
+ */
 @Entity
 @Table(name = "B_BILL_DETAIL")
 @SuppressWarnings("serial")
@@ -24,6 +32,7 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 
 	@Id
 	@Column(name = "ID", length = 36)
+	@GeneratedValue(generator = UUIDSequence.UUIDSEQUENCE)
 	private String id;
 
 	@NotSerializable

@@ -9,9 +9,13 @@ import java.math.BigDecimal;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.Owner;
 import com.luckia.biller.core.model.TerminalRelation;
+import com.luckia.biller.core.serialization.entities.BillSerializer;
+import com.luckia.biller.core.serialization.entities.BillTypeSerializer;
+import com.luckia.biller.core.serialization.entities.OwnerSerializer;
 
 /**
  * Componente encargado de serializar y deserializar las entidades utilizando JSON.
@@ -30,6 +34,7 @@ public class Serializer {
 		builder.registerTypeHierarchyAdapter(TerminalRelation.class, new TerminalRelationSerializer());
 		builder.registerTypeAdapter(BigDecimal.class, new BigDecimalSerializer());
 		builder.registerTypeAdapter(BillType.class, new BillTypeSerializer());
+		builder.registerTypeAdapter(Bill.class, new BillSerializer());
 		return builder;
 	}
 

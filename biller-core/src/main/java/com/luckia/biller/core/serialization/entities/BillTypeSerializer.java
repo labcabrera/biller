@@ -1,4 +1,4 @@
-package com.luckia.biller.core.serialization;
+package com.luckia.biller.core.serialization.entities;
 
 import java.lang.reflect.Type;
 

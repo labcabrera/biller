@@ -6,6 +6,7 @@
 package com.luckia.biller.core.model;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
@@ -13,6 +14,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @SuppressWarnings("serial")
+@DiscriminatorValue("L")
 public class BillLiquidationDetail extends AbstractBillDetail {
 
 	/**

@@ -5,6 +5,7 @@
  ******************************************************************************/
 package com.luckia.biller.core.model;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
@@ -12,6 +13,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @SuppressWarnings("serial")
+@DiscriminatorValue("B")
 public class BillDetail extends AbstractBillDetail implements Cloneable {
 
 	@Override
