@@ -13,7 +13,7 @@ public class BillSerializer extends AbstractEntitySerializer implements JsonSeri
 
 	@Override
 	public JsonElement serialize(Bill src, Type typeOfSrc, JsonSerializationContext context) {
-		JsonObject result = context.serialize(src, InternalBillSerializer.class).getAsJsonObject();
+		JsonObject result = context.serialize(src, InternalBill.class).getAsJsonObject();
 		clean(result, "sender", Arrays.asList("id", "name"));
 		clean(result, "receiver", Arrays.asList("id", "name"));
 		clean(result, "liquidation", Arrays.asList("id"));
@@ -22,7 +22,7 @@ public class BillSerializer extends AbstractEntitySerializer implements JsonSeri
 	}
 
 	@SuppressWarnings("serial")
-	private final class InternalBillSerializer extends Bill {
+	private final class InternalBill extends Bill {
 	}
 
 }
