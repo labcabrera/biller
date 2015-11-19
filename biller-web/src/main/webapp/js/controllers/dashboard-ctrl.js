@@ -145,21 +145,21 @@
 	});
 
 
-	appModule.directive('dashboardAlertPendingContracts', function() {
+	appModule.directive('dashboardPendingLiquidations', function() {
 		return {
 			restrict : 'AE',
-			templateUrl : 'html/dashboard/dashboard-alert-pending-contracts.html',
-			controller : 'DashboardAlertPendingContractsCtrl',
+			templateUrl : 'html/dashboard/dashboard-pending-liquidations.html',
+			controller : 'DashboardPendingLiquidationsCtrl',
 			scope : {
 			}
 		};
 	});
 	
-	appModule.controller('DashboardAlertPendingContractsCtrl', ['$scope', '$rootScope', '$routeParams', '$http', '$modal', '$translate', function($scope, $rootScope, $routeParams, $http, $modal, $translate) {
+	appModule.controller('DashboardPendingLiquidationsCtrl', ['$scope', '$rootScope', '$routeParams', '$http', '$modal', '$translate', function($scope, $rootScope, $routeParams, $http, $modal, $translate) {
 		$scope.searchResults = {};
 		$scope.setPage  = function(page) {
 			$scope.currentPage = page;
-			$http.get($rootScope.REST_PATH + '/contractAlert/pending', {
+			$http.get('rest/dashboard/liquidation/pending', {
 				params : {
 					p : $scope.currentPage,
 					n : 4

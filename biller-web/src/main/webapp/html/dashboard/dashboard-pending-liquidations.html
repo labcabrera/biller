@@ -1,6 +1,6 @@
 
 <div class="panel panel-default" ng-hide="close">
-	<div class="panel-heading"><span class=" glyphicon glyphicon-warning-sign"></span> {{'dashboardAlertBills' | translate}}
+	<div class="panel-heading"><span class=" glyphicon glyphicon-warning-sign"></span> {{'dashboardPendingLiquidations' | translate}}
 		<button type="button btn-sm" class="close" ng-click="close=true">
 			<span class=" glyphicon glyphicon-remove"></span>
 		</button>
@@ -16,14 +16,15 @@
 					<th>{{'company' | translate}}</th>
 					<th>{{'store' | translate}}</th>
 					<th>{{'alert.title' | translate}}</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr class="animate-pagination" ng-repeat="alert in searchResults.results">
+				<tr class="animate-pagination" ng-repeat="liquidation in searchResults.payloaf">
 					<td>{{(searchResults.currentPage - 1) * searchResults.itemsPerPage + $index + 1}}</td>
-					<td>{{alert.agreementCode}}</td>
-					<td><a href="#contract/view/{{alert.contractId}}">{{alert.contractDraftNumber}}</a></td>
+					<td>{{liquidation.sender.name}}</td>
 					<td>{{alert.title | translate}}</td>
+					<td><a href="#/view/{{alert.contractId}}">{{'view' | translate}}</a></td>
 				</tr>
 			</tbody>
 		</table>

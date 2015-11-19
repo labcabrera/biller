@@ -13,13 +13,10 @@
 			</div>
 			-->
 		
-			<!-- ALERTS -->
-			<div dashboard-alert-pending-contracts rest-path="/dashboard/contract/pending"></div>
+			<div dashboard-pending-liquidations rest-path="/dashboard/contract/pending"></div>
 		
-			<!-- LINE CHARTS -->
 			<div bar-line-chart rest-path="rest/dashboard/company/evolution/amount" chart-type="bar" panel-name="{{'dashboardCompanyEvolutionAmount' | translate}}"></div>
 		
-			<!-- PIE CHARTS -->
 			<div class="row">
 				<div class="col-sm-6">
 					<div pie-chart rest-path="rest/dashboard/company/storeDistribution" panel-name="{{'dashboardStoreDistribution' | translate}}"></div>

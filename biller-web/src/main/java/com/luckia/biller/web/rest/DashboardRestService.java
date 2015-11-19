@@ -15,6 +15,8 @@ import javax.ws.rs.QueryParam;
 
 import org.joda.time.DateTime;
 
+import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.web.model.ChartModel;
 
 @Path("/dashboard")
@@ -25,6 +27,7 @@ public class DashboardRestService {
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 
+	// TODO dummy data
 	@GET
 	@Path("/company/evolution/amount")
 	public List<ChartModel> contractEvolutionAmount() {
@@ -42,6 +45,8 @@ public class DashboardRestService {
 		list.add(new ChartModel("Diciembre", 0d));
 		return list;
 	}
+
+	// TODO dummy data
 	@GET
 	@Path("company/storeDistribution")
 	public List<ChartModel> companyStoreDistribution() {
@@ -59,8 +64,17 @@ public class DashboardRestService {
 		list.add(new ChartModel("Bar X", 100d));
 		return list;
 	}
-	
-	
+
+	// TODO filtrar
+	@GET
+	@Path("liquidation/pending")
+	public Message<List<Liquidation>> liquidationPending(@QueryParam("n") Integer n, @QueryParam("p") Integer p) {
+		EntityManager entityManager = entityManagerProvider.get();
+		TypedQuery<Liquidation> query = entityManager.createQuery("select e from Liquidation e", Liquidation.class);
+		query.setMaxResults(10);
+		List<Liquidation> list = query.getResultList();
+		return new Message<List<Liquidation>>().withPayload(list);
+	}
 
 	@GET
 	@Path("/contract/agreement")

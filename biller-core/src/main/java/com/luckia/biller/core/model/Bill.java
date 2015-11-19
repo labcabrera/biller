@@ -29,18 +29,15 @@ import org.eclipse.persistence.annotations.ChangeTrackingType;
 import com.luckia.biller.core.jpa.Mergeable;
 
 /**
- * Entidad que representa una factura. La aplicacion genera las facturas que emiten los establecimientos a sus operadores de máquinas de
- * juego.
+ * Entidad que representa una factura. La aplicacion genera las facturas que emiten los establecimientos a sus operadores de máquinas de juego.
  * <ul>
  * <li>En emisor de la factura será el titular del establecimiento.</li>
  * <li>El receptor de la factura será la empresa a la que está asociada el establecimiento</li>
- * <li>El código de la factura se generará secuencialmente a partir de la secuencia de cada uno de los clientes. El código solo se generará
- * una vez se aprueba la factura</li>
+ * <li>El código de la factura se generará secuencialmente a partir de la secuencia de cada uno de los clientes. El código solo se generará una vez se aprueba la factura</li>
  * </ul>
  * Los detalles de las facturas tienen tres posibilidades:
  * <ul>
- * <li><b>Ajustes operativos</b> (incluidos en la liquidacion): los ajustes operativos representan robos o descuadres que practicamente
- * siempre serán negativos.</li>
+ * <li><b>Ajustes operativos</b> (incluidos en la liquidacion): los ajustes operativos representan robos o descuadres que practicamente siempre serán negativos.</li>
  * <li><b>Ajustes manuales incluídos en la liquidación</b></li>
  * <li><b>Ajustes manuales NO incluídos en la liquidación</b></li>
  * </ul>
@@ -56,8 +53,7 @@ import com.luckia.biller.core.jpa.Mergeable;
 public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	/**
-	 * Determinadas facturas pueden tener una relación padre-hijo con otras (por ejemplo las rectificaciones). Este atributo nos permite
-	 * definir esta relación.
+	 * Determinadas facturas pueden tener una relación padre-hijo con otras (por ejemplo las rectificaciones). Este atributo nos permite definir esta relación.
 	 */
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "PARENT_ID")
