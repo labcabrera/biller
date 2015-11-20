@@ -13,8 +13,10 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.TerminalRelation;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
@@ -52,6 +54,7 @@ public class TerminalRelationRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
+	@RegisterActivity(type = UserActivityType.TERMINAL_RELATION_MERGE)
 	public Message<TerminalRelation> merge(TerminalRelation entity) {
 		try {
 			return entityService.merge(entity);
@@ -65,6 +68,7 @@ public class TerminalRelationRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/remove/{id}")
+	@RegisterActivity(type = UserActivityType.TERMINAL_RELATION_REMOVE)
 	public Message<TerminalRelation> remove(@PathParam("id") Long id) {
 		try {
 			return entityService.remove(id);

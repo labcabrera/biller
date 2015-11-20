@@ -1,5 +1,7 @@
 package com.luckia.biller.web.rest;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -104,9 +106,9 @@ public class ReportRestService {
 			} else {
 				entities = entityManagerProvider.get().createQuery("select e from Company e", Company.class).getResultList();
 			}
-			Message<AppFile> message = liquidationReportGenerator.generate(from.getValue(), to.getValue(), entities);
-			InputStream in = fileService.getInputStream(message.getPayload());
-			ResponseBuilder response = Response.ok(in);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			liquidationReportGenerator.generate(from.getValue(), to.getValue(), entities, out);
+			ResponseBuilder response = Response.ok(new ByteArrayInputStream(out.toByteArray()));
 			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "Liquidaciones.xls"));
 			response.header("Content-Type", FileService.CONTENT_TYPE_EXCEL);
 			return response.build();
