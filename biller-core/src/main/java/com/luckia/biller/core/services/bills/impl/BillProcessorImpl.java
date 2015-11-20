@@ -45,6 +45,7 @@ import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
+import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 
 /**
@@ -74,12 +75,13 @@ public class BillProcessorImpl implements BillProcessor {
 	private Injector injector;
 	@Inject
 	private LiquidationProcessor liquidationProcessor;
+	@Inject
+	private ProvinceTaxesService provinceTaxesService;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.billing.BillProcessor#generateBill(com.luckia.biller.core.model.Store,
-	 * org.apache.commons.lang3.Range)
+	 * @see com.luckia.biller.core.services.billing.BillProcessor#generateBill(com.luckia.biller.core.model.Store, org.apache.commons.lang3.Range)
 	 */
 	@Override
 	@Transactional
@@ -146,17 +148,12 @@ public class BillProcessorImpl implements BillProcessor {
 		bill.setAmount(amount);
 		bill.setVatPercent(vatPercent);
 		bill.setVatAmount(vatAmount);
-
 		// Procesamos la liquidacion
-		// BigDecimal liquidationBetAmount = BigDecimal.ZERO;
-		// BigDecimal liquidationSatAmount = BigDecimal.ZERO;
-		// BigDecimal liquidationPricePerLocation = BigDecimal.ZERO;
 		BigDecimal liquidationTotalAmount = BigDecimal.ZERO;
 		BigDecimal liquidationVatAmount = BigDecimal.ZERO;
 		BigDecimal liquidationNetAmount = BigDecimal.ZERO;
 		BigDecimal liquidationManualAmount = BigDecimal.ZERO;
 		BigDecimal liquidationOuterAmount = BigDecimal.ZERO;
-
 		// Primero calculamos los conceptos de liquidacion
 		for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
 			BigDecimal partial = MathUtils.safeNull(detail.getValue());
@@ -171,36 +168,7 @@ public class BillProcessorImpl implements BillProcessor {
 				}
 			} else {
 				liquidationOuterAmount = liquidationOuterAmount.add(partial);
-
 			}
-
-			// if (detail.getConcept() == null) {
-			// LOG.warn("Missing concept in bill {}", bill);
-			// } else if (detail.getLiquidationIncluded() == null || detail.getLiquidationIncluded()) {
-			// switch (detail.getConcept()) {
-			// case Stakes:
-			// case GGR:
-			// case NGR:
-			// case NR:
-			// liquidationBetAmount = liquidationBetAmount.add(partial);
-			// break;
-			// case SatMonthlyFees:
-			// case CommercialMonthlyFees:
-			// liquidationSatAmount = liquidationSatAmount.add(partial);
-			// break;
-			// case PricePerLocation:
-			// liquidationPricePerLocation = liquidationPricePerLocation.add(partial);
-			// break;
-			// case MANUAL:
-			// liquidationManualAmount = liquidationManualAmount.add(partial);
-			// break;
-			// default:
-			// LOG.warn("Ignorando concepto no esperado en la liquidacion: {}", detail.getConcept());
-			// break;
-			// }
-			// } else if (detail.getLiquidationIncluded() != null && !detail.getLiquidationIncluded()) {
-			// liquidationOuterAmount = liquidationOuterAmount.add(partial);
-			// }
 		}
 		bill.setLiquidationBetAmount(BigDecimal.ZERO);
 		bill.setLiquidationSatAmount(BigDecimal.ZERO);
@@ -210,24 +178,12 @@ public class BillProcessorImpl implements BillProcessor {
 		bill.setLiquidationManualAmount(liquidationManualAmount);
 		bill.setLiquidationOuterAmount(liquidationOuterAmount);
 		entityManager.merge(bill);
-
 		if (bill.getLiquidation() != null) {
 			entityManager.flush();
 			entityManager.clear();
 			Liquidation liquidation = entityManager.find(Liquidation.class, bill.getLiquidation().getId());
 			LOG.debug("Actualizando resultados de la liquidacion {}", liquidation);
 			liquidationProcessor.processResults(liquidation);
-			// BigDecimal totalAmount = BigDecimal.ZERO;
-			// for (Bill i : liquidation.getBills()) {
-			// LOG.debug("Liquidacion de {}: {}", i.getSender(), i.getLiquidationTotalAmount());
-			// if (MathUtils.isNotZero(i.getLiquidationTotalAmount())) {
-			// totalAmount = totalAmount.add(i.getLiquidationTotalAmount());
-			// } else {
-			// LOG.warn("La liquidacion de {} es nula", i.getSender());
-			// }
-			// }
-			// liquidation.setAmount(totalAmount);
-			// LOG.debug("Resultado de la liquidacion: {}", totalAmount);
 			entityManager.merge(liquidation);
 		}
 	}
@@ -347,14 +303,14 @@ public class BillProcessorImpl implements BillProcessor {
 		if (detail.getLiquidationIncluded()) {
 			switch (bill.getModel().getVatLiquidationType()) {
 			case LIQUIDATION_INCLUDED:
-				vatPercent = new BigDecimal("21"); // TODO resolver
+				vatPercent = provinceTaxesService.getVatPercent(bill);
 				BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent).divide(MathUtils.HUNDRED);
 				netValue = receivedValue.divide(divisor, 2, RoundingMode.HALF_EVEN);
 				vatValue = receivedValue.subtract(netValue);
 				value = netValue.add(vatValue);
 				break;
 			case LIQUIDATION_ADDED:
-				vatPercent = new BigDecimal("21"); // TODO resolver
+				vatPercent = provinceTaxesService.getVatPercent(bill);
 				netValue = receivedValue;
 				vatValue = netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 				value = netValue.add(vatValue);
@@ -416,7 +372,7 @@ public class BillProcessorImpl implements BillProcessor {
 	@Transactional
 	@RegisterActivity(type = UserActivityType.BILL_REMOVE)
 	public void remove(Bill bill) {
-		LOG.info("Eliminando factura {}", bill);
+		LOG.info("Removing bill {} ({})", bill, bill.getId());
 		// Eliminamos los detalles
 		EntityManager entityManager = entityManagerProvider.get();
 		for (Object i : bill.getBillDetails()) {

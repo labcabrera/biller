@@ -187,7 +187,6 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 
 					StringBuffer comments = new StringBuffer();
 
-					// TODO en algunos casos aparece como titular una empresa
 					Owner owner = null;
 					if (!"tbd".equals(ownerCompleteName) && !"?".equals(ownerCompleteName)) {
 						owner = new Owner();

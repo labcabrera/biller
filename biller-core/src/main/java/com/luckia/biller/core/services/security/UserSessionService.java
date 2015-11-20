@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-//import javax.inject.Inject;
-//import javax.inject.Named;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -21,7 +21,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.User;
 import com.luckia.biller.core.model.UserSession;
@@ -34,14 +33,13 @@ public class UserSessionService {
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 
-	// TODO leer de configuracion
-	// @Inject
-	// @Named("security.password-digest-algoritm")
-	private String passwordDigestAlgoritm = "SHA-256";
+	@Inject
+	@Named("security.password-digest-algoritm")
+	private String passwordDigestAlgoritm;
 
-	// @Inject(optional = true)
-	// @Named("security.session-expiration-minutes")
-	private Integer sessionExpiration = 30;
+	@Inject
+	@Named("security.session-expiration-minutes")
+	private Integer sessionExpiration;
 
 	public Message<Map<String, Object>> login(String key, String password) {
 		Message<Map<String, Object>> result = new Message<>();
@@ -90,10 +88,12 @@ public class UserSessionService {
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.createQuery("delete from UserSession e where e.user = :user").setParameter("user", user).executeUpdate();
 		UserSession session = new UserSession();
+		Date now = new DateTime().toDate();
 		session.setSession(UUID.randomUUID().toString());
 		session.setUser(user);
-		session.setCreated(new DateTime().toDate());
+		session.setCreated(now);
 		session.setLastAccess(session.getCreated());
+		session.setExpiration(calculateExpiration(now));
 		entityManager.persist(session);
 		return session;
 	}

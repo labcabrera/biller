@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.NoAvailableDataException;
 import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
@@ -31,10 +32,6 @@ import com.luckia.biller.core.model.common.Message;
 public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ProvinceTaxesService.class);
-
-	// TODO eliminar valor por defecto
-	private static final BigDecimal DEFAULT_FEES_VALUE = new BigDecimal("10.00");
-	private static final BigDecimal DEFAULT_VAT = new BigDecimal("21.00");
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
@@ -61,7 +58,7 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 		if (entity != null && entity.getFeesPercent() != null) {
 			return entity.getFeesPercent();
 		} else {
-			return DEFAULT_FEES_VALUE;
+			throw new NoAvailableDataException("Cant recover games fees percent from bill " + bill.getId());
 		}
 	}
 
@@ -70,8 +67,7 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 		if (entity != null && entity.getVatPercent() != null) {
 			return entity.getVatPercent();
 		} else {
-			LOG.warn("Missing province vat percent {}", entity.getProvince().getName());
-			return DEFAULT_VAT;
+			throw new NoAvailableDataException("Cant recover vat percent from bill " + bill.getId());
 		}
 	}
 

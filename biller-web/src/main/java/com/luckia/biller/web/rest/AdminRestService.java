@@ -30,7 +30,6 @@ import com.google.inject.Injector;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
-import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
@@ -159,33 +158,6 @@ public class AdminRestService {
 				LOG.debug("Finalizado el tratamiento de {} tareas", tasks.size());
 			}
 			return new Message<String>(Message.CODE_SUCCESS, String.format("Recalculadas %s liquidaciones", tasks.size()));
-		} catch (Exception ex) {
-			LOG.error("Error al recalcular la factura", ex);
-			return new Message<String>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());
-		}
-	}
-
-	// TODO este metodo ya no se utiliza
-	public Message<String> calculateNewStores(@PathParam("year") Integer year, @PathParam("month") Integer month) {
-		try {
-			Range<Date> range = getEffectiveRange(year, month);
-			EntityManager entityManager = entityManagerProvider.get();
-			LOG.info("Buscando nuevos establecimientos para los que hay que generar las facturas");
-			TypedQuery<Store> storeQuery = entityManager.createQuery("select s from Store s order by s.name", Store.class);
-			TypedQuery<Bill> queryBills = entityManager.createQuery("select b from Bill b where b.sender = :store and b.billDate >= :from and b.billDate <= :to", Bill.class);
-			List<Store> stores = storeQuery.getResultList();
-			List<Store> targets = new ArrayList<>();
-			for (Store store : stores) {
-				queryBills.setParameter("store", store);
-				queryBills.setParameter("from", range.getMinimum());
-				queryBills.setParameter("to", range.getMaximum());
-				if (queryBills.getResultList().isEmpty()) {
-					LOG.debug("Detectado establecimiento sin facturas: " + store.getName());
-					targets.add(store);
-				}
-			}
-			// TODO Procesar esos establecimientos
-			return new Message<String>(Message.CODE_SUCCESS, String.format("Encontrados %s establecimientos sin facturacion", targets.size()));
 		} catch (Exception ex) {
 			LOG.error("Error al recalcular la factura", ex);
 			return new Message<String>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());

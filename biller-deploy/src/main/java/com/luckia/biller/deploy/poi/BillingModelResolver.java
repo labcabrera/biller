@@ -41,7 +41,6 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 		current.setStoreModel(new BillingModelAttributes());
 		current.setCompanyModel(new BillingModelAttributes());
 		current.getStoreModel().setStakesPercent(parseBigDecimal(row.getCell(13), 4).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
-
 		current.getCompanyModel().setStakesPercent(parseBigDecimal(row.getCell(14), 4).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
 		current.getCompanyModel().setGgrPercent(parseBigDecimal(row.getCell(15), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
 		current.getCompanyModel().setNrPercent(parseBigDecimal(row.getCell(16), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));

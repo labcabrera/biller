@@ -215,9 +215,6 @@ public class FiqlParser {
 			return name + operator + value;
 		}
 
-		/**
-		 * TODO Buscar una mejor solucion para la conversion de tipos a la hora de generar los predicados.
-		 */
 		@Override
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public Predicate build() {

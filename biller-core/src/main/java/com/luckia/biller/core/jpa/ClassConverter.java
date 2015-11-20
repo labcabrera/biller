@@ -18,8 +18,7 @@ public class ClassConverter implements Converter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.persistence.mappings.converters.Converter# convertObjectValueToDataValue(java.lang.Object,
-	 * org.eclipse.persistence.sessions.Session)
+	 * @see org.eclipse.persistence.mappings.converters.Converter# convertObjectValueToDataValue(java.lang.Object, org.eclipse.persistence.sessions.Session)
 	 */
 	@Override
 	public Object convertObjectValueToDataValue(Object objectValue, Session session) {
@@ -37,8 +36,7 @@ public class ClassConverter implements Converter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.persistence.mappings.converters.Converter# convertDataValueToObjectValue(java.lang.Object,
-	 * org.eclipse.persistence.sessions.Session)
+	 * @see org.eclipse.persistence.mappings.converters.Converter# convertDataValueToObjectValue(java.lang.Object, org.eclipse.persistence.sessions.Session)
 	 */
 	@Override
 	public Object convertDataValueToObjectValue(Object dataValue, Session session) {
@@ -59,14 +57,10 @@ public class ClassConverter implements Converter {
 
 	@Override
 	public boolean isMutable() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void initialize(DatabaseMapping mapping, Session session) {
-		// TODO Auto-generated method stub
-
 	}
-
 }
