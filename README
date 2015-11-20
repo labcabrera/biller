@@ -1,6 +1,7 @@
 FIX
 	- Revisar reporte de liquidaciones tras cambio de modelo
 	- Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
+	- En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar
 
 TODO
 	- Los reports no se almacenan en base de datos

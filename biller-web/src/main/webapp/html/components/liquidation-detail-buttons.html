@@ -26,7 +26,7 @@
 		<a
 			class="btn btn-primary btn-sm"
 			ng-if="entity.reportFile != null"
-			href="rest/binary/download/{{entity.reportFile.id}}"
+			href="rest/report/liquidations?from={{entity.dateFrom | limitTo: 10}}&to={{entity.dateTo | limitTo: 10}}&ids={{entity.sender.id}}"
 			role="button"
 			ng-disabled="isSaving">{{'viewReport' | translate}}</a>
 		<button
