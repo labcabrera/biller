@@ -4,7 +4,8 @@ FIX
 	- En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar
 
 TODO
-	- Los reports no se almacenan en base de datos
+	- Configuracion de logback en produccion / preproducción 
+	- Los reports no se deban almacenar en base de datos (se calculan al vuelo)
 	- Proceso de migración de facturas y liquidaciones
 	- Eliminar el reportFile de la liquidacion
 	- Añadir los RegisterActivity que faltan
