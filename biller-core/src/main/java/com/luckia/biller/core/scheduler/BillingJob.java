@@ -1,8 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2012 Kotasoft S.L.
- * All rights reserved. This program and the accompanying materials
- * may only be used prior written consent of Kotasoft S.L.
- ******************************************************************************/
 package com.luckia.biller.core.scheduler;
 
 import java.util.Calendar;
@@ -33,8 +28,8 @@ import com.luckia.biller.core.services.bills.BillProcessor;
  * <ul>
  * <li><b>from</b>: fecha de inicio de facturacion</li>
  * <li><b>to</b>: fecha de final de la facturacion</li>
- * <li><b>thread.count</b>: numero de threads en los que se calcularan en paralelo las facturas. En caso de no establecerse este parametro
- * el job se ejecutara utilizando 10 threads.</li>
+ * <li><b>thread.count</b>: numero de threads en los que se calcularan en paralelo las facturas. En caso de no establecerse este parametro el job se ejecutara utilizando 10
+ * threads.</li>
  * </ul>
  */
 public class BillingJob extends BaseJob {
