@@ -18,17 +18,17 @@
 			href="rest/binary/download/{{entity.pdfFile.id}}"
 			role="button"
 			ng-disabled="isSaving">{{'downloadPdf' | translate}}</a>
+		<button
+			ng-click="recreatePDF()"
+			ng-if="entity.currentState.stateDefinition.id != 'Draft'"
+			class='btn btn-sm btn-primary'
+			ng-disabled="isSaving">{{'recreatePdf' | translate}}</button>
 		<a
 			class="btn btn-primary btn-sm"
 			ng-if="entity.reportFile != null"
 			href="rest/binary/download/{{entity.reportFile.id}}"
 			role="button"
 			ng-disabled="isSaving">{{'viewReport' | translate}}</a>
-		<button
-			ng-click="recreatePDF()"
-			ng-if="entity.currentState.stateDefinition.id != 'Draft'"
-			class='btn btn-sm btn-primary'
-			ng-disabled="isSaving">{{'recreatePdf' | translate}}</button>
 		<button
 			ng-click="draft()"
 			ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'"

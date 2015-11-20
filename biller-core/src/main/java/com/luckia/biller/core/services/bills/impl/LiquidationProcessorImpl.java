@@ -163,6 +163,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		results.setTotalAmount(totalAmount);
 		results.setReceiverAmount(storeCash.subtract(totalAmount));
 		results.setEffectiveLiquidationAmount(results.getReceiverAmount().add(results.getLiquidationManualOuterAmount()));
+		liquidation.setAmount(totalAmount);
 	}
 
 	@Override

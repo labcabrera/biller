@@ -1,7 +1,11 @@
 FIX
 	- Revisar reporte de liquidaciones tras cambio de modelo
 	- Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
-TODO:
+
+TODO
+	- Los reports no se almacenan en base de datos
+	- Proceso de migración de facturas y liquidaciones
+	- Eliminar el reportFile de la liquidacion
 	- Añadir los RegisterActivity que faltan
 	- Pensar en combinar el RegisterActivity para que actualice la informacion de auditoria
 	- Historico en la relacion de terminales y locales

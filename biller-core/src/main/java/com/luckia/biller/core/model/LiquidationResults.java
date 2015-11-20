@@ -22,7 +22,7 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	/**
 	 * Saldo de caja ajustado despues de los ajustes manuales.
 	 */
-	@Column(name = "CASH_STORE_ADJUSTMENT_AMOUNT", precision = 18, scale = 2)
+	@Column(name = "CASH_STORE_EFFECTIVE_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal cashStoreEffectiveAmount;
 
 	/**
@@ -37,7 +37,7 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	@Column(name = "TOTAL_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal totalAmount;
 
-	@Column(name = "ADJUSTMENT_AMOUNT", precision = 18, scale = 2)
+	@Column(name = "LIQUIDATION_MANUAL_INNER_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal liquidationManualInnerAmount;
 
 	/**
@@ -49,7 +49,7 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	/**
 	 * Importe total de ajustes manuales no incluidos en el importe de liquidacion.
 	 */
-	@Column(name = "TOTAL_OUTER_AMOUNT", precision = 18, scale = 2)
+	@Column(name = "LIQUIDATION_MANUAL_OUTER_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal liquidationManualOuterAmount;
 
 	/** Resultado de la liquidacion de Egasa */
@@ -61,6 +61,12 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	 */
 	@Column(name = "LIQUIDATION_EFFECTIVE_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal effectiveLiquidationAmount;
+
+	/**
+	 * Version con la que se ha generado la liquidacion (utilizado para migraciones)
+	 */
+	@Column(name = "MODEL_VERSION", length = 8)
+	private String modelVersion;
 
 	// obsoletes (migrar) -----------------------------------------------------------------
 
@@ -189,6 +195,14 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 		this.effectiveLiquidationAmount = value;
 	}
 
+	public String getModelVersion() {
+		return modelVersion;
+	}
+
+	public void setModelVersion(String modelVersion) {
+		this.modelVersion = modelVersion;
+	}
+
 	@Override
 	public void merge(LiquidationResults entity) {
 		if (entity != null) {
@@ -204,6 +218,7 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 			this.totalAmount = entity.totalAmount;
 			this.storeManualOuterAmount = entity.storeManualOuterAmount;
 			this.effectiveLiquidationAmount = entity.effectiveLiquidationAmount;
+			this.modelVersion = entity.modelVersion;
 		}
 	}
 
