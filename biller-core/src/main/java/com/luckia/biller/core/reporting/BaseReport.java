@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -28,18 +29,19 @@ public abstract class BaseReport {
 
 	private Map<ReportStyle, HSSFCellStyle> styles;
 
-	// e7501e
 	public void init(HSSFWorkbook workbook) {
+		HSSFFont font = workbook.createFont();
+		font.setFontName("Verdana");
 		styles = new HashMap<>();
-		styles.put(ReportStyle.DEFAULT, buildStyle(workbook));
-		styles.put(ReportStyle.DEFAULT_DATE, buildDateStyle(workbook, null));
-		styles.put(ReportStyle.DEFAULT_NUMBERIC, buildNumericStyle(workbook, null));
-		styles.put(ReportStyle.HEADER, buildStyle(workbook, HSSFColor.LIGHT_ORANGE.index));
-		styles.put(ReportStyle.HEADER, buildNumericStyle(workbook, HSSFColor.LIGHT_ORANGE.index));
-		styles.put(ReportStyle.HEADER_NUMBERIC, buildStyle(workbook, HSSFColor.LIGHT_ORANGE.index));
-		styles.put(ReportStyle.DISABLED, buildStyle(workbook, HSSFColor.GREY_25_PERCENT.index));
-		styles.put(ReportStyle.DISABLED_DATE, buildDateStyle(workbook, HSSFColor.GREY_25_PERCENT.index));
-		styles.put(ReportStyle.DISABLED_NUMERIC, buildNumericStyle(workbook, HSSFColor.GREY_25_PERCENT.index));
+		styles.put(ReportStyle.DEFAULT, buildStyle(workbook, font));
+		styles.put(ReportStyle.DEFAULT_DATE, buildDateStyle(workbook, null, font));
+		styles.put(ReportStyle.DEFAULT_NUMBERIC, buildNumericStyle(workbook, null, font));
+		styles.put(ReportStyle.HEADER, buildStyle(workbook, HSSFColor.LIGHT_ORANGE.index, font));
+		styles.put(ReportStyle.HEADER, buildNumericStyle(workbook, HSSFColor.LIGHT_ORANGE.index, font));
+		styles.put(ReportStyle.HEADER_NUMBERIC, buildStyle(workbook, HSSFColor.LIGHT_ORANGE.index, font));
+		styles.put(ReportStyle.DISABLED, buildStyle(workbook, HSSFColor.GREY_25_PERCENT.index, font));
+		styles.put(ReportStyle.DISABLED_DATE, buildDateStyle(workbook, HSSFColor.GREY_25_PERCENT.index, font));
+		styles.put(ReportStyle.DISABLED_NUMERIC, buildNumericStyle(workbook, HSSFColor.GREY_25_PERCENT.index, font));
 	}
 
 	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex, String value) {
@@ -112,20 +114,21 @@ public abstract class BaseReport {
 		return cell;
 	}
 
-	private HSSFCellStyle buildStyle(HSSFWorkbook workbook) {
-		return buildStyle(workbook, null);
+	private HSSFCellStyle buildStyle(HSSFWorkbook workbook, HSSFFont font) {
+		return buildStyle(workbook, null, font);
 	}
 
-	private HSSFCellStyle buildStyle(HSSFWorkbook workbook, Short color) {
+	private HSSFCellStyle buildStyle(HSSFWorkbook workbook, Short color, HSSFFont font) {
 		HSSFCellStyle style = workbook.createCellStyle();
 		if (color != null) {
 			style.setFillForegroundColor(color);
 			style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		}
+		style.setFont(font);
 		return style;
 	}
 
-	private HSSFCellStyle buildNumericStyle(HSSFWorkbook workbook, Short color) {
+	private HSSFCellStyle buildNumericStyle(HSSFWorkbook workbook, Short color, HSSFFont font) {
 		HSSFDataFormat hssfDataFormat = workbook.createDataFormat();
 		HSSFCellStyle style = workbook.createCellStyle();
 		style.setDataFormat(hssfDataFormat.getFormat("#,##0.00"));
@@ -133,10 +136,11 @@ public abstract class BaseReport {
 			style.setFillForegroundColor(color);
 			style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		}
+		style.setFont(font);
 		return style;
 	}
 
-	private HSSFCellStyle buildDateStyle(HSSFWorkbook workbook, Short color) {
+	private HSSFCellStyle buildDateStyle(HSSFWorkbook workbook, Short color, HSSFFont font) {
 		HSSFCellStyle style = workbook.createCellStyle();
 		short format = workbook.createDataFormat().getFormat("dd/MM/yyyy");
 		style = workbook.createCellStyle();
@@ -145,6 +149,7 @@ public abstract class BaseReport {
 			style.setFillForegroundColor(color);
 			style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		}
+		style.setFont(font);
 		return style;
 	}
 }
