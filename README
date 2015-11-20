@@ -13,9 +13,8 @@ TODO:
 	- No generar el PDF de las facturas que están a cero
 	- Administrador de roles y permisos
 	- Administración tareas programadas
-	- Meter gradle
-	- Destinatario de la liquidación
 	- Eliminar los conceptos de ajuste de caja del modelo
 	- PATCH: actualizar el liquidation.model que ahora esta a null
 	- Eliminar la facturas sin resultado
 	- unificar carpetas de html (ahora hay cierto caos con templates, static, html, partials...)
+	- Factura: boton de cerrar las alertas

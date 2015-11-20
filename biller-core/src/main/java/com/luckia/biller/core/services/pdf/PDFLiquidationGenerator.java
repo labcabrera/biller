@@ -132,12 +132,12 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		if (!outerDetails.isEmpty()) {
 			cells.add(createCell("Saldo de caja ajustado", Element.ALIGN_LEFT, boldFont));
 			cells.addAll(createEmptyCells(4));
-			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreAdjustmentAmount()), Element.ALIGN_RIGHT, boldFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreEffectiveAmount()), Element.ALIGN_RIGHT, boldFont));
 		}
 
 		cells.add(createCell("Total liquidación a percibir por " + senderName, Element.ALIGN_LEFT, documentFont));
 		cells.addAll(createEmptyCells(4));
-		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getSenderAmount()), Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getTotalAmount()), Element.ALIGN_RIGHT, documentFont));
 
 		String message;
 		if (StringUtils.isBlank(liquidation.getReceiver().getAccountNumber())) {

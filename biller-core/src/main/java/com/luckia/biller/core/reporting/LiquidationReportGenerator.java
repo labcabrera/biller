@@ -175,7 +175,7 @@ public class LiquidationReportGenerator extends BaseReport {
 		currentRow++;
 		createDisabledCell(sheet, currentRow, textCol, "Total:");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getSenderAmount());
+		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getTotalAmount());
 		currentRow++;
 		createDisabledCell(sheet, currentRow, textCol, "Saldo de caja:");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);

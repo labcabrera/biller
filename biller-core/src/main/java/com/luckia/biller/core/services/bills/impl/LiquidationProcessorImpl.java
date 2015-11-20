@@ -124,9 +124,10 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		BigDecimal vatAmount = BigDecimal.ZERO;
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		BigDecimal storeCash = BigDecimal.ZERO;
-		BigDecimal liquidationManualAmount = BigDecimal.ZERO;
 		BigDecimal storeManualOuterAmount = BigDecimal.ZERO;
-		BigDecimal liquidationOuterAmount = BigDecimal.ZERO;
+		BigDecimal liquidationManualInnerAmount = BigDecimal.ZERO;
+		BigDecimal liquidationManualOuterAmount = BigDecimal.ZERO;
+		// Recorremos las facturas
 		for (Bill bill : liquidation.getBills()) {
 			netAmount = netAmount.add(MathUtils.safeNull(bill.getLiquidationTotalNetAmount()));
 			vatAmount = vatAmount.add(MathUtils.safeNull(bill.getLiquidationTotalVat()));
@@ -134,15 +135,16 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			storeCash = storeCash.add(MathUtils.safeNull(bill.getStoreCash()));
 			storeManualOuterAmount = storeManualOuterAmount.add(MathUtils.safeNull(bill.getLiquidationOuterAmount()));
 		}
+		// Procesamos los detalles de liquidacion
 		if (liquidation.getDetails() != null) {
 			for (LiquidationDetail detail : liquidation.getDetails()) {
 				if (detail.getLiquidationIncluded()) {
 					netAmount = netAmount.add(MathUtils.safeNull(detail.getNetValue()));
 					vatAmount = vatAmount.add(MathUtils.safeNull(detail.getVatValue()));
 					totalAmount = totalAmount.add(MathUtils.safeNull(detail.getValue()));
-					liquidationManualAmount = liquidationManualAmount.add(MathUtils.safeNull(detail.getValue()));
+					liquidationManualInnerAmount = liquidationManualInnerAmount.add(MathUtils.safeNull(detail.getValue()));
 				} else {
-					liquidationOuterAmount = liquidationOuterAmount.add(detail.getValue());
+					liquidationManualOuterAmount = liquidationManualOuterAmount.add(detail.getValue());
 				}
 			}
 		}
@@ -151,18 +153,16 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			results = new LiquidationResults();
 			liquidation.setLiquidationResults(results);
 		}
-		results.setStoreAmount(BigDecimal.ZERO); // TODO eliminar porque no veo para que utiliza
 		results.setStoreManualOuterAmount(storeManualOuterAmount);
-		results.setTotalOuterAmount(storeManualOuterAmount.add(liquidationOuterAmount));
-		results.setAdjustmentAmount(liquidationManualAmount);
+		results.setLiquidationManualOuterAmount(storeManualOuterAmount.add(liquidationManualOuterAmount));
+		results.setLiquidationManualInnerAmount(liquidationManualInnerAmount);
 		results.setCashStoreAmount(storeCash);
-		results.setCashStoreAdjustmentAmount(storeCash.add(storeManualOuterAmount).add(liquidationOuterAmount));
+		results.setCashStoreEffectiveAmount(storeCash.add(storeManualOuterAmount).add(liquidationManualOuterAmount));
 		results.setNetAmount(netAmount);
 		results.setVatAmount(vatAmount);
 		results.setTotalAmount(totalAmount);
 		results.setReceiverAmount(storeCash.subtract(totalAmount));
-		results.setEffectiveLiquidationAmount(results.getReceiverAmount().add(results.getTotalOuterAmount()));
-		results.setSenderAmount(results.getCashStoreAdjustmentAmount().subtract(results.getEffectiveLiquidationAmount()));
+		results.setEffectiveLiquidationAmount(results.getReceiverAmount().add(results.getLiquidationManualOuterAmount()));
 	}
 
 	@Override
