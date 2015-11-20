@@ -21,9 +21,9 @@ import com.luckia.biller.core.model.Liquidation;
 /**
  * Actualiza el modelo en aquellas liquidaciones que carecen de el.
  */
-public class UpdateLiquidationModel {
+public class PatchUpdateLiquidationModel {
 
-	private static final Logger LOG = LoggerFactory.getLogger(UpdateLiquidationModel.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PatchUpdateLiquidationModel.class);
 
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new BillerModule());

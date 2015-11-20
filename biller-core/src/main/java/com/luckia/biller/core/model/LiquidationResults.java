@@ -62,12 +62,6 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	@Column(name = "LIQUIDATION_EFFECTIVE_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal effectiveLiquidationAmount;
 
-	/**
-	 * Version con la que se ha generado la liquidacion (utilizado para migraciones)
-	 */
-	@Column(name = "MODEL_VERSION", length = 8)
-	private String modelVersion;
-
 	// obsoletes (migrar) -----------------------------------------------------------------
 
 	// /** Suma de todos los conceptos por apuestas de las facturas */
@@ -88,32 +82,6 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	// /** Resultado de la liquidacion del operador */
 	// @Column(name = "SENDER_AMOUNT", precision = 18, scale = 2)
 	// private BigDecimal senderAmount;
-
-	// --------------------------------------------------------------------------------------------------------------------
-
-	// public BigDecimal getBetAmount() {
-	// return betAmount;
-	// }
-	//
-	// public void setBetAmount(BigDecimal betAmount) {
-	// this.betAmount = betAmount;
-	// }
-	//
-	// public BigDecimal getSatAmount() {
-	// return satAmount;
-	// }
-	//
-	// public void setSatAmount(BigDecimal satAmount) {
-	// this.satAmount = satAmount;
-	// }
-	//
-	// public BigDecimal getStoreAmount() {
-	// return storeAmount;
-	// }
-	//
-	// public void setStoreAmount(BigDecimal value) {
-	// this.storeAmount = value;
-	// }
 
 	public BigDecimal getLiquidationManualInnerAmount() {
 		return liquidationManualInnerAmount;
@@ -195,31 +163,17 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 		this.effectiveLiquidationAmount = value;
 	}
 
-	public String getModelVersion() {
-		return modelVersion;
-	}
-
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
-
 	@Override
 	public void merge(LiquidationResults entity) {
 		if (entity != null) {
 			this.liquidationManualInnerAmount = entity.liquidationManualInnerAmount;
-			// this.betAmount = entity.betAmount;
 			this.cashStoreAmount = entity.cashStoreAmount;
 			this.receiverAmount = entity.receiverAmount;
-			// this.satAmount = entity.satAmount;
-			// this.senderAmount = entity.senderAmount;
-			// this.storeAmount = entity.storeAmount;
 			this.netAmount = entity.netAmount;
 			this.vatAmount = entity.vatAmount;
 			this.totalAmount = entity.totalAmount;
 			this.storeManualOuterAmount = entity.storeManualOuterAmount;
 			this.effectiveLiquidationAmount = entity.effectiveLiquidationAmount;
-			this.modelVersion = entity.modelVersion;
 		}
 	}
-
 }
