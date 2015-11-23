@@ -19,6 +19,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillLiquidationDetail;
@@ -27,7 +28,6 @@ import com.luckia.biller.core.model.BillerComparator;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
-import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
@@ -143,27 +143,25 @@ public class LiquidationReportGenerator extends BaseReport {
 		int textCol = 3;
 		int blankCol = 4;
 		int valueCol = 5;
-		BigDecimal adjustementAmount = BigDecimal.ZERO;
-		if (liquidation.getDetails() != null) {
-			for (LiquidationDetail i : liquidation.getDetails()) {
-				adjustementAmount = adjustementAmount.add(i.getValue());
-			}
-		}
-		createDisabledCell(sheet, currentRow, textCol, "Ajustes:");
+		createDisabledCell(sheet, currentRow, textCol, "AJUSTES");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, adjustementAmount);
+		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(liquidation.getLiquidationResults().getLiquidationManualInnerAmount()));
 		currentRow++;
-		createDisabledCell(sheet, currentRow, textCol, "Total:");
+		createDisabledCell(sheet, currentRow, textCol, "TOTAL");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getTotalAmount());
+		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(liquidation.getLiquidationResults().getTotalAmount()));
 		currentRow++;
-		createDisabledCell(sheet, currentRow, textCol, "Saldo de caja:");
+		createDisabledCell(sheet, currentRow, textCol, "SALDO DE CAJA");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getCashStoreAmount());
+		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(liquidation.getLiquidationResults().getCashStoreAmount()));
 		currentRow++;
-		createDisabledCell(sheet, currentRow, textCol, "Resultado:");
+		createDisabledCell(sheet, currentRow, textCol, "AJUSTES DE CAJA");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, liquidation.getLiquidationResults().getReceiverAmount());
+		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(liquidation.getLiquidationResults().getLiquidationManualOuterAmount()));
+		currentRow++;
+		createDisabledCell(sheet, currentRow, textCol, "RESULTADO");
+		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
+		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(liquidation.getLiquidationResults().getEffectiveLiquidationAmount()));
 		return currentRow + 1;
 
 	}
@@ -176,7 +174,7 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, liquidation.getSender().getName());
 			createCell(sheet, currentRow, cell++, bill.getSender().getName());
 			createCell(sheet, currentRow, cell++, bill.getBillDate());
-			createCell(sheet, currentRow, cell++, bill.getCurrentState().getStateDefinition().getDesc());
+			createCell(sheet, currentRow, cell++, bill.getCurrentState().getStateDefinition().getDesc().toUpperCase());
 			createCell(sheet, currentRow, cell++, bill.getAmount());
 			createCell(sheet, currentRow, cell++, bill.getLiquidationTotalAmount());
 			createCell(sheet, currentRow, cell++, bill.getDateFrom());
