@@ -17,6 +17,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class UserSessionService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserSessionService.class);
 
-	@Inject
+	@Inject	
 	private Provider<EntityManager> entityManagerProvider;
 
 	@Inject
@@ -44,8 +45,7 @@ public class UserSessionService {
 	public Message<Map<String, Object>> login(String key, String password) {
 		Message<Map<String, Object>> result = new Message<>();
 		EntityManager entityManager = entityManagerProvider.get();
-		String qlString = "select e from User e where e.alias = :key or e.email = :key";
-		TypedQuery<User> query = entityManager.createQuery(qlString, User.class);
+		TypedQuery<User> query = entityManager.createNamedQuery("User.login", User.class);
 		List<User> users = query.setParameter("key", key).getResultList();
 		if (users.isEmpty()) {
 			return result.withCode("404").addError("login.invalid.user");
@@ -69,7 +69,7 @@ public class UserSessionService {
 	public Message<Boolean> validateSession(String sessionId) {
 		Message<Boolean> result = new Message<>();
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Date> query = entityManager.createQuery("select e.expiration from UserSession e where e.session = :sessionId", Date.class);
+		TypedQuery<Date> query = entityManager.createNamedQuery("User.validateSession", Date.class);
 		try {
 			Date expiration = query.setParameter("sessionId", sessionId).getSingleResult();
 			if (expiration == null || expiration.before(Calendar.getInstance().getTime())) {
@@ -86,7 +86,7 @@ public class UserSessionService {
 	@Transactional
 	public UserSession createSession(User user) {
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.createQuery("delete from UserSession e where e.user = :user").setParameter("user", user).executeUpdate();
+		entityManager.createNamedQuery("User.deleteSession").setParameter("user", user).executeUpdate();
 		UserSession session = new UserSession();
 		Date now = new DateTime().toDate();
 		session.setSession(UUID.randomUUID().toString());
@@ -103,8 +103,7 @@ public class UserSessionService {
 		EntityManager entityManager = entityManagerProvider.get();
 		Date lastAccess = new DateTime().toDate();
 		Date expiration = calculateExpiration(lastAccess);
-		String qlString = "update UserSession set lastAccess = :lastAccess, expiration = :expiration where session = :sessionId";
-		Query query = entityManager.createQuery(qlString);
+		Query query = entityManager.createNamedQuery("User.touchSession");
 		query.setParameter("sessionId", sessionId);
 		query.setParameter("lastAccess", lastAccess);
 		query.setParameter("expiration", expiration);
@@ -121,8 +120,8 @@ public class UserSessionService {
 
 	public String calculatePasswordDigest(String password) {
 		try {
-			String algorithm = passwordDigestAlgoritm != null ? passwordDigestAlgoritm : "SHA-256";
-			MessageDigest digest = MessageDigest.getInstance(algorithm);
+			Validate.notNull(passwordDigestAlgoritm, "Invalid configuration digest password algoritm");
+			MessageDigest digest = MessageDigest.getInstance(passwordDigestAlgoritm);
 			digest.reset();
 			byte[] rawDigest = digest.digest(password.getBytes("UTF-8"));
 			return new String(Hex.encodeHex(rawDigest));

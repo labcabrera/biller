@@ -34,9 +34,9 @@ public class PatchUpgradeLiquidationResults {
 		injector.getInstance(PersistService.class).start();
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 
-		Query query = entityManager.createQuery("select e from Liquidation e where e.id in :ids order by e.billDate");
-		query.setParameter("ids", Arrays.asList("fcfc58a4-4f5f-4ffe-8621-80c364475ef0"));
-		query.setMaxResults(10);
+		Query query = entityManager.createQuery("select e from Liquidation e where e.liquidationResults.effectiveLiquidationAmount is null");
+		// query.setParameter("ids", Arrays.asList("fcfc58a4-4f5f-4ffe-8621-80c364475ef0"));
+		// query.setMaxResults(10);
 
 		query.setHint(QueryHints.SCROLLABLE_CURSOR, true);
 		ScrollableCursor cursor = (ScrollableCursor) query.getSingleResult();

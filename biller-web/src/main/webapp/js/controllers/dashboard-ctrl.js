@@ -58,7 +58,8 @@
 				$scope.loadData = function() {
 					$http.get($scope.restPath, {
 						params : {
-							year : $scope.year
+							year : 2015,
+							month : 9
 						}
 					}).success(function(records) {
 						$scope.records = records;

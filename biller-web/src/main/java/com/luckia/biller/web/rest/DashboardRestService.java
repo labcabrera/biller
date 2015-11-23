@@ -1,20 +1,26 @@
 package com.luckia.biller.web.rest;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
+import com.luckia.biller.core.common.MathUtils;
+import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.web.model.ChartModel;
@@ -24,44 +30,112 @@ import com.luckia.biller.web.model.ChartModel;
 @Produces({ "application/json; charset=UTF-8" })
 public class DashboardRestService {
 
+	private static final Integer MAX_PIE_RESULTS = 12;
+
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
+	@Inject
+	private I18nService i18nService;
 
-	// TODO dummy data
 	@GET
-	@Path("/company/evolution/amount")
-	public List<ChartModel> contractEvolutionAmount() {
+	@Path("/company/evolution/amount/{companyId}")
+	public List<ChartModel> contractEvolutionAmount(@PathParam("companyId") Long companyId) {
+		EntityManager entityManager = entityManagerProvider.get();
 		List<ChartModel> list = new ArrayList<>();
-		list.add(new ChartModel("Enero", 12567d));
-		list.add(new ChartModel("Febrero", 9843d));
-		list.add(new ChartModel("Marzo", 16343d));
-		list.add(new ChartModel("Abril", 6789d));
-		list.add(new ChartModel("Mayo", 11335d));
-		list.add(new ChartModel("Junio", 13335d));
-		list.add(new ChartModel("Agosto", 14335d));
-		list.add(new ChartModel("Septiembre", 14335d));
-		list.add(new ChartModel("Octubre", 0d));
-		list.add(new ChartModel("Noviembre", 0d));
-		list.add(new ChartModel("Diciembre", 0d));
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT SUM(L.LIQUIDATION_EFFECTIVE_AMOUNT) FROM B_LIQUIDATION L ");
+		sb.append("JOIN B_ABSTRACT_BILL AB ON L.ID = AB.ID ");
+		sb.append("JOIN S_STATE S ON AB.CURRENT_STATE = S.ID ");
+		sb.append("WHERE AB.RECEIVER = ? ");
+		sb.append("AND AB.BILL_DATE BETWEEN ? AND ? ");
+		sb.append("AND S.STATE_DEFINITION_ID IN ('Sent', 'Confirmed')");
+		Query query = entityManager.createNativeQuery(sb.toString());
+		for (int i = 1; i < 13; i++) {
+			DateTime from = new DateTime(2015, i, 1, 0, 0, 0);
+			DateTime to = from.dayOfMonth().withMaximumValue();
+			query.setParameter(1, companyId);
+			query.setParameter(2, from.toDate());
+			query.setParameter(3, to.toDate());
+			BigDecimal partial = MathUtils.safeNull((BigDecimal) query.getResultList().iterator().next());
+			String monthI18nKey = "month." + StringUtils.leftPad(String.valueOf(i), 2, "0");
+			list.add(new ChartModel(i18nService.getMessage(monthI18nKey), partial.doubleValue()));
+		}
 		return list;
 	}
 
-	// TODO dummy data
 	@GET
-	@Path("company/storeDistribution")
-	public List<ChartModel> companyStoreDistribution() {
+	@Path("company/storeDistribution/{companyId}")
+	public List<ChartModel> companyStoreDistributionByMonth(@PathParam("companyId") Long companyId, @QueryParam("year") Integer year, @QueryParam("month") Integer month,
+			@QueryParam("negative") Boolean negative) {
+		year = year != null ? year : new DateTime().getYear();
+		month = month != null ? month : new DateTime().getMonthOfYear();
+		DateTime from = new DateTime(year, month, 1, 0, 0, 0);
+		DateTime to = from.dayOfMonth().withMaximumValue();
+		return companyDistribution(companyId, from, to, negative);
+	}
+
+	@GET
+	@Path("company/storeDistribution/negative/{companyId}")
+	public List<ChartModel> companyStoreDistributionNegative(@PathParam("companyId") Long companyId, @QueryParam("year") Integer year, @QueryParam("month") Integer month) {
+		return companyStoreDistributionByMonth(companyId, year, month, true);
+	}
+
+	@GET
+	@Path("company/storeDistributionAnual/{companyId}")
+	public List<ChartModel> companyStoreDistributionByYear(@PathParam("companyId") Long companyId, @QueryParam("year") Integer year, @QueryParam("negative") Boolean negative) {
+		year = year != null ? year : new DateTime().getYear();
+		DateTime from = new DateTime(year, 1, 1, 0, 0, 0);
+		DateTime to = new DateTime(year, 12, 31, 0, 0, 0);
+		return companyDistribution(companyId, from, to, negative);
+	}
+
+	@GET
+	@Path("company/storeDistributionAnual/negative/{companyId}")
+	public List<ChartModel> companyStoreDistributionByYearNegative(@PathParam("companyId") Long companyId, @QueryParam("year") Integer year) {
+		return companyStoreDistributionByYear(companyId, year, true);
+	}
+
+	private List<ChartModel> companyDistribution(Long companyId, DateTime from, DateTime to, Boolean negative) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT LE.NAME, L.LIQUIDATION_EFFECTIVE_AMOUNT FROM B_LIQUIDATION L ");
+		sb.append("JOIN B_ABSTRACT_BILL AB ON L.ID = AB.ID ");
+		sb.append("JOIN B_LEGAL_ENTITY LE ON AB.SENDER = LE.ID ");
+		sb.append("JOIN S_STATE S ON AB.CURRENT_STATE = S.ID ");
+		sb.append("WHERE AB.RECEIVER = ? ");
+		sb.append("AND AB.BILL_DATE BETWEEN ? AND ? ");
+		sb.append("AND S.STATE_DEFINITION_ID IN ('Sent', 'Confirmed') ");
+		if (negative == null || !negative) {
+			sb.append("AND L.LIQUIDATION_EFFECTIVE_AMOUNT > 0 ");
+			sb.append("GROUP BY LE.NAME ");
+			sb.append("ORDER BY L.LIQUIDATION_EFFECTIVE_AMOUNT DESC ");
+		} else {
+			sb.append("AND L.LIQUIDATION_EFFECTIVE_AMOUNT < 0 ");
+			sb.append("GROUP BY LE.NAME ");
+			sb.append("ORDER BY L.LIQUIDATION_EFFECTIVE_AMOUNT");
+		}
+		EntityManager entityManager = entityManagerProvider.get();
+		Query query = entityManager.createNativeQuery(sb.toString());
+		query.setParameter(1, companyId);
+		query.setParameter(2, from.toDate());
+		query.setParameter(3, to.toDate());
 		List<ChartModel> list = new ArrayList<>();
-		list.add(new ChartModel("Bar PEPE", 12567d));
-		list.add(new ChartModel("Bar MANOLO", 9843d));
-		list.add(new ChartModel("Bar ANTONIO", 16343d));
-		list.add(new ChartModel("Bar Pro", 26789d));
-		list.add(new ChartModel("Cafe Real", 11335d));
-		list.add(new ChartModel("Cafe Madrid", 13335d));
-		list.add(new ChartModel("Luckia Sport Cafe", 14335d));
-		list.add(new ChartModel("Centro de juego", 14335d));
-		list.add(new ChartModel("Bar X", 345d));
-		list.add(new ChartModel("Bar Y", 3233d));
-		list.add(new ChartModel("Bar X", 100d));
+		List<?> results = query.getResultList();
+		ChartModel others = new ChartModel("Otros", 0L);
+		int index = 0;
+		for (Object i : results) {
+			Object[] raw = (Object[]) i;
+			String name = (String) raw[0];
+			BigDecimal partial = (BigDecimal) raw[1];
+			if (index > MAX_PIE_RESULTS) {
+				others.setValue(others.getValue() + partial.doubleValue());
+				if (!list.contains(others)) {
+					list.add(others);
+				}
+			} else {
+				list.add(new ChartModel(name, partial.doubleValue()));
+			}
+			index++;
+		}
 		return list;
 	}
 
@@ -140,20 +214,6 @@ public class DashboardRestService {
 		}
 		return getQuery(sql, year).getResultList();
 	}
-
-	// @GET
-	// @Path("/alert/pendingPayment")
-	// public SearchResults<PendingPayment> pendingPayment(@QueryParam("p") Integer page, @QueryParam("n") Integer maxResults) {
-	// Long count = entityManagerProvider.get().createQuery("SELECT COUNT(p) FROM Payment p WHERE p.state = :state",
-	// Long.class).setParameter("state", PaymentState.PENDING)
-	// .getSingleResult();
-	// String sql =
-	// "SELECT NEW %s(s.id, s.number, s.policy.insured.name, p.effectiveDate, p.amount) FROM Payment p JOIN p.sinister s WHERE p.state = :state";
-	// TypedQuery<PendingPayment> query = entityManagerProvider.get().createQuery(String.format(sql, PendingPayment.class.getName()),
-	// PendingPayment.class);
-	// query.setParameter("state", PaymentState.PENDING).setMaxResults(maxResults).setFirstResult(maxResults * (page - 1));
-	// return new SearchResults<PendingPayment>(page, maxResults, count, query.getResultList());
-	// }
 
 	private TypedQuery<ChartModel> getQuery(String sql, Integer year) {
 		TypedQuery<ChartModel> query = entityManagerProvider.get().createQuery(String.format(sql, ChartModel.class.getName()), ChartModel.class);
