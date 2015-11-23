@@ -16,6 +16,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.jpa.FiqlParser;
@@ -30,6 +32,8 @@ import com.luckia.biller.core.services.AuditService;
  * @param <I>
  */
 public abstract class EntityService<I> {
+
+	private static final Logger LOG = LoggerFactory.getLogger(EntityService.class);
 
 	@Inject
 	protected Provider<EntityManager> entityManagerProvider;
@@ -57,6 +61,7 @@ public abstract class EntityService<I> {
 	 * @return
 	 */
 	public SearchResults<I> find(SearchParams params) {
+		Long t0 = System.currentTimeMillis();
 		Class<I> entityClass = getEntityClass();
 		EntityManager entityManager = entityManagerProvider.get();
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -79,6 +84,7 @@ public abstract class EntityService<I> {
 		searchResults.setTotalPages(totalPages);
 		searchResults.setCurrentPage(params.getCurrentPage());
 		searchResults.setItemsPerPage(params.getItemsPerPage());
+		LOG.debug("Readed {} {} items in {} ms", totalItems, getClass().getSimpleName(), (System.currentTimeMillis() - t0));
 		return searchResults;
 	}
 

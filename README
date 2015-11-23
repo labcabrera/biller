@@ -1,12 +1,9 @@
 FIX
-	- Revisar reporte de liquidaciones tras cambio de modelo
 	- Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
 	- En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar
 
 TODO
-	- Configuracion de logback en produccion / preproducción 
-	- Los reports no se deban almacenar en base de datos (se calculan al vuelo)
-	- Proceso de migración de facturas y liquidaciones
+	- Configuracion de logback en produccion / preproducción
 	- Eliminar el reportFile de la liquidacion
 	- Añadir los RegisterActivity que faltan
 	- Pensar en combinar el RegisterActivity para que actualice la informacion de auditoria
@@ -20,7 +17,12 @@ TODO
 	- Administrador de roles y permisos
 	- Administración tareas programadas
 	- Eliminar los conceptos de ajuste de caja del modelo
-	- PATCH: actualizar el liquidation.model que ahora esta a null
 	- Eliminar la facturas sin resultado
 	- unificar carpetas de html (ahora hay cierto caos con templates, static, html, partials...)
 	- Factura: boton de cerrar las alertas
+
+CHECK-LIST
+	- Revisar reporte de liquidaciones tras cambio de modelo
+	- Proceso de migración de facturas y liquidaciones
+
+	

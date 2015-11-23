@@ -33,4 +33,13 @@
 		</query>
 	</named-query>
 
+	<entity class="com.luckia.biller.core.model.Liquidation">
+		<fetch-group name="list">
+			<attribute name="id" />
+			<attribute name="code" />
+			<attribute name="billDate" />
+		</fetch-group>
+	</entity>
+
+
 </entity-mappings>
