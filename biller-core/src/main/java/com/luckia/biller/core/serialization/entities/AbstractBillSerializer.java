@@ -17,25 +17,36 @@ public abstract class AbstractBillSerializer extends AbstractEntitySerializer {
 		result.addProperty("comments", src.getComments());
 		result.addProperty("commentsPdf", src.getCommentsPdf());
 
-		JsonObject sender = new JsonObject();
-		sender.addProperty("id", src.getSender().getId());
-		sender.addProperty("name", src.getSender().getName());
-		result.add("sender", sender);
+		if (src.getSender() != null) {
+			JsonObject sender = new JsonObject();
+			sender.addProperty("id", src.getSender().getId());
+			sender.addProperty("name", src.getSender().getName());
+			result.add("sender", sender);
+		}
 
-		JsonObject receiver = new JsonObject();
-		receiver.addProperty("id", src.getSender().getId());
-		receiver.addProperty("name", src.getSender().getName());
-		result.add("receiver", receiver);
+		if (src.getReceiver() != null) {
+			JsonObject receiver = new JsonObject();
+			receiver.addProperty("id", src.getSender().getId());
+			receiver.addProperty("name", src.getSender().getName());
+			result.add("receiver", receiver);
+		}
 
-		JsonObject model = new JsonObject();
-		model.addProperty("id", src.getModel().getId());
-		model.addProperty("name", src.getModel().getName());
-		result.add("model", model);
+		if (src.getModel() != null) {
+			JsonObject model = new JsonObject();
+			model.addProperty("id", src.getModel().getId());
+			model.addProperty("name", src.getModel().getName());
+			result.add("model", model);
+		}
 
-		result.add("currentState", context.serialize(src.getCurrentState()));
-		result.add("pdfFile", context.serialize(src.getPdfFile()));
-		result.add("auditData", context.serialize(src.getAuditData()));
-
+		if (src.getCurrentState() != null) {
+			result.add("currentState", context.serialize(src.getCurrentState()));
+		}
+		if (src.getPdfFile() != null) {
+			result.add("pdfFile", context.serialize(src.getPdfFile()));
+		}
+		if (src.getAuditData() != null) {
+			result.add("auditData", context.serialize(src.getAuditData()));
+		}
 		return result;
 	}
 
