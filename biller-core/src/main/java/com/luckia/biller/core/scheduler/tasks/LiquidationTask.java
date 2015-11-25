@@ -55,7 +55,7 @@ public class LiquidationTask implements Runnable {
 				liquidationProcessor.confirm(liquidationResult);
 			}
 			long ms = System.currentTimeMillis() - t0;
-			LOG.debug("Procesada liquidacion del operador {} de {} en {} ms. Generando report", company.getName(), ISO_DATE_FORMAT.format(range.getMaximum()), ms);
+			LOG.debug("Procesada liquidacion del operador {} de {} en {} ms", company.getName(), ISO_DATE_FORMAT.format(range.getMaximum()), ms);
 		} catch (Exception ex) {
 			LOG.error("Error al procesar la liquidacion", ex);
 		}
