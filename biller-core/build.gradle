@@ -25,30 +25,23 @@ if (project.hasProperty('profile')) {
 	sourceSets.main.resources.srcDir "src/main/profile/local"
 }
 
-
-
-def entitiesBasePackage = 'com.luckia.biller.core.model'
-
-configurations {
-  weave
-}
-
-dependencies {
-  weave 'org.eclipse.persistence:javax.persistence:2.1.0'
-  weave 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.5.2'
-}
-
-compileJava {
-  destinationDir file("$buildDir/compiled-classes")
-}
-
 // jpa weaving
-
+def entitiesBasePackage = 'com.luckia.biller.core.model'
+configurations {
+	weave
+}
+dependencies {
+	weave 'org.eclipse.persistence:javax.persistence:2.1.0'
+	weave 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.5.2'
+}
+compileJava {
+	destinationDir file("$buildDir/compiled-classes")
+}
 task copyNonPersistentClasses(type: Copy, dependsOn: compileJava) {
-  from "$buildDir/compiled-classes"
-  into sourceSets.main.output.classesDir
-  exclude '**/' + entitiesBasePackage.replaceAll('\\.','/') + '/**'
-  includeEmptyDirs = false
+	from "$buildDir/compiled-classes"
+	into sourceSets.main.output.classesDir
+	exclude '**/' + entitiesBasePackage.replaceAll('\\.','/') + '/**'
+	includeEmptyDirs = false
 }
 task copyPersistentClasses(type: Copy, dependsOn: compileJava) {
   from "$buildDir/compiled-classes"
@@ -57,19 +50,18 @@ task copyPersistentClasses(type: Copy, dependsOn: compileJava) {
   includeEmptyDirs = false
 }
 task weaveJpaEntities(type: JavaExec, dependsOn: [copyPersistentClasses,processResources]) {
-  main = 'org.eclipse.persistence.tools.weaving.jpa.StaticWeave'
-  classpath configurations.weave.incoming.files
-  args '-persistenceinfo'
-  args processResources.destinationDir.absolutePath
-  args '-classpath'
-  args configurations.compile.incoming.files.asPath
-  args '-loglevel'
-  args 'INFO'
-  args copyPersistentClasses.destinationDir.absolutePath
-  args sourceSets.main.output.classesDir.absolutePath
-
-  inputs.files fileTree(copyPersistentClasses.destinationDir),fileTree(processResources.destinationDir).matching({pattern -> pattern.include('**/META-INF/persistence.xml')})
-  outputs.dir sourceSets.main.output.classesDir
+	main = 'org.eclipse.persistence.tools.weaving.jpa.StaticWeave'
+	classpath configurations.weave.incoming.files
+	args '-persistenceinfo'
+	args processResources.destinationDir.absolutePath
+	args '-classpath'
+	args configurations.compile.incoming.files.asPath
+	args '-loglevel'
+	args 'INFO'
+	args copyPersistentClasses.destinationDir.absolutePath
+	args sourceSets.main.output.classesDir.absolutePath
+	inputs.files fileTree(copyPersistentClasses.destinationDir),fileTree(processResources.destinationDir).matching({pattern -> pattern.include('**/META-INF/persistence.xml')})
+	outputs.dir sourceSets.main.output.classesDir
 }
 classes.dependsOn copyNonPersistentClasses,weaveJpaEntities
 
