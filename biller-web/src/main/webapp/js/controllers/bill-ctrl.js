@@ -33,8 +33,10 @@
 		};
 		$scope.search = function() {
 			$scope.currentPage = 1;
+			$scope.searchMessage = "Loading...";
 			$http.get($scope.getSearchUrl()).success(function(data) {
 				$scope.results = data;
+				$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
 			});
 		};
 		$scope.setPage = function(page) {

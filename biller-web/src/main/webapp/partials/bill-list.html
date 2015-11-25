@@ -8,7 +8,7 @@
 	<div class="col-sm-9">
 		<h4>
 			<span class="glyphicon glyphicon-file text-muted"></span>
-			<span>{{'bills' | translate}} <small>({{results.totalItems}} {{'resultsLowerCase' | translate}})</small></span>
+			<span>{{'bills' | translate}} <small>{{searchMessage}}</small></span>
 		</h4>
 		<div ng-if="results.results.length < 1">{{'noResults' | translate}}</div>
 		<div ng-if="results.results.length > 0">
