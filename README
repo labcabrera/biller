@@ -2,6 +2,7 @@ FIX
 	- Error JPA recalcular facturacion
 	- Revisar static weaving
 	- Revisar generacion del zip
+	- Revisar error paginacion facturas (por ejemplo SOLMAR VALENCIA en septiembre)
 
 	- Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
 	- En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar

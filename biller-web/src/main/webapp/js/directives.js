@@ -406,7 +406,7 @@
 		return {
 			restrict : 'AE',
 			templateUrl : 'html/components/liquidation-details.html',
-			controller : function($scope, $http) {
+			controller : function($scope, $http, $routeParams) {
 				$scope.editDetail = function(data) {
 					if(data != null && !(typeof data === 'undefined') ) {
 						$scope.isSaving = true;
@@ -422,6 +422,14 @@
 					}
 					$('#editLiquidationConceptModal').modal('show');
 				};
+				$scope.setPage = function(page) {
+				    $scope.currentPage = page;
+				    $http.get('rest/bills/find?q=liquidation.id==' + $routeParams.id + "&n=15" + "&p=" + page).success(function(data) { $scope.childs = data; });
+				};
+				$scope.init = function() {
+					$scope.setPage(1);
+				};
+				$scope.init();
 			},
 			scope : {
 				childs: "=",
