@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.HtmlEmail;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.BillerModule;
 
+@Ignore
 public class MailServiceTest {
 
 	@Test

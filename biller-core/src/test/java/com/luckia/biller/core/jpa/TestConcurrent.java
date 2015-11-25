@@ -7,6 +7,7 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -17,7 +18,9 @@ import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 
+@Ignore
 public class TestConcurrent {
+
 	@Test
 	public void test() throws InterruptedException {
 		Injector injector = Guice.createInjector(new BillerModule());

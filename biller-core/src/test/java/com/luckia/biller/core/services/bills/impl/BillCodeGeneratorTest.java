@@ -2,6 +2,7 @@ package com.luckia.biller.core.services.bills.impl;
 
 import javax.persistence.EntityManager;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -9,6 +10,7 @@ import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.BillerModule;
 
+@Ignore
 public class BillCodeGeneratorTest {
 
 	@Test

@@ -22,11 +22,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.eclipse.persistence.annotations.JoinFetch;
+import org.eclipse.persistence.annotations.JoinFetchType;
+
 /**
  * Entidad abstracta que representa una entidad legal. Hay diferentes tipos de entidades legales: personas, establecimientos, empresas, etc.
  */
 @Entity
-@Table(name = "B_LEGAL_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "ID_CARD_NUMBER" }))
+@Table(name = "B_LEGAL_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "ID_CARD_NUMBER" }) )
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.CHAR, length = 1)
 @SuppressWarnings("serial")
@@ -55,6 +58,7 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 	/** Fiscal address */
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "ADDRESS_ID")
+	@JoinFetch(JoinFetchType.OUTER)
 	protected Address address;
 
 	@ManyToOne(cascade = CascadeType.DETACH)

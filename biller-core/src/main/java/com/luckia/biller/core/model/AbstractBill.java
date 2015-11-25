@@ -17,11 +17,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.eclipse.persistence.annotations.JoinFetch;
+import org.eclipse.persistence.annotations.JoinFetchType;
 
 import com.luckia.biller.core.jpa.UUIDSequence;
 
@@ -74,11 +76,13 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 	/** Emisor de la factura */
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "SENDER", nullable = false)
+	@JoinFetch(value = JoinFetchType.INNER)
 	protected LegalEntity sender;
 
 	/** Receptor de la factura */
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "RECEIVER", nullable = false)
+	@JoinFetch(value = JoinFetchType.INNER)
 	protected LegalEntity receiver;
 
 	/**
@@ -86,6 +90,7 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 	 */
 	@ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "CURRENT_STATE")
+	@JoinFetch(JoinFetchType.INNER)
 	protected State currentState;
 
 	/**
@@ -93,6 +98,7 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 	 */
 	@ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "MODEL_ID")
+	@JoinFetch(JoinFetchType.INNER)
 	protected BillingModel model;
 
 	@Column(name = "AMOUNT", precision = 18, scale = 2)
@@ -104,7 +110,8 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 	@Column(name = "COMMENTS_PDF", columnDefinition = "TEXT")
 	protected String commentsPdf;
 
-	@OneToOne(cascade = CascadeType.DETACH)
+	@OneToOne(cascade = CascadeType.DETACH, optional = true)
+	@JoinFetch(JoinFetchType.OUTER)
 	protected AppFile pdfFile;
 
 	@Embedded

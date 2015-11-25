@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 
 import javax.persistence.EntityManager;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -13,6 +14,7 @@ import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Bill;
 
+@Ignore
 public class PDFBillGeneratorTest {
 
 	@Test

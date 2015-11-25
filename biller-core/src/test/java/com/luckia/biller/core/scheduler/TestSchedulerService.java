@@ -1,5 +1,6 @@
 package com.luckia.biller.core.scheduler;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
@@ -12,6 +13,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.BillerModule;
 
+@Ignore
 public class TestSchedulerService {
 
 	@Test

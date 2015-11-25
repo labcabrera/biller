@@ -2,6 +2,7 @@ package com.luckia.biller.core.scheduler;
 
 import org.apache.commons.lang3.Range;
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.quartz.JobExecutionException;
 
@@ -9,6 +10,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.BillerModule;
 
+@Ignore
 public class TestBillerJob {
 
 	@Test

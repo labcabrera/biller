@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.eclipse.persistence.config.QueryHints;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -15,12 +16,12 @@ import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.serialization.Serializer;
 
+@Ignore
 public class TestFetchGroup {
 
 	@Test
 	public void test() {
 		try {
-
 			Injector injector = Guice.createInjector(new BillerModule());
 			injector.getInstance(PersistService.class).start();
 			Serializer serializer = injector.getInstance(Serializer.class);

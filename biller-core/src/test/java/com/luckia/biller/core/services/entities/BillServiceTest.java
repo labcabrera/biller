@@ -1,5 +1,6 @@
 package com.luckia.biller.core.services.entities;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -9,6 +10,7 @@ import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 
+@Ignore
 public class BillServiceTest {
 
 	@Test

@@ -3,6 +3,7 @@ package com.luckia.biller.core.services;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -10,6 +11,7 @@ import com.google.inject.Injector;
 import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.scheduler.RappelLiquidationJob;
 
+@Ignore
 public class TestRappelStoreService {
 
 	@Test
