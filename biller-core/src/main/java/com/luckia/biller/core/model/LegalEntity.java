@@ -9,6 +9,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -33,8 +34,8 @@ import org.eclipse.persistence.annotations.JoinFetchType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.CHAR, length = 1)
 @SuppressWarnings("serial")
-// @ValidLegalEntity
 @NamedQueries({ @NamedQuery(name = "LegalEntity.selectByName", query = "select e from LegalEntity e where e.name = :name") })
+// @ValidLegalEntity
 public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Auditable {
 
 	@Id
@@ -56,12 +57,12 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 	protected String phoneNumber;
 
 	/** Fiscal address */
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ADDRESS_ID")
 	@JoinFetch(JoinFetchType.OUTER)
 	protected Address address;
 
-	@ManyToOne(cascade = CascadeType.DETACH)
+	@ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PARENT_ID")
 	protected LegalEntity parent;
 

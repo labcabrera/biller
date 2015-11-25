@@ -26,8 +26,8 @@ public abstract class AbstractBillSerializer extends AbstractEntitySerializer {
 
 		if (src.getReceiver() != null) {
 			JsonObject receiver = new JsonObject();
-			receiver.addProperty("id", src.getSender().getId());
-			receiver.addProperty("name", src.getSender().getName());
+			receiver.addProperty("id", src.getReceiver().getId());
+			receiver.addProperty("name", src.getReceiver().getName());
 			result.add("receiver", receiver);
 		}
 
