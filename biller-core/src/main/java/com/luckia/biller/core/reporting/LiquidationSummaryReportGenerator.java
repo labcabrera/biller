@@ -6,12 +6,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -69,7 +75,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			HSSFSheet sheet = workbook.createSheet(sheetName);
 			configureHeaders(sheet);
 			createReportData(sheet, from, to, company, costCenter);
-			for (int i = 0; i < 7; i++) {
+			for (int i = 0; i < 30; i++) {
 				sheet.autoSizeColumn(i);
 			}
 			workbook.write(out);
@@ -89,7 +95,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		BigDecimal totalResults = BigDecimal.ZERO;
 		int rowIndex = 1;
 		for (Liquidation liquidation : liquidations) {
-			int col = 1;
+			int col = 0;
 			BigDecimal amount = liquidation.getAmount() != null ? liquidation.getAmount() : BigDecimal.ZERO;
 			BigDecimal cashStore = liquidation.getLiquidationResults().getCashStoreAmount();
 			BigDecimal adjustements = getAdjustementAmount(liquidation);
@@ -99,6 +105,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			totalAdjustements = totalAdjustements.add(adjustements);
 			totalResults = totalResults.add(result);
 			createCell(sheet, rowIndex, col++, ISODateTimeFormat.date().print(new DateTime(liquidation.getBillDate())));
+			createCell(sheet, rowIndex, col++, liquidation.getReceiver().getName());
 			createCell(sheet, rowIndex, col++, liquidation.getSender().getName());
 			createCell(sheet, rowIndex, col++, amount);
 			createCell(sheet, rowIndex, col++, cashStore);
@@ -117,18 +124,40 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 
 	private List<Liquidation> findLiquidations(Date from, Date to, LegalEntity company, CostCenter costCenter) {
 		EntityManager entityManager = entityManagerProvider.get();
-		return entityManager.createQuery("select e from Liquidation e", Liquidation.class).setMaxResults(10).getResultList();
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Liquidation> criteria = builder.createQuery(Liquidation.class);
+		Root<Liquidation> root = criteria.from(Liquidation.class);
+		List<Predicate> predicates = new ArrayList<>();
+		if (from != null) {
+			predicates.add(builder.greaterThanOrEqualTo(root.<Date> get("billDate"), from));
+		}
+		if (to != null) {
+			predicates.add(builder.lessThanOrEqualTo(root.<Date> get("billDate"), to));
+		}
+		if (company != null) {
+			predicates.add(builder.equal(root.get("sender"), company));
+		}
+		criteria.where(predicates.toArray(new Predicate[predicates.size()]));
+		criteria.orderBy(builder.desc(root.<Date> get("billDate")), builder.asc(root.<String> get("sender").get("name")), builder.desc(root.<String> get("code")));
+		TypedQuery<Liquidation> query = entityManager.createQuery(criteria);
+		return query.getResultList();
 	}
 
 	private void configureHeaders(HSSFSheet sheet) {
 		int index = 1;
 		int col = 0;
-		createHeaderCell(sheet, col, index++, "Fecha de liquidaciñón");
-		createHeaderCell(sheet, col, index++, "Operadora");
-		createHeaderCell(sheet, col, index++, "Importe");
-		createHeaderCell(sheet, col, index++, "Saldo de caja");
-		createHeaderCell(sheet, col, index++, "Ajustes manuales");
-		createHeaderCell(sheet, col, index++, "Resultado a percibir por EH");
+		createHeaderCell(sheet, col, index++, "FECHA DE LIQUIDACION");
+		createHeaderCell(sheet, col, index++, "GRUPO");
+		createHeaderCell(sheet, col, index++, "OPERADORA");
+		createHeaderCell(sheet, col, index++, "IMPORTE");
+		createHeaderCell(sheet, col, index++, "SALDO DE CAJA");
+		createHeaderCell(sheet, col, index++, "AJUSTES MANUALES");
+		createHeaderCell(sheet, col, index++, "");
+		createHeaderCell(sheet, col, index++, "APOSTADO");
+		createHeaderCell(sheet, col, index++, "PAGADO");
+		createHeaderCell(sheet, col, index++, "CREDITO");
+		createHeaderCell(sheet, col, index++, "AJUSTES MANUALES");
+		createHeaderCell(sheet, col, index++, "RESULTADO A PERCIBIR");
 	}
 
 	private BigDecimal getAdjustementAmount(Liquidation liquidation) {
