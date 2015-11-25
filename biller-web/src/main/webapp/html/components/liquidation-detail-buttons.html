@@ -25,7 +25,6 @@
 			ng-disabled="isSaving">{{'recreatePdf' | translate}}</button>
 		<a
 			class="btn btn-primary btn-sm"
-			ng-if="entity.reportFile != null"
 			href="rest/report/liquidations?from={{entity.dateFrom | limitTo: 10}}&to={{entity.dateTo | limitTo: 10}}&ids={{entity.sender.id}}"
 			role="button"
 			ng-disabled="isSaving">{{'viewReport' | translate}}</a>
