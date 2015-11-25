@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -14,6 +15,7 @@ import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Bill;
 
+@Ignore
 public class TestBillerSerializer {
 
 	@Test

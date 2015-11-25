@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -19,6 +20,7 @@ import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.Region;
 
+@Ignore
 public class TestLegalEntityValidation {
 
 	@Test
