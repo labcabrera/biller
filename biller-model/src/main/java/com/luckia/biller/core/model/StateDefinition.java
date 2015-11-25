@@ -10,7 +10,6 @@ import javax.persistence.Table;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.Converter;
 
-import com.luckia.biller.core.jpa.ClassConverter;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 /**

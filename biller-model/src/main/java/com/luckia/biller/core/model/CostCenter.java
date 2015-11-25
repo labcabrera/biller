@@ -5,8 +5,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.model.validation.ValidCostCenter;
-
 /**
  * Representa un centro de coste que se utilizara para generar las liquidaciones.<br>
  * En un primer momento habra un unico centro de coste por comunidad autonoma.
@@ -14,7 +12,7 @@ import com.luckia.biller.core.model.validation.ValidCostCenter;
 @Entity
 @Table(name = "B_COST_CENTER")
 @DiscriminatorValue("O")
-@ValidCostCenter
+// @ValidCostCenter
 @SuppressWarnings("serial")
 public class CostCenter extends LegalEntity {
 

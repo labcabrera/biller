@@ -25,8 +25,6 @@ import javax.persistence.TemporalType;
 import org.eclipse.persistence.annotations.JoinFetch;
 import org.eclipse.persistence.annotations.JoinFetchType;
 
-import com.luckia.biller.core.jpa.UUIDSequence;
-
 /**
  * Generalización de los siguientes tipos:
  * <ul>
@@ -48,7 +46,7 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 
 	@Id
 	@Column(name = "ID", length = 36)
-	@GeneratedValue(generator = UUIDSequence.UUIDSEQUENCE)
+	@GeneratedValue(generator = "system-uuid")
 	protected String id;
 
 	/**

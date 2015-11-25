@@ -15,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.jpa.UUIDSequence;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 /**
@@ -31,7 +30,7 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 
 	@Id
 	@Column(name = "ID", length = 36)
-	@GeneratedValue(generator = UUIDSequence.UUIDSEQUENCE)
+	@GeneratedValue(generator = "system-uuid")
 	private String id;
 
 	@NotSerializable

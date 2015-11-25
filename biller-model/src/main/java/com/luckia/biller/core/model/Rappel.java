@@ -11,12 +11,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.model.validation.ValidRappel;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 @Entity
 @Table(name = "B_RAPPEL")
-@ValidRappel
+// @ValidRappel
 public class Rappel implements Mergeable<Rappel> {
 
 	@Id
