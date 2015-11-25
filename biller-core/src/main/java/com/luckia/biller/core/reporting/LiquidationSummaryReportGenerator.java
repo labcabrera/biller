@@ -19,7 +19,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.joda.time.DateTime;
@@ -61,7 +60,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		generate(from, to, company, costCenter, out);
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-		String fileName = String.format("Resumen-liquidaciones-%s_%s.xls", DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
+		String fileName = String.format("Resumen-liquidaciones.xls");
 		AppFile appFile = fileService.save(fileName, FileService.CONTENT_TYPE_EXCEL, in);
 		return new Message<AppFile>(Message.CODE_SUCCESS, "Report file created", appFile);
 	}
@@ -71,8 +70,17 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		try {
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			init(workbook);
-			String sheetName = String.format("Resumen liquidaciones %s_%s", new SimpleDateFormat("dd-MM-yyyy").format(from), new SimpleDateFormat("dd-MM-yyyy").format(to));
-			HSSFSheet sheet = workbook.createSheet(sheetName);
+
+			StringBuilder sheetName = new StringBuilder("Resumen liquidaciones");
+			if (from != null) {
+				sheetName.append(" ");
+				sheetName.append(new SimpleDateFormat("dd-MM-yyyy").format(from));
+			}
+			if (to != null) {
+				sheetName.append(" ");
+				sheetName.append(new SimpleDateFormat("dd-MM-yyyy").format(to));
+			}
+			HSSFSheet sheet = workbook.createSheet(sheetName.toString());
 			configureHeaders(sheet);
 			createReportData(sheet, from, to, company, costCenter);
 			for (int i = 0; i < 30; i++) {
@@ -144,7 +152,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 	}
 
 	private void configureHeaders(HSSFSheet sheet) {
-		int index = 1;
+		int index = 0;
 		int col = 0;
 		createHeaderCell(sheet, col, index++, "FECHA DE LIQUIDACION");
 		createHeaderCell(sheet, col, index++, "GRUPO");

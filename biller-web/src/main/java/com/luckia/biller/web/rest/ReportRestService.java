@@ -25,7 +25,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,16 +144,16 @@ public class ReportRestService {
 
 	private void calculateRange(String fromAsString, String toAsString, Mutable<Date> resultFrom, Mutable<Date> resultTo) {
 		try {
-			resultFrom.setValue(new SimpleDateFormat("yyyy-MM-dd").parse(fromAsString));
-			resultTo.setValue(new SimpleDateFormat("yyyy-MM-dd").parse(toAsString));
+			if (StringUtils.isNotBlank(fromAsString)) {
+				resultFrom.setValue(new SimpleDateFormat("yyyy-MM-dd").parse(fromAsString));
+			}
+			if (StringUtils.isNotBlank(toAsString)) {
+				resultTo.setValue(new SimpleDateFormat("yyyy-MM-dd").parse(toAsString));
+			}
 			return;
 		} catch (Exception ignore) {
+			LOG.warn("Error setting report date range", ignore);
 		}
-		DateTime now = new DateTime();
-		DateTime dateTimeFrom = now.minusMonths(1).dayOfMonth().withMinimumValue();
-		DateTime dateTimeTo = now.minusMonths(1).dayOfMonth().withMaximumValue();
-		resultFrom.setValue(dateTimeFrom.toDate());
-		resultTo.setValue(dateTimeTo.toDate());
 	}
 
 }
