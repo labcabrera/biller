@@ -28,8 +28,10 @@
 					<td>{{ result.sender.name | limitTo: 18 }}{{result.sender.name.length > 18 ? '...' : ''}}</td>
 					<td>{{ result.receiver.name | limitTo: 18 }}{{result.receiver.name.length > 18 ? '...' : ''}}</td>
 					<td>
-						<span ng-if="result.currentState.stateDefinition.id == 'Draft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
-						<span ng-if="result.currentState.stateDefinition.id == 'Rectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
+						<center>
+							<span ng-if="result.currentState.stateDefinition.id == 'Draft'" class="glyphicon glyphicon-exclamation-sign text-danger" title="Borrador"></span>
+							<span ng-if="result.currentState.stateDefinition.id == 'Rectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
+						</center>
 					</td>
 					<td>{{result.billDate.substr(0,10)}}</td>
 					<td>{{result.billType.desc}}</td>
