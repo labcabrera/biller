@@ -36,8 +36,8 @@ public class Serializer {
 		builder.registerTypeHierarchyAdapter(TerminalRelation.class, new TerminalRelationSerializer());
 		builder.registerTypeAdapter(BigDecimal.class, new BigDecimalSerializer());
 		builder.registerTypeAdapter(BillType.class, new BillTypeSerializer());
-		// builder.registerTypeAdapter(Bill.class, new BillSerializer());
-		// builder.registerTypeAdapter(Liquidation.class, new LiquidationSerializer());
+		builder.registerTypeAdapter(Bill.class, new BillSerializer());
+		builder.registerTypeAdapter(Liquidation.class, new LiquidationSerializer());
 		return builder;
 	}
 
