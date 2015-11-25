@@ -96,9 +96,9 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 	/**
 	 * Modelo de facturacion utilizado para generar la factura.
 	 */
-	@ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "MODEL_ID")
-	@JoinFetch(JoinFetchType.INNER)
+	@JoinFetch(JoinFetchType.OUTER)
 	protected BillingModel model;
 
 	@Column(name = "AMOUNT", precision = 18, scale = 2)

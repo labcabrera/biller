@@ -16,7 +16,7 @@ dependencies {
 }
 
 /**
- * Activacion del profile si compilamos con la opcion "-Pname"
+ * Activacion del profile si compilamos con la opcion "-Pprofile=pre"
  */
 if (project.hasProperty('profile')) {
     println "Target environment: $profile"
