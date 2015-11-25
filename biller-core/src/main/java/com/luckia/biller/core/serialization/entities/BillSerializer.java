@@ -18,9 +18,23 @@ public class BillSerializer extends AbstractBillSerializer implements JsonSerial
 		liquidation.addProperty("id", src.getLiquidation().getId());
 		bill.add("liquidation", liquidation);
 
+		bill.addProperty("netAmount", src.getNetAmount());
+		bill.addProperty("vatAmount", src.getVatAmount());
+		bill.addProperty("vatPercent", src.getVatPercent());
+		bill.addProperty("liquidationTotalAmount", src.getLiquidationTotalAmount());
+		bill.addProperty("liquidationTotalVat", src.getLiquidationTotalVat());
+		bill.addProperty("liquidationTotalNetAmount", src.getLiquidationTotalNetAmount());
+		bill.addProperty("liquidationBetAmount", src.getLiquidationBetAmount());
+		bill.addProperty("liquidationSatAmount", src.getLiquidationSatAmount());
+		bill.addProperty("liquidationPricePerLocation", src.getLiquidationPricePerLocation());
+		bill.addProperty("liquidationManualAmount", src.getLiquidationManualAmount());
+		bill.addProperty("liquidationOuterAmount", src.getLiquidationOuterAmount());
+
 		bill.add("billType", context.serialize(src.getBillType()));
 		bill.add("billDetails", context.serialize(src.getBillDetails()));
 		bill.add("liquidationDetails", context.serialize(src.getLiquidationDetails()));
+		bill.add("billRawData", context.serialize(src.getBillRawData()));
+
 		return bill;
 	}
 }
