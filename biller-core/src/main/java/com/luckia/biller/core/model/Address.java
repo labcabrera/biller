@@ -10,8 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.jpa.Mergeable;
-
 /**
  * Entidad que representa una direccion (provincia, municipio, codigo postal, direccion y numero)
  */

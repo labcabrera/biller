@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.jpa.Mergeable;
 import com.luckia.biller.core.model.validation.ValidRappel;
 import com.luckia.biller.core.serialization.NotSerializable;
 

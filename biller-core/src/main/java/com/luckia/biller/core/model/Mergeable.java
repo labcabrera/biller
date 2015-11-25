@@ -1,4 +1,4 @@
-package com.luckia.biller.core.jpa;
+package com.luckia.biller.core.model;
 
 /**
  * Interfaz para generaliza la actualizacion de entidades. Esto nos facilita el modo en el que actualizaremos las entidades del modelo y nos

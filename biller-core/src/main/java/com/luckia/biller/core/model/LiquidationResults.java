@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import com.luckia.biller.core.jpa.Mergeable;
-
 /**
  * Entidad que agrupa los resultados de una liquidacion.
  */

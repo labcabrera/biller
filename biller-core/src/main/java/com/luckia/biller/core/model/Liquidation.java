@@ -9,13 +9,13 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.jpa.Mergeable;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 /**
@@ -32,6 +32,7 @@ import com.luckia.biller.core.serialization.NotSerializable;
 @Entity
 @Table(name = "B_LIQUIDATION")
 @DiscriminatorValue("L")
+@MappedSuperclass
 @SuppressWarnings("serial")
 @NamedQueries({
 		@NamedQuery(name = "Liquidation.selectByCompanyInRange", query = "select e from Liquidation e where e.sender = :sender and e.dateFrom >= :from and e.dateTo <= :to") })

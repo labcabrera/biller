@@ -22,8 +22,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.jpa.Mergeable;
-
 /**
  * Entidad que establece la parametrización con la que se van a generar tanto facturas como liquidaciones.
  */

@@ -21,8 +21,6 @@ import javax.persistence.Table;
 import org.eclipse.persistence.annotations.ChangeTracking;
 import org.eclipse.persistence.annotations.ChangeTrackingType;
 
-import com.luckia.biller.core.jpa.Mergeable;
-
 /**
  * Entidad que representa una factura. La aplicacion genera las facturas que emiten los establecimientos a sus operadores de máquinas de juego.
  * <ul>

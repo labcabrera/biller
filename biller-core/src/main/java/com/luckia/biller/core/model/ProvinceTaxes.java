@@ -14,8 +14,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.jpa.Mergeable;
-
 /**
  * Entidad que representa las tasas de juego de una determinada provincia. En principio este valor será del 10% del GGR.
  */

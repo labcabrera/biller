@@ -10,8 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.luckia.biller.core.jpa.Mergeable;
-
 /**
  * Representa el numero de identificacion fiscal (NIF o CIF) asociado a una entidad legal.
  */
