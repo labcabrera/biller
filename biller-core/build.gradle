@@ -8,7 +8,12 @@ dependencies {
 	compile 'mysql:mysql-connector-java:5.1.37'
 	compile 'org.apache.poi:poi-ooxml:3.13'
 	compile 'org.apache.bval:bval-guice:0.5'
-	compile 'org.eclipse.persistence:eclipselink:2.6.1'
+	
+	//compile 'org.eclipse.persistence:eclipselink:2.6.1'
+	compile 'org.eclipse.persistence:eclipselink:2.5.2'
+	//compile 'org.eclipse.persistence:eclipselink:2.5.1'
+	//compile 'org.eclipse.persistence:eclipselink:2.4.2'
+	
 	compile 'org.quartz-scheduler:quartz:2.2.2'
 	compile 'org.apache.commons:commons-email:1.4'
 	compile 'com.itextpdf:itextpdf:5.5.7'
@@ -24,3 +29,52 @@ if (project.hasProperty('profile')) {
 } else {
 	sourceSets.main.resources.srcDir "src/main/profile/local"
 }
+
+
+
+
+def entitiesBasePackage = 'com.luckia.biller.core.model'
+
+configurations {
+  weave
+}
+
+dependencies {
+  weave 'org.eclipse.persistence:javax.persistence:2.1.0'
+  weave 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.5.2'
+}
+
+compileJava {
+  destinationDir file("$buildDir/compiled-classes")
+}
+
+// jpa weaving
+
+task copyNonPersistentClasses(type: Copy, dependsOn: compileJava) {
+  from "$buildDir/compiled-classes"
+  into sourceSets.main.output.classesDir
+  exclude '**/' + entitiesBasePackage.replaceAll('\\.','/') + '/**'
+  includeEmptyDirs = false
+}
+task copyPersistentClasses(type: Copy, dependsOn: compileJava) {
+  from "$buildDir/compiled-classes"
+  into "$buildDir/unwoven-persistent-classes"
+  include '**/' + entitiesBasePackage.replaceAll('\\.','/') + '/**'
+  includeEmptyDirs = false
+}
+task weaveJpaEntities(type: JavaExec, dependsOn: [copyPersistentClasses,processResources]) {
+  main = 'org.eclipse.persistence.tools.weaving.jpa.StaticWeave'
+  classpath configurations.weave.incoming.files
+  args '-persistenceinfo'
+  args processResources.destinationDir.absolutePath
+  args '-classpath'
+  args configurations.compile.incoming.files.asPath
+  args '-loglevel'
+  args 'INFO'
+  args copyPersistentClasses.destinationDir.absolutePath
+  args sourceSets.main.output.classesDir.absolutePath
+
+  inputs.files fileTree(copyPersistentClasses.destinationDir),fileTree(processResources.destinationDir).matching({pattern -> pattern.include('**/META-INF/persistence.xml')})
+  outputs.dir sourceSets.main.output.classesDir
+}
+classes.dependsOn copyNonPersistentClasses,weaveJpaEntities

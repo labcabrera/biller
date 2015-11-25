@@ -6,7 +6,7 @@
 		<div class="col-sm-9">
 			<h4>
 				<span class="glyphicon glyphicon-list-alt text-muted"></span>
-				<span>{{'liquidations' | translate}} <small>({{results.totalItems}} resultados)</small></span>
+				<span>{{'liquidations' | translate}} <small>{{searchMessage}}</small></span>
 			</h4>
 			<div ng-if="results.results.length < 1">{{'noResults' | translate}}</div>
 			<div ng-if="results.results.length > 0">

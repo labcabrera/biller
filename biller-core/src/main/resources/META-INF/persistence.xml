@@ -4,7 +4,7 @@
 	version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
 	
 	<persistence-unit name="com.luckia.biller" transaction-type="RESOURCE_LOCAL">
-	
+		<mapping-file>META-INF/biller-orm.xml</mapping-file>
 		<class>com.luckia.biller.core.model.AbstractBill</class>
 		<class>com.luckia.biller.core.model.AbstractBillDetail</class>
 		<class>com.luckia.biller.core.model.Address</class>
@@ -40,6 +40,9 @@
 		<class>com.luckia.biller.core.model.UserActivity</class>
 		<class>com.luckia.biller.core.model.UserRole</class>
 		<class>com.luckia.biller.core.model.UserSession</class>
+		<!--
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		-->
 		<shared-cache-mode>NONE</shared-cache-mode>
 	</persistence-unit>
 	
@@ -49,6 +52,9 @@
 	-->
 	<persistence-unit name="com.luckia.lis" transaction-type="RESOURCE_LOCAL">
 		<class>com.luckia.biller.core.model.lis.LisTerminalRecord</class>
+		<!--
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		-->
 	</persistence-unit>
 </persistence>
 

@@ -35,7 +35,7 @@ public class LISBillDataProvider implements BillDataProvider {
 
 	@Inject
 	@Lis
-	private Provider<EntityManager> entityManagerProvider;	
+	private Provider<EntityManager> lisEntityManagerProvider;	
 	@Inject
 	private ProvinceTaxesService provinceTaxesService;
 
@@ -54,7 +54,7 @@ public class LISBillDataProvider implements BillDataProvider {
 		Validate.notNull(terminals, "No se ha establecido la lista de terminales");
 		Validate.notEmpty(terminals, "La lista de terminales no puede estar vacia");
 		Map<BillConcept, BigDecimal> map = new HashMap<BillConcept, BigDecimal>();
-		EntityManager entityManager = entityManagerProvider.get();
+		EntityManager entityManager = lisEntityManagerProvider.get();
 		TypedQuery<LisTerminalRecord> query = entityManager.createNamedQuery("LisTerminalRecord.selectByCodesInRange", LisTerminalRecord.class);
 		query.setParameter("codes", terminals);
 		query.setParameter("from", range.getMinimum());

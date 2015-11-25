@@ -8,6 +8,7 @@ public class SearchResults<T> {
 	private Integer itemsPerPage;
 	private Long totalPages;
 	private Long totalItems;
+	private Long ms;
 	private List<T> results;
 
 	public Integer getCurrentPage() {
@@ -40,6 +41,14 @@ public class SearchResults<T> {
 
 	public void setTotalPages(Long totalPages) {
 		this.totalPages = totalPages;
+	}
+
+	public Long getMs() {
+		return ms;
+	}
+
+	public void setMs(Long ms) {
+		this.ms = ms;
 	}
 
 	public List<T> getResults() {

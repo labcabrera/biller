@@ -19,9 +19,13 @@ public class LisEntityManagerProvider implements Provider<EntityManager> {
 	private final Properties persistenceProperties;
 
 	public LisEntityManagerProvider() {
-		entityManager = new ThreadLocal<EntityManager>();
-		persistenceProperties = readLisProperties();
-		entityManagerFactory = Persistence.createEntityManagerFactory(Constants.PERSISTENCE_UNIT_NAME_LIS, persistenceProperties);
+		try {
+			entityManager = new ThreadLocal<EntityManager>();
+			persistenceProperties = readLisProperties();
+			entityManagerFactory = Persistence.createEntityManagerFactory(Constants.PERSISTENCE_UNIT_NAME_LIS, persistenceProperties);
+		} catch (Exception ex) {
+			throw new RuntimeException("Error loading Lis entity manager provider", ex);
+		}
 	}
 
 	@Override
