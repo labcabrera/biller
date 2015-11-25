@@ -12,7 +12,6 @@ TODO
 	- Añadir los RegisterActivity que faltan
 	- Pensar en combinar el RegisterActivity para que actualice la informacion de auditoria
 	- Historico en la relacion de terminales y locales
-	- Optimización serializadores
 	- Optimizacion relaciones JPA
 	- Revisión seguridad descargas (no usan ahora el sessionid y tienen el @PermitAll)
 	- Migración de MANUAL_WITH_LIQUIDATION y MANUAL_WITHOUT_LIQUIDATION (2 registros solamente)
@@ -28,5 +27,5 @@ TODO
 CHECK-LIST
 	- Revisar reporte de liquidaciones tras cambio de modelo
 	- Proceso de migración de facturas y liquidaciones
-
+	- Optimización serializadores
 	
