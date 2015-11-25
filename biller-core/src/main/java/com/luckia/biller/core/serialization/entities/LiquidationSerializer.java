@@ -2,6 +2,8 @@ package com.luckia.biller.core.serialization.entities;
 
 import java.lang.reflect.Type;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -13,10 +15,15 @@ public class LiquidationSerializer extends AbstractBillSerializer implements Jso
 	@Override
 	public JsonElement serialize(Liquidation src, Type typeOfSrc, JsonSerializationContext context) {
 		JsonObject liquidation = serialize(src, context);
-		liquidation.add("liquidationResults", context.serialize(src.getLiquidationResults()));
-		liquidation.add("details", context.serialize(src.getDetails()));
-		liquidation.addProperty("modelVersion", src.getModelVersion());
-
+		if (src.getLiquidationResults() != null) {
+			liquidation.add("liquidationResults", context.serialize(src.getLiquidationResults()));
+		}
+		if (src.getDetails() != null) {
+			liquidation.add("details", context.serialize(src.getDetails()));
+		}
+		if (StringUtils.isNotBlank(src.getModelVersion())) {
+			liquidation.addProperty("modelVersion", src.getModelVersion());
+		}
 		return liquidation;
 	}
 
