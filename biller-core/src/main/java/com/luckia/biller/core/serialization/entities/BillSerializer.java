@@ -20,9 +20,11 @@ public class BillSerializer extends AbstractBillSerializer implements JsonSerial
 		try {
 			JsonObject bill = serialize(src, context);
 
-			JsonObject liquidation = new JsonObject();
-			liquidation.addProperty("id", src.getLiquidation().getId());
-			bill.add("liquidation", liquidation);
+			if (src.getLiquidation() != null) {
+				JsonObject liquidation = new JsonObject();
+				liquidation.addProperty("id", src.getLiquidation().getId());
+				bill.add("liquidation", liquidation);
+			}
 
 			bill.addProperty("storeCash", src.getStoreCash());
 			bill.addProperty("netAmount", src.getNetAmount());
@@ -38,10 +40,15 @@ public class BillSerializer extends AbstractBillSerializer implements JsonSerial
 			bill.addProperty("liquidationOuterAmount", src.getLiquidationOuterAmount());
 
 			bill.add("billType", context.serialize(src.getBillType()));
-			bill.add("billDetails", context.serialize(src.getBillDetails()));
-			bill.add("liquidationDetails", context.serialize(src.getLiquidationDetails()));
-			bill.add("billRawData", context.serialize(src.getBillRawData()));
-
+			if (src.getBillDetails() != null) {
+				bill.add("billDetails", context.serialize(src.getBillDetails()));
+			}
+			if (src.getLiquidationDetails() != null) {
+				bill.add("liquidationDetails", context.serialize(src.getLiquidationDetails()));
+			}
+			if (src.getBillRawData() != null) {
+				bill.add("billRawData", context.serialize(src.getBillRawData()));
+			}
 			return bill;
 		} catch (RuntimeException ex) {
 			LOG.error("Bill serialization error: " + ex.getMessage());
