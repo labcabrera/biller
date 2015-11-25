@@ -2,7 +2,6 @@ package com.luckia.biller.deploy.patch;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -35,8 +34,6 @@ public class PatchUpgradeLiquidationResults {
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 
 		Query query = entityManager.createQuery("select e from Liquidation e where e.liquidationResults.effectiveLiquidationAmount is null");
-		// query.setParameter("ids", Arrays.asList("fcfc58a4-4f5f-4ffe-8621-80c364475ef0"));
-		// query.setMaxResults(10);
 
 		query.setHint(QueryHints.SCROLLABLE_CURSOR, true);
 		ScrollableCursor cursor = (ScrollableCursor) query.getSingleResult();

@@ -10,8 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.luckia.biller.core.serialization.NotSerializable;
-
 /**
  * Entidad que agrupa los diferentes atributos que queremos almacenar para tener una mínima trazabilidad sobre las entidades:
  * <ul>
