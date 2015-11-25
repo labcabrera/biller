@@ -7,8 +7,12 @@ import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.Liquidation;
@@ -23,6 +27,8 @@ import com.luckia.biller.core.serialization.entities.OwnerSerializer;
  * Componente encargado de serializar y deserializar las entidades utilizando JSON.
  */
 public class Serializer {
+
+	private static final Logger LOG = LoggerFactory.getLogger(Serializer.class);
 
 	private static final String UTF_8 = "UTF-8";
 	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.sss'Z'";
@@ -46,14 +52,19 @@ public class Serializer {
 			Gson gson = getBuilder().create();
 			String json = gson.toJson(object);
 			entityStream.write(json.getBytes("UTF8"));
-		} catch (IOException ex) {
+		} catch (Exception ex) {
+			LOG.error("Serialization error: {}", ex.getMessage());
 			throw new RuntimeException(ex);
 		}
 	}
 
 	public String toJson(Object object) {
-		Gson gson = getBuilder().create();
-		return gson.toJson(object);
+		try {
+			return getBuilder().create().toJson(object);
+		} catch (Exception ex) {
+			LOG.error("Serialization error: {}", ex.getMessage());
+			throw new RuntimeException(ex);
+		}
 	}
 
 	public <T> T deserialize(Class<T> type, InputStream entityStream) {
