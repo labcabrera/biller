@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import com.luckia.biller.core.model.AuditData;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.Liquidation;
@@ -44,6 +44,7 @@ public class Serializer {
 		builder.registerTypeAdapter(BillType.class, new BillTypeSerializer());
 		builder.registerTypeHierarchyAdapter(Bill.class, new BillSerializer());
 		builder.registerTypeHierarchyAdapter(Liquidation.class, new LiquidationSerializer());
+		builder.registerTypeHierarchyAdapter(AuditData.class, new AuditDataSerializer());
 		return builder;
 	}
 

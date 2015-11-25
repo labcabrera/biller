@@ -41,7 +41,6 @@ public class AuditData {
 
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "MODIFIED_BY")
-	@NotSerializable
 	private User modifiedBy;
 
 	public Date getCreated() {
