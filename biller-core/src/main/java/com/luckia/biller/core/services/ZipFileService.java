@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.zip.ZipEntry;
@@ -16,9 +15,11 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
@@ -30,33 +31,36 @@ import com.luckia.biller.core.reporting.LiquidationReportGenerator;
 public class ZipFileService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ZipFileService.class);
-	private static final String DATE_FORMAT = "yyyy-MM-dd";
-	private static final String[] REPLACEMENTS_KEYS = { "á", "é", "í", "ó", "ú", "ñ", " " };
-	private static final String[] REPLACEMENTS_VALUES = { "a", "e", "i", "o", "u", "n", "_", "" };
-	private static final String FORMAT_LIQUIDATION_NAME = "liquidacion-%s-%s.pdf";
-	private static final String FORMAT_BILL_NAME = "factura-%s-%s.pdf";
+
+	private static final String[] REPLACEMENTS_KEYS = { "á", "é", "í", "ó", "ú", "ñ", " ", "." };
+	private static final String[] REPLACEMENTS_VALUES = { "a", "e", "i", "o", "u", "n", "_", "", "" };
+	private static final String FORMAT_LIQUIDATION_NAME = "%s-%s.pdf";
+	private static final String FORMAT_LIQUIDATION_REPORT = "%s-%s.pdf";
+	private static final String FORMAT_BILL_NAME = "%s-%s.pdf";
 	private static final String FORMAT_BILL_FOLDER = "facturas/";
 
 	@Inject
 	private FileService fileService;
 	@Inject
 	private LiquidationReportGenerator reportGenerator;
+	@Inject
+	private I18nService i18nService;
 
 	public void generate(Liquidation liquidation, OutputStream out) {
 		Validate.notNull(liquidation.getPdfFile(), "Missing liquidation file");
 		String name;
-		String sender;
 		InputStream in;
 		try {
+			DateTime date = new DateTime(liquidation.getBillDate());
+			Integer monthIndex = date.getMonthOfYear();
+			String monthName = i18nService.getMessage("month." + StringUtils.leftPad(String.valueOf(monthIndex), 2, '0')).toLowerCase();
 			ZipOutputStream zipOutputStream = new ZipOutputStream(out);
-			sender = normalizeName(liquidation.getSender().getName());
-			name = fileService.normalizeFileName(String.format(FORMAT_LIQUIDATION_NAME, sender, formatDate(liquidation.getBillDate())));
+			name = fileService.normalizeFileName(String.format(FORMAT_LIQUIDATION_NAME, date.getYear(), monthName));
 			in = fileService.getInputStream(liquidation.getPdfFile());
 			addZipEntry(in, zipOutputStream, name);
 			for (Bill bill : liquidation.getBills()) {
 				if (bill.getPdfFile() != null) {
-					sender = normalizeName(bill.getSender().getName());
-					name = fileService.normalizeFileName(String.format(FORMAT_BILL_NAME, sender, formatDate(liquidation.getBillDate())));
+					name = fileService.normalizeFileName(String.format(FORMAT_BILL_NAME, date.getYear(), monthName));
 					in = fileService.getInputStream(bill.getPdfFile());
 					addZipEntry(in, zipOutputStream, FORMAT_BILL_FOLDER + name);
 				} else {
@@ -73,7 +77,7 @@ public class ZipFileService {
 				reportGenerator.generate(from, to, Arrays.asList(company), reportOutputStream);
 				ByteArrayInputStream reportInputStream = new ByteArrayInputStream(reportOutputStream.toByteArray());
 				// TODO
-				String fileName = String.format("liquidacion-%s-%s.xls", DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
+				String fileName = String.format(FORMAT_LIQUIDATION_REPORT, DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
 				addZipEntry(reportInputStream, zipOutputStream, normalizeName(fileName));
 			} catch (Exception ignore) {
 				LOG.error("Error al adjuntar el report", ignore);
@@ -101,9 +105,5 @@ public class ZipFileService {
 		while ((len = inputStream.read(buf)) > 0) {
 			zipOutputStream.write(buf, 0, len);
 		}
-	}
-
-	private String formatDate(Date date) {
-		return date != null ? new SimpleDateFormat(DATE_FORMAT).format(date) : StringUtils.EMPTY;
 	}
 }

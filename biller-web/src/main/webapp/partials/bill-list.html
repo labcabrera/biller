@@ -53,7 +53,7 @@
 			<form role="form">
 				<div class="form-group">
 					<label>{{'code' | translate}}</label>
-					<input type="text" class="form-control input-sm" ng-model="searchOptions.code" />
+					<input type="text" class="form-control" ng-model="searchOptions.code" />
 				</div>
 				<div class="form-group">
 					<label>{{'store' | translate}}</label>
@@ -94,7 +94,7 @@
 					<input type="text" class="form-control input-sm data-amount" ng-model="searchOptions.max" />
 				</div>
 				<button class="btn btn-primary btn-sm" ng-click="search()">Buscar</button>
-				<button class="btn btn-default btn-sm" ng-click="reset()">Reset</button>
+				<button class="btn btn-primary btn-sm" ng-click="reset()">Reset</button>
 			</form>
 		</div>
 	</div>

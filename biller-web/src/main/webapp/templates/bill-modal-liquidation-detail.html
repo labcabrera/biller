@@ -46,8 +46,8 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default btn-sm" ng-disabled="isSaving" data-dismiss="modal">{{'cancel' | translate}}</button>
-				<button type="button" class="btn btn-default btn-sm" ng-click="removeLiquidationDetail(detail.id)" ng-if="detail.id != null" ng-disabled="isSaving">{{'remove' | translate}}</button>
+				<button type="button" class="btn btn-primary btn-sm" ng-disabled="isSaving" data-dismiss="modal">{{'cancel' | translate}}</button>
+				<button type="button" class="btn btn-primary btn-sm" ng-click="removeLiquidationDetail(detail.id)" ng-if="detail.id != null" ng-disabled="isSaving">{{'remove' | translate}}</button>
 				<button type="button" class="btn btn-success btn-sm" ng-click="mergeLiquidationDetail()" ng-disabled="isSaving">{{'save' | translate}}</button>
 			</div>
 		</div>

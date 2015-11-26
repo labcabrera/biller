@@ -8,7 +8,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -17,7 +16,6 @@ import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Liquidation;
 
-@Ignore
 public class ZipFileServiceTest {
 
 	@Test
@@ -31,7 +29,7 @@ public class ZipFileServiceTest {
 		if (list.isEmpty()) {
 			System.out.println("No se encuentran liquidaciones validas para realizar el test");
 		} else {
-			FileOutputStream out = new FileOutputStream(new File("./target/test-liquidation.zip"));
+			FileOutputStream out = new FileOutputStream(new File("./build/test-liquidation.zip"));
 			ZipFileService zipFileService = injector.getInstance(ZipFileService.class);
 			zipFileService.generate(list.iterator().next(), out);
 		}

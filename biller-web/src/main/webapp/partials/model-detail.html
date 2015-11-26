@@ -69,7 +69,6 @@
 				<li><a href="#/bills?model={{entity.id}}">{{'viewBillsCreatedWithThisModel' | translate}}</a></li>
 			</ul>
 		</div>
-		<div ng-include src="'templates/entity-json-popup.html'"></div>
 	</div>
 	
 	<!-- Ventana modal para editar tramos de rappel -->
@@ -98,9 +97,9 @@
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal" ng-disabled="isSaving">Cancelar</button>
-					<button type="button" class="btn btn-primary btn-sm" ng-click="removeRappel()" ng-disabled="isSaving">Eliminar</button>
-					<button type="button" class="btn btn-primary btn-sm" ng-click="mergeRappel()" ng-disabled="isSaving">Guardar</button>
+					<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal" ng-disabled="isSaving">{{'cancel' | translate}}</button>
+					<button type="button" class="btn btn-primary btn-sm" ng-click="removeRappel()" ng-disabled="isSaving">{{'remove' | translate}}</button>
+					<button type="button" class="btn btn-primary btn-sm" ng-click="mergeRappel()" ng-disabled="isSaving">{{'save' | translate}}</button>
 				</div>
 			</div>
 		</div>

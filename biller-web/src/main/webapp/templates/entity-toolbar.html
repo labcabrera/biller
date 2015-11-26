@@ -1,8 +1,8 @@
 <div class="btn-toolbar" role="toolbar">
 	<div class="btn-group">
-		<button ng-click="edit()" ng-class='isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"' ng-disabled="isSaving">Editar</button>
-		<button ng-click="load()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"' ng-disabled="isSaving"><span class="glyphicon glyphicon-refresh"></span></button>
-		<button ng-click="update()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"' ng-disabled="isSaving"><span class="glyphicon glyphicon-floppy-save"></span></button>
-		<button ng-click="remove()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"' ng-disabled="isSaving"><span class="glyphicon glyphicon-trash"></span></button>
+		<button ng-click="edit()" ng-class='isReadOnly ? "btn btn-sm btn-primary" : "btn btn-sm btn-default"' ng-disabled="!isSaving && !isReadOnly">Editar</button>
+		<button ng-click="load()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"' ng-disabled="isSaving || isReadOnly"><span class="glyphicon glyphicon-refresh"></span></button>
+		<button ng-click="update()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"' ng-disabled="isSaving || isReadOnly"><span class="glyphicon glyphicon-floppy-save"></span></button>
+		<button ng-click="remove()" ng-class='isReadOnly ? "btn btn-sm btn-default" : "btn btn-sm btn-primary"' ng-disabled="isSaving || isReadOnly"><span class="glyphicon glyphicon-trash"></span></button>
 	</div>
 </div>
