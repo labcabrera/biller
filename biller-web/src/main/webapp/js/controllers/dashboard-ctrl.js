@@ -5,7 +5,6 @@
 	appModule.controller('DashboardCtrl', [ '$scope', '$http', function($scope, $http) {
 		$scope.year = new Date().getFullYear();
 		$scope.month = new Date().getMonth(); 
-		$scope.company = {};
 		$http.get('rest/companies/id/198').success(function(data) {
 			$scope.company = data;
 		});
