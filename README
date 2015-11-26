@@ -1,9 +1,6 @@
 FIX
 	- Error JPA recalcular facturacion
-	- Revisar static weaving
 	- Revisar generacion del zip
-	- Revisar error paginacion facturas (por ejemplo SOLMAR VALENCIA en septiembre)
-
 	- Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
 	- En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar
 
@@ -19,7 +16,7 @@ TODO
 	- Sacar named queries a orm.xml
 	- No generar el PDF de las facturas que están a cero
 	- Administrador de roles y permisos
-	- Administración tareas programadas
+	- Administración tareas programadas (puedo coger tal cual el servicio que hay en cnp-saving)
 	- Eliminar los conceptos de ajuste de caja del modelo
 	- Eliminar la facturas sin resultado
 	- unificar carpetas de html (ahora hay cierto caos con templates, static, html, partials...)
@@ -29,4 +26,5 @@ CHECK-LIST
 	- Revisar reporte de liquidaciones tras cambio de modelo
 	- Proceso de migración de facturas y liquidaciones
 	- Optimización serializadores
+	- Revisar error paginacion facturas (por ejemplo SOLMAR VALENCIA en septiembre)
 	

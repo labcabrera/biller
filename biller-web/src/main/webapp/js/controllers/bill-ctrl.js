@@ -32,17 +32,14 @@
 			return 'rest/bills/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
 		$scope.search = function() {
-			$scope.currentPage = 1;
-			$scope.searchMessage = "Loading...";
-			$http.get($scope.getSearchUrl()).success(function(data) {
-				$scope.results = data;
-				$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
-			});
+			setPage(1);
 		};
 		$scope.setPage = function(page) {
 		    $scope.currentPage = page;
+		    $scope.searchMessage = "Loading...";
 		    $http.get($scope.getSearchUrl()).success(function(data) {
 		    	$scope.results = data;
+		    	$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
 		    });
 		};
 		$scope.reset();

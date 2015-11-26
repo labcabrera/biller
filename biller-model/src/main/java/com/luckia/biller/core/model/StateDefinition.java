@@ -3,14 +3,10 @@ package com.luckia.biller.core.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.Converter;
-
-import com.luckia.biller.core.serialization.NotSerializable;
 
 /**
  * Entidad que representa uno de los estados posibles de una determinada entidad.
@@ -21,7 +17,7 @@ import com.luckia.biller.core.serialization.NotSerializable;
 @Entity
 @Table(name = "S_STATE_DEFINITION")
 @SuppressWarnings("serial")
-@Converter(converterClass = ClassConverter.class, name = "ClassConverter")
+
 public class StateDefinition implements Serializable {
 
 	@Id
@@ -29,8 +25,8 @@ public class StateDefinition implements Serializable {
 	private String id;
 
 	@Column(name = "ENTITY_CLASS", nullable = false, columnDefinition = "VARCHAR(256)")
-	@Convert("ClassConverter")
-	@NotSerializable
+
+	@Convert(converter = ClassConverter.class)
 	private Class<? extends HasState> hasStateClass;
 
 	@Column(name = "STATE_DESC", nullable = false, length = 64)
