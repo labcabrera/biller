@@ -34,7 +34,12 @@ public class UserActivityRestService {
 		searchParams.setItemsPerPage(itemsPerPage);
 		searchParams.setCurrentPage(page);
 		searchParams.setQueryString(queryString);
-		return entityService.find(searchParams);
+		SearchResults<UserActivity> list = entityService.find(searchParams);
+		// En las busquedas no queremos serializar el JSON de entrada
+		for (UserActivity i : list.getResults()) {
+			i.setData(null);
+		}
+		return list;
 	}
 
 }
