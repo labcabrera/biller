@@ -182,6 +182,8 @@
 	"userActivityViewByUser": "Ver operaciones del usuario",
 	"userActivity.LIQUIDATION_MERGE_DETAIL": "Actualización de detalle de liquidación",
 	"userActivity.LIQUIDATION_REMOVE_DETAIL": "Eliminación de detalle de liquidación",
+	"userActivity.BILL_REMOVE": "Eliminación de factura",
+	"userActivity.LIQUIDATION_REMOVE": "Eliminación de liquidación",
 	"vat": "IVA/IGIT",
 	"vatLiquidationType": "IVA/IGIC",
 	"vatLiquidationType.EXCLUDED": "No incluído",

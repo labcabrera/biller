@@ -16,6 +16,9 @@ import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.serialization.Serializer;
 
+/**
+ * Nota: para probar esto es necesario tener el class-weaving de eclipse (esta configurado en gradle)
+ */
 @Ignore
 public class TestFetchGroup {
 
@@ -29,15 +32,18 @@ public class TestFetchGroup {
 			Long t0 = System.currentTimeMillis();
 			TypedQuery<Liquidation> query = entityManager.createQuery("select e from Liquidation e", Liquidation.class);
 			query.setMaxResults(10);
+
 			query.setHint(QueryHints.FETCH_GROUP_NAME, "list");
+
 			List<Liquidation> liquidations = query.getResultList();
 			for (Liquidation liquidation : liquidations) {
 				System.out.println(serializer.toJson(liquidation));
 				System.out.println("--------------------------------------------");
 			}
 			System.out.println("Time: " + (System.currentTimeMillis() - t0) + " ms");
-		} catch (Exception ex) {
+		} catch (RuntimeException ex) {
 			ex.printStackTrace();
+			throw ex;
 		}
 	}
 
