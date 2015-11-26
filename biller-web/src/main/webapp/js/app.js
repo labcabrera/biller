@@ -1,7 +1,6 @@
 'use strict';
 
 var billerModule = angular.module('billerModule', [ 'ngRoute', 'ngCookies', 'billerModule', 'ui.bootstrap', 'dialogs.main', 'tc.chartjs', 'pascalprecht.translate']);
-//var billerModule = angular.module('billerModule', [ 'ngRoute', 'ngCookies', 'billerModule', 'ui.bootstrap', 'dialogs.main', 'pascalprecht.translate']);
 
 billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $location) {
 	
