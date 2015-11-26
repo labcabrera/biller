@@ -2,8 +2,12 @@
 
 	var appModule = angular.module('billerModule');
 
-	appModule.controller('DashboardCtrl', [ '$scope', function($scope) {
-	
+	appModule.controller('DashboardCtrl', [ '$scope', '$http', function($scope, $http) {
+		$scope.year = new Date().getFullYear();
+		$scope.company = {};
+		$http.get('rest/companies/id/198').success(function(data) {
+			$scope.company = data;
+		});
 	}]);
 
 	appModule.factory('colorChartService', function() {
@@ -94,7 +98,8 @@
 				$scope.loadData = function() {
 					$http.get($scope.restPath, {
 						params : {
-							year : $scope.year
+							year : $scope.sourceYear ? $scope.sourceYear : -1,
+							companyId: $scope.sourceCompany ? $scope.sourceCompany.id : -1
 						}
 					}).success(function(records) {
 						var labels = new Array();
@@ -120,14 +125,21 @@
 						};
 					});
 				};
-				$scope.$watch('year', function() {
+				$scope.$watch('sourceYear', function() {
+					$scope.myData = null;
+					$scope.loadData();
+				});
+				$scope.$watch('sourceCompany', function() {
+					$scope.myData = null;
 					$scope.loadData();
 				});
 			} ],
 			scope : {
 				restPath : '@',
 				chartType : '@',
-				panelName : '@'
+				panelName : '@',
+				sourceCompany: '=',
+				sourceYear: '='
 			},
 		};
 	});

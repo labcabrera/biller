@@ -6,8 +6,30 @@
 			</h4>
 
 			<div dashboard-pending-liquidations rest-path="/dashboard/contract/pending"></div>
+			
+			<div class="row">
+				<div class="col-sm-12">
+					<form class="form">
+						<div class="form-group col-sm-6"> 
+							<label>{{'company' | translate}}</label>
+							<div company ng-model="company"></div>
+						</div>
+						<div class="form-group col-sm-6">
+							<label>{{'year' | translate}}</label>
+							<select class="form-control" ng-model="year">
+								<option value="2015">2015</option>
+								<option value="2014">2014</option>
+							</select>
+						</div>
+					</form>
+				</div>
+			</div>
 
-			<div bar-line-chart rest-path="rest/dashboard/company/evolution/amount/198" chart-type="bar"
+			<div bar-line-chart
+				rest-path="rest/dashboard/company/evolution"
+				chart-type="bar"
+				source-company="company"
+				source-year="year"
 				panel-name="{{'dashboardCompanyEvolutionAmount' | translate}}"></div>
 
 			<div class="row">
@@ -35,5 +57,8 @@
 				</div>
 			</div>
 		</div>
+		
+		<pre>{{year}}</pre>
+		<pre>{{company|json}}</pre>
 	</div>
 </div>

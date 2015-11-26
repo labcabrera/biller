@@ -70,6 +70,7 @@
 	"dashboardStoreMonthDistributionNegative": "Distribución mensual por establecimientos con liquidación negativa",
 	"dashboardStoreYearDistributionPositive": "Distribución anual por establecimientos",
 	"dashboardStoreYearDistributionNegative": "Distribución anual por establecimientos con liquidación negativa",
+	"dashboardNoData": "No se han encontrado registros",
 	"date": "Fecha",
 	"dateFrom": "Desde",
 	"dateTo": "Hasta",

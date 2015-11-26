@@ -38,8 +38,9 @@ public class DashboardRestService {
 	private I18nService i18nService;
 
 	@GET
-	@Path("/company/evolution/amount/{companyId}")
-	public List<ChartModel> contractEvolutionAmount(@PathParam("companyId") Long companyId) {
+	@Path("/company/evolution")
+	public List<ChartModel> contractEvolutionAmount(@QueryParam("companyId") Long companyId, @QueryParam("year") Integer year) {
+		year = year != null && year > 0 ? year : new DateTime().getYear();
 		EntityManager entityManager = entityManagerProvider.get();
 		List<ChartModel> list = new ArrayList<>();
 		StringBuffer sb = new StringBuffer();
@@ -51,7 +52,7 @@ public class DashboardRestService {
 		sb.append("AND S.STATE_DEFINITION_ID IN ('Sent', 'Confirmed')");
 		Query query = entityManager.createNativeQuery(sb.toString());
 		for (int i = 1; i < 13; i++) {
-			DateTime from = new DateTime(2015, i, 1, 0, 0, 0);
+			DateTime from = new DateTime(year, i, 1, 0, 0, 0);
 			DateTime to = from.dayOfMonth().withMaximumValue();
 			query.setParameter(1, companyId);
 			query.setParameter(2, from.toDate());
