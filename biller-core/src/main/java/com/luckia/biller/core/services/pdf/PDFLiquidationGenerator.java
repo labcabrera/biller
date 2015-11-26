@@ -134,7 +134,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			cells.add(createCell(formatAmount(vatPercent, false) + "%", Element.ALIGN_RIGHT, boldFont));
 			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getVatAmount()), Element.ALIGN_RIGHT, boldFont));
 		} else {
-			cells.addAll(createEmptyCells(7));
+			cells.addAll(createEmptyCells(3));
 		}
 		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getTotalAmount()), Element.ALIGN_RIGHT, boldFont));
 
