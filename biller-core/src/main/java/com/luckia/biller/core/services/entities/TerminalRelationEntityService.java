@@ -8,7 +8,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.TerminalRelation;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 
 /**
@@ -23,6 +25,7 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 	 */
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.TERMINAL_RELATION_MERGE)
 	public Message<TerminalRelation> merge(TerminalRelation entity) {
 		EntityManager entityManager = entityManagerProvider.get();
 		TerminalRelation current;
@@ -50,6 +53,7 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 	 */
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.TERMINAL_RELATION_REMOVE)
 	public Message<TerminalRelation> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		TerminalRelation current = entityManager.find(TerminalRelation.class, primaryKey);

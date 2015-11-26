@@ -18,11 +18,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.common.NoAvailableDataException;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.ProvinceTaxes;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 
 /**
@@ -38,6 +40,7 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.PROVICE_TAX_MERGE)
 	public Message<ProvinceTaxes> merge(ProvinceTaxes entity) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -53,6 +56,7 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 		}
 	}
 
+	@RegisterActivity(type = UserActivityType.PROVICE_TAX_SET_FEES_PERCENT)
 	public BigDecimal getGameFeesPercent(Bill bill) {
 		ProvinceTaxes entity = resolveTaxes(bill);
 		if (entity != null && entity.getFeesPercent() != null) {
@@ -62,6 +66,7 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 		}
 	}
 
+	@RegisterActivity(type = UserActivityType.PROVICE_TAX_SET_VAT_PERCENT)
 	public BigDecimal getVatPercent(Bill bill) {
 		ProvinceTaxes entity = resolveTaxes(bill);
 		if (entity != null && entity.getVatPercent() != null) {

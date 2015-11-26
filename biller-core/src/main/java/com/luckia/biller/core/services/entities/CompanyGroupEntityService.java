@@ -6,13 +6,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.CompanyGroup;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 
 public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGroup> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.COMPANY_GROUP_MERGE)
 	public Message<CompanyGroup> merge(CompanyGroup entity) {
 		Message<CompanyGroup> validationResult = validate(entity);
 		if (validationResult.hasErrors()) {
@@ -39,6 +42,7 @@ public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGro
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.COMPANY_GROUP_REMOVE)
 	public Message<CompanyGroup> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Query query = entityManager.createQuery("update LegalEntity e set e.parent = :parent where e.parent.id = :value");

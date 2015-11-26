@@ -46,6 +46,7 @@ public class CostCenterEntityService extends EntityService<CostCenter> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.COST_CENTER_REMOVE)
 	public Message<CostCenter> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		CostCenter current = entityManager.find(CostCenter.class, primaryKey);

@@ -9,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 
 public class StoreEntityService extends LegalEntityBaseService<Store> {
@@ -19,6 +21,7 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.STORE_MERGE)
 	public Message<Store> merge(Store entity) {
 		Validate.notNull(entity);
 		EntityManager entityManager = entityManagerProvider.get();
@@ -49,6 +52,7 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.STORE_REMOVE)
 	public Message<Store> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Store current = entityManager.find(Store.class, primaryKey);

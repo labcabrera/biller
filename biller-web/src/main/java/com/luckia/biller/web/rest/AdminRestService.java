@@ -27,9 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.scheduler.tasks.BillRecalculationTask;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
@@ -70,6 +72,7 @@ public class AdminRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/bill/{storeId}/{year}/{month}")
+	@RegisterActivity(type = UserActivityType.BILL_RECALCULATION)
 	public Message<String> recalculateBill(@PathParam("storeId") Long storeId, @PathParam("year") Integer year, @PathParam("month") Integer month) {
 		try {
 			Range<Date> range = getEffectiveRange(year, month);
@@ -123,6 +126,7 @@ public class AdminRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/liquidation/{companyId}/{year}/{month}")
+	@RegisterActivity(type = UserActivityType.LIQUIDATION_RECALCULATION)
 	public Message<String> recalculateLiquidation(@PathParam("companyId") Long companyId, @PathParam("year") Integer year, @PathParam("month") Integer month) {
 		try {
 			Range<Date> range = getEffectiveRange(year, month);

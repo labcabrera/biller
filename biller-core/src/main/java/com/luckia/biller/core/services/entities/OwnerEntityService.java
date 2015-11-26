@@ -5,7 +5,9 @@ import java.io.Serializable;
 import javax.persistence.EntityManager;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.Owner;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 
 /**
@@ -15,6 +17,7 @@ public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.OWNER_MERGE)
 	public Message<Owner> merge(Owner entity) {
 		Message<Owner> validationResult = validate(entity);
 		if (validationResult.hasErrors()) {
@@ -41,6 +44,7 @@ public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.OWNER_REMOVE)
 	public Message<Owner> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Owner current = entityManager.find(Owner.class, primaryKey);

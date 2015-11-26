@@ -5,13 +5,16 @@ import java.io.Serializable;
 import javax.persistence.EntityManager;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.Company;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 
 public class CompanyEntityService extends LegalEntityBaseService<Company> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.COMPANY_MERGE)
 	public Message<Company> merge(Company entity) {
 		Message<Company> validationResult = validate(entity);
 		if (validationResult.hasErrors()) {
@@ -38,6 +41,7 @@ public class CompanyEntityService extends LegalEntityBaseService<Company> {
 
 	@Override
 	@Transactional
+	@RegisterActivity(type = UserActivityType.COMPANY_REMOVE)
 	public Message<Company> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Company current = entityManager.find(Company.class, primaryKey);
