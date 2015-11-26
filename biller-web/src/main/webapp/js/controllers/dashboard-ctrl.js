@@ -4,6 +4,7 @@
 
 	appModule.controller('DashboardCtrl', [ '$scope', '$http', function($scope, $http) {
 		$scope.year = new Date().getFullYear();
+		$scope.month = new Date().getMonth(); 
 		$scope.company = {};
 		$http.get('rest/companies/id/198').success(function(data) {
 			$scope.company = data;
@@ -62,8 +63,9 @@
 				$scope.loadData = function() {
 					$http.get($scope.restPath, {
 						params : {
-							year : 2015,
-							month : 9
+							companyId: $scope.sourceCompany.id,
+							year : $scope.sourceYear,
+							month : $scope.sourceMonth
 						}
 					}).success(function(records) {
 						$scope.records = records;
@@ -79,13 +81,22 @@
 						};
 					});
 				};
-				$scope.$watch('year', function() {
+				$scope.$watch('sourceYear', function() {
+					$scope.loadData();
+				});
+				$scope.$watch('sourceCompany', function() {
+					$scope.loadData();
+				});
+				$scope.$watch('sourceMonth', function() {
 					$scope.loadData();
 				});
 			}],
 			scope : {
 				restPath : '@',
-				panelName : '@'
+				panelName : '@',
+				sourceCompany: '=',
+				sourceYear: '=',
+				sourceMonth: '='
 			},
 		};
 	});

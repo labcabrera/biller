@@ -12,7 +12,6 @@ import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
@@ -65,8 +64,8 @@ public class DashboardRestService {
 	}
 
 	@GET
-	@Path("company/storeDistribution/{companyId}")
-	public List<ChartModel> companyStoreDistributionByMonth(@PathParam("companyId") Long companyId, @QueryParam("year") Integer year, @QueryParam("month") Integer month,
+	@Path("company/storeDistribution")
+	public List<ChartModel> companyStoreDistributionByMonth(@QueryParam("companyId") Long companyId, @QueryParam("year") Integer year, @QueryParam("month") Integer month,
 			@QueryParam("negative") Boolean negative) {
 		year = year != null ? year : new DateTime().getYear();
 		month = month != null ? month : new DateTime().getMonthOfYear();
@@ -76,14 +75,14 @@ public class DashboardRestService {
 	}
 
 	@GET
-	@Path("company/storeDistribution/negative/{companyId}")
-	public List<ChartModel> companyStoreDistributionNegative(@PathParam("companyId") Long companyId, @QueryParam("year") Integer year, @QueryParam("month") Integer month) {
+	@Path("company/storeDistribution/negative")
+	public List<ChartModel> companyStoreDistributionNegative(@QueryParam("companyId") Long companyId, @QueryParam("year") Integer year, @QueryParam("month") Integer month) {
 		return companyStoreDistributionByMonth(companyId, year, month, true);
 	}
 
 	@GET
-	@Path("company/storeDistributionAnual/{companyId}")
-	public List<ChartModel> companyStoreDistributionByYear(@PathParam("companyId") Long companyId, @QueryParam("year") Integer year, @QueryParam("negative") Boolean negative) {
+	@Path("company/storeDistributionAnual")
+	public List<ChartModel> companyStoreDistributionByYear(@QueryParam("companyId") Long companyId, @QueryParam("year") Integer year, @QueryParam("negative") Boolean negative) {
 		year = year != null ? year : new DateTime().getYear();
 		DateTime from = new DateTime(year, 1, 1, 0, 0, 0);
 		DateTime to = new DateTime(year, 12, 31, 0, 0, 0);
@@ -91,8 +90,8 @@ public class DashboardRestService {
 	}
 
 	@GET
-	@Path("company/storeDistributionAnual/negative/{companyId}")
-	public List<ChartModel> companyStoreDistributionByYearNegative(@PathParam("companyId") Long companyId, @QueryParam("year") Integer year) {
+	@Path("company/storeDistributionAnual/negative")
+	public List<ChartModel> companyStoreDistributionByYearNegative(@QueryParam("companyId") Long companyId, @QueryParam("year") Integer year) {
 		return companyStoreDistributionByYear(companyId, year, true);
 	}
 
