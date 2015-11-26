@@ -10,9 +10,7 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label">{{'type' | translate}}</label>
 						<div class="col-sm-8">
-							<select class="form-control"
-								ng-model="detail.dummyType"
-								ng-change="detail.name = (detail.dummyType == 'OTHER' ? '' : detail.dummyType)">
+							<select class="form-control"ng-model="detail.dummyType" ng-change="detail.name = (detail.dummyType == 'OTHER' ? '' : detail.dummyType)">
 								<option value="{{'loanRecovery' | translate}}">{{'loanRecovery' | translate}}</option>
 								<option value="{{'robbery' | translate}}">{{'robbery' | translate}}</option>
 								<option value="OTHER">{{'other' | translate}}</option>

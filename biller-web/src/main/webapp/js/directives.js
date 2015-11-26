@@ -414,13 +414,14 @@
 							$scope.isSaving = false;
 							$scope.liquidationDetail = data;
 							$scope.liquidationDetail.liquidation = { "id": $scope.entity.id };
+							$('#editLiquidationConceptModal').modal('show');
 						});	
 					} else {
 						var d = $scope.liquidationDetail;
 						d.id = d.units = d.value = d.name = d.dummyType = null;
 						d.liquidationIncluded = true;
+						$('#editLiquidationConceptModal').modal('show');
 					}
-					$('#editLiquidationConceptModal').modal('show');
 				};
 				$scope.setPage = function(page) {
 				    $scope.currentPage = page;

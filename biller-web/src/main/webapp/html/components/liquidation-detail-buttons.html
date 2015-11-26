@@ -1,57 +1,54 @@
-<div class="m-top-15">
-	<div liquidation-details entity="entity" childs="childs" liquidation-detail="liquidationDetail"></div>
-	<div class="btn-toolbar" role="toolbar">
-		<button
-			ng-click="editDetail()"
-			ng-if="entity.currentState.stateDefinition.id == 'Draft'"
-			class='btn btn-sm btn-primary'
-			ng-disabled="isSaving">{{'addLiquidationDetail' | translate}}</button>
-		<a
-			class="btn btn-primary btn-sm"
-			ng-if="entity.currentState.stateDefinition.id == 'Draft'"
-			href="rest/liquidations/draft/{{entity.id}}"
-			role="button"
-			ng-disabled="isSaving">{{'viewLiquidationDraft' | translate}}</a>
-		<a
-			class="btn btn-primary btn-sm"
-			ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'"
-			href="rest/binary/download/{{entity.pdfFile.id}}"
-			role="button"
-			ng-disabled="isSaving">{{'downloadPdf' | translate}}</a>
-		<button
-			ng-click="recreatePDF()"
-			ng-if="entity.currentState.stateDefinition.id != 'Draft'"
-			class='btn btn-sm btn-primary'
-			ng-disabled="isSaving">{{'recreatePdf' | translate}}</button>
-		<a
-			class="btn btn-primary btn-sm"
-			href="rest/report/liquidations?from={{entity.dateFrom | limitTo: 10}}&to={{entity.dateTo | limitTo: 10}}&ids={{entity.sender.id}}"
-			role="button"
-			ng-disabled="isSaving">{{'viewReport' | translate}}</a>
-		<button
-			ng-click="draft()"
-			ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'"
-			class='btn btn-sm btn-primary'
-			ng-disabled="isSaving">{{'draft' | translate}}</button>
-		<button
-			ng-click="confirm()"
-			ng-if="entity.currentState.stateDefinition.id == 'Draft'"
-			class='btn btn-sm btn-success pull-right'
-			ng-disabled="isSaving">{{'confirmLiquidation' | translate}}</button>
-		<button
-			ng-click="confirmPendingBills()"
-			ng-if="entity.currentState.stateDefinition.id == 'Draft'"
-			class='btn btn-sm btn-success pull-right'
-			ng-disabled="isSaving">{{'confirmPendingBills' | translate}}</button>
-		<button
-			ng-click="recalculate()"
-			ng-if="entity.currentState.stateDefinition.id == 'Draft'"
-			class='btn btn-sm btn-success pull-right'
-			ng-disabled="isSaving">{{'recalculate' | translate}}</button>
-		<button
-			ng-click="editSendMail()"
-			ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'"
-			class='btn btn-sm btn-success pull-right'
-			ng-disabled="isSaving">{{'send' | translate}}</button>
-	</div>
+<div class="btn-toolbar" role="toolbar">
+	<button
+		ng-click="editDetail()"
+		ng-if="entity.currentState.stateDefinition.id == 'Draft'"
+		class='btn btn-sm btn-primary'
+		ng-disabled="isSaving">{{'addLiquidationDetail' | translate}}</button>
+	<a
+		class="btn btn-primary btn-sm"
+		ng-if="entity.currentState.stateDefinition.id == 'Draft'"
+		href="rest/liquidations/draft/{{entity.id}}"
+		role="button"
+		ng-disabled="isSaving">{{'viewLiquidationDraft' | translate}}</a>
+	<a
+		class="btn btn-primary btn-sm"
+		ng-if="entity.currentState.stateDefinition.id != 'Draft' && entity.currentState.stateDefinition.id != 'Cancelled'"
+		href="rest/binary/download/{{entity.pdfFile.id}}"
+		role="button"
+		ng-disabled="isSaving">{{'downloadPdf' | translate}}</a>
+	<button
+		ng-click="recreatePDF()"
+		ng-if="entity.currentState.stateDefinition.id != 'Draft'"
+		class='btn btn-sm btn-primary'
+		ng-disabled="isSaving">{{'recreatePdf' | translate}}</button>
+	<a
+		class="btn btn-primary btn-sm"
+		href="rest/report/liquidations?from={{entity.dateFrom | limitTo: 10}}&to={{entity.dateTo | limitTo: 10}}&ids={{entity.sender.id}}"
+		role="button"
+		ng-disabled="isSaving">{{'viewReport' | translate}}</a>
+	<button
+		ng-click="draft()"
+		ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'"
+		class='btn btn-sm btn-primary'
+		ng-disabled="isSaving">{{'draft' | translate}}</button>
+	<button
+		ng-click="confirm()"
+		ng-if="entity.currentState.stateDefinition.id == 'Draft'"
+		class='btn btn-sm btn-success pull-right'
+		ng-disabled="isSaving">{{'confirmLiquidation' | translate}}</button>
+	<button
+		ng-click="confirmPendingBills()"
+		ng-if="entity.currentState.stateDefinition.id == 'Draft'"
+		class='btn btn-sm btn-success pull-right'
+		ng-disabled="isSaving">{{'confirmPendingBills' | translate}}</button>
+	<button
+		ng-click="recalculate()"
+		ng-if="entity.currentState.stateDefinition.id == 'Draft'"
+		class='btn btn-sm btn-success pull-right'
+		ng-disabled="isSaving">{{'recalculate' | translate}}</button>
+	<button
+		ng-click="editSendMail()"
+		ng-if="entity.currentState.stateDefinition.id == 'Confirmed' || entity.currentState.stateDefinition.id == 'Sent'"
+		class='btn btn-sm btn-success pull-right'
+		ng-disabled="isSaving">{{'send' | translate}}</button>
 </div>

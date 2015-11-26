@@ -59,7 +59,10 @@
 				
 				<div class="tab-content">
 					<div class="tab-pane active" id="detailTab">
-						<div ng-include src="'html/components/liquidation-detail-buttons.html'"></div>
+						<div class="m-top-15">	
+							<div liquidation-details entity="entity" childs="childs" liquidation-detail="liquidationDetail"></div>
+							<div ng-include src="'html/components/liquidation-detail-buttons.html'"></div>
+						</div>
 					</div>
 					<!-- Pestaña de observaciones -->
 					<div class="tab-pane" id="commentsTab">
@@ -93,7 +96,7 @@
 	</div>
 
 	<div add-liquidation-detail liquidation="entity" message="message" detail="liquidationDetail" is-saving="isSaving"></div>
-
+	
 	<!-- ventana modal para el envio de correos -->
 	<div class="modal fade" id="sendMailModal" tabindex="-1" role="dialog" aria-labelledby="sendMailLabel" aria-hidden="true">
 		<div class="modal-dialog">
