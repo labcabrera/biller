@@ -62,7 +62,7 @@
 				$scope.loadData = function() {
 					$http.get($scope.restPath, {
 						params : {
-							companyId: $scope.sourceCompany.id,
+							companyId: $scope.sourceCompany ? $scope.sourceCompany.id : -1,
 							year : $scope.sourceYear,
 							month : $scope.sourceMonth
 						}
