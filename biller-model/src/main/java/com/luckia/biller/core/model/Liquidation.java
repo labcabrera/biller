@@ -107,4 +107,19 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 			this.liquidationResults = null;
 		}
 	}
+
+	public boolean vatApplies() {
+		boolean hasVat = false;
+		if (model != null && model.getVatLiquidationType() != null) {
+			switch (model.getVatLiquidationType()) {
+			case LIQUIDATION_ADDED:
+			case LIQUIDATION_INCLUDED:
+				hasVat = true;
+				break;
+			default:
+				break;
+			}
+		}
+		return hasVat;
+	}
 }

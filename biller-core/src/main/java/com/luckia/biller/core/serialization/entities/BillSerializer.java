@@ -26,18 +26,18 @@ public class BillSerializer extends AbstractBillSerializer implements JsonSerial
 				bill.add("liquidation", liquidation);
 			}
 
-			bill.addProperty("storeCash", src.getStoreCash());
-			bill.addProperty("netAmount", src.getNetAmount());
-			bill.addProperty("vatAmount", src.getVatAmount());
-			bill.addProperty("vatPercent", src.getVatPercent());
-			bill.addProperty("liquidationTotalAmount", src.getLiquidationTotalAmount());
-			bill.addProperty("liquidationTotalVat", src.getLiquidationTotalVat());
-			bill.addProperty("liquidationTotalNetAmount", src.getLiquidationTotalNetAmount());
-			bill.addProperty("liquidationBetAmount", src.getLiquidationBetAmount());
-			bill.addProperty("liquidationSatAmount", src.getLiquidationSatAmount());
-			bill.addProperty("liquidationPricePerLocation", src.getLiquidationPricePerLocation());
-			bill.addProperty("liquidationManualAmount", src.getLiquidationManualAmount());
-			bill.addProperty("liquidationOuterAmount", src.getLiquidationOuterAmount());
+			bill.add("storeCash", context.serialize(src.getStoreCash()));
+			bill.add("netAmount", context.serialize(src.getNetAmount()));
+			bill.add("vatAmount", context.serialize(src.getVatAmount()));
+			bill.add("vatPercent", context.serialize(src.getVatPercent()));
+			bill.add("liquidationTotalAmount", context.serialize(src.getLiquidationTotalAmount()));
+			bill.add("liquidationTotalVat", context.serialize(src.getLiquidationTotalVat()));
+			bill.add("liquidationTotalNetAmount", context.serialize(src.getLiquidationTotalNetAmount()));
+			bill.add("liquidationBetAmount", context.serialize(src.getLiquidationBetAmount()));
+			bill.add("liquidationSatAmount", context.serialize(src.getLiquidationSatAmount()));
+			bill.add("liquidationPricePerLocation", context.serialize(src.getLiquidationPricePerLocation()));
+			bill.add("liquidationManualAmount", context.serialize(src.getLiquidationManualAmount()));
+			bill.add("liquidationOuterAmount", context.serialize(src.getLiquidationOuterAmount()));
 
 			bill.add("billType", context.serialize(src.getBillType()));
 			if (src.getBillDetails() != null) {

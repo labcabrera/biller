@@ -1,6 +1,7 @@
 package com.luckia.biller.core.services.pdf;
 
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
+import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 
 public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 
@@ -31,6 +33,8 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 
 	@Inject
 	private PDFLiquidationDetailProcessor detailProcessor;
+	@Inject
+	private ProvinceTaxesService provinceTaxesService;
 
 	private Map<BillConcept, PDFLiquidationDetail> details;
 	private Map<BillConcept, PDFLiquidationDetail> outerDetails;
@@ -64,36 +68,49 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 	private void printGeneralDetails(Document document, Liquidation liquidation) throws DocumentException {
 		String senderName = liquidation.getSender().getName();
 		String receiverName = liquidation.getReceiver().getName();
-		PdfPTable table = new PdfPTable(new float[] { 30f, 10f, 10f, 10f, 10f, 10f });
+		boolean hasVat = liquidation.vatApplies();
+		BigDecimal vatPercent = BigDecimal.ZERO;
+		PdfPTable table;
+		if (hasVat) {
+			vatPercent = provinceTaxesService.getVatPercent(liquidation);
+			table = new PdfPTable(new float[] { 50f, 10f, 10f, 10f, 10f, 10f, 10f });
+		} else {
+			table = new PdfPTable(new float[] { 60f, 10f, 10f, 10f, 10f });
+		}
 		table.setWidthPercentage(100f);
-
 		List<PdfPCell> cells = new ArrayList<>();
 
+		// Header
 		cells.add(createCell("Liquidación", Element.ALIGN_LEFT, documentFont));
-		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
-		cells.add(createCell(StringUtils.EMPTY, Element.ALIGN_RIGHT, documentFont));
+		cells.addAll(createEmptyCells(hasVat ? 6 : 4));
 
+		// Titles
 		cells.add(createCell("Descripción", Element.ALIGN_LEFT, boldFont));
 		cells.add(createCell("Cantidad", Element.ALIGN_RIGHT, boldFont));
 		cells.add(createCell("Precio unidad", Element.ALIGN_RIGHT, boldFont));
 		cells.add(createCell("Base imponible", Element.ALIGN_RIGHT, boldFont));
-		cells.add(createCell("IVA / EGIC", Element.ALIGN_RIGHT, boldFont));
+		if (hasVat) {
+			cells.add(createCell("IVA/IGIC", Element.ALIGN_RIGHT, boldFont));
+			cells.add(createCell("IVA/IGIC", Element.ALIGN_RIGHT, boldFont));
+		}
 		cells.add(createCell("Importe", Element.ALIGN_RIGHT, boldFont));
 
+		// Main concepts
 		for (Entry<BillConcept, PDFLiquidationDetail> entry : details.entrySet()) {
 			if (MathUtils.isNotZero(entry.getValue().getAmount())) {
 				cells.add(createCell("" + entry.getValue().getName(), Element.ALIGN_LEFT, documentFont));
 				cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
 				cells.add(createCell(formatAmount(entry.getValue().getNetAmount()), Element.ALIGN_RIGHT, documentFont));
 				cells.add(createCell(formatAmount(entry.getValue().getNetAmount()), Element.ALIGN_RIGHT, documentFont));
-				cells.add(createCell(formatAmount(entry.getValue().getVatAmount()), Element.ALIGN_RIGHT, documentFont));
+				if (hasVat) {
+					cells.add(createCell(formatAmount(vatPercent, false) + "%", Element.ALIGN_RIGHT, documentFont));
+					cells.add(createCell(formatAmount(entry.getValue().getVatAmount()), Element.ALIGN_RIGHT, documentFont));
+				}
 				cells.add(createCell(formatAmount(entry.getValue().getAmount()), Element.ALIGN_RIGHT, documentFont));
 			}
 		}
 
+		// Liquidation concepts
 		if (liquidation.getDetails() != null) {
 			for (LiquidationDetail detail : liquidation.getDetails()) {
 				if (detail.getLiquidationIncluded()) {
@@ -101,42 +118,49 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 					cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
 					cells.add(createCell(formatAmount(detail.getNetValue()), Element.ALIGN_RIGHT, documentFont));
 					cells.add(createCell(formatAmount(detail.getNetValue()), Element.ALIGN_RIGHT, documentFont));
-					cells.add(createCell(formatAmount(detail.getVatValue()), Element.ALIGN_RIGHT, documentFont));
+					if (hasVat) {
+						cells.add(createCell(formatAmount(vatPercent, false) + "%", Element.ALIGN_RIGHT, documentFont));
+						cells.add(createCell(formatAmount(detail.getVatValue()), Element.ALIGN_RIGHT, documentFont));
+					}
 					cells.add(createCell(formatAmount(detail.getValue()), Element.ALIGN_RIGHT, documentFont));
 				}
 			}
 		}
 
 		cells.add(createCell("TOTAL LIQUIDACIÓN", Element.ALIGN_LEFT, boldFont));
-		cells.addAll(createEmptyCells(4));
+		if (hasVat) {
+			cells.addAll(createEmptyCells(2));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getNetAmount()), Element.ALIGN_RIGHT, boldFont));
+			cells.add(createCell(formatAmount(vatPercent, false) + "%", Element.ALIGN_RIGHT, boldFont));
+			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getVatAmount()), Element.ALIGN_RIGHT, boldFont));
+		} else {
+			cells.addAll(createEmptyCells(7));
+		}
 		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getTotalAmount()), Element.ALIGN_RIGHT, boldFont));
 
-		cells.addAll(createEmptyCells(6));
+		cells.addAll(createEmptyCells(hasVat ? 7 : 5));
 
 		cells.add(createCell("Saldo de caja de " + senderName, Element.ALIGN_LEFT, boldFont));
-		cells.addAll(createEmptyCells(4));
+		cells.addAll(createEmptyCells(hasVat ? 5 : 3));
 		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreAmount()), Element.ALIGN_RIGHT, boldFont));
 
 		// Ajustes manuales externos a la liquidacion
 		for (Entry<BillConcept, PDFLiquidationDetail> entry : outerDetails.entrySet()) {
 			if (MathUtils.isNotZero(entry.getValue().getAmount())) {
-				cells.add(createCell("" + entry.getValue().getName(), Element.ALIGN_LEFT, documentFont));
-				cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-				cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-				cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-				cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
+				cells.add(createCell(entry.getValue().getName(), Element.ALIGN_LEFT, documentFont));
+				cells.addAll(createEmptyCells(hasVat ? 5 : 3));
 				cells.add(createCell(formatAmount(entry.getValue().getAmount()), Element.ALIGN_RIGHT, documentFont));
 			}
 		}
 
 		if (!outerDetails.isEmpty()) {
 			cells.add(createCell("Saldo de caja ajustado", Element.ALIGN_LEFT, boldFont));
-			cells.addAll(createEmptyCells(4));
+			cells.addAll(createEmptyCells(hasVat ? 5 : 3));
 			cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreEffectiveAmount()), Element.ALIGN_RIGHT, boldFont));
 		}
 
 		cells.add(createCell("Total liquidación a percibir por " + senderName, Element.ALIGN_LEFT, documentFont));
-		cells.addAll(createEmptyCells(4));
+		cells.addAll(createEmptyCells(hasVat ? 5 : 3));
 		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getTotalAmount()), Element.ALIGN_RIGHT, documentFont));
 
 		String message;
@@ -146,10 +170,10 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 			message = String.format("Total a ingresar a %s (%s)", receiverName, liquidation.getReceiver().getAccountNumber());
 		}
 		cells.add(createCell(message, Element.ALIGN_LEFT, boldFont));
-		cells.addAll(createEmptyCells(4));
+		cells.addAll(createEmptyCells(hasVat ? 5 : 3));
 		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getEffectiveLiquidationAmount()), Element.ALIGN_RIGHT, boldFont));
 
-		int cols = 6;
+		int cols = hasVat ? 7 : 5;
 		int subtotalRow = 2 + details.size();
 		for (int i = 0; i < cells.size(); i++) {
 			int col = i % cols;
