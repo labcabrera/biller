@@ -32,7 +32,7 @@
 			return 'rest/bills/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
 		$scope.search = function() {
-			setPage(1);
+			$scope.setPage(1);
 		};
 		$scope.setPage = function(page) {
 		    $scope.currentPage = page;
