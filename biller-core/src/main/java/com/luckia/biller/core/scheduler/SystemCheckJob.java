@@ -13,9 +13,9 @@ public class SystemCheckJob extends BaseJob {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		LOG.trace("Checking system status");
 		init(context);
+		// SettingsService settingsService = injector.getInstance(SettingsService.class);
 		// Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
 		// LiquidationMailService liquidationMailService = injector.getInstance(LiquidationMailService.class);
-		// SettingsService settingsService = injector.getInstance(SettingsService.class);
 		// SendLiquidationsTask sendLiquidationsTask = new SendLiquidationsTask(entityManagerProvider, liquidationMailService, settingsService);
 		// sendLiquidationsTask.run();
 	}

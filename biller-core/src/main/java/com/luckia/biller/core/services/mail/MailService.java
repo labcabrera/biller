@@ -1,6 +1,7 @@
 package com.luckia.biller.core.services.mail;
 
 import java.util.List;
+import java.util.Properties;
 
 import javax.inject.Singleton;
 
@@ -12,16 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.luckia.biller.core.model.AppSettings;
-import com.luckia.biller.core.services.SettingsService;
+import com.luckia.biller.core.common.SettingsManager;
 
 @Singleton
 public class MailService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
 
+	// @Inject
+	// private SettingsService settingsService;
 	@Inject
-	private SettingsService settingsService;
+	private SettingsManager settingsManager;
 
 	private String hostName;
 	private String emailUser;
@@ -34,14 +36,14 @@ public class MailService {
 
 	public void init() {
 		LOG.debug("Loading mail settings");
-		AppSettings appSettings = settingsService.getMailSettings();
-		hostName = appSettings.getValue("hostName", String.class);
-		emailUser = appSettings.getValue("emailUser", String.class);
-		emailPassword = appSettings.getValue("emailPassword", String.class);
-		fromEmail = appSettings.getValue("fromEmail", String.class);
-		sslConnection = appSettings.getValue("sslConnection", String.class);
-		tlsConnection = appSettings.getValue("tlsConnection", String.class);
-		port = Integer.parseInt(appSettings.getValue("port", String.class));
+		Properties properties = settingsManager.getProperties("mail");
+		hostName = properties.getProperty("host");
+		emailUser = properties.getProperty("user");
+		emailPassword = properties.getProperty("password");
+		fromEmail = properties.getProperty("fromEmail");
+		sslConnection = properties.getProperty("sslConnection");
+		tlsConnection = properties.getProperty("tlsConnection");
+		port = Integer.parseInt(properties.getProperty("port"));
 	}
 
 	/**
