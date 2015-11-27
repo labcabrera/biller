@@ -85,7 +85,7 @@ public abstract class EntityService<I> {
 		searchResults.setCurrentPage(params.getCurrentPage());
 		searchResults.setItemsPerPage(params.getItemsPerPage());
 		searchResults.setMs(System.currentTimeMillis() - t0);
-		LOG.debug("Readed {}/{} {} items in {} ms", searchResults.getResults().size(), totalItems, getClass().getSimpleName(), searchResults.getMs());
+		LOG.debug("Readed {} ({}) {} items in {} ms", searchResults.getResults().size(), totalItems, getEntityClass().getSimpleName(), searchResults.getMs());
 		return searchResults;
 	}
 

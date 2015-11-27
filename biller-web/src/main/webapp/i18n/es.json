@@ -202,6 +202,8 @@
 	"userActivity.LIQUIDATION_REMOVE_DETAIL": "Eliminación de detalle de liquidación",
 	"userActivity.BILL_REMOVE": "Eliminación de factura",
 	"userActivity.LIQUIDATION_REMOVE": "Eliminación de liquidación",
+	"userActivity.PROVICE_TAX_SET_VAT_PERCENT": "Actualización IVA",
+	"userActivity.PROVICE_TAX_SET_FEES_PERCENT": "Actualización tasa de juego",
 	"vat": "IVA/IGIT",
 	"vatLiquidationType": "IVA/IGIC",
 	"vatLiquidationType.EXCLUDED": "No incluído",
