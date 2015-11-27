@@ -28,8 +28,6 @@ public class ZipFileService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ZipFileService.class);
 
-	private static final String[] REPLACEMENTS_KEYS = { "á", "é", "í", "ó", "ú", "ñ", " ", ".", "," };
-	private static final String[] REPLACEMENTS_VALUES = { "a", "e", "i", "o", "u", "n", "-", "", "", "" };
 	private static final String FORMAT_BILL_FOLDER = "facturas/";
 
 	@Inject
@@ -43,12 +41,12 @@ public class ZipFileService {
 		InputStream in;
 		try {
 			ZipOutputStream zipOutputStream = new ZipOutputStream(out);
-			name = fileService.getLiquidationFileName(liquidation, "pdf");
+			name = fileService.getAbstractBillFileName(liquidation, "pdf");
 			in = fileService.getInputStream(liquidation.getPdfFile());
 			addZipEntry(in, zipOutputStream, name);
 			for (Bill bill : liquidation.getBills()) {
 				if (bill.getPdfFile() != null) {
-					name = fileService.getBillFileName(bill, "pdf");
+					name = fileService.getAbstractBillFileName(bill, "pdf");
 					in = fileService.getInputStream(bill.getPdfFile());
 					addZipEntry(in, zipOutputStream, FORMAT_BILL_FOLDER + name);
 				} else {
@@ -57,15 +55,14 @@ public class ZipFileService {
 			}
 			// Generamos el report
 			try {
-
 				Date from = liquidation.getDateFrom();
 				Date to = liquidation.getDateTo();
 				ByteArrayOutputStream reportOutputStream = new ByteArrayOutputStream();
 				Company company = liquidation.getSender().as(Company.class);
 				reportGenerator.generate(from, to, Arrays.asList(company), reportOutputStream);
 				ByteArrayInputStream reportInputStream = new ByteArrayInputStream(reportOutputStream.toByteArray());
-				String fileName = fileService.getLiquidationFileName(liquidation, "xls");
-				addZipEntry(reportInputStream, zipOutputStream, normalizeName(fileName));
+				String fileName = fileService.getAbstractBillFileName(liquidation, "xls");
+				addZipEntry(reportInputStream, zipOutputStream, fileName);
 			} catch (Exception ignore) {
 				LOG.error("Error al adjuntar el report", ignore);
 			}
@@ -74,14 +71,6 @@ public class ZipFileService {
 		} catch (Exception ex) {
 			throw new RuntimeException("Error al generar el ZIP con la liquidación", ex);
 		}
-	}
-
-	private String normalizeName(String name) {
-		name = name.toLowerCase();
-		for (int i = 0; i < REPLACEMENTS_KEYS.length; i++) {
-			name = name.replace(REPLACEMENTS_KEYS[i], REPLACEMENTS_VALUES[i]);
-		}
-		return name;
 	}
 
 	private void addZipEntry(InputStream inputStream, ZipOutputStream zipOutputStream, String name) throws IOException {

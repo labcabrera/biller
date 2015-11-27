@@ -29,7 +29,7 @@ public class LiquidationMailService {
 
 	public void sendEmail(Liquidation liquidation, String emailAddress, boolean updateState) {
 		try {
-			String title = fileService.getLiquidationFileName(liquidation, "zip");
+			String title = fileService.getAbstractBillFileName(liquidation, "zip");
 			DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 			String sender = liquidation.getSender().getName();
 			String body = String.format(i18nService.getMessage("mail.liquidation.body"), sender, df.format(liquidation.getDateFrom()), df.format(liquidation.getDateTo()));

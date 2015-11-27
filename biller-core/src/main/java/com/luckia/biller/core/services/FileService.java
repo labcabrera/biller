@@ -24,9 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.i18n.I18nService;
+import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.AppFile;
-import com.luckia.biller.core.model.Bill;
-import com.luckia.biller.core.model.Liquidation;
 
 /**
  * Servicio encargado de gestionar el repositorio de ficheros de la aplicación.
@@ -112,15 +111,7 @@ public class FileService {
 		return name != null ? name.replaceAll(INVALID_FILE_CHARACTERS, INVALID_FILE_CHARACTERS_REPLACEMENT) : null;
 	}
 
-	public String getLiquidationFileName(Liquidation liquidation, String extension) {
-		String sender = liquidation.getSender().getName().toLowerCase().replaceAll("\\s", "-").replaceAll("[^a-zA-Z0-9-_]", "");
-		DateTime date = new DateTime(liquidation.getBillDate());
-		Integer monthIndex = date.getMonthOfYear();
-		String monthName = i18nService.getMessage("month." + StringUtils.leftPad(String.valueOf(monthIndex), 2, '0')).toLowerCase();
-		return new StringBuilder().append(sender).append("-").append(date.getYear()).append("-").append(monthName).append(".").append(extension).toString();
-	}
-
-	public String getBillFileName(Bill bill, String extension) {
+	public String getAbstractBillFileName(AbstractBill bill, String extension) {
 		String sender = bill.getSender().getName().toLowerCase().replaceAll("\\s", "-").replaceAll("[^a-zA-Z0-9-_]", "");
 		DateTime date = new DateTime(bill.getBillDate());
 		Integer monthIndex = date.getMonthOfYear();
