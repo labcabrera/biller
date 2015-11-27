@@ -13,7 +13,7 @@ public abstract class AbstractBillSerializer extends AbstractEntitySerializer {
 		result.add("billDate", context.serialize(src.getBillDate()));
 		result.add("dateFrom", context.serialize(src.getDateFrom()));
 		result.add("dateTo", context.serialize(src.getDateTo()));
-		result.addProperty("amount", src.getAmount());
+		result.add("amount", context.serialize(src.getAmount()));
 		result.addProperty("comments", src.getComments());
 		result.addProperty("commentsPdf", src.getCommentsPdf());
 
