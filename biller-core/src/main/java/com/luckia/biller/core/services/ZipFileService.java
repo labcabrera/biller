@@ -12,14 +12,10 @@ import java.util.zip.ZipOutputStream;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
@@ -32,35 +28,27 @@ public class ZipFileService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ZipFileService.class);
 
-	private static final String[] REPLACEMENTS_KEYS = { "á", "é", "í", "ó", "ú", "ñ", " ", "." };
-	private static final String[] REPLACEMENTS_VALUES = { "a", "e", "i", "o", "u", "n", "_", "", "" };
-	private static final String FORMAT_LIQUIDATION_NAME = "%s-%s.pdf";
-	private static final String FORMAT_LIQUIDATION_REPORT = "%s-%s.pdf";
-	private static final String FORMAT_BILL_NAME = "%s-%s.pdf";
+	private static final String[] REPLACEMENTS_KEYS = { "á", "é", "í", "ó", "ú", "ñ", " ", ".", "," };
+	private static final String[] REPLACEMENTS_VALUES = { "a", "e", "i", "o", "u", "n", "-", "", "", "" };
 	private static final String FORMAT_BILL_FOLDER = "facturas/";
 
 	@Inject
 	private FileService fileService;
 	@Inject
 	private LiquidationReportGenerator reportGenerator;
-	@Inject
-	private I18nService i18nService;
 
 	public void generate(Liquidation liquidation, OutputStream out) {
 		Validate.notNull(liquidation.getPdfFile(), "Missing liquidation file");
 		String name;
 		InputStream in;
 		try {
-			DateTime date = new DateTime(liquidation.getBillDate());
-			Integer monthIndex = date.getMonthOfYear();
-			String monthName = i18nService.getMessage("month." + StringUtils.leftPad(String.valueOf(monthIndex), 2, '0')).toLowerCase();
 			ZipOutputStream zipOutputStream = new ZipOutputStream(out);
-			name = fileService.normalizeFileName(String.format(FORMAT_LIQUIDATION_NAME, date.getYear(), monthName));
+			name = fileService.getLiquidationFileName(liquidation, "pdf");
 			in = fileService.getInputStream(liquidation.getPdfFile());
 			addZipEntry(in, zipOutputStream, name);
 			for (Bill bill : liquidation.getBills()) {
 				if (bill.getPdfFile() != null) {
-					name = fileService.normalizeFileName(String.format(FORMAT_BILL_NAME, date.getYear(), monthName));
+					name = fileService.getBillFileName(bill, "pdf");
 					in = fileService.getInputStream(bill.getPdfFile());
 					addZipEntry(in, zipOutputStream, FORMAT_BILL_FOLDER + name);
 				} else {
@@ -76,8 +64,7 @@ public class ZipFileService {
 				Company company = liquidation.getSender().as(Company.class);
 				reportGenerator.generate(from, to, Arrays.asList(company), reportOutputStream);
 				ByteArrayInputStream reportInputStream = new ByteArrayInputStream(reportOutputStream.toByteArray());
-				// TODO
-				String fileName = String.format(FORMAT_LIQUIDATION_REPORT, DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
+				String fileName = fileService.getLiquidationFileName(liquidation, "xls");
 				addZipEntry(reportInputStream, zipOutputStream, normalizeName(fileName));
 			} catch (Exception ignore) {
 				LOG.error("Error al adjuntar el report", ignore);

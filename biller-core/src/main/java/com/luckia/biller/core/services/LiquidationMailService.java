@@ -24,10 +24,12 @@ public class LiquidationMailService {
 	private MailService mailService;
 	@Inject
 	private StateMachineService stateMachineService;
+	@Inject
+	private FileService fileService;
 
 	public void sendEmail(Liquidation liquidation, String emailAddress, boolean updateState) {
 		try {
-			String title = "liquidacion.zip";
+			String title = fileService.getLiquidationFileName(liquidation, "zip");
 			DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 			String sender = liquidation.getSender().getName();
 			String body = String.format(i18nService.getMessage("mail.liquidation.body"), sender, df.format(liquidation.getDateFrom()), df.format(liquidation.getDateTo()));

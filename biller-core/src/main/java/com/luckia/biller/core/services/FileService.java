@@ -16,12 +16,17 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
+import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.Liquidation;
 
 /**
  * Servicio encargado de gestionar el repositorio de ficheros de la aplicación.
@@ -38,14 +43,15 @@ public class FileService {
 	@Inject
 	private SettingsService settingsService;
 	@Inject
+	private I18nService i18nService;
+	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 
 	/**
 	 * Guarda en base de datos el descriptor del fichero y almacena su contenido en el repositorio de la aplicación.
 	 * 
 	 * @param name
-	 *            Nombre identificativo del fichero (no tiene por que ser el nombre real del fichero, sólo indica el nombre que tiene dentro
-	 *            de la aplicación)
+	 *            Nombre identificativo del fichero (no tiene por que ser el nombre real del fichero, sólo indica el nombre que tiene dentro de la aplicación)
 	 * @param contentType
 	 *            Media type del fichero
 	 * @param inputStream
@@ -61,7 +67,7 @@ public class FileService {
 		try {
 			FileOutputStream out = new FileOutputStream(target);
 			bytesCopied = IOUtils.copyLarge(inputStream, out);
-			LOG.debug("Generado fichero {}", target.getAbsolutePath());	
+			LOG.debug("Generado fichero {}", target.getAbsolutePath());
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -104,6 +110,22 @@ public class FileService {
 
 	public String normalizeFileName(String name) {
 		return name != null ? name.replaceAll(INVALID_FILE_CHARACTERS, INVALID_FILE_CHARACTERS_REPLACEMENT) : null;
+	}
+
+	public String getLiquidationFileName(Liquidation liquidation, String extension) {
+		String sender = liquidation.getSender().getName().toLowerCase().replaceAll("\\s", "-").replaceAll("[^a-zA-Z0-9-_]", "");
+		DateTime date = new DateTime(liquidation.getBillDate());
+		Integer monthIndex = date.getMonthOfYear();
+		String monthName = i18nService.getMessage("month." + StringUtils.leftPad(String.valueOf(monthIndex), 2, '0')).toLowerCase();
+		return new StringBuilder().append(sender).append("-").append(date.getYear()).append("-").append(monthName).append(".").append(extension).toString();
+	}
+
+	public String getBillFileName(Bill bill, String extension) {
+		String sender = bill.getSender().getName().toLowerCase().replaceAll("\\s", "-").replaceAll("[^a-zA-Z0-9-_]", "");
+		DateTime date = new DateTime(bill.getBillDate());
+		Integer monthIndex = date.getMonthOfYear();
+		String monthName = i18nService.getMessage("month." + StringUtils.leftPad(String.valueOf(monthIndex), 2, '0')).toLowerCase();
+		return new StringBuilder().append(sender).append("-").append(date.getYear()).append("-").append(monthName).append(".").append(extension).toString();
 	}
 
 	/**
