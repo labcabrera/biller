@@ -17,6 +17,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import com.luckia.biller.core.serialization.NotSerializable;
+
 @Entity
 @Table(name = "S_SCHEDULED_TASK")
 @NamedQueries({ @NamedQuery(name = "ScheduledTask.selectEnabled", query = "select e from ScheduledTask e where e.enabled = true") })
@@ -32,6 +34,7 @@ public class ScheduledTask implements Mergeable<ScheduledTask> {
 
 	@Column(name = "CLASSNAME", nullable = false, columnDefinition = "TEXT")
 	@Convert(converter = ClassConverter.class)
+	@NotSerializable
 	private Class<?> executorClass;
 
 	@Column(name = "CRON_EXP", length = 64)
@@ -107,7 +110,6 @@ public class ScheduledTask implements Mergeable<ScheduledTask> {
 	public void merge(ScheduledTask t) {
 		this.name = t.name;
 		this.cronExpression = t.cronExpression;
-		this.executorClass = t.executorClass;
 		this.enabled = t.enabled;
 	}
 }

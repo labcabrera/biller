@@ -4,6 +4,9 @@ FIX
 	- Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
 	- En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar
 
+	- Unificar cuadros de mensajes
+
+
 TODO
 	- Configuracion de logback en produccion / preproducción
 	- Eliminar el reportFile de la liquidacion

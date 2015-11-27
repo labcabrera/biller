@@ -44,6 +44,7 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/admin/recalculate/liquidation', { templateUrl : 'html/admin/recalculate-liquidation.html', controller: 'BillRecalculationCtrl'
 	}).when('/admin/user-activity', { templateUrl : 'html/admin/user-activity/user-activity-list.html', controller: 'UserActivityListCtrl'
 	}).when('/admin/user-activity/id/:id', { templateUrl : 'html/admin/user-activity/user-activity-detail.html', controller: 'UserActivityCtrl'
+	}).when('/admin/scheduler', { templateUrl : 'html/admin/scheduler-list.html', controller: 'SchedulerListCtrl'
 	}).when('/dashboard/companies', { templateUrl : 'html/dashboard/dashboard-panel.html', controller : 'DashboardCtrl'
 	}).when('/login', { templateUrl : 'partials/login.html', controller: 'LoginCtrl'
 	}).when('/index', { templateUrl : 'static/index.html'

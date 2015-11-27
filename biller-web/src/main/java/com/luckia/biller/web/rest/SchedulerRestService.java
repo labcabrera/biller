@@ -43,7 +43,7 @@ public class SchedulerRestService {
 	@GET
 	@Path("/find")
 	public SearchResults<ScheduledTask> search() {
-		List<ScheduledTask> tasks = entityManagerProvider.get().createQuery("SchedulerTask.selectAll", ScheduledTask.class).getResultList();
+		List<ScheduledTask> tasks = entityManagerProvider.get().createNamedQuery("SchedulerTask.selectAll", ScheduledTask.class).getResultList();
 		SearchResults<ScheduledTask> results = new SearchResults<>();
 		results.setResults(tasks);
 		return results;
@@ -70,7 +70,7 @@ public class SchedulerRestService {
 	@POST
 	@Path("/pause/{id}")
 	@Transactional
-	public Message<ScheduledTask> pause(@PathParam("id") String taskId) {
+	public Message<ScheduledTask> pause(@PathParam("id") Long taskId) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			ScheduledTask current = entityManager.find(ScheduledTask.class, taskId);
@@ -87,7 +87,7 @@ public class SchedulerRestService {
 	@POST
 	@Path("/resume/{id}")
 	@Transactional
-	public Message<ScheduledTask> resume(@PathParam("id") String taskId) {
+	public Message<ScheduledTask> resume(@PathParam("id") Long taskId) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			ScheduledTask current = entityManager.find(ScheduledTask.class, taskId);
@@ -128,7 +128,7 @@ public class SchedulerRestService {
 	@POST
 	@Path("/execute/{id}")
 	@Transactional
-	public Message<ScheduledTask> execute(@PathParam("id") String taskId) {
+	public Message<ScheduledTask> execute(@PathParam("id") Long taskId) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			ScheduledTask task = entityManager.find(ScheduledTask.class, taskId);
@@ -148,7 +148,7 @@ public class SchedulerRestService {
 	 */
 	@GET
 	@Path("/nextExecutions/{id}")
-	public Message<String> getNextExecutions(@PathParam("id") String taskId, @QueryParam("c") Integer count) {
+	public Message<String> getNextExecutions(@PathParam("id") Long taskId, @QueryParam("c") Integer count) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			ScheduledTask task = entityManager.find(ScheduledTask.class, taskId);

@@ -99,6 +99,87 @@
 		});
 	}]);
 	
+	billerModule.controller('SchedulerListCtrl', ['$scope', '$rootScope', '$routeParams', '$http', '$modal', '$translate', function($scope, $rootScope, $routeParams, $http, $modal, $translate) {
+		$scope.searchResults = {};
+		$scope.setPage  = function(page) {
+			$scope.currentPage = page;
+			$http.get('rest/scheduler/find').success(function(data) {
+				$scope.searchResults = data;
+			});
+		};
+		$scope.setPage(1);
+		$scope.edit = function(task) {
+			$scope.open(task);
+		};
+		$scope.open = function(task) {
+			var modalInstance = $modal.open({
+				templateUrl : 'html/admin/scheduler-detail.html',
+				controller : 'SchedulerDetailCtrl',
+				size : 'lg',
+				resolve : {
+					task : function() {
+						return task;
+					}
+				}
+			});
+			modalInstance.result.then(function(data) {
+				$scope.message = data;
+				$scope.setPage(1);
+			}, function() {
+			});
+		};
+	}]);
+	
+	billerModule.controller('SchedulerDetailCtrl', ['$scope', '$rootScope', '$routeParams', '$http', '$modal', '$modalInstance', '$translate', 'task', function($scope, $rootScope, $routeParams, $http, $modal, $modalInstance, $translate, task) {
+		$scope.task = task;
+		$scope.getNextExecutions = function() {
+			$http.get('rest/scheduler/nextExecutions/' + $scope.task.id).success(function(data) {
+				$scope.nextExecutions = data;
+			});
+		};
+		$scope.save = function() {
+			$http.post('rest/scheduler/merge', $scope.task).success(function(data) {
+				if (data.code == '200') {
+					$scope.task = data.payload;
+					$scope.getNextExecutions();
+					// $modalInstance.close(data);
+				} else {
+					$scope.message = data;
+				}
+			});
+		};
+		$scope.cancel = function() {
+			$modalInstance.dismiss('cancel');
+		};
+		$scope.enable = function() {
+			$scope.task.disabled = false;
+			$http.post('rest/scheduler/resume/' +  $scope.task.id).success(function(data) {
+				if (data.code == '200') {
+					$scope.task = data.payload;
+					$modalInstance.close(data);
+				} else {
+					$scope.message = data;
+				}
+			});
+		};
+		$scope.disable = function() {
+			$scope.task.disabled = true;
+			$http.post('rest/scheduler/pause/' +  $scope.task.id).success(function(data) {
+				if (data.code == '200') {
+					$scope.task = data.payload;
+					$modalInstance.close(data);
+				} else {
+					$scope.message = data;
+				}
+			});
+		};
+		$scope.execute = function() {
+			$http.post('rest/scheduler/execute/' +  $scope.task.id).success(function(data) {
+				$scope.message = data;
+			});
+		};
+		$scope.getNextExecutions();
+	}]);
 	
 	
 })();
