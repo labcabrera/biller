@@ -17,7 +17,7 @@ import com.luckia.biller.core.model.AppSettings;
 public class SettingsService {
 
 	public static final String MAIL = "MAIL";
-	public static final String BILLING = "BILLING";
+	// public static final String BILLING = "BILLING";
 	public static final String SYSTEM = "SYSTEM";
 
 	@Inject
@@ -25,10 +25,6 @@ public class SettingsService {
 
 	public AppSettings getMailSettings() {
 		return entityManagerProvider.get().find(AppSettings.class, MAIL);
-	}
-
-	public AppSettings getBillingSettings() {
-		return entityManagerProvider.get().find(AppSettings.class, BILLING);
 	}
 
 	public AppSettings getSystemSettings() {

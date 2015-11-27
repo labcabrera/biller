@@ -57,8 +57,10 @@ public class SchedulerRestService {
 			EntityManager entityManager = entityManagerProvider.get();
 			ScheduledTask current = entityManager.find(ScheduledTask.class, task.getId());
 			current.merge(task);
-			schedulerService.unregisterTask(task);
-			schedulerService.registerTask(task);
+			schedulerService.unregisterTask(current);
+			if (current.getEnabled()) {
+				schedulerService.registerTask(current);
+			}
 			entityManager.merge(current);
 			return new Message<ScheduledTask>(Message.CODE_SUCCESS, "scheduler.task.merge.ok").withPayload(current);
 		} catch (Exception ex) {

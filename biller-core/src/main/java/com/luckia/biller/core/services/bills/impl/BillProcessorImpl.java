@@ -36,7 +36,6 @@ import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.scheduler.tasks.LiquidationRecalculationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.FileService;
-import com.luckia.biller.core.services.SettingsService;
 import com.luckia.biller.core.services.StateMachineService;
 import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
@@ -58,8 +57,6 @@ public class BillProcessorImpl implements BillProcessor {
 	private BillCodeGenerator billCodeGenerator;
 	@Inject
 	private BillDetailProcessor billDetailProcessor;
-	@Inject
-	private SettingsService settingsService;
 	@Inject
 	private FileService fileService;
 	@Inject
@@ -136,7 +133,7 @@ public class BillProcessorImpl implements BillProcessor {
 		for (BillDetail detail : bill.getBillDetails()) {
 			netAmount = netAmount.add(detail.getValue());
 		}
-		BigDecimal vatPercent = settingsService.getBillingSettings().getValue("vat", BigDecimal.class);
+		BigDecimal vatPercent = provinceTaxesService.getVatPercent(bill);
 		BigDecimal vatAmount = netAmount.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 		BigDecimal amount = netAmount.add(vatAmount);
 		bill.setNetAmount(netAmount);

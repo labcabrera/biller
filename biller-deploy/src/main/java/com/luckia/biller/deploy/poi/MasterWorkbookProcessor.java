@@ -30,7 +30,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Address;
-import com.luckia.biller.core.model.AppSettings;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CostCenter;
@@ -47,7 +46,6 @@ import com.luckia.biller.core.services.SettingsService;
 public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MasterWorkbookProcessor.class);
-	private static final String COST_CENTER_NAME = "Central de pagos (ccc EH)";
 	private static final String DATABASE_FILE = "./src/main/resources/bootstrap/hoja-maestra-facturacion.xlsx";
 
 	@Inject
@@ -120,7 +118,6 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 				entityManager.getTransaction().commit();
 				entityManager.getTransaction().begin();
 				updateCostCenters();
-				updateSettings();
 				entityManager.getTransaction().commit();
 				LOG.debug("Importacion finalizada");
 			}
@@ -264,17 +261,6 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 		entityManager.createQuery("delete from CompanyGroup").executeUpdate();
 		entityManager.createQuery("delete from Address").executeUpdate();
 		entityManager.createQuery("delete from IdCard").executeUpdate();
-	}
-
-	private void updateSettings() {
-		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Company> query = entityManager.createQuery("select c from Company c where c.name = :value", Company.class);
-		List<Company> companies = query.setParameter("value", COST_CENTER_NAME).getResultList();
-		if (!companies.isEmpty()) {
-			AppSettings settings = settingsService.getBillingSettings();
-			settings.setValue("global.costCenter.id", String.valueOf(companies.iterator().next().getId()));
-			entityManager.merge(settings);
-		}
 	}
 
 	private void updateCostCenters() {
