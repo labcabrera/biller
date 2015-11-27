@@ -1,23 +1,23 @@
 <div class="m-top-15">
 	<form class="form-horizontal" role="form">
 		<div class="form-group">
-			<label class="col-sm-2 control-label input-sm">Usuario</label>
+			<label class="col-sm-2 control-label input-sm">{{'user' | translate}}</label>
 			<div class="col-sm-4">
-				<input type='text' class="form-control input-sm" ng-model="entity.auditData.modifiedBy.name" disabled="true" />
+				<input type="text" class="form-control input-sm" ng-model="entity.auditData.modifiedBy.name" disabled="true">
 			</div>
-			<label class="col-sm-2 control-label input-sm">Creado</label>
+			<label class="col-sm-2 control-label input-sm">{{'created' | translate}}</label>
 			<div class="col-sm-4">
-				<input calendar-real ng-model="entity.auditData.created" disabled="true" />
+				<input type="text" class="form-control input-sm" ng-model="entity.auditData.created" ng-disabled="true">
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label input-sm">Modificado</label>
+			<label class="col-sm-2 control-label input-sm">{{'modified' | translate}}</label>
 			<div class="col-sm-4">
-				<input calendar-real ng-model="entity.auditData.modified" disabled="true" />
+				<input type="text" class="form-control input-sm" ng-model="entity.auditData.modified" ng-disabled="true">
 			</div>
-			<label class="col-sm-2 control-label input-sm">Eliminado</label>
+			<label class="col-sm-2 control-label input-sm">{{'deleted' | translate}}</label>
 			<div class="col-sm-4">
-				<input calendar-real ng-model="entity.auditData.deleted" disabled="true" />
+				<input type="text" class="form-control input-sm" ng-model="entity.auditData.deleted" ng-disabled="true">
 			</div>
 		</div>
 	</form>
