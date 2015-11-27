@@ -18,10 +18,12 @@ import com.luckia.biller.core.model.BillType;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Owner;
 import com.luckia.biller.core.model.TerminalRelation;
+import com.luckia.biller.core.model.UserActivity;
 import com.luckia.biller.core.serialization.entities.BillSerializer;
 import com.luckia.biller.core.serialization.entities.BillTypeSerializer;
 import com.luckia.biller.core.serialization.entities.LiquidationSerializer;
 import com.luckia.biller.core.serialization.entities.OwnerSerializer;
+import com.luckia.biller.core.serialization.entities.UserActivitySerializer;
 
 /**
  * Componente encargado de serializar y deserializar las entidades utilizando JSON.
@@ -45,6 +47,7 @@ public class Serializer {
 		builder.registerTypeHierarchyAdapter(Bill.class, new BillSerializer());
 		builder.registerTypeHierarchyAdapter(Liquidation.class, new LiquidationSerializer());
 		builder.registerTypeHierarchyAdapter(AuditData.class, new AuditDataSerializer());
+		builder.registerTypeHierarchyAdapter(UserActivity.class, new UserActivitySerializer());
 		return builder;
 	}
 
