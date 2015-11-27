@@ -18,14 +18,14 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "SCHEDULED_TASK")
+@Table(name = "S_SCHEDULED_TASK")
 @NamedQueries({ @NamedQuery(name = "ScheduledTask.selectEnabled", query = "select e from ScheduledTask e where e.enabled = true") })
 public class ScheduledTask implements Mergeable<ScheduledTask> {
 
 	@Id
-	@Column(name = "ID", length = 36)
-	@GeneratedValue(generator = "system-uuid")
-	private String id;
+	@Column(name = "ID")
+	@GeneratedValue
+	private Long id;
 
 	@Column(name = "NAME", length = 128, nullable = false)
 	private String name;
@@ -40,17 +40,17 @@ public class ScheduledTask implements Mergeable<ScheduledTask> {
 	@Column(name = "ENABLED", nullable = false)
 	private Boolean enabled;
 
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.LAZY)
 	@MapKeyColumn(name = "PARAM_KEY", length = 516)
 	@Column(name = "PARAM_VALUE", length = 64)
-	@CollectionTable(name = "SCHEDULED_TASK_PARAM", joinColumns = @JoinColumn(name = "TASK_ID") )
+	@CollectionTable(name = "S_SCHEDULED_TASK_PARAM", joinColumns = @JoinColumn(name = "TASK_ID") )
 	private Map<String, String> params = new HashMap<String, String>();
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

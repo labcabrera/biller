@@ -33,4 +33,11 @@
 		</query>
 	</named-query>
 
+	<named-query name="SchedulerTask.selectAll">
+		<query><![CDATA[select e from ScheduledTask e order by e.name]]>
+		</query>
+	</named-query>
+
+
+
 </entity-mappings>

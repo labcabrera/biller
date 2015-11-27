@@ -75,12 +75,13 @@ public class SchedulerService {
 			EntityManager entityManager = entityManagerProvider.get();
 			TypedQuery<ScheduledTask> query = entityManager.createNamedQuery("ScheduledTask.selectEnabled", ScheduledTask.class);
 			List<ScheduledTask> tasks = query.getResultList();
-			LOG.debug("Readed {} tasks from database", tasks.size());
+			LOG.debug("Readed {} scheduled tasks from database", tasks.size());
 			for (ScheduledTask task : tasks) {
 				if (StringUtils.isNotBlank(task.getCronExpression())) {
 					try {
 						Class<? extends Job> taskClass = (Class<? extends Job>) task.getExecutorClass();
 						registerJob(taskClass, task.getCronExpression(), task.getParams());
+						LOG.info("Scheduled task {} ({})", task.getName(), task.getExecutorClass().getName());
 					} catch (Exception ex) {
 						LOG.error("Error registering task " + task, ex);
 					}
