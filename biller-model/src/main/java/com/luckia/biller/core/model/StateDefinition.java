@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.luckia.biller.core.serialization.NotSerializable;
+
 /**
  * Entidad que representa uno de los estados posibles de una determinada entidad.
  * 
@@ -27,6 +29,7 @@ public class StateDefinition implements Serializable {
 	@Column(name = "ENTITY_CLASS", nullable = false, columnDefinition = "VARCHAR(256)")
 
 	@Convert(converter = ClassConverter.class)
+	@NotSerializable
 	private Class<? extends HasState> hasStateClass;
 
 	@Column(name = "STATE_DESC", nullable = false, length = 64)
