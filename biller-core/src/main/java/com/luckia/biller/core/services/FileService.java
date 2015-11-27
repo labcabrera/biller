@@ -22,6 +22,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.name.Named;
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AbstractBill;
@@ -40,11 +41,12 @@ public class FileService {
 	private static final Logger LOG = LoggerFactory.getLogger(FileService.class);
 
 	@Inject
-	private SettingsService settingsService;
-	@Inject
 	private I18nService i18nService;
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
+	@Inject
+	@Named("repositoryPath")
+	private String repositoryBasePath;
 
 	/**
 	 * Guarda en base de datos el descriptor del fichero y almacena su contenido en el repositorio de la aplicación.
@@ -100,11 +102,10 @@ public class FileService {
 	/**
 	 * Obtiene la ruta base del repositorio de ficheros establecida en configuración.
 	 * 
-	 * @see SettingsService
 	 * @return
 	 */
 	public String getBasePath() {
-		return settingsService.getSystemSettings().getValue("repositoryPath", String.class);
+		return repositoryBasePath;
 	}
 
 	public String normalizeFileName(String name) {

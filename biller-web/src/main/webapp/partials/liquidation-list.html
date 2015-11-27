@@ -45,16 +45,16 @@
 				<h4>{{'filterResults' | translate}}</h4>
 				<form role="form">
 					<div class="form-group">
-						<label>{{'code' | translate}}</label> <input type="text" class="form-control input-sm" ng-model="searchOptions.code" />
+						<label>{{'code' | translate}}</label> <input type="text" class="form-control" ng-model="searchOptions.code" />
 					</div>
 					<div class="form-group">
-						<label>{{'sender' | translate}}</label><input type="text" class="form-control input-sm" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchOptions.company" />
+						<label>{{'sender' | translate}}</label><input type="text" class="form-control" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchOptions.company" />
 					</div>
 					<div class="form-group">
-						<label>{{'receiver' | translate}}</label> <input type="text" class="form-control input-sm" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchOptions.trader" />
+						<label>{{'receiver' | translate}}</label> <input type="text" class="form-control" typeahead="company as company.name for company in companies($viewValue)" ng-model="searchOptions.trader" />
 					</div>
 					<div class="form-group">
-						<label>{{'state' | translate}}</label> <select class="form-control input-sm" ng-model="searchOptions.state">
+						<label>{{'state' | translate}}</label> <select class="form-control" ng-model="searchOptions.state">
 							<option value=""></option>
 							<option value="Draft">Borradores</option>
 							<option value="Confirmed">Confirmadas</option>
