@@ -5,9 +5,11 @@
 <body>
 	<div class="row">
 		<div class="col-sm-9">
-			<div id="alertContainer"></div>
+		
+			<message-error-panel ng-model="message" auto-close="true"></message-error-panel>
 
-			<h4>Recalcular facturaci&oacute;n</h4>
+			<h4>{{'recalculateBills' | translate}}</h4>
+			
 			<div class="col-sm-offset-2">
 				<form class="form-horizontal" role="form">
 					<div class="form-group">

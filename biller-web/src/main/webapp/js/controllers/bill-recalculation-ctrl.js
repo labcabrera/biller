@@ -80,44 +80,6 @@
 				});
 			});			
 		};
-		
-		
-		
-//		$scope.recalculateBill = function() {
-//		};
-//		$scope.recalculateAllBills = function() {
-//			var dlg = dialogs.confirm('Confirmacion','Desea recalcular todas las facturas? Los ajustes manuales se perderan');
-//			dlg.result.then(function(btn){
-//				var billYear = $scope.billYear;
-//				var billMonth = $scope.billMonth;
-//				$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
-//				$http.post('rest/admin/recalculate/bills/' + billYear + "/" + billMonth).success(function(data) {
-//					$scope.displayAlert(data);
-//				});
-//			});
-//		};
-//		$scope.recalculateLiquidation = function() {
-//			if($rootScope.autoconfirm || window.confirm('Se va a recalcular la liquidacion')) {
-//				var liquidationYear = $scope.liquidationYear;
-//				var liquidationMonth = $scope.liquidationMonth;
-//				var liquidationCompany = $scope.liquidationCompany != null ? $scope.liquidationCompany.id : '';
-//				$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
-//				$http.post('rest/admin/recalculate/liquidation/' + liquidationCompany + '/' + liquidationYear + "/" + liquidationMonth).success(function(data) {
-//					$scope.displayAlert(data);
-//				});
-//			}
-//		};
-//		$scope.recalculateAllLiquidations = function() {
-//			if($rootScope.autoconfirm || window.confirm('Se va a recalcular todas las liquidaciones')) {
-//				var liquidationYear = $scope.liquidationYear;
-//				var liquidationMonth = $scope.liquidationMonth;
-//				var liquidationCompany = $scope.liquidationCompany != null ? $scope.liquidationCompany.id : '';
-//				$scope.displayAlert({ 'code': 200, 'message': 'Recalculando facturas... El proceso puede durar varios minutos'});
-//				$http.post('rest/admin/recalculate/liquidations/' + liquidationYear + "/" + liquidationMonth).success(function(data) {
-//					$scope.displayAlert(data);
-//				});
-//			}
-//		};
 		$scope.init();
 	}]);
 	
