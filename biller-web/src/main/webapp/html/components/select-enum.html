@@ -1,0 +1,6 @@
+<select
+	class="form-control"
+	ng-disabled="isReadOnly"
+	ng-model="ngModel"
+	ng-options="'{{enumName}}.' + name | translate for name in names">
+</select>

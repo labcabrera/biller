@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import com.luckia.biller.core.model.CommonState;
+import com.luckia.biller.core.model.UserActivityType;
 
 @Path("/enumeration")
 @Consumes({ "application/json; charset=UTF-8" })
@@ -17,8 +18,14 @@ public class EnumerationRestService {
 
 	@GET
 	@Path("/state")
-	public List<CommonState> idCardType() {
+	public List<CommonState> commonStates() {
 		return Arrays.asList(CommonState.values());
+	}
+
+	@GET
+	@Path("/userActivity")
+	public List<UserActivityType> userActivitTypes() {
+		return Arrays.asList(UserActivityType.values());
 	}
 
 	@GET

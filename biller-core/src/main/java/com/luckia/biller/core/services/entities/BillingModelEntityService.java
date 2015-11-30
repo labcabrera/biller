@@ -55,7 +55,7 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 	}
 
 	@Transactional
-	@RegisterActivity(type = UserActivityType.BILLING_MODEL_RAPEL_MERGE)
+	@RegisterActivity(type = UserActivityType.BILLING_MODEL_RAPPEL_MERGE)
 	public Message<BillingModel> mergeRappelDetail(Rappel entity) {
 		try {
 			// TODO deberiamos tener un constructor de mensajes a partir de errores de validacion en lugar de tomar solo el primer mensaje
@@ -88,7 +88,7 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 	}
 
 	@Transactional
-	@RegisterActivity(type = UserActivityType.BILLING_MODEL_RAPEL_REMOVE)
+	@RegisterActivity(type = UserActivityType.BILLING_MODEL_RAPPEL_REMOVE)
 	public Message<BillingModel> removeRappelDetail(Long primaryKey) {
 		try {
 			Validate.notNull(primaryKey);

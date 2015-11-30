@@ -38,8 +38,13 @@
 			<form role="form">
 				<div class="form-group">
 					<label>{{'user' | translate}}</label>
-					<input type="text" class="form-control input-sm" ng-model="searchOptions.user" />
+					<input type="text" class="form-control" ng-model="searchOptions.user" />
 				</div>
+				<div class="form-group">
+					<label>{{'type' | translate}}</label>
+					<div select-enum ng-model="searchOptions.type" enum-name="userActivity" is-read-only="false"></div>
+				</div>
+				
 				<div class="form-group">
 					<label>{{'dateFrom' | translate}}</label>
 					<div class="input-group col-sm-12">

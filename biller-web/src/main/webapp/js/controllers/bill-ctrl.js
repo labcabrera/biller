@@ -37,6 +37,7 @@
 		};
 		$scope.setPage = function(page) {
 		    $scope.currentPage = page;
+		    $scope.results = null;
 		    $scope.searchMessage = "Loading...";
 		    $http.get($scope.getSearchUrl()).success(function(data) {
 		    	$scope.results = data;

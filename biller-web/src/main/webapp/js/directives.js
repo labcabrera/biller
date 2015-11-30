@@ -171,6 +171,26 @@
 		};
 	}]);
 	
+	billerModule.directive('selectEnum', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/select-enum.html',
+			require : [ '^ngModel', '^enumName' ],
+			controller : ['$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {
+				$http.get('rest/enumeration/' + $scope.enumName, {
+					cache : true
+				}).success(function(data) {
+					$scope.names = data;
+				});
+			}],
+			scope : {
+				ngModel : '=',
+				enumName : '@',
+				isReadOnly : '=',
+			}
+		};
+	});
+	
 	billerModule.controller('ProvinceCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.provinces = function(name) {
 			return $http.get(REST_PATH + '/provinces/find/' + name).then(function(response) {
