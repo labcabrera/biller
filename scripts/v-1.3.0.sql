@@ -205,4 +205,7 @@ ADD CONSTRAINT `FK_SCHEDULED_TASK`
 INSERT INTO S_SCHEDULED_TASK(NAME, CLASSNAME, CRON_EXP, ENABLED) VALUES ('Generación automática de facturas', 'com.luckia.biller.core.scheduler.BillingJob', '0 0 12 5 1/1 ? *', false);
 INSERT INTO S_SCHEDULED_TASK(NAME, CLASSNAME, CRON_EXP, ENABLED) VALUES ('Envío de correos', 'com.luckia.biller.core.scheduler.MailJob', '0 0 0/1 1/1 * ? *', false);
 INSERT INTO S_SCHEDULED_TASK(NAME, CLASSNAME, CRON_EXP, ENABLED) VALUES ('System check', 'com.luckia.biller.core.scheduler.SystemCheckJob', '0 0 0/1 1/1 * ? *', false);
+INSERT INTO S_SCHEDULED_TASK(NAME, CLASSNAME, CRON_EXP, ENABLED) VALUES ('Liquidación de rapel (obsoleto)', 'com.luckia.biller.core.scheduler.RappelLiquidationJob', '0 0 12 15 1 ? *', false);
+
+
 
