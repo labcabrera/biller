@@ -6,9 +6,9 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	
 	$routeProvider.when('/users', { templateUrl : 'html/user-list.html', controller : 'UserListCtrl'
 	}).when('/users/:id', { templateUrl : 'html/user-detail.html', controller : 'UserDetailCtrl'
-	}).when('/groups', { templateUrl : 'html/group-list.html', controller : 'GroupListCtrl'
-	}).when('/groups/id/:id', { templateUrl : 'html/group-detail.html', controller : 'GroupDetailCtrl'
-	}).when('/groups/new', { templateUrl : 'html/group-detail.html', controller : 'GroupNewCtrl'
+	}).when('/groups', { templateUrl : 'html/company-group-list.html', controller : 'GroupListCtrl'
+	}).when('/groups/id/:id', { templateUrl : 'html/company-group-detail.html', controller : 'GroupDetailCtrl'
+	}).when('/groups/new', { templateUrl : 'html/company-group-detail.html', controller : 'GroupNewCtrl'
 	}).when('/companies', { templateUrl : 'html/company-list.html', controller : 'CompanyListCtrl'
 	}).when('/companies/id/:id', { templateUrl : 'html/company-detail.html', controller : 'CompanyDetailCtrl'
 	}).when('/companies/new', { templateUrl : 'html/company-detail.html', controller : 'CompanyNewCtrl'
