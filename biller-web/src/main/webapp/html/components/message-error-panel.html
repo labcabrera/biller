@@ -1,9 +1,7 @@
 <div ng-if="message != null">
 	<div collapse="message.message == null || message.message == '' || isCollapse">
-		<div class="alert alert-warning" role="alert">
-			<button type="button" class="close" ng-click="setCollapse()">
-				<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-			</button>
+		<div class="alert alert-warning alert-dismissible" role="alert">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			<div class="row">
 				<div class="col-sm-1">
 					<span class="glyphicon glyphicon-ok" style="font-size: 3em;"></span>

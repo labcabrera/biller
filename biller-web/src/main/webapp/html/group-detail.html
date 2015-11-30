@@ -7,28 +7,30 @@
 
 	<div class="col-sm-9">
 
-		<div id="alertContainer"></div>	
+		<div id="alertContainer"></div>
+		
+		<message-error-panel ng-model="message" auto-close="true"></message-error-panel>
 
-		<h4>Grupo de Empresas</h4>
+		<h4>{{'companyGroup' | translate}}</h4>
 
 		<div class="m-top-15">
 			<form class="form-horizontal" role="form">
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Nombre</label>
+					<label class="col-sm-2 control-label input-sm">{{'name' | translate}}</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.name" ng-readonly="isReadOnly" />
 					</div>
-					<label class="col-sm-2 control-label input-sm">CIF</label>
+					<label class="col-sm-2 control-label input-sm">{{'cif' | translate}}</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.idCard.number" ng-readonly="isReadOnly" />
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Provincia</label>
+					<label class="col-sm-2 control-label input-sm">{{'province' | translate}}</label>
 					<div class="col-sm-4">
 						<div province ng-model="entity.address.province" is-read-only="isReadOnly"></div>
 					</div>
-					<label for="inputPassword3" class="col-sm-2 control-label input-sm">Localidad</label>
+					<label for="inputPassword3" class="col-sm-2 control-label input-sm">{{'locality' | translate}}</label>
 					<div class="col-sm-4">
 						<div region ng-model="entity.address.region" province-id="entity.address.province.id" is-read-only="isReadOnly"></div>
 					</div>

@@ -24,7 +24,9 @@
 		$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
 		$scope.setPage = function(page) {
 		    $scope.currentPage = page;
-			$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
+			$http.get($scope.getSearchUrl()).success(function(data) {
+				$scope.results = data;
+			});
 		};
 		$scope.reset();
 		$scope.search();
@@ -32,7 +34,7 @@
 
 	billerModule.controller('GroupDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $location, $routeParams, $http, messageService) {
 		if(messageService.hasMessage()) {
-			$scope.displayAlert(messageService.getMessage());
+			$scope.message = messageService.getMessage();
 		}
 		$scope.load = function() {
 			$http.get(REST_PATH + '/groups/id/' + $routeParams.id).success(function(data) {
@@ -43,17 +45,18 @@
 		};
 		$scope.update = function() {
 			$http.post(REST_PATH + '/groups/merge/', $scope.entity).success(function(data) {
-				$scope.displayAlert(data);
-				if(data.code == 200) {
-					$scope.entity = data.payload;
-					$rootScope.isReadOnly = true;				
-				}
+				$scope.message = data;
+				$scope.isReadOnly = true;
 			});
 		};
 		$scope.remove = function() {
 			if($rootScope.autoconfirm || window.confirm('Se va a eliminar el grupo')) {
 				$http.post(REST_PATH + '/groups/remove/' + $scope.entity.id).success(function(data) {
-					if(data.code == 200) { $location.path("groups"); } else { $scope.displayAlert(data); }
+					if(data.code == 200) {
+						$location.path("groups");
+					} else {
+						$scope.message = data;
+					}
 				});
 			}
 		};
