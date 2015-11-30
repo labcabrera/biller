@@ -142,6 +142,7 @@
 		$scope.recalculate = function() {
 			var dlg = dialogs.confirm('Confirmacion','Desea recalcular la liquidacion? Los ajustes manuales se perderan');
 			dlg.result.then(function(btn){
+				$scope.message = {code: 200, info: [ $filter('translate')('recalculatingLiquidation') ]};
 				$scope.isSaving = true;
 				$http.post('rest/liquidations/recalculate/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;

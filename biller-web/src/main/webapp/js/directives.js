@@ -373,7 +373,7 @@
 					$scope.isSaving = true;
 					$http.post('rest/liquidations/detail/merge/', $scope.detail).success(function(data) {
 						$scope.isSaving = false;
-						//$scope.displayAlert(data);
+						$scope.message = data;
 						$("#editLiquidationConceptModal").modal('hide');
 						if(data.code == 200) {
 							$scope.liquidation = data.payload;
@@ -384,7 +384,7 @@
 					$scope.isSaving = true;
 					$http.post('rest/liquidations/detail/remove/' + id).success(function(data) {
 						$scope.isSaving = false;
-						//$scope.displayAlert(data);
+						$scope.message = data;
 						$("#editLiquidationConceptModal").modal('hide');
 						if(data.code == 200) {
 							$scope.liquidation = data.payload;

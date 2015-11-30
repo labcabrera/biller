@@ -155,6 +155,7 @@
 	"recalculateBillsByStore": "Recalcular por establecimiento",
 	"recalculateBillsByCompany": "Recalcular por operador",
 	"recalculateLiquidation": "Recalcular liquidación",
+	"recalculatingLiquidation": "Recalculando liquidación...",
 	"receiver": "Destinatario",
 	"receiverPartialAmount": "Resultado sin ajustes a percibir por",
 	"receiverFinalAmount": "Resultado a percibir por",
