@@ -6,6 +6,7 @@ FIX
 	- Unificar cuadros de mensajes
 	- En pre no aparece el usuario en el listado de actividad
 	- Revisar funcionamiento de la generacion de numeros de facturas
+	- Cargar los controladores de forma selectiva para cada pagina
 
 TODO
 	- Unificar mensajes de alerta. Quitar los $scope.displayAlert(data);

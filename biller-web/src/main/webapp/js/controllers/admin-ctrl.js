@@ -139,12 +139,10 @@
 		};
 		$scope.save = function() {
 			$http.post('rest/scheduler/merge', $scope.task).success(function(data) {
+				$scope.message = data;
 				if (data.code == '200') {
 					$scope.task = data.payload;
 					$scope.getNextExecutions();
-					// $modalInstance.close(data);
-				} else {
-					$scope.message = data;
 				}
 			});
 		};
