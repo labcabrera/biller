@@ -24,7 +24,6 @@ import com.luckia.biller.web.rest.RegionsRestService;
 import com.luckia.biller.web.rest.ReportRestService;
 import com.luckia.biller.web.rest.SchedulerRestService;
 import com.luckia.biller.web.rest.SecurityRestService;
-import com.luckia.biller.web.rest.SettingsRestService;
 import com.luckia.biller.web.rest.StoreRestService;
 import com.luckia.biller.web.rest.TerminalRelationRestService;
 import com.luckia.biller.web.rest.UserActivityRestService;
@@ -71,7 +70,6 @@ public class RestModule implements Module {
 		binder.bind(ReportRestService.class);
 		binder.bind(SchedulerRestService.class);
 		binder.bind(SecurityRestService.class);
-		binder.bind(SettingsRestService.class);
 		binder.bind(StoreRestService.class);
 		binder.bind(TerminalRelationRestService.class);
 		binder.bind(UserActivityRestService.class);
