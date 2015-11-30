@@ -2,6 +2,7 @@
 	"addAdjustment": "Añadir ajuste",
 	"addBillDetail": "Añadir ajuste",
 	"addLiquidationDetail": "Añadir ajuste",
+	"addStore": "Añadir establecimiento",
 	"address": "Dirección",
 	"admin": "Administración",
 	"alerts": "Alertas",
@@ -67,6 +68,7 @@
 	"created": "Creación",
 	"credit": "Crédito",
 	"cronExpression": "Expresión CRON",
+	"currentStore": "Empresa actual",
 	"dashboard": "Dashboard",
 	"dashboardCompanyEvolutionAmount": "Evolución anual de liquidaciones",
 	"dashboardPendingLiquidations": "Liquidaciones pendientes",
@@ -138,6 +140,7 @@
 	"outerManualTotalAmount": "Ajustes externos a la liquidación",
 	"owner": "Titular",
 	"owners": "Titulares",
+	"phoneNumber": "Número de teléfono",
 	"prepareBillRecalculation": "Preparar",
 	"pricePerLocation": "Coste por ubicación",
 	"pricePerLocation.help": "Importe mensual por cada ubicación de la empresa operadora",
@@ -176,6 +179,7 @@
 	"search": "Buscar",
 	"send": "Enviar",
 	"sender": "Emisor",
+	"sequencePrefix": "Secuencia",
 	"stakes": "Ventas",
 	"state": "Estado",
 	"store": "Local",
@@ -218,5 +222,6 @@
 	"viewDraft": "Consultar borrador",
 	"viewLiquidationDraft": "Consultar borrador",
 	"viewReport": "Report",
-	"year": "Año"
+	"year": "Año",
+	"zipCode": "Código postal"
 }

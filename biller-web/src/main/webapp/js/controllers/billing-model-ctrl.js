@@ -39,7 +39,7 @@
 	/** Detalle de modelo de facturacion */
 	billerModule.controller('ModelDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location','dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
 		if(messageService.hasMessage()) {
-			$scope.displayAlert(messageService.getMessage());
+			$scope.message = messageService.getMessage();
 		}
 		$scope.load = function() {
 			$rootScope.isReadOnly = true;
@@ -54,7 +54,7 @@
 			$scope.isSaving = true;
 			$http.post('rest/models/merge', $scope.entity).success(function(data) {
 				$scope.isSaving = false;
-				$scope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
 					$rootScope.isReadOnly = true;
 					$scope.entity = data.payload;
@@ -83,13 +83,11 @@
 			$scope.isSaving = true;
 			$http.post('rest/models/rappel/merge', $scope.newRappel).success(function(data) {
 				$scope.isSaving = false;
+				$scope.message = data;
 				if(data.code == 200) {
-					$scope.displayAlert(data);
 					$rootScope.isReadOnly = true;
 					$scope.entity = data.payload;
 					$('#addRappelModal').modal('hide');
-				} else {
-					$scope.displayAlertModal(data);
 				}
 			});
 		};
@@ -97,7 +95,7 @@
 			$scope.isSaving = true;
 			$http.post('rest/models/rappel/remove/' + $scope.newRappel.id).success(function(data) {
 				$scope.isSaving = false;
-				$scope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
 					$rootScope.isReadOnly = true;
 					$scope.entity = data.payload;

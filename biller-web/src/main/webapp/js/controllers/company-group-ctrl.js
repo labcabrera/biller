@@ -46,7 +46,7 @@
 		$scope.update = function() {
 			$http.post(REST_PATH + '/groups/merge/', $scope.entity).success(function(data) {
 				$scope.message = data;
-				$scope.isReadOnly = true;
+				$rootScope.isReadOnly = true;
 			});
 		};
 		$scope.remove = function() {

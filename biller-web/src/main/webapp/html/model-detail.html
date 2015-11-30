@@ -5,10 +5,12 @@
 <body>
 <div class="row">
 	<div class="col-sm-9">
-		<div id="alertContainer"></div>
-		<h4>{{'billingModel' | translate}}</h4>
-		<div class="m-top-15">
 		
+		<message-error-panel ng-model="message" auto-close="true"></message-error-panel>
+		
+		<h4>{{'billingModel' | translate}}</h4>
+		
+		<div class="m-top-15">
 			<form class="form-horizontal" role="form">
 				<div class="form-group">
 					<label class="col-sm-2 control-label input-sm">{{'name' | translate}}</label>

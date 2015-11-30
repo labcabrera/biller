@@ -8,6 +8,7 @@ FIX
 
 TODO
 	- Unificar mensajes de alerta. Quitar los $scope.displayAlert(data);
+	- El isReadOnly esta definido a nivel de $rootScope. Hacer que sea a nivel de scope
 
 	- Configuracion de logback en produccion / preproducción
 	- Eliminar el reportFile de la liquidacion
