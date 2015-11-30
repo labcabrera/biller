@@ -470,13 +470,12 @@
 	billerModule.directive('billLiquidationDetail', function() {
 		return {
 			restrict : 'AE',
+			templateUrl : 'html/components/bill-liquidation-detail.html',
 			controller : function($scope, $http) {
 				$scope.editLiquidationDetail = function(id) {
-					console.log("id: " + id)
 					if(id != null && !(typeof id === 'undefined') ) {
 						$scope.isSaving = true;
 						$http.get('rest/bills/detail/liquidation/id/' + id).success(function(data) {
-							console.log("data: " + data);
 							$scope.detail = data;
 							$scope.detail.bill = { "id": $scope.entity.id };
 							$scope.isSaving = false;
@@ -489,10 +488,28 @@
 					$('#editBillLiquidationConceptModal').modal('show');			
 				};
 			},
-			templateUrl : 'html/components/bill-liquidation-detail.html',
 			scope : {
 				entity: '=',
 				detail: '='
+			}
+		};
+	});
+	
+	billerModule.directive('ownerTab', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/entity-owner-tab.html',
+			controller : function($scope, $http) {
+				if($scope.owner && $scope.owner.id) {
+					$scope.load = function() {
+						$http.get('rest/owners/id/' + $scope.owner.id).success(function(data) {
+							$scope.entity = data;
+						});	
+					};
+				};
+			},
+			scope : {
+				owner: '='
 			}
 		};
 	});
