@@ -40,7 +40,7 @@
 	
 	billerModule.controller('CompanyDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
 		if(messageService.hasMessage()) {
-			$scope.displayAlert(messageService.getMessage());
+			$scope.message = messageService.getMessage();
 		}
 		$scope.regions = function(name) {
 			var url = "rest/regions/find/" + name + (angular.isDefined($scope.entity.address.province.id) ? '?province=' + $scope.entity.address.province.id : '');
@@ -86,7 +86,7 @@
 			$scope.isSaving = true;
 			$http.post('rest/stores/merge', $scope.newStore).success(function(data) {
 				$scope.isSaving = false;
-				$rootScope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
 					$scope.load();
 					$scope.newStore = null;
@@ -114,7 +114,7 @@
 					messageService.setMessage(data);
 					$location.path("companies/id/" + data.payload.id);				
 				} else {
-					$scope.displayAlert(data);
+					$scope.message = data;
 				}
 			});
 		};

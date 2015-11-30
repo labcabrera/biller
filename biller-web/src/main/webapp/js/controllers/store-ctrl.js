@@ -127,12 +127,11 @@
 		$scope.update = function() {
 			$scope.isSaving = true;
 			$http.post('rest/stores/merge/', $scope.entity).success(function(data) {
+				$scope.message = data;
 				$scope.isSaving = false;
 				if(data.code == 200) {
 					messageService.setMessage(data);
 					$location.path("stores/id/" + data.payload.id);				
-				} else {
-					$scope.displayAlert(data);
 				}
 			});
 		};

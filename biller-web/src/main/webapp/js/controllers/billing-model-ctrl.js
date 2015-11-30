@@ -8,7 +8,7 @@
 	 */
 	billerModule.controller('ModelListCtrl', [ '$scope', '$rootScope', '$http', 'messageService', function($scope, $rootScope, $http, messageService) {
 		if(messageService.hasMessage()) {
-			$scope.displayAlert(messageService.getMessage());
+			$scope.message = messageService.getMessage();
 		}
 		$scope.currentPage = 1;
 		$scope.reset = function() {
@@ -67,7 +67,7 @@
 				$scope.isSaving = true;
 				$http.post('rest/models/remove/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;
-					$scope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						messageService.setMessage(data);
 						$location.path("models");
@@ -128,12 +128,11 @@
 		$scope.update = function() {
 			$scope.isSaving = true;
 			$http.post('rest/models/merge/', $scope.entity).success(function(data) {
+				$scope.message = data;
 				$scope.isSaving = false;
 				if(data.code == 200) {
 					messageService.setMessage(data);
 					$location.path("models/id/" + data.payload.id);				
-				} else {
-					$scope.displayAlert(data);
 				}
 			});
 		};
@@ -174,7 +173,7 @@
 		$scope.confirm = function() {
 			if($rootScope.autoconfirm || window.confirm('Se va a aceptar el rappel')) {
 				$http.post('rest/rappel/stores/confirm/' + $scope.entity.id).success(function(data) {
-					$scope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						$scope.entity = data.payload;
 					}

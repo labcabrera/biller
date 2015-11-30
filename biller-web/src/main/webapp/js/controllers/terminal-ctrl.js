@@ -1,0 +1,74 @@
+(function() {
+	
+	var billerModule = angular.module('billerModule');
+	
+	billerModule.controller('TerminalListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', function($scope, $rootScope, $routeParams, $http) {
+		$scope.currentPage = 1;
+		$scope.searchName = '';
+		$scope.reset = function() {
+			$scope.searchOptions = {
+				'terminal': { 'code': ''},
+				'showOrphan' : false,
+				'showDeleted': false,
+			};
+		};
+		$scope.getSearchUrl = function() {
+			var predicateBuilder = new PredicateBuilder('');
+			predicateBuilder.append("code=lk=", $scope.searchOptions.terminal.code);			
+			if($scope.searchOptions.showOrphan) { predicateBuilder.appendKey("store=n="); }
+			if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
+			return 'rest/terminals/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
+		};
+		$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+		$scope.setPage = function(page) {
+		    $scope.currentPage = page;
+			$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
+		};
+		$scope.reset();
+		$scope.search();
+	} ]);
+	
+	billerModule.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $location, $routeParams, $http, messageService) {
+		if(messageService.hasMessage()) {
+			$scope.displayAlert(messageService.getMessage());
+		}
+		$scope.load = function() {
+			$http.get('rest/terminals/id/' + $routeParams.id).success(function(data) {
+				$scope.entity = data;
+		});};
+		$scope.update = function() {
+			$http.post('rest/terminals/merge/', $scope.entity).success(function(data) {
+				$scope.displayAlert(data);
+				if(data.code == 200) {
+					$scope.entity = data.payload;
+					$rootScope.isReadOnly = true;				
+				}
+			});
+		};
+		$scope.remove = function() {
+			if($rootScope.autoconfirm || window.confirm('Se va a eliminar el terminal')) {
+				$http.post('rest/terminals/remove/' + $scope.entity.id).success(function(data) {
+					if(data.code == 200) { $location.path("terminals"); } else { $scope.displayAlert(data); }
+				});
+			}
+		};
+		$scope.$watch('entity.store', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.store = null; } });
+		$scope.load();
+	} ]);
+	
+	billerModule.controller('TerminalNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
+		$scope.isReadOnly = false;
+		$scope.update = function() {
+			$http.post('rest/terminals/merge/', $scope.entity).success(function(data) {
+				if(data.code == 200) {
+					messageService.setMessage(data);
+					$location.path("terminals/id/" + data.payload.id);				
+				} else {
+					$scope.displayAlert(data);
+				}
+			});
+		};
+		$scope.provinces = function(name) { return $http.get("/rest/provinces/find/" + name).then(function(response) { return response.data; }); };
+	} ]);
+
+})();
