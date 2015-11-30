@@ -29,6 +29,7 @@
 		};
 		$scope.search = function() {
 			$scope.searchMessage = "Loading...";
+			$scope.results = null;
 			$http.get($scope.getSearchUrl()).success(function(data) {
 				$scope.results = data;
 				$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
@@ -73,10 +74,11 @@
 				$scope.isSaving = true;
 				$http.post('rest/models/remove/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;
-					$scope.message = data;
 					if(data.code == 200) {
 						messageService.setMessage(data);
 						$location.path("models");
+					} else {
+						$scope.message = data;						
 					}
 				});
 			});

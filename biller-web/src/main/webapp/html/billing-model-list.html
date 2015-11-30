@@ -15,26 +15,26 @@
 				</li>
 			</ul>
 			<div class="pull-right">
-				<a href="#/models/new">Nuevo modelo de facturaci&oacute;n</a>
+				<a href="#/models/new">{{'addBillingModel' | translate}}</a>
 			</div>
 			<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)" max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
 		</div>
 	</div>
 	
 	<div class="col-sm-3">
-		<h4>Filtrar resultados</h4>
+		<h4>{{'filterResults' | translate}}</h4>
 		<form role="form">
 			<div class="form-group">
-				<label>Nombre</label>
-				<input type='text' class="form-control input-sm" ng-model="searchOptions.name" />
+				<label>{{'name' | translate}}</label>
+				<input type='text' class="form-control" ng-model="searchOptions.name" />
 			</div>
 			<div class="form-group">
 				<div class="checkbox">
 					<label><input type="checkbox" ng-model="searchOptions.showDeleted">{{'model.showDeleted' |  translate}}</label>
 				</div>
 			</div>
-			<button ng-click="search()" class='btn btn-sm btn-primary'>Buscar</button></li>
-			<button ng-click="reset()" class='btn btn-sm btn-primary'>Reset</button></li>
+			<button ng-click="search()" class='btn btn-sm btn-primary'>{{'search' | translate}}</button>
+			<button ng-click="reset()" class='btn btn-sm btn-primary'>{{'reset' | translate}}</button>
 		</form>
 	</div>
 
