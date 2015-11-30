@@ -21,7 +21,14 @@
 			}
 			return REST_PATH + '/groups/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
-		$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+		$scope.search = function() {
+			$scope.searchMessage = "Loading...";
+			$scope.results = null;
+			$http.get($scope.getSearchUrl()).success(function(data) {
+				$scope.results = data;
+				$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
+			});
+		};
 		$scope.setPage = function(page) {
 		    $scope.currentPage = page;
 			$http.get($scope.getSearchUrl()).success(function(data) {

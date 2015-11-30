@@ -7,7 +7,7 @@
 	
 	<div class="col-sm-9">
 		<div>
-			<h4>Grupos de Empresas  <small>({{results.totalItems}} resultados)</small></h4>
+			<h4>Grupos de Empresas  <small>{{searchMessage}}</small></h4>
 			<div ng-if="results.results.length == 0">No se han encontrado resultados</div>
 			<ul class="list-group">
 				<li class="list-group-item" ng-repeat="group in results.results">
@@ -15,7 +15,7 @@
 				</li>
 			</ul>
 			<div class="pull-right">
-				<a href="#/groups/new">Nuevo grupo</a>
+				<a href="#/groups/new">{{'addCompanyGroup' | translate}}</a>
 			</div>
 			<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)"></pagination>
 		</div>
