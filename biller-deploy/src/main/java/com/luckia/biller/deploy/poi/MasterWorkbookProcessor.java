@@ -41,7 +41,6 @@ import com.luckia.biller.core.model.Region;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.services.AuditService;
-import com.luckia.biller.core.services.SettingsService;
 
 public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 
@@ -56,8 +55,6 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 	protected BillingModelResolver billingModelResolver;
 	@Inject
 	protected PersonNameResolver personNameResolver;
-	@Inject
-	protected SettingsService settingsService;
 	@Inject
 	protected AuditService auditService;
 

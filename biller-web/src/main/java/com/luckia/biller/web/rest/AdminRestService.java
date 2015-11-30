@@ -40,6 +40,7 @@ import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
+//TODO revisar este servicio. Ya no deberia estar utilizandose. Borrar
 @Path("/admin")
 public class AdminRestService {
 
@@ -54,6 +55,7 @@ public class AdminRestService {
 	@Inject
 	private Injector injector;
 
+	// TODO revisar este metodo. Creo que ya no se utiliza
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/bills/{year}/{month}")
@@ -69,10 +71,10 @@ public class AdminRestService {
 	 * @param month
 	 * @return
 	 */
+	// TODO revisar este metodo. Creo que ya no se utiliza
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/bill/{storeId}/{year}/{month}")
-	@RegisterActivity(type = UserActivityType.BILL_RECALCULATION)
 	public Message<String> recalculateBill(@PathParam("storeId") Long storeId, @PathParam("year") Integer year, @PathParam("month") Integer month) {
 		try {
 			Range<Date> range = getEffectiveRange(year, month);

@@ -15,8 +15,10 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang3.Range;
 import org.joda.time.DateTime;
 
+import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Store;
+import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.services.bills.recalculation.BillRecalculationInfo;
 import com.luckia.biller.core.services.bills.recalculation.BillRecalculationService;
@@ -60,6 +62,7 @@ public class RecalculationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/execute/bill")
+	@RegisterActivity(type = UserActivityType.BILL_RECALCULATION)
 	public Message<BillRecalculationInfo> executeBill(BillRecalculationInfo info) {
 		return billRecalculationService.execute(info);
 	}

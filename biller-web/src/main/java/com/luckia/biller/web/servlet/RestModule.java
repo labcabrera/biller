@@ -7,7 +7,6 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.web.json.GsonMessageBodyHandler;
-import com.luckia.biller.web.rest.AdminRestService;
 import com.luckia.biller.web.rest.BillRestService;
 import com.luckia.biller.web.rest.BillingModelRestService;
 import com.luckia.biller.web.rest.BinaryRestService;
@@ -54,7 +53,7 @@ public class RestModule implements Module {
 		// Security
 		binder.bind(SecurityInterceptor.class);
 		// Rest services
-		binder.bind(AdminRestService.class);
+		// binder.bind(AdminRestService.class);
 		binder.bind(BillingModelRestService.class);
 		binder.bind(BillRestService.class);
 		binder.bind(BinaryRestService.class);

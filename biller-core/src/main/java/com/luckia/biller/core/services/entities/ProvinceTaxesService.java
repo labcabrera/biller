@@ -56,7 +56,6 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 		}
 	}
 
-	@RegisterActivity(type = UserActivityType.PROVICE_TAX_SET_FEES_PERCENT)
 	public BigDecimal getGameFeesPercent(Bill bill) {
 		ProvinceTaxes entity = resolveTaxes(bill);
 		if (entity != null && entity.getFeesPercent() != null) {
@@ -66,7 +65,6 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 		}
 	}
 
-	@RegisterActivity(type = UserActivityType.PROVICE_TAX_SET_VAT_PERCENT)
 	public BigDecimal getVatPercent(Bill bill) {
 		ProvinceTaxes entity = resolveTaxes(bill);
 		if (entity != null && entity.getVatPercent() != null) {

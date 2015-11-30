@@ -16,7 +16,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
 import com.luckia.biller.core.BillerModule;
-import com.luckia.biller.deploy.fedders.AppSettingsFeeder;
 import com.luckia.biller.deploy.fedders.BillingModelFeeder;
 import com.luckia.biller.deploy.fedders.BillingProvinceFeesFeeder;
 import com.luckia.biller.deploy.fedders.CompanyGroupFeeder;
@@ -51,7 +50,6 @@ public class Bootstrap implements Runnable {
 			LOG.info("Database already initialized");
 		} else {
 			Map<Class<? extends Feeder<?>>, String> feederMapping = new LinkedHashMap<Class<? extends Feeder<?>>, String>();
-			feederMapping.put(AppSettingsFeeder.class, "");
 			feederMapping.put(UserFeeder.class, "bootstrap/users.csv");
 			feederMapping.put(ProvinceFeeder.class, "bootstrap/provinces.json");
 			feederMapping.put(RegionFeeder.class, "bootstrap/regions.csv");
