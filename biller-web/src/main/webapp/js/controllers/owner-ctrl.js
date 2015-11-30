@@ -24,9 +24,17 @@
 		};
 		$scope.setPage = function(page) {
 			$scope.currentPage = page;
-			$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
+			$http.get($scope.getSearchUrl()).success(function(data) {
+				$scope.results = data;
+			});
 		};
-		$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+		$scope.search = function() {
+			$scope.searchMessage = "Loading...";
+			$http.get($scope.getSearchUrl()).success(function(data) {
+				$scope.results = data;
+				$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
+			});
+		};
 		$scope.$watch('entity.address.province', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.province = null; } });
 		$scope.$watch('entity.address.region', function(newValue, oldValue){ if(newValue === ''){ $scope.entity.address.region = null; } });
 		$scope.reset();

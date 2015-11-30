@@ -5,7 +5,7 @@
 <body>
 <div class="row">
 	<div class="col-sm-9">
-		<h4>{{'companies' | translate}}  <small>({{results.totalItems}} resultados)</small></h4>
+		<h4>{{'companies' | translate}}  <small>{{searchMessage}}</small></h4>
 		<ul class="list-group">
 			<li class="list-group-item" ng-repeat="company in results.results">
 				<div>
@@ -27,20 +27,19 @@
 			<form role="form">
 				<div class="form-group">
 					<label>{{'name' | translate}}</label>
-					<input type='text' class="form-control input-sm" ng-model="searchOptions.name" />
+					<input type='text' class="form-control" ng-model="searchOptions.name" />
 				</div>
 				<div class="form-group">
 					<label for="entityIdCardNumber">{{'province' | translate}}</label>
-					<input type='text' class="form-control input-sm" ng-model="searchOptions.province" typeahead-editable="false"
-						typeahead="province as province.name for province in provinces($viewValue)" />
+					<div province ng-model="searchOptions.province"></div>
 				</div>
 				<div class="form-group">
 					<div class="checkbox">
 						<label><input type="checkbox" ng-model="searchOptions.showDeleted">{{'company.showDeleted' | translate}}</label>
 					</div>
 				</div>
-				<button ng-click="search()" class='btn btn-primary btn-sm '>{{'search' | translate}}</button></li>
-				<button ng-click="reset()" class='btn btn-primary btn-sm '>{{'reset' | translate}}</button></li>
+				<button ng-click="search()" class='btn btn-primary btn-sm '>{{'search' | translate}}</button>
+				<button ng-click="reset()" class='btn btn-primary btn-sm '>{{'reset' | translate}}</button>
 			</form>
 		</div>
 	</div>
