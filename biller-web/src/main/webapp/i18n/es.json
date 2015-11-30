@@ -186,6 +186,7 @@
 	"sendingMail": "Enviando correo...",
 	"sequencePrefix": "Secuencia",
 	"showDeleted": "Mostrar registros eliminados",
+	"showOrphan": "Mostrar huérfanos",
 	"stakes": "Ventas",
 	"state": "Estado",
 	"store": "Local",
