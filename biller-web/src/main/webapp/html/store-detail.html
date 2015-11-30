@@ -7,13 +7,13 @@
 		<div class="m-top-15">
 			<form class="form-horizontal" role="form">
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">{{'name' | translate}}</label>
+					<label class="col-sm-2 control-label">{{'name' | translate}}</label>
 					<div class="col-sm-10">
 						<input type='text' class="form-control" ng-model="entity.name" ng-readonly="isReadOnly" required />
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">{{'company' | translate}}</label>
+					<label class="col-sm-2 control-label">{{'company' | translate}}</label>
 					<div class="col-sm-4">
 						<div class="input-group">
 							<input type="text" class="form-control" ng-model="entity.parent"  ng-readonly="isReadOnly" typeahead="company as company.name for company in companies($viewValue)" typeahead-editable="false" />
@@ -23,7 +23,7 @@
 							</span>
 						</div>
 					</div>
-					<label class="col-sm-2 control-label input-sm">{{'costCenter' | translate}}</label>
+					<label class="col-sm-2 control-label">{{'costCenter' | translate}}</label>
 					<div class="col-sm-4">
 						<div class="input-group">
 							<input type="text" class="form-control" ng-model="entity.costCenter" ng-readonly="isReadOnly" typeahead="costCenter as costCenter.name for costCenter in costcenters($viewValue)" typeahead-editable="false" />
@@ -35,49 +35,41 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">{{'cif' | translate}}</label>
+					<label class="col-sm-2 control-label">{{'cif' | translate}}</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.idCard.number" ng-readonly="isReadOnly"  />
 					</div>
-					<label class="col-sm-2 control-label input-sm">{{'type' | translate}}</label>
+					<label class="col-sm-2 control-label">{{'type' | translate}}</label>
 					<div class="col-sm-4">
-						<select class="form-control" ng-model="entity.type" ng-readonly="isReadOnly" ng-disabled="isReadOnly">
-							<option value="Bar">Bar</option>
-							<option value="BingoCorner">C&oacute;rner en Bingo</option>
-							<option value="SalonCorner">C&oacute;rner en Sal&oacute;n</option>
-							<option value="CasinoCorner">C&oacute;rner en Casino</option>
-							<option value="SpecificStore">Tienda espec&iacute;fica</option>
-							<option value="LSC">Luckia Sport Caf&eacute;</option>
-							<option value="CasaDeApuestas">Casa de apuestas</option>
-						</select>
+						<div select-enum ng-model="entity.type" enum-name="storeType" is-read-only="isReadOnly"></div>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Provincia</label>
+					<label class="col-sm-2 control-label">{{'province' | translate}}</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly"  />
+						<div province ng-model="entity.address.province" is-read-only="isReadOnly"></div>
 					</div>
-					<label class="col-sm-2 control-label input-sm">Localidad</label>
+					<label class="col-sm-2 control-label">{{'locality' | translate}}</label>
 					<div class="col-sm-4">
-						<input type='text' class="form-control" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly"  />
+						<div region ng-model="entity.address.region" is-read-only="isReadOnly"></div>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Direcci&oacute;n</label>
+					<label class="col-sm-2 control-label">{{'address' | translate}}</label>
 					<div class="col-sm-4">
 						<input type="text" class="form-control" ng-model="entity.address.road" ng-readonly="isReadOnly"  />
 					</div>
-					<label class="col-sm-2 control-label input-sm">N&uacute;mero</label>
+					<label class="col-sm-2 control-label">{{'number' | translate}}</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.address.number" ng-readonly="isReadOnly"  />
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Email</label>
+					<label class="col-sm-2 control-label">{{'email' | translate}}</label>
 					<div class="col-sm-4">
 						<input type="text" class="form-control" ng-model="entity.email" ng-readonly="isReadOnly" />
 					</div>
-					<label class="col-sm-2 control-label input-sm">Serie</label>
+					<label class="col-sm-2 control-label">{{'sequencePrefix' | translate}}</label>
 					<div class="col-sm-4">
 						<div class="input-group">
 							<input type="text" class="form-control" ng-model="entity.billSequencePrefix" ng-readonly="isReadOnly" />
@@ -88,29 +80,19 @@
 					</div>					
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Inicio</label>
+					<label class="col-sm-2 control-label">{{'store.start' | translate}}</label>
 					<div class="col-sm-4">
-						<div class="input-group">
-							<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="entity.startDate"
-								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas"
-								ng-readonly="isReadOnly" clear-text="Borrar"/>
-							<span class="input-group-addon glyphicon glyphicon-calendar"></span>
-						</div>
+						<div calendar ng-model="entity.startDate" require="false" is-read-only="isReadOnly"></div>
 					</div>
-					<label class="col-sm-2 control-label input-sm">Fin</label>
+					<label class="col-sm-2 control-label">{{'store.end' | translate}}</label>
 					<div class="col-sm-4">
-						<div class="input-group">
-							<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="entity.endDate"
-								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas"
-								ng-readonly="isReadOnly" clear-text="Borrar"/>
-							<span class="input-group-addon glyphicon glyphicon-calendar"></span>
-						</div>
+						<div calendar ng-model="entity.endDate" require="false" is-read-only="isReadOnly"></div>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-sm-6 col-sm-offset-2">
 						<input type="checkbox" id="labelAutoliquidation" ng-model="entity.autoConfirm" ng-readonly="isReadOnly" class="checkbox" />
-	    				<label for="labelAutoliquidation">Autoliquidaci&oacute;n</label>
+	    				<label for="labelAutoliquidation">{{'autoliquidation' | translate}}</label>
 	    			</div>
 				</div>
 			</form>
@@ -118,12 +100,12 @@
 		
 		<div class="m-top-40">
 			<ul class="nav nav-tabs">
-				<li class="active"><a data-target="#ownerTab" data-toggle="tab">Titular</a></li>
-				<li><a data-target="#terminalTab" data-toggle="tab">Terminales</a></li>
-				<li><a data-target="#billingModelTab" data-toggle="tab">Modelo de facturaci&oacute;n</a></li>
-				<li><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
-				<li><a data-target="#ispInfoTab" data-toggle="tab">ADSL</a></li>
-				<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
+				<li class="active"><a data-target="#ownerTab" data-toggle="tab">{{'owner' | translate}}</a></li>
+				<li><a data-target="#terminalTab" data-toggle="tab">{{'terminals' | translate}}</a></li>
+				<li><a data-target="#billingModelTab" data-toggle="tab">{{'billingModel' | translate}}</a></li>
+				<li><a data-target="#commentsTab" data-toggle="tab">{{'comments' | translate}}</a></li>
+				<li><a data-target="#ispInfoTab" data-toggle="tab">{{'isp' | translate}}</a></li>
+				<li><a data-target="#auditTab" data-toggle="tab">{{'auditData' | translate}}</a></li>
 			</ul>
 	
 			<div class="tab-content">
@@ -145,7 +127,6 @@
 					</div>
 				</div>
 				
-				<!-- Pestaña de terminales asociados -->
 				<div class="tab-pane" id="terminalTab">
 					<div class="m-top-15">
 						<div ng-if="childTerminals.length < 1">No se han encontrado terminales asociados a este establecimiento.</div>
@@ -155,17 +136,18 @@
 								<a class="pull-right" href="" ng-click="removeTerminal(i)"><span class="glyphicon glyphicon-trash"></span></a>
 							</li>
 						</ul>
-						<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addTerminalModal">A&ntilde;adir terminal</button>
+						<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addTerminalModal">{{'addTerminal' | translate}}</button>
 					</div>
 				</div>
 				
-				<!-- Pestaña de informacion de conexion -->
 				<div class="tab-pane" id="ispInfoTab">
 					<div ng-include src="'templates/store-isp-info.html'"></div>
 				</div>
+				
 				<div class="tab-pane" id="auditTab">
 					<div ng-include src="'templates/entity-audit-info.html'"></div>
 				</div>
+				
 			</div>
 		</div>
 	</div>

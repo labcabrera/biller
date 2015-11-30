@@ -14,12 +14,20 @@
 		return {
 			restrict : 'AE',
 			templateUrl : 'html/components/calendar.html',
-			controller : 'CalendarCtrl',
+			controller : ['$scope', function($scope) {
+					$scope.placeHolder= 'DD/MM/YYYY';
+					$scope.showCalendar = false;
+					$scope.loadRealCalendar = function() {
+						if(!$scope.isReadOnly) {
+							$scope.showCalendar = true;
+						};
+					};
+			}],
 			require : '^ngModel',
 			replace : 'true',
 			scope : {
 				ngModel : '=',
-				disabled : '@'
+				isReadOnly : '='
 			},
 		};
 	});
@@ -29,11 +37,37 @@
 			restrict : 'AE',
 			templateUrl : 'html/components/calendar-real.html',
 			controller : 'CalendarRealCtrl',
+			controller : ['$scope', '$timeout', function($scope, $timeout) {
+				$scope.format = 'dd/MM/yyyy';
+				$scope.placeHolder= 'DD/MM/YYYY';
+				$timeout(function() {
+						$scope.opened= true;
+				}, 100);
+				$scope.today = function() {
+					$scope.ngModel = new Date();
+				};
+				$scope.clear = function() {
+					$scope.ngModel = null;
+				};
+				$scope.toggleMin = function() {
+					$scope.minDate = $scope.minDate ? null : new Date();
+				};
+				$scope.toggleMin();
+				$scope.open = function($event) {
+					$event.preventDefault();
+					$event.stopPropagation();
+					$scope.opened = true;
+				};
+				$scope.dateOptions = {
+					formatYear : 'yy',
+					startingDay : 1
+				};
+			}],
 			require : '^ngModel',
 			replace : 'true',
 			scope : {
 				ngModel : '=',
-				disabled : '@'
+				isReadOnly : '='
 			},
 		};
 	});
@@ -42,7 +76,13 @@
 		return {
 			restrict : 'AE',
 			templateUrl : 'html/components/province-searchbox.html',
-			controller : 'ProvinceCtrl',
+			controller : ['$scope', '$http', function($scope, $http) {
+				$scope.provinces = function(name) {
+					return $http.get('rest/provinces/find/' + name).then(function(response) {
+						return response.data;
+					});
+				};
+			}],
 			require : '^ngModel',
 			replace : 'true',
 			scope : {
@@ -135,42 +175,6 @@
 		};
 	});
 
-	billerModule.controller('CalendarCtrl', ['$scope', function($scope) {
-		$scope.placeHolder= 'DD/MM/YYYY';
-		$scope.showCalendar = false;
-		$scope.loadRealCalendar = function() {
-			$scope.showCalendar = true;
-		};
-	}]);
-	
-	billerModule.controller('CalendarRealCtrl', ['$scope', '$timeout', function($scope, $timeout) {
-		//$scope.format = 'mediumDate';
-		$scope.format = 'dd/MM/yyyy';
-		$scope.placeHolder= 'DD/MM/YYYY';
-		$timeout(function() {
-				$scope.opened= true;
-		}, 100);
-		$scope.today = function() {
-			$scope.ngModel = new Date();
-		};
-		$scope.clear = function() {
-			$scope.ngModel = null;
-		};
-		$scope.toggleMin = function() {
-			$scope.minDate = $scope.minDate ? null : new Date();
-		};
-		$scope.toggleMin();
-		$scope.open = function($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-			$scope.opened = true;
-		};
-		$scope.dateOptions = {
-			formatYear : 'yy',
-			startingDay : 1
-		};
-	}]);
-	
 	billerModule.directive('selectEnum', function() {
 		return {
 			restrict : 'AE',
@@ -190,14 +194,6 @@
 			}
 		};
 	});
-	
-	billerModule.controller('ProvinceCtrl', ['$scope', '$http', function($scope, $http) {
-		$scope.provinces = function(name) {
-			return $http.get(REST_PATH + '/provinces/find/' + name).then(function(response) {
-				return response.data;
-			});
-		};
-	}]);
 	
 	billerModule.controller('RegionCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.regions = function(name) {

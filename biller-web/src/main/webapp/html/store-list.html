@@ -6,10 +6,10 @@
 			<div ng-if="results.results.length > 0">
 				<table class="table table-condensed">
 					<tr>
-						<th>Nombre</th>
-						<th>Empresa</th>
-						<th>Provincia</th>
-						<th>Tipo</th>
+						<th>{{'name' | translate}}</th>
+						<th>{{'company' | translate}}</th>
+						<th>{{'province' | translate}}</th>
+						<th>{{'type' | translate}}</th>
 					</tr>
 					<tr ng-repeat="result in results.results">
 						<td><a href="#/stores/id/{{result.id}}">{{result.name}}</a></td>
@@ -29,40 +29,31 @@
 	
 	<div class="col-sm-3">
 		<div>
-			<h4>Filtrar resultados</h4>
+			<h4>{{'filterResults' | translate}}</h4>
 			<form role="form">
 				<div class="form-group">
-					<label>Nombre</label>
-					<input type="text" class="form-control input-sm" ng-model="searchOptions.name" />
+					<label>{{'name' | translate}}</label>
+					<input type="text" class="form-control" ng-model="searchOptions.name" />
 				</div>
 				<div class="form-group">
-					<label>Empresa</label>
-					<input type="text" class="form-control input-sm" ng-model="searchOptions.company" typeahead="company as company.name for company in companies($viewValue)" />
+					<label>{{'company' | translate}}</label>
+					<input type="text" class="form-control" ng-model="searchOptions.company" typeahead="company as company.name for company in companies($viewValue)" />
 				</div>
 				<div class="form-group">
-					<label>Provincia</label>
-					<input type="text" class="form-control input-sm" ng-model="searchOptions.province" typeahead="province as province.name for province in provinces($viewValue)" />
+					<label>{{'province' | translate}}</label>
+					<input type="text" class="form-control" ng-model="searchOptions.province" typeahead="province as province.name for province in provinces($viewValue)" />
 				</div>
 				<div class="form-group">
-					<label>Centro de coste</label>
-					<input type="text" class="form-control input-sm" ng-model="searchOptions.costCenter" typeahead="center as center.name for center in costcenters($viewValue)"/>
+					<label>{{'costCenter' | translate}}</label>
+					<input type="text" class="form-control" ng-model="searchOptions.costCenter" typeahead="center as center.name for center in costcenters($viewValue)"/>
 				</div>
 				<div class="form-group">
-					<label>Titular</label>
-					<input type="text" class="form-control input-sm" ng-model="searchOptions.owner" typeahead="owner as owner.name for owner in owners($viewValue)"/>
+					<label>{{'owner' | translate}}</label>
+					<input type="text" class="form-control" ng-model="searchOptions.owner" typeahead="owner as owner.name for owner in owners($viewValue)"/>
 				</div>
 				<div class="form-group">
-					<label>Tipo</label>
-					<select class="selectpicker form-control input-sm" ng-model="searchOptions.type">
-						<option value=""></option>
-						<option value="Bar">Bar</option>
-						<option value="SalonCorner">C&oacute;rner en sal&oacute;n</option>
-						<option value="CasinoCorner">C&oacuterner en casino</option>
-						<option value="BingoCorner">C&oacuterner en bingo</option>
-						<option value="SpecifigStore">Tienda espec&iacute;fica</option>
-						<option value="LCS">Luckia Sport Caf&eacute;</option>
-						<option value="CasaDeApuestas">Casa de apuestas</option>
-					</select>
+					<label>{{'type' | translate}}</label>
+					<div select-enum ng-model="searchOptions.type" enum-name="storeType"></div>
 				</div>			
 				<div class="form-group">
 					<div class="checkbox">

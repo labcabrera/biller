@@ -7,8 +7,8 @@
 	
 	<div class="col-sm-9">
 		<div>
-			<h4>Grupos de Empresas  <small>{{searchMessage}}</small></h4>
-			<div ng-if="results.results.length == 0">No se han encontrado resultados</div>
+			<h4>{{'companyGroups' | translate}}  <small>{{searchMessage}}</small></h4>
+			<div ng-if="results.results.length == 0">{{'noResults' | translate}}</div>
 			<ul class="list-group">
 				<li class="list-group-item" ng-repeat="group in results.results">
 					<a href="#/groups/id/{{group.id}}">{{group.name}}</a>

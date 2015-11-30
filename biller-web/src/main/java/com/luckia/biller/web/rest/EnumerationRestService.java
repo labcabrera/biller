@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import com.luckia.biller.core.model.CommonState;
+import com.luckia.biller.core.model.StoreType;
 import com.luckia.biller.core.model.UserActivityType;
 
 @Path("/enumeration")
@@ -24,8 +25,14 @@ public class EnumerationRestService {
 
 	@GET
 	@Path("/userActivity")
-	public List<UserActivityType> userActivitTypes() {
+	public List<UserActivityType> userActivityTypes() {
 		return Arrays.asList(UserActivityType.values());
+	}
+
+	@GET
+	@Path("/storeType")
+	public List<StoreType> storeTypes() {
+		return Arrays.asList(StoreType.values());
 	}
 
 	@GET
