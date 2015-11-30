@@ -5,11 +5,13 @@ FIX
 	- En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar
 	- Unificar cuadros de mensajes
 	- En pre no aparece el usuario en el listado de actividad
+	- Revisar funcionamiento de la generacion de numeros de facturas
 
 TODO
 	- Unificar mensajes de alerta. Quitar los $scope.displayAlert(data);
 	- El isReadOnly esta definido a nivel de $rootScope. Hacer que sea a nivel de scope
 	- Eliminar los "window.confirm(..."
+	- Quitar los mensajes de javascript y recuperarlos a traves del filter translate
 
 	- Configuracion de logback en produccion / preproducción
 	- Eliminar el reportFile de la liquidacion

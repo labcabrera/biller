@@ -48,7 +48,7 @@
 	 * DETALLE DE LIQUIDACION
 	 * ----------------------------------------------------------------------------
 	 */
-	billerModule.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
+	billerModule.controller('LiquidationDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', '$filter', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, $filter, dialogs, messageService) {
 		$scope.load = function() {
 			$http.get('rest/liquidations/id/' + $routeParams.id).success(function(data) {
 				$scope.entity = data;
@@ -65,7 +65,9 @@
 		};
 		$scope.setPage = function(page) {
 		    $scope.currentPage = page;
-		    $http.get('rest/bills/find?q=liquidation.id==' + $routeParams.id + "&n=15" + "&p=" + page).success(function(data) { $scope.childs = data; });
+		    $http.get('rest/bills/find?q=liquidation.id==' + $routeParams.id + "&n=15" + "&p=" + page).success(function(data) {
+		    	$scope.childs = data;
+		    });
 		};
 		$scope.confirm = function() {
 			var dlg = dialogs.confirm('Confirmacion','Se va a aceptar la liquidacion');
@@ -73,7 +75,7 @@
 				$scope.isSaving = true;
 				$http.post('rest/liquidations/confirm/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;
-					$scope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						$scope.entity = data.payload;
 					}
@@ -85,7 +87,7 @@
 			dlg.result.then(function(btn){
 				$scope.isSaving = true;
 				$http.post('rest/liquidations/bills/confirm/' + $scope.entity.id).success(function(data) {
-					$scope.displayAlert(data);
+					$scope.message= data;
 					if(data.code == 200) {
 						$http.get('rest/bills/find?q=liquidation.id==' + $routeParams.id + "&n=15").success(function(data) {
 							$scope.childs = data;
@@ -99,7 +101,7 @@
 			$scope.isSaving = true;
 			$http.post('rest/liquidations/merge/', $scope.entity).success(function(data) {
 				$scope.isSaving = false;
-				$scope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
 					$rootScope.isReadOnly = true;				
 					$scope.entity = data.payload;
@@ -113,7 +115,11 @@
 					$scope.isSaving = true;
 					$http.post('rest/liquidations/remove/' + $scope.entity.id).success(function(data) {
 						$scope.isSaving = false;
-						if(data.code == 200) { $location.path("liquidations"); } else { $scope.displayAlert(data); }
+						if(data.code == 200) {
+							$location.path("liquidations");
+						} else {
+							$scope.message = data;
+						}
 					});
 				});
 			}
@@ -139,7 +145,7 @@
 				$scope.isSaving = true;
 				$http.post('rest/liquidations/recalculate/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;
-					$scope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						messageService.setMessage(data);
 						$location.path("liquidations/id/" + data.payload.id);
@@ -153,7 +159,7 @@
 				$scope.isSaving = true;
 				$http.post('rest/liquidations/pdf/recreate/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;
-					$scope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						$scope.entity = data.payload;
 					}
@@ -166,7 +172,7 @@
 				$scope.isSaving = true;
 				$http.post('rest/liquidations/draft/' + $scope.entity.id).success(function(data) {
 					$scope.isSaving = false;
-					$scope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						$scope.entity = data.payload;
 					}
@@ -175,11 +181,10 @@
 		};
 		$scope.editSendMail = function() { $('#sendMailModal').modal('show'); };
 		$scope.sendMail = function() {
-			$scope.isSaving = true;
+			$('#sendMailModal').modal('hide');
+			$scope.message = {code: 200, info: [ $filter('translate')('sendingMail') ]};
 			$http.post('rest/liquidations/send/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {
-				$scope.isSaving = false;
-				$scope.displayAlert(data);
-				$('#sendMailModal').modal('hide');
+				$scope.message = data;
 			});
 		};
 		$scope.load();

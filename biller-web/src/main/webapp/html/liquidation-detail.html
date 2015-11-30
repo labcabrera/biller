@@ -5,10 +5,14 @@
 <body>
 	<div class="row">
 		<div class="col-sm-9">
-			<div id="alertContainer"></div>
+			
+			<message-error-panel ng-model="message" auto-close="true"></message-error-panel>
+			
 			<h4>
-				<span class="glyphicon glyphicon-list-alt text-muted"></span> <span>{{'liquidation' | translate}}</span>
+				<span class="glyphicon glyphicon-list-alt text-muted"></span>
+				<span>{{'liquidation' | translate}}</span>
 			</h4>
+			
 			<div>
 				<form class="form-horizontal" role="form">
 					<div class="form-group">
