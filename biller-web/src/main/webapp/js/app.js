@@ -14,7 +14,7 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/companies/new', { templateUrl : 'html/company-detail.html', controller : 'CompanyNewCtrl'
 	}).when('/costcenters', { templateUrl : 'html/cost-center-list.html', controller : 'CostCenterListCtrl'
 	}).when('/costcenters/id/:id', { templateUrl : 'html/cost-center-detail.html', controller : 'CostCenterDetailCtrl'
-	}).when('/costcenters/new', { templateUrl : 'html/costcenter-detail.html', controller : 'CostCenterNewCtrl'
+	}).when('/costcenters/new', { templateUrl : 'html/cost-center-detail.html', controller : 'CostCenterNewCtrl'
 	}).when('/stores', { templateUrl : 'html/store-list.html', controller : 'StoreListCtrl'
 	}).when('/stores/id/:id', { templateUrl : 'html/store-detail.html', controller : 'StoreDetailCtrl'
 	}).when('/stores/new', { templateUrl : 'html/store-detail.html', controller : 'StoreNewCtrl'
