@@ -6,62 +6,60 @@
 <div class="row">
 
 	<div class="col-sm-9">
-		<div id="alertContainer"></div>
-		<h4>Centro de coste</h4>
+		
+		<message-error-panel ng-model="message" auto-close="true"></message-error-panel>
+		
+		<h4>{{'costCenter' | translate}}</h4>
+		
 		<form class="form-horizontal" role="form">
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">{{'name' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'name' | translate}}</label>
 				<div class="col-sm-4">
-					<input type='text' class="form-control input-sm" ng-model="entity.name" ng-readonly="isReadOnly" />
+					<input type='text' class="form-control" ng-model="entity.name" ng-readonly="isReadOnly" />
 				</div>
-				<label class="col-sm-2 control-label input-sm">{{'idCard.nif' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'idCard.nif' | translate}}</label>
 				<div class="col-sm-4">
-					<input type='text' class="form-control input-sm" ng-model="entity.idCard.number" ng-readonly="isReadOnly" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">{{'code' | translate}}</label>
-				<div class="col-sm-4">
-					<input type='text' class="form-control input-sm" ng-model="entity.code" ng-readonly="isReadOnly" />
+					<input type='text' class="form-control" ng-model="entity.idCard.number" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">{{'email' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'code' | translate}}</label>
 				<div class="col-sm-4">
-					<input type="text" class="form-control input-sm" ng-model="entity.email" ng-readonly="isReadOnly" />
+					<input type='text' class="form-control" ng-model="entity.code" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">{{'province' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'email' | translate}}</label>
 				<div class="col-sm-4">
-					<input type="text" class="form-control input-sm" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly" />
-				</div>
-				<label class="col-sm-2 control-label input-sm">{{'region' | translate}}</label>
-				<div class="col-sm-4">
-					<input type='text' class="form-control input-sm" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly" />
+					<input type="text" class="form-control" ng-model="entity.email" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">{{'address' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'province' | translate}}</label>
 				<div class="col-sm-4">
-					<input type="text" class="form-control input-sm" ng-model="entity.address.road" ng-readonly="isReadOnly" />
+					<input type="text" class="form-control" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly" />
 				</div>
-				<label class="col-sm-2 control-label input-sm">{{'number' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'region' | translate}}</label>
 				<div class="col-sm-4">
-					<input type='text' class="form-control input-sm" ng-model="entity.address.floor" ng-readonly="isReadOnly" />
+					<input type='text' class="form-control" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">{{'vat' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'address' | translate}}</label>
 				<div class="col-sm-4">
-					<input type="text" class="form-control input-sm" ng-model="entity.vat" ng-readonly="isReadOnly" />
+					<input type="text" class="form-control" ng-model="entity.address.road" ng-readonly="isReadOnly" />
+				</div>
+				<label class="col-sm-2 control-label">{{'number' | translate}}</label>
+				<div class="col-sm-4">
+					<input type='text' class="form-control" ng-model="entity.address.floor" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 		</form>
+		
 		<div class="m-top-40">
 			<ul class="nav nav-tabs">
-				<li class="active"><a data-target="#storesTab" data-toggle="tab">Locales</a></li>
-				<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
+				<li class="active"><a data-target="#storesTab" data-toggle="tab">{{'stores' | translate}}</a></li>
+				<li><a data-target="#auditTab" data-toggle="tab">{{'auditData' | translate}}</a></li>
 			</ul>
 			<div class="tab-content">
 				<!-- Pestaña del titular del local -->
@@ -79,13 +77,13 @@
 	<div class="col-sm-3">
 		<div ng-include src="'templates/entity-toolbar.html'"></div>
 		<div class="m-top-40">
-			<h4>Centros de coste</h4>
+			<h4>{{'costCenters' | translate}}</h4>
 			<ul class="list-unstyled">
 				<li><a href="#/costcenters">Ver centros de coste</a></li>
 			</ul>
 		</div>
 		<div class="m-top-40">
-			<h4>Facturaci&oacute;n</h4>
+			<h4>{{'billing' | translate}}</h4>
 			<ul class="list-unstyled">
 				<li><a href="#">Facturas pendientes</a></li>
 				<li><a href="#">Ver facturas emitidas</a></li>

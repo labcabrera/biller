@@ -1,6 +1,7 @@
 {
 	"addAdjustment": "Añadir ajuste",
 	"addBillDetail": "Añadir ajuste",
+	"addCostCenter": "Añadir centro de coste",
 	"addLiquidationDetail": "Añadir ajuste",
 	"addStore": "Añadir establecimiento",
 	"addTerminal": "Añadir terminal",
@@ -184,6 +185,7 @@
 	"sender": "Emisor",
 	"sendingMail": "Enviando correo...",
 	"sequencePrefix": "Secuencia",
+	"showDeleted": "Mostrar registros eliminados",
 	"stakes": "Ventas",
 	"state": "Estado",
 	"store": "Local",

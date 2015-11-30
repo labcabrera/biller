@@ -6,7 +6,7 @@
 <div class="row">
 
 	<div class="col-sm-9">
-		<h4>Centros de coste <small>({{results.totalItems}} resultados)</small></h4>
+		<h4>{{'costCenters' | translate}} <small>{{searchMessage}}</small></h4>
 		<ul class="list-group">
 			<li class="list-group-item" ng-repeat="result in results.results | filter:query | orderBy:orderProp">
 				<div>
@@ -15,7 +15,7 @@
 			</li>
 		</ul>
 		<div class="pull-right">
-			<a href="#/costcenters/new">Nuevo centro de coste</a>
+			<a href="#/costcenters/new">{{'addCostCenter' | translate}}</a>
 		</div>
 		<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)"
 			max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
@@ -23,23 +23,23 @@
 
 	<div class="col-sm-3">
 		<div>
-			<h4>Filtrar resultados</h4>
+			<h4>{{'filterResults' | translate}}</h4>
 			<form role="form">
 				<div class="form-group">
-					<label>C&oacute;digo</label>
-					<input type="text" class="form-control input-sm" ng-model="searchOptions.code" />
+					<label>{{'code' | translate}}</label>
+					<input type="text" class="form-control" ng-model="searchOptions.code" />
 				</div>
 				<div class="form-group">
-					<label>Nombre</label>
-					<input type="text" class="form-control input-sm" ng-model="searchOptions.name" />
+					<label>{{'name' | translate}}</label>
+					<input type="text" class="form-control" ng-model="searchOptions.name" />
 				</div>
 				<div class="form-group">
 					<div class="checkbox">
-						<label><input type="checkbox" ng-model="searchOptions.showDeleted">Mostrar grupos eliminados</label>
+						<label><input type="checkbox" ng-model="searchOptions.showDeleted">{{'showDeleted' | translate}}</label>
 					</div>
 				</div>
-				<button class="btn btn-primary btn-sm" ng-click="search()">Buscar</button>
-				<button class="btn btn-primary btn-sm" ng-click="reset()">Reset</button>
+				<button class="btn btn-primary btn-sm" ng-click="search()">{{'search' | translate}}</button>
+				<button class="btn btn-primary btn-sm" ng-click="reset()">{{'reset' | translate}}</button>
 			</form>
 		</div>
 	</div>

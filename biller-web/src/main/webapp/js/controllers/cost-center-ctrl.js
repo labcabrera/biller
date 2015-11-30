@@ -22,7 +22,13 @@
 			$scope.currentPage = page;
 			$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
 		};
-		$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+		$scope.search = function() {
+			$scope.searchMessage = "Loading...";
+			$http.get($scope.getSearchUrl()).success(function(data) {
+				$scope.results = data;
+				$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
+			});
+		};
 		$scope.reset();
 		$scope.search();
 	} ]);

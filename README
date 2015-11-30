@@ -13,7 +13,7 @@ TODO
 	- El isReadOnly esta definido a nivel de $rootScope. Hacer que sea a nivel de scope
 	- Eliminar los "window.confirm(..."
 	- Quitar los mensajes de javascript y recuperarlos a traves del filter translate
-
+	- Meter como parte de la build la fecha de generación (lo estoy haciendo ahora manualmente)
 	- Configuracion de logback en produccion / preproducción
 	- Eliminar el reportFile de la liquidacion
 	- Añadir los RegisterActivity que faltan
