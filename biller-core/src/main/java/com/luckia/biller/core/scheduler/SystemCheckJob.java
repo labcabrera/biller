@@ -33,7 +33,7 @@ public class SystemCheckJob extends BaseJob {
 			File folder = new File(repositoryPath);
 			if (!folder.canRead()) {
 				alertService.hangleAlert(String.format("Missing repository folder '%s'", repositoryPath));
-			} else if (folder.canRead()) {
+			} else if (!folder.canRead()) {
 				alertService.hangleAlert(String.format("Invalid folder permissions '%s': cant read", repositoryPath));
 			} else if (folder.canWrite()) {
 				alertService.hangleAlert(String.format("Invalid folder permissions '%s': cant write", repositoryPath));
