@@ -40,7 +40,7 @@ public class ProvinceTaxesService extends EntityService<ProvinceTaxes> {
 
 	@Override
 	@Transactional
-	@RegisterActivity(type = UserActivityType.PROVICE_TAX_MERGE)
+	@RegisterActivity(type = UserActivityType.PROVINCE_TAX_MERGE)
 	public Message<ProvinceTaxes> merge(ProvinceTaxes entity) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();

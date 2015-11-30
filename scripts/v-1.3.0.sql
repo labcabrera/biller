@@ -207,5 +207,5 @@ INSERT INTO S_SCHEDULED_TASK(NAME, CLASSNAME, CRON_EXP, ENABLED) VALUES ('Envío
 INSERT INTO S_SCHEDULED_TASK(NAME, CLASSNAME, CRON_EXP, ENABLED) VALUES ('System check', 'com.luckia.biller.core.scheduler.SystemCheckJob', '0 0 0/1 1/1 * ? *', false);
 INSERT INTO S_SCHEDULED_TASK(NAME, CLASSNAME, CRON_EXP, ENABLED) VALUES ('Liquidación de rapel (obsoleto)', 'com.luckia.biller.core.scheduler.RappelLiquidationJob', '0 0 12 15 1 ? *', false);
 
-
-
+DROP TABLE S_APP_SETTINGS_VALUES;
+DROP TABLE S_APP_SETTINGS;
