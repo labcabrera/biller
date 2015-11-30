@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col-sm-9">
-		<h4>{{'stores' | translate}} <small>({{results.totalItems}} resultados)</small></h4>
+		<h4>{{'stores' | translate}} <small>{{searchMessage}}</small></h4>
 		<div class="m-top-15">
 			<div ng-if="results.results.length < 1">{{'noResults' | translate}}</div>
 			<div ng-if="results.results.length > 0">

@@ -36,14 +36,20 @@
 		    $scope.currentPage = page;
 		    $scope.search();
 		};
-		$scope.search = function() { $http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; }); };
+		$scope.search = function() {
+			$scope.searchMessage = "Loading...";
+			$http.get($scope.getSearchUrl()).success(function(data) {
+				$scope.results = data;
+				$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
+			});
+		};
 		$scope.reset();
 		$scope.search();
 	} ]);
 
-	billerModule.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
 		if(messageService.hasMessage()) {
-			$scope.displayAlert(messageService.getMessage());
+			$scope.message = messageService.getMessage();
 		}
 		$scope.load = function() {
 			$http.get('rest/stores/id/' + $routeParams.id).success(function(data) {
@@ -56,7 +62,7 @@
 			$scope.isSaving = true;
 			$http.post('rest/stores/merge/', $scope.entity).success(function(data) {
 				$scope.isSaving = false;
-				$rootScope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
 					$scope.entity = data.payload;
 					$rootScope.isReadOnly = true;
@@ -64,13 +70,21 @@
 			});
 		};
 		$scope.remove = function() {
-			if($rootScope.autoconfirm || window.confirm('Se va a eliminar el establecimiento')) {
+			var dlg = dialogs.confirm('Confirmacion','Se va a eliminar la empresa');
+			dlg.result.then(function(btn){
 				$scope.isSaving = true;
-				$http.post('rest/stores/remove/' + $scope.entity.id).success(function(data) {
-					$scope.isSaving = false;
-					if(data.code == 200) { $location.path("stores"); } else { $scope.displayAlert(data); }
+				$http.post('rest/liquidations/confirm/' + $scope.entity.id).success(function(data) {
+					$scope.isSaving = true;
+					$http.post('rest/stores/remove/' + $scope.entity.id).success(function(data) {
+						$scope.isSaving = false;
+						if(data.code == 200) {
+							$location.path("stores");
+						} else {
+							$scope.message = data;
+						}
+					});
 				});
-			}
+			});
 		};
 		$scope.addTerminal = function() {
 			var current = $scope.newTerminal.store != null ? $scope.newTerminal.store.name : null;
@@ -79,7 +93,7 @@
 				$scope.isSaving = true;
 				$http.post('rest/terminals/merge', $scope.newTerminal).success(function(data) {
 					$scope.isSaving = false;
-					$rootScope.displayAlert(data);
+					$scope.message = data;
 					if(data.code == 200) {
 						$scope.load();
 						$scope.newTerminal = null;
@@ -93,7 +107,7 @@
 			$scope.isSaving = true;
 			$http.post('rest/terminals/merge', data).success(function(data) {
 				$scope.isSaving = false;
-				$rootScope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
 					$scope.load();
 				}

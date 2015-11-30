@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col-sm-9">
 
-		<div id="alertContainer"></div>
+		<message-error-panel ng-model="message" auto-close="true"></message-error-panel>
 		
 		<h4>{{'store' | translate}}</h4>
 		<div class="m-top-15">
@@ -13,7 +13,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Empresa</label>
+					<label class="col-sm-2 control-label input-sm">{{'company' | translate}}</label>
 					<div class="col-sm-4">
 						<div class="input-group">
 							<input type="text" class="form-control" ng-model="entity.parent"  ng-readonly="isReadOnly" typeahead="company as company.name for company in companies($viewValue)" typeahead-editable="false" />
@@ -23,7 +23,7 @@
 							</span>
 						</div>
 					</div>
-					<label class="col-sm-2 control-label input-sm">C. Coste</label>
+					<label class="col-sm-2 control-label input-sm">{{'costCenter' | translate}}</label>
 					<div class="col-sm-4">
 						<div class="input-group">
 							<input type="text" class="form-control" ng-model="entity.costCenter" ng-readonly="isReadOnly" typeahead="costCenter as costCenter.name for costCenter in costcenters($viewValue)" typeahead-editable="false" />
@@ -35,11 +35,11 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">CIF</label>
+					<label class="col-sm-2 control-label input-sm">{{'cif' | translate}}</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.idCard.number" ng-readonly="isReadOnly"  />
 					</div>
-					<label class="col-sm-2 control-label input-sm">Tipo</label>
+					<label class="col-sm-2 control-label input-sm">{{'type' | translate}}</label>
 					<div class="col-sm-4">
 						<select class="form-control" ng-model="entity.type" ng-readonly="isReadOnly" ng-disabled="isReadOnly">
 							<option value="Bar">Bar</option>
@@ -173,14 +173,14 @@
 	<div class="col-sm-3">
 		<div ng-include="'templates/entity-toolbar.html'"></div>
 		<div class="m-top-40">
-			<h4>Facturaci&oacute;n</h4>
+			<h4>{{'billing' | translate}}</h4>
 			<ul class="list-unstyled">
 				<li><a href="#/bills?store={{entity.id}}">Ver facturas de este establecimiento</a></li>
 				<li><a href="#/bills?store={{entity.id}}&state=Draft">Ver facturas pendientes</a></li>
 			</ul>
 		</div>
 		<div class="m-top-40">
-			<h4>Entidades</h4>
+			<h4>{{'stores' | translate}}</h4>
 			<ul class="list-unstyled">
 				<li><a href="#stores?parent={{entity.parent.id}}">Ver establecimientos de la empresa</a></li>
 				<li><a href="#stores">Ver establecimientos</a></li>
@@ -196,18 +196,18 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">A&ntilde;adir terminal</h4>
+				<h4 class="modal-title">{{'addTerminal' | translate}}</h4>
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal" role="form">
 					<div class="form-group">
-						<label class="col-sm-3 control-label">C&oacute;digo</label>
+						<label class="col-sm-3 control-label">{{'code' | translate}}</label>
 						<div class="col-sm-6">
 							<input type='text' class="form-control" ng-model="newTerminal" typeahead="terminal as terminal.code for terminal in terminals($viewValue)" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label">Establecimiento</label>
+						<label class="col-sm-3 control-label">{{'store' | translate}}</label>
 						<div class="col-sm-6">
 							<input type='text' class="form-control" ng-model="newTerminal.store.name" ng-readonly="true" />
 						</div>
@@ -216,7 +216,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">{{'cancel' | translate}}</button>
-				<button type="button" class="btn btn-primary btn-sm" ng-click="addTerminal()" >{{'add' | translate}}</button>
+				<button type="button" class="btn btn-primary btn-sm" ng-click="addTerminal()" >{{'addTerminal' | translate}}</button>
 			</div>
 		</div>
 	</div>
