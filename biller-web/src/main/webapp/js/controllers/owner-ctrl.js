@@ -43,10 +43,12 @@
 	
 	billerModule.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
 		if(messageService.hasMessage()) {
-			$scope.displayAlert(messageService.getMessage());
+			$scope.message = messageService.getMessage();
 		}
 		$scope.load = function() {
-			$http.get('rest/owners/id/' + $routeParams.id).success(function(data) { $scope.entity = data; });
+			$http.get('rest/owners/id/' + $routeParams.id).success(function(data) {
+				$scope.entity = data;
+			});
 			$rootScope.isReadOnly = true;
 			$scope.setStorePage(1);
 		};
@@ -55,17 +57,20 @@
 			$scope.isSaving = true;
 			$http.post('rest/owners/merge/', $scope.entity).success(function(data) {
 				$scope.isSaving = false;
-				$scope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
 					$rootScope.isReadOnly = true;				
-					$scope.message = data.payload;
 				}
 			});
 		};
 		$scope.remove = function() {
 			if($rootScope.autoconfirm || window.confirm('Se va a eliminar el titular')) {
 				$http.post('rest/owners/remove/' + $scope.entity.id).success(function(data) {
-					if(data.code == 200) { $location.path("owners"); } else { $scope.displayAlert(data); }
+					if(data.code == 200) {
+						$location.path("owners");
+					} else {
+						$scope.message = data;
+					}
 				});
 			}
 		};
@@ -83,7 +88,7 @@
 		$scope.reset = function() {};
 		$scope.update = function() {
 			$http.post('rest/owners/merge/', $scope.entity).success(function(data) {
-				$scope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
 					messageService.setMessage(data);
 					$location.path("owners/id/" + data.payload.id);				

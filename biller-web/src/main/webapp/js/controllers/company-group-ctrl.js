@@ -79,7 +79,7 @@
 					messageService.setMessage(data);
 					$location.path("groups/id/" + data.payload.id);				
 				} else {
-					$scope.displayAlert(data);
+					$scope.message = data;
 				}
 			});
 		};

@@ -36,7 +36,7 @@
 	
 	billerModule.controller('CostCenterDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
 		if(messageService.hasMessage()) {
-			$scope.displayAlert(messageService.getMessage());
+			$scope.message = messageService.getMessage();
 		}
 		$scope.load = function() {
 			$http.get('rest/costcenters/id/' + $routeParams.id).success(function(data) { $scope.entity = data; });
@@ -46,7 +46,7 @@
 		$scope.reset = function() { $scope.load(); };
 		$scope.update = function() {
 			$http.post('rest/costcenters/merge/', $scope.entity).success(function(data) {
-				$scope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
 					$rootScope.isReadOnly = true;				
 					$scope.message = data.payload;
@@ -56,7 +56,11 @@
 		$scope.remove = function() {
 			if($rootScope.autoconfirm || window.confirm('Se va a eliminar el centro de coste')) {
 				$http.post('rest/costcenters/remove/' + $scope.entity.id).success(function(data) {
-					if(data.code == 200) { $location.path("costcenters"); } else { $scope.displayAlert(data); }
+					if(data.code == 200) {
+						$location.path("costcenters");
+					} else {
+						$scope.message = data;
+					}
 				});
 			}
 		};
@@ -75,7 +79,7 @@
 					messageService.setMessage(data);
 					$location.path("costcenters/id/" + data.payload.id);				
 				} else {
-					$scope.displayAlert(data);
+					$scope.message = data;
 				}
 			});
 		};

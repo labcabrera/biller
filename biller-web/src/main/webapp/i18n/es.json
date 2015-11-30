@@ -109,6 +109,7 @@
 	"generate": "Generar",
 	"idCard": "Número de idenficación fiscal",
 	"idCard.nif": "NIF",
+	"idCard.cif": "CIF",
 	"inputData": "Datos de entrada",
 	"language.es": "Castellano",
 	"language.en": "English",
@@ -232,6 +233,7 @@
 	"viewBillsCreatedWithThisModel": "Ver facturas generadas con este modelo",
 	"viewDraft": "Consultar borrador",
 	"viewLiquidationDraft": "Consultar borrador",
+	"viewOwners": "Ver titulares",
 	"viewReport": "Report",
 	"year": "Año",
 	"zipCode": "Código postal"
