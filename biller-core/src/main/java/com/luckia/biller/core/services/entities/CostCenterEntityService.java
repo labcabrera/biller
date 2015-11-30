@@ -52,7 +52,6 @@ public class CostCenterEntityService extends EntityService<CostCenter> {
 		CostCenter current = entityManager.find(CostCenter.class, primaryKey);
 		auditService.processDeleted(current);
 		entityManager.merge(current);
-		auditService.addUserActivity(UserActivityType.COST_CENTER_DELETE, primaryKey);
 		return new Message<CostCenter>(Message.CODE_SUCCESS, i18nService.getMessage("costCenter.remove"), current);
 	}
 
