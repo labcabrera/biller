@@ -16,8 +16,10 @@
 			return REST_PATH + '/provinceTaxes/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
 		$scope.search = function() {
+			$scope.searchMessage = "Loading...";
 			$http.get($scope.getSearchUrl()).success(function(data) {
 				$scope.results = data;
+				$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
 			});
 		};
 		$scope.setPage = function(page) {

@@ -1,11 +1,11 @@
 <div class="row">
 	<div class="col-sm-9">
-		<h4>{{'gameFeesAndVat' | translate}} <small>({{results.totalItems}} resultados)</small></h4>
+		<h4>{{'gameFeesAndVat' | translate}} <small>{{searchMessage}}</small></h4>
 		<table class="table table-hover table-condensed">
 				<tr>
 					<th class="col-sm-6">{{'province' | translate}}</th>
-					<th class="col-sm-2">{{'vatPercent' | translate}}</th>
-					<th class="col-sm-2">{{'gameFeesPercent' | translate}}</th>
+					<th class="col-sm-2">{{'vat' | translate}}</th>
+					<th class="col-sm-2">{{'feesPercent' | translate}}</th>
 					<th class="col-sm-2"></th>
 				</tr>
 				<tr ng-repeat="result in results.results">
@@ -13,7 +13,9 @@
 					<td>{{result.vatPercent}}</td>
 					<td>{{result.feesPercent}}</td>
 					<td>
-						<button class="btn btn-sm btn-primary" ng-click="edit(result)">{{'modify' | translate}}</button>
+						<button type="button" class="btn btn-warning btn-sm" ng-click="edit(result)">
+							<span class="glyphicon glyphicon-edit"></span>
+						</button>
 					</td>
 				</tr>
 			</table>
@@ -23,7 +25,7 @@
 	
 	<div class="col-sm-3">
 		<div>
-			<h4>Filtrar resultados</h4>
+			<h4>{{'filterResults' | translate}}</h4>
 			<form role="form">
 				<div class="form-group">
 					<label for="entityIdCardNumber">{{'province' | translate}}</label>
