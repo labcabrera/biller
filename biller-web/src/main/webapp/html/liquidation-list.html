@@ -64,19 +64,11 @@
 					</div>
 					<div class="form-group">
 						<label>{{'dateFrom' | translate}}</label>
-						<div class="input-group">
-							<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="searchOptions.from"
-								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
-							<span class="input-group-addon glyphicon glyphicon-calendar"></span>
-						</div>
+						<div calendar ng-model="searchOptions.from" require="false"></div>						
 					</div>
 					<div class="form-group">
 						<label>{{'dateTo' | translate}}</label>
-						<div class="input-group">
-							<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="searchOptions.to"
-								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
-							<span class="input-group-addon glyphicon glyphicon-calendar"></span>
-						</div>
+						<div calendar ng-model="searchOptions.to" require="false"></div>
 					</div>
 					<button class="btn btn-primary btn-sm" ng-click="search()">{{'search' | translate}}</button>
 					<button class="btn btn-primary btn-sm" ng-click="reset()">{{'reset' | translate}}</button>
