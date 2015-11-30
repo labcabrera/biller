@@ -1,14 +1,12 @@
 FIX
-	- Error JPA recalcular facturacion
-	- Revisar generacion del zip
 	- Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
 	- En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar
-	- Unificar cuadros de mensajes
 	- En pre no aparece el usuario en el listado de actividad
-	- Revisar funcionamiento de la generacion de numeros de facturas
 	- Cargar los controladores de forma selectiva para cada pagina
 
 TODO
+	+ Report de resumen de liquidaciones
+	- Revisar funcionamiento de la generacion de numeros de facturas
 	- Unificar mensajes de alerta. Quitar los $scope.displayAlert(data);
 	- El isReadOnly esta definido a nivel de $rootScope. Hacer que sea a nivel de scope
 	- Eliminar los "window.confirm(..."
@@ -17,23 +15,21 @@ TODO
 	- Configuracion de logback en produccion / preproducción
 	- Eliminar el reportFile de la liquidacion
 	- Añadir los RegisterActivity que faltan
-	- Pensar en combinar el RegisterActivity para que actualice la informacion de auditoria
 	- Historico en la relacion de terminales y locales
 	- Optimizacion relaciones JPA
 	- Revisión seguridad descargas (no usan ahora el sessionid y tienen el @PermitAll)
-	- Migración de MANUAL_WITH_LIQUIDATION y MANUAL_WITHOUT_LIQUIDATION (2 registros solamente)
-	- Sacar named queries a orm.xml
+	- Sacar named queries a orm.xml (quedan 23 por migrar)
 	- No generar el PDF de las facturas que están a cero
 	- Administrador de roles y permisos
-	- Administración tareas programadas (puedo coger tal cual el servicio que hay en cnp-saving)
 	- Eliminar los conceptos de ajuste de caja del modelo
 	- Eliminar la facturas sin resultado
-	- unificar carpetas de html (ahora hay cierto caos con templates, static, html, partials...)
-	- Factura: boton de cerrar las alertas
+	> Cambio en los modelos de facturacion. Tener un modelo para bares y otro diferentes para operadores
 
 CHECK-LIST
 	- Revisar reporte de liquidaciones tras cambio de modelo
 	- Proceso de migración de facturas y liquidaciones
 	- Optimización serializadores
 	- Revisar error paginacion facturas (por ejemplo SOLMAR VALENCIA en septiembre)
+	- Unificar cuadros de mensajes
+	- Migración de MANUAL_WITH_LIQUIDATION y MANUAL_WITHOUT_LIQUIDATION (2 registros solamente)	
 	
