@@ -1,6 +1,6 @@
 <div ng-if="message != null">
 	<div collapse="message.message == null || message.message == '' || isCollapse">
-		<div class="alert alert-success" role="alert">
+		<div class="alert alert-warning" role="alert">
 			<button type="button" class="close" ng-click="setCollapse()">
 				<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 			</button>
@@ -14,7 +14,7 @@
 			</div>
 		</div>
 	</div>
-	<div message-error-box message-class="alert alert-info" message-icon="glyphicon glyphicon-info-sign" ng-model="message.info"></div>
 	<div message-error-box message-class="alert alert-danger" message-icon="glyphicon glyphicon-remove-circle" ng-model="message.errors"></div>
 	<div message-error-box message-class="alert alert-warning" message-icon="glyphicon glyphicon-exclamation-sign" ng-model="message.warnings"></div>
+	<div message-error-box message-class="alert alert-warning" message-icon="glyphicon glyphicon-info-sign" ng-model="message.info"></div>
 </div>
