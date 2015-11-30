@@ -9,7 +9,6 @@
 		<class>com.luckia.biller.core.model.AbstractBillDetail</class>
 		<class>com.luckia.biller.core.model.Address</class>
 		<class>com.luckia.biller.core.model.AppFile</class>
-		<class>com.luckia.biller.core.model.AppSettings</class>
 		<class>com.luckia.biller.core.model.Bill</class>
 		<class>com.luckia.biller.core.model.BillDetail</class>
 		<class>com.luckia.biller.core.model.BillLiquidationDetail</class>
