@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet author="lab" id="user-activity-001">
+		<createTable tableName="S_USER_ACTIVITY">
+			<column name="ID" type="VARCHAR(36)">
+				<constraints nullable="false" />
+			</column>
+			<column name="USER_ID" type="BIGINT(20)" />
+			<column name="ACTIVITY_DATE" type="TIMESTAMP">
+				<constraints nullable="false" />
+			</column>
+			<column name="TYPE" type="VARCHAR(128)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DATA" type="VARCHAR(64)" />
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="S_USER_ACTIVITY" constraintName="FK_USER_ACTIVITY_USER_IDX"
+			referencedColumnNames="ID" referencedTableName="S_USER" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" />
+	</changeSet>
+
+
+</databaseChangeLog>
