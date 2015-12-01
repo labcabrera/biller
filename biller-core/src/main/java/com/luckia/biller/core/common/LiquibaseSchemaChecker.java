@@ -7,6 +7,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
+import org.eclipse.persistence.sessions.server.ServerSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -15,16 +19,12 @@ import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 
-import org.eclipse.persistence.sessions.server.ServerSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Componente que se encarga de comprobar el fichero cambios de base de datos de Liquibase para comprobar si es necesario ejecutar algun changelog.
  */
 public class LiquibaseSchemaChecker {
 
-	public static final String DEFAULT_MASTER_CHANGELOG = "dbchangelog/db.changelog-master.xml";
+	private static final String DEFAULT_MASTER_CHANGELOG = "dbchangelog/db-master.xml";
 	private static final Logger LOG = LoggerFactory.getLogger(LiquibaseSchemaChecker.class);
 
 	@Inject
