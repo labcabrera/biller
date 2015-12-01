@@ -63,6 +63,7 @@
 	"concept.STAKES": "Stakes",
 	"concept.STORE_CASH": "Saldo de caja",
 	"concept.OTHER": "Otros conceptos y ajustes",
+	"concept.MANUAL_WITHOUT_LIQUIDATION": "Ajuste no incluído en la liquidación",
 	"confirmDraft": "Aceptar borrador",
 	"confirmLiquidation": "Aceptar borrador",
 	"confirmPendingBills": "Aceptar facturas pendientes",	
