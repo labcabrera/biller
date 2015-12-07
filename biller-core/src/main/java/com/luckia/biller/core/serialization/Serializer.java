@@ -40,9 +40,10 @@ public class Serializer {
 		builder.setPrettyPrinting();
 		builder.addSerializationExclusionStrategy(new SerializationExclusionStrategy());
 		builder.setDateFormat(DATE_FORMAT_PATTERN);
+		builder.registerTypeAdapter(BigDecimal.class, new BigDecimalSerializer());
+		// Entity custom serialization
 		builder.registerTypeHierarchyAdapter(Owner.class, new OwnerSerializer());
 		builder.registerTypeHierarchyAdapter(TerminalRelation.class, new TerminalRelationSerializer());
-		builder.registerTypeAdapter(BigDecimal.class, new BigDecimalSerializer());
 		builder.registerTypeAdapter(BillType.class, new BillTypeSerializer());
 		builder.registerTypeHierarchyAdapter(Bill.class, new BillSerializer());
 		builder.registerTypeHierarchyAdapter(Liquidation.class, new LiquidationSerializer());
