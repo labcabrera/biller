@@ -28,6 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.AppFile;
+import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.BillConcept;
+import com.luckia.biller.core.model.BillLiquidationDetail;
+import com.luckia.biller.core.model.BillRawData;
 import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.LegalEntity;
@@ -84,7 +88,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			}
 			HSSFSheet sheet = workbook.createSheet(sheetName.toString());
 			configureHeaders(sheet);
-			createReportData(sheet, from, to, company, costCenter);
+			createReportData(sheet, from, to, company, costCenter, companyGroup);
 			for (int i = 0; i < 30; i++) {
 				sheet.autoSizeColumn(i);
 			}
@@ -97,8 +101,9 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		}
 	}
 
-	private void createReportData(HSSFSheet sheet, Date from, Date to, LegalEntity company, CostCenter costCenter) {
-		List<Liquidation> liquidations = findLiquidations(from, to, company, costCenter);
+	private void createReportData(HSSFSheet sheet, Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
+		List<Liquidation> liquidations = findLiquidations(from, to, company, costCenter, companyGroup);
+		LOG.debug("Readed {} liquidations", liquidations.size());
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		BigDecimal totalCashStore = BigDecimal.ZERO;
 		BigDecimal totalAdjustements = BigDecimal.ZERO;
@@ -108,19 +113,27 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			int col = 0;
 			BigDecimal amount = MathUtils.safeNull(liquidation.getLiquidationResults().getTotalAmount());
 			BigDecimal cashStore = MathUtils.safeNull(liquidation.getLiquidationResults().getCashStoreAmount());
-			BigDecimal adjustements = MathUtils.safeNull(getAdjustementAmount(liquidation));
+			BigDecimal outerAdjustements = MathUtils.safeNull(getAdjustementAmount(liquidation, false));
 			BigDecimal result = MathUtils.safeNull(liquidation.getLiquidationResults().getReceiverAmount());
+			BigDecimal betAmount = getAmountByConcept(liquidation, BillConcept.TOTAL_BET_AMOUNT);
+			BigDecimal winAmount = getAmountByConcept(liquidation, BillConcept.TOTAL_WIN_AMOUNT);
+			BigDecimal credit = getAmountByConcept(liquidation, BillConcept.CREDIT);
+			BigDecimal innerAdjustements = MathUtils.safeNull(getAdjustementAmount(liquidation, false));
 			totalAmount = totalAmount.add(amount);
 			totalCashStore = totalCashStore.add(cashStore);
-			totalAdjustements = totalAdjustements.add(adjustements);
+			totalAdjustements = totalAdjustements.add(outerAdjustements);
 			totalResults = totalResults.add(result);
 			createCell(sheet, rowIndex, col++, ISODateTimeFormat.date().print(new DateTime(liquidation.getBillDate())));
 			createCell(sheet, rowIndex, col++, liquidation.getReceiver().getName());
 			createCell(sheet, rowIndex, col++, liquidation.getSender().getName());
 			createCell(sheet, rowIndex, col++, amount);
 			createCell(sheet, rowIndex, col++, cashStore);
-			createCell(sheet, rowIndex, col++, adjustements);
+			createCell(sheet, rowIndex, col++, outerAdjustements);
 			createCell(sheet, rowIndex, col++, result);
+			createCell(sheet, rowIndex, col++, betAmount);
+			createCell(sheet, rowIndex, col++, winAmount);
+			createCell(sheet, rowIndex, col++, credit);
+			createCell(sheet, rowIndex, col++, innerAdjustements);
 			rowIndex++;
 		}
 		rowIndex++;
@@ -132,7 +145,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		createHeaderCell(sheet, rowIndex, col++, totalResults);
 	}
 
-	private List<Liquidation> findLiquidations(Date from, Date to, LegalEntity company, CostCenter costCenter) {
+	private List<Liquidation> findLiquidations(Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
 		EntityManager entityManager = entityManagerProvider.get();
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Liquidation> criteria = builder.createQuery(Liquidation.class);
@@ -146,6 +159,9 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		}
 		if (company != null) {
 			predicates.add(builder.equal(root.get("sender"), company));
+		}
+		if (companyGroup != null) {
+			predicates.add(builder.equal(root.get("sender").get("parent"), companyGroup));
 		}
 		criteria.where(predicates.toArray(new Predicate[predicates.size()]));
 		criteria.orderBy(builder.asc(root.<Date> get("billDate")), builder.asc(root.<String> get("sender").get("name")), builder.desc(root.<String> get("code")));
@@ -161,22 +177,43 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		createHeaderCell(sheet, col, index++, "OPERADORA");
 		createHeaderCell(sheet, col, index++, "IMPORTE DE LIQUIDACION");
 		createHeaderCell(sheet, col, index++, "SALDO DE CAJA");
-		createHeaderCell(sheet, col, index++, "AJUSTES MANUALES");
+		createHeaderCell(sheet, col, index++, "AJUSTES EXTERNOS");
 		createHeaderCell(sheet, col, index++, "RESULTADO");
 		createHeaderCell(sheet, col, index++, "APOSTADO");
 		createHeaderCell(sheet, col, index++, "PAGADO");
 		createHeaderCell(sheet, col, index++, "CREDITO");
-		createHeaderCell(sheet, col, index++, "AJUSTES MANUALES");
-		createHeaderCell(sheet, col, index++, "RESULTADO A PERCIBIR");
+		createHeaderCell(sheet, col, index++, "AJUSTES INTERNOS");
 	}
 
-	private BigDecimal getAdjustementAmount(Liquidation liquidation) {
+	private BigDecimal getAdjustementAmount(Liquidation liquidation, boolean liquidationIncluded) {
 		BigDecimal result = BigDecimal.ZERO;
+		for (Bill bill : liquidation.getBills()) {
+			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
+				if (liquidationIncluded == i.getLiquidationIncluded()) {
+					result = result.add(MathUtils.safeNull(i.getValue()));
+				}
+			}
+		}
 		if (liquidation.getDetails() != null) {
 			for (LiquidationDetail detail : liquidation.getDetails()) {
-				result = result.add(detail.getValue());
+				if (liquidationIncluded = detail.getLiquidationIncluded()) {
+					result = result.add(MathUtils.safeNull(detail.getValue()));
+				}
 			}
 		}
 		return result;
 	}
+
+	private BigDecimal getAmountByConcept(Liquidation liquidation, BillConcept concept) {
+		BigDecimal result = BigDecimal.ZERO;
+		for (Bill bill : liquidation.getBills()) {
+			for (BillRawData i : bill.getBillRawData()) {
+				if (i.getConcept() == concept) {
+					result = result.add(MathUtils.safeNull(i.getAmount()));
+				}
+			}
+		}
+		return result;
+	}
+
 }

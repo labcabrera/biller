@@ -4,6 +4,7 @@
 * Arreglar el funcionamiento del serializador cuando se utiliza eclipselink-weaving 
 
 # TODO
+* Filtro de summary report por centro de coste (el problema es que esta asociado a los locales, no a los operadores)
 * Formato separador miles en el front
 * Revisar PDF con el desglose de ajustes en las miniliquidaciones
 * Revisar excel el auto-size de las columnas
