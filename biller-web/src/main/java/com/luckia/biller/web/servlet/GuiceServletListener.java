@@ -1,5 +1,7 @@
 package com.luckia.biller.web.servlet;
 
+import java.util.TimeZone;
+
 import javax.servlet.ServletContextListener;
 
 import org.jboss.resteasy.plugins.guice.GuiceResteasyBootstrapServletContextListener;
@@ -25,6 +27,8 @@ public class GuiceServletListener extends GuiceResteasyBootstrapServletContextLi
 	protected void withInjector(Injector injector) {
 		super.withInjector(injector);
 		try {
+			LOG.debug("User home: {}", System.getProperty("user.home"));
+			LOG.debug("Time zone: {}", TimeZone.getDefault().getDisplayName());
 			injector.getInstance(PersistService.class).start();
 			LiquibaseSchemaChecker schemaChecker = injector.getInstance(LiquibaseSchemaChecker.class);
 			schemaChecker.checkSchema();

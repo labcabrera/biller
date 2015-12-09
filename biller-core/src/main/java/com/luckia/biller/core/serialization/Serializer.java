@@ -51,13 +51,13 @@ public class Serializer {
 		builder.registerTypeAdapter(Date.class, injector.getInstance(DateSerializer.class));
 		builder.registerTypeAdapter(BigDecimal.class, injector.getInstance(BigDecimalSerializer.class));
 		// Entity custom serialization
-		builder.registerTypeHierarchyAdapter(Owner.class, new OwnerSerializer());
-		builder.registerTypeHierarchyAdapter(TerminalRelation.class, new TerminalRelationSerializer());
-		builder.registerTypeAdapter(BillType.class, new BillTypeSerializer());
-		builder.registerTypeHierarchyAdapter(Bill.class, new BillSerializer());
-		builder.registerTypeHierarchyAdapter(Liquidation.class, new LiquidationSerializer());
-		builder.registerTypeHierarchyAdapter(AuditData.class, new AuditDataSerializer());
-		builder.registerTypeHierarchyAdapter(UserActivity.class, new UserActivitySerializer());
+		builder.registerTypeHierarchyAdapter(Owner.class, injector.getInstance(OwnerSerializer.class));
+		builder.registerTypeHierarchyAdapter(TerminalRelation.class, injector.getInstance(TerminalRelationSerializer.class));
+		builder.registerTypeAdapter(BillType.class, injector.getInstance(BillTypeSerializer.class));
+		builder.registerTypeHierarchyAdapter(Bill.class, injector.getInstance(BillSerializer.class));
+		builder.registerTypeHierarchyAdapter(Liquidation.class, injector.getInstance(LiquidationSerializer.class));
+		builder.registerTypeHierarchyAdapter(AuditData.class, injector.getInstance(AuditDataSerializer.class));
+		builder.registerTypeHierarchyAdapter(UserActivity.class, injector.getInstance(UserActivitySerializer.class));
 		return builder;
 	}
 
