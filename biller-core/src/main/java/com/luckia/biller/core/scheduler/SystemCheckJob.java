@@ -31,7 +31,7 @@ public class SystemCheckJob extends BaseJob {
 			alertService.hangleAlert("Missing configuration repository folder. Check app configuration");
 		} else {
 			File folder = new File(repositoryPath);
-			if (!folder.canRead()) {
+			if (!folder.exists()) {
 				alertService.hangleAlert(String.format("Missing repository folder '%s'", repositoryPath));
 			} else if (!folder.canRead()) {
 				alertService.hangleAlert(String.format("Invalid folder permissions '%s': cant read", repositoryPath));

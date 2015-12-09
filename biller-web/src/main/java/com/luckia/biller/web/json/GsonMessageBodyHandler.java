@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -19,6 +20,7 @@ import javax.ws.rs.ext.Provider;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.inject.Injector;
 import com.luckia.biller.core.serialization.Serializer;
 
 /**
@@ -31,11 +33,14 @@ public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>, 
 
 	private static final String UTF_8 = "UTF-8";
 
+	@Inject
+	private Injector injector;
+
 	private Gson gson;
 
 	private Gson getGson() {
 		if (gson == null) {
-			final GsonBuilder gsonBuilder = new Serializer().getBuilder();
+			final GsonBuilder gsonBuilder = new Serializer(injector).getBuilder();
 			gson = gsonBuilder.create();
 		}
 		return gson;
@@ -47,8 +52,8 @@ public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>, 
 	}
 
 	@Override
-	public Object readFrom(Class<Object> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
-			throws IOException {
+	public Object readFrom(Class<Object> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders,
+			InputStream entityStream) throws IOException {
 		InputStreamReader streamReader = new InputStreamReader(entityStream, UTF_8);
 		try {
 			Type jsonType;

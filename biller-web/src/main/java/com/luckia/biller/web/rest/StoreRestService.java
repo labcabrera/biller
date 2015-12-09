@@ -1,13 +1,8 @@
 package com.luckia.biller.web.rest;
 
-import java.util.Iterator;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -74,20 +69,8 @@ public class StoreRestService {
 			}
 			entity.setOwner(owner);
 			return entityService.merge(entity);
-		} catch (PersistenceException ex) {
-			LOG.error("Error al actualizar el establecimiento", ex);
-			Message<Store> message = new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("store.error.merge"));
-			if (ex.getCause() instanceof ConstraintViolationException) {
-				ConstraintViolationException cve = (ConstraintViolationException) ex.getCause();
-				for (Iterator<ConstraintViolation<?>> it = cve.getConstraintViolations().iterator(); it.hasNext();) {
-					ConstraintViolation<? extends Object> v = it.next();
-					System.err.println(v);
-					System.err.println("==>>" + v.getMessage());
-				}
-			}
-			return message;
 		} catch (Exception ex) {
-			LOG.error("Error al actualizar el establecimiento", ex);
+			LOG.error("Merge store error", ex);
 			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("store.error.merge"));
 		}
 	}

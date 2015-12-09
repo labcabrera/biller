@@ -10,6 +10,23 @@
 		};
 	});
 	
+	billerModule.directive('date', function() {
+		return {
+			restrict : 'AE',
+			templateUrl : 'html/components/date.html',
+			controller : ['$scope', function($scope) {
+					$scope.placeHolder = 'DD/MM/YYYY';
+					$scope.format = 'dd-MM-yyyy';
+			}],
+			require : '^ngModel',
+			replace : 'true',
+			scope : {
+				ngModel : '=',
+				isReadOnly : '='
+			},
+		};
+	});
+	
 	billerModule.directive('calendar', function() {
 		return {
 			restrict : 'AE',

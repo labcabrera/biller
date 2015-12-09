@@ -6,12 +6,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.inject.Injector;
 import com.luckia.biller.core.model.AuditData;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillType;
@@ -31,16 +35,21 @@ import com.luckia.biller.core.serialization.entities.UserActivitySerializer;
 public class Serializer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Serializer.class);
-
 	private static final String UTF_8 = "UTF-8";
-	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.sss'Z'";
+
+	private final Injector injector;
+
+	@Inject
+	public Serializer(Injector injector) {
+		this.injector = injector;
+	}
 
 	public <T> GsonBuilder getBuilder() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting();
 		builder.addSerializationExclusionStrategy(new SerializationExclusionStrategy());
-		builder.setDateFormat(DATE_FORMAT_PATTERN);
-		builder.registerTypeAdapter(BigDecimal.class, new BigDecimalSerializer());
+		builder.registerTypeAdapter(Date.class, injector.getInstance(DateSerializer.class));
+		builder.registerTypeAdapter(BigDecimal.class, injector.getInstance(BigDecimalSerializer.class));
 		// Entity custom serialization
 		builder.registerTypeHierarchyAdapter(Owner.class, new OwnerSerializer());
 		builder.registerTypeHierarchyAdapter(TerminalRelation.class, new TerminalRelationSerializer());
