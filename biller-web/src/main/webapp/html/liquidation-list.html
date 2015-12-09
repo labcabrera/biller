@@ -59,11 +59,11 @@
 					</div>
 					<div class="form-group">
 						<label>{{'dateFrom' | translate}}</label>
-						<div calendar ng-model="searchOptions.from" require="false" is-open="false"></div>						
+						<div date ng-model="searchOptions.from"></div>						
 					</div>
 					<div class="form-group">
 						<label>{{'dateTo' | translate}}</label>
-						<div calendar ng-model="searchOptions.to" require="false"></div>
+						<div date ng-model="searchOptions.to"></div>
 					</div>
 					<button class="btn btn-primary btn-sm" ng-click="search()">{{'search' | translate}}</button>
 					<button class="btn btn-primary btn-sm" ng-click="reset()">{{'reset' | translate}}</button>
