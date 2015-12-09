@@ -3,7 +3,8 @@ dependencies {
 }
 
 /**
- * Enabling eclipselink static weaving
+ * Enabling eclipselink static weaving.
+ * Deshabilitdo porque esta dando problemas con la serializacion automatica de Gson que hace por reflection
  */
 // def entitiesBasePackage = 'com.luckia.biller.core.model'
 // configurations {

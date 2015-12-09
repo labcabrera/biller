@@ -11,17 +11,17 @@
 			<div class="m-top-15">
 				<form class="form-horizontal" role="form">
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">{{'dateFrom' | translate}}</label>
+						<label class="col-sm-2 control-label">{{'dateFrom' | translate}}</label>
 						<div class="col-sm-4">
 							<div date ng-model="reportData.from"></div>
 						</div>
-						<label class="col-sm-2 control-label input-sm">{{'dateTo' | translate}}</label>
+						<label class="col-sm-2 control-label">{{'dateTo' | translate}}</label>
 						<div class="col-sm-4">
 							<div date ng-model="reportData.to"></div>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">{{'company' | translate}}</label>
+						<label class="col-sm-2 control-label">{{'company' | translate}}</label>
 						<div class="col-sm-4">
 							<div company ng-model="reportData.company"></div>
 						</div>
@@ -35,5 +35,4 @@
 			</div>
 		</div>
 	</div>
-	<pre ng-if="false">{{reportData | json}}</pre>
 </html>

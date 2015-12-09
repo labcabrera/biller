@@ -33,7 +33,12 @@
 			var to = $scope.reportData.to != null ? $filter('date')($scope.reportData.to, "yyyy-MM-dd") : '';
 			var companyId = $scope.reportData.company != null ? $scope.reportData.company.id : "";
 			var costCenterId = $scope.reportData.costCenter != null ? $scope.reportData.costCenter.id : "";
-			var url = 'rest/report/liquidation-summary?from=' + from + '&to=' + to + "&companyId=" + companyId + "&costCenterId=" + costCenterId;
+			var companyGroupId = $scope.reportData.companyGroup != null ? $scope.reportData.companyGroup.id : "";
+			var url = 'rest/report/liquidation-summary?from=' + from;
+			url += '&to=' + to;
+			url += "&companyId=" + companyId;
+			url += "&costCenterId=" + costCenterId;
+			url += "&companyGroupId=" + companyGroupId;
 			$window.open(url, '_blank');
 		};
 	}]);

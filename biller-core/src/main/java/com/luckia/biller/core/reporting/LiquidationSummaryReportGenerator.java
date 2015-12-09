@@ -26,7 +26,9 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.AppFile;
+import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
@@ -37,6 +39,7 @@ import com.luckia.biller.core.services.FileService;
 public class LiquidationSummaryReportGenerator extends BaseReport {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LiquidationSummaryReportGenerator.class);
+	private static final String DATE_FORMAT = "dd-MM-yyyy";
 
 	@Inject
 	private FileService fileService;
@@ -56,29 +59,28 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 	 * @return
 	 * @throws IOException
 	 */
-	public Message<AppFile> generate(Date from, Date to, LegalEntity company, CostCenter costCenter) {
+	public Message<AppFile> generate(Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		generate(from, to, company, costCenter, out);
+		generate(from, to, company, costCenter, companyGroup, out);
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 		String fileName = String.format("Resumen-liquidaciones.xls");
 		AppFile appFile = fileService.save(fileName, FileService.CONTENT_TYPE_EXCEL, in);
 		return new Message<AppFile>(Message.CODE_SUCCESS, "Report file created", appFile);
 	}
 
-	public Message<AppFile> generate(Date from, Date to, LegalEntity company, CostCenter costCenter, OutputStream out) {
+	public Message<AppFile> generate(Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup, OutputStream out) {
 		LOG.debug("Generating liquidation summary report");
 		try {
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			init(workbook);
-
 			StringBuilder sheetName = new StringBuilder("Resumen liquidaciones");
 			if (from != null) {
 				sheetName.append(" ");
-				sheetName.append(new SimpleDateFormat("dd-MM-yyyy").format(from));
+				sheetName.append(new SimpleDateFormat(DATE_FORMAT).format(from));
 			}
 			if (to != null) {
 				sheetName.append(" ");
-				sheetName.append(new SimpleDateFormat("dd-MM-yyyy").format(to));
+				sheetName.append(new SimpleDateFormat(DATE_FORMAT).format(to));
 			}
 			HSSFSheet sheet = workbook.createSheet(sheetName.toString());
 			configureHeaders(sheet);
@@ -104,10 +106,10 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		int rowIndex = 1;
 		for (Liquidation liquidation : liquidations) {
 			int col = 0;
-			BigDecimal amount = liquidation.getAmount() != null ? liquidation.getAmount() : BigDecimal.ZERO;
-			BigDecimal cashStore = liquidation.getLiquidationResults().getCashStoreAmount();
-			BigDecimal adjustements = getAdjustementAmount(liquidation);
-			BigDecimal result = liquidation.getLiquidationResults().getReceiverAmount();
+			BigDecimal amount = MathUtils.safeNull(liquidation.getLiquidationResults().getTotalAmount());
+			BigDecimal cashStore = MathUtils.safeNull(liquidation.getLiquidationResults().getCashStoreAmount());
+			BigDecimal adjustements = MathUtils.safeNull(getAdjustementAmount(liquidation));
+			BigDecimal result = MathUtils.safeNull(liquidation.getLiquidationResults().getReceiverAmount());
 			totalAmount = totalAmount.add(amount);
 			totalCashStore = totalCashStore.add(cashStore);
 			totalAdjustements = totalAdjustements.add(adjustements);
@@ -146,7 +148,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			predicates.add(builder.equal(root.get("sender"), company));
 		}
 		criteria.where(predicates.toArray(new Predicate[predicates.size()]));
-		criteria.orderBy(builder.desc(root.<Date> get("billDate")), builder.asc(root.<String> get("sender").get("name")), builder.desc(root.<String> get("code")));
+		criteria.orderBy(builder.asc(root.<Date> get("billDate")), builder.asc(root.<String> get("sender").get("name")), builder.desc(root.<String> get("code")));
 		TypedQuery<Liquidation> query = entityManager.createQuery(criteria);
 		return query.getResultList();
 	}
@@ -157,10 +159,10 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		createHeaderCell(sheet, col, index++, "FECHA DE LIQUIDACION");
 		createHeaderCell(sheet, col, index++, "GRUPO");
 		createHeaderCell(sheet, col, index++, "OPERADORA");
-		createHeaderCell(sheet, col, index++, "IMPORTE");
+		createHeaderCell(sheet, col, index++, "IMPORTE DE LIQUIDACION");
 		createHeaderCell(sheet, col, index++, "SALDO DE CAJA");
 		createHeaderCell(sheet, col, index++, "AJUSTES MANUALES");
-		createHeaderCell(sheet, col, index++, "");
+		createHeaderCell(sheet, col, index++, "RESULTADO");
 		createHeaderCell(sheet, col, index++, "APOSTADO");
 		createHeaderCell(sheet, col, index++, "PAGADO");
 		createHeaderCell(sheet, col, index++, "CREDITO");

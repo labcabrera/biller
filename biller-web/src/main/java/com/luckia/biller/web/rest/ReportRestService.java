@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Company;
+import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.reporting.LiquidationReportGenerator;
@@ -122,16 +123,17 @@ public class ReportRestService {
 	@Path("/liquidation-summary")
 	@PermitAll
 	public Response liquidationSummary(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString, @QueryParam("companyId") String companyId,
-			@QueryParam("costCenterId") String costCenterId) {
+			@QueryParam("costCenterId") String costCenterId, @QueryParam("companyGroupId") String companyGroupId) {
 		try {
-			LOG.debug("Generating liquidation summary report ({},{},{},{}", fromAsString, toAsString, companyId, costCenterId);
+			LOG.debug("Generating liquidation summary report ({},{},{},{})", fromAsString, toAsString, companyId, costCenterId);
 			Mutable<Date> from = new MutableObject<Date>();
 			Mutable<Date> to = new MutableObject<Date>();
 			calculateRange(fromAsString, toAsString, from, to);
 			EntityManager entityManager = entityManagerProvider.get();
 			Company company = StringUtils.isNotBlank(companyId) ? entityManager.find(Company.class, Long.parseLong(companyId)) : null;
 			CostCenter costCenter = StringUtils.isNotBlank(costCenterId) ? entityManager.find(CostCenter.class, Long.parseLong(costCenterId)) : null;
-			Message<AppFile> message = liquidationSummaryReportGenerator.generate(from.getValue(), to.getValue(), company, costCenter);
+			CompanyGroup companyGroup = StringUtils.isNotBlank(companyGroupId) ? entityManager.find(CompanyGroup.class, Long.parseLong(companyGroupId)) : null;
+			Message<AppFile> message = liquidationSummaryReportGenerator.generate(from.getValue(), to.getValue(), company, costCenter, companyGroup);
 			InputStream in = fileService.getInputStream(message.getPayload());
 			ResponseBuilder response = Response.ok(in);
 			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "Resumen de liquidaciones.xls"));
