@@ -78,6 +78,7 @@
 	"credit": "Crédito",
 	"cronExpression": "Expresión CRON",
 	"currentStore": "Empresa actual",
+	"currentCompany": "Empresa actual",
 	"dashboard": "Dashboard",
 	"dashboardCompanyEvolutionAmount": "Evolución anual de liquidaciones",
 	"dashboardPendingLiquidations": "Liquidaciones pendientes",

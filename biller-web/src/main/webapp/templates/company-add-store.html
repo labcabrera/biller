@@ -3,48 +3,48 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">A&ntilde;adir establecimiento</h4>
+				<h4 class="modal-title">{{'addStore' | translate}}</h4>
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal" role="form">
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Nombre</label>
+						<label class="col-sm-2 control-label">{{'name' | translate}}</label>
 						<div class="col-sm-8">
 							<input type='text' class="form-control" ng-model="newStore" typeahead="store as store.name for store in stores($viewValue)" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Empresa actual</label>
+						<label class="col-sm-2 control-label">{{'currentCompany' | translate}}</label>
 						<div class="col-sm-4">
-							<input type='text' class="form-control" ng-model="newStore.parent.name	" ng-readonly="true" />
+							<input type='text' class="form-control" ng-model="newStore.parent.name" ng-readonly="true" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">CIF</label>
+						<label class="col-sm-2 control-label">{{'cif' | translate}}</label>
 						<div class="col-sm-4">
 							<input type='text' class="form-control" ng-model="newStore.idCard.number" ng-readonly="true" />
 						</div>
-						<label class="col-sm-2 control-label input-sm">Titular</label>
+						<label class="col-sm-2 control-label">{{'owner' | translate}}</label>
 						<div class="col-sm-4">
 							<input type='text' class="form-control" ng-model="newStore.owner.completeName" ng-readonly="true" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Provincia</label>
+						<label class="col-sm-2 control-label">{{'province' | translate}}</label>
 						<div class="col-sm-4">
 							<input type='text' class="form-control" ng-model="newStore.address.province.name" ng-readonly="true" />
 						</div>
-						<label class="col-sm-2 control-label input-sm">Localidad</label>
+						<label class="col-sm-2 control-label">{{'locality' | translate}}</label>
 						<div class="col-sm-4">
 							<input type='text' class="form-control" ng-model="newStore.address.region.name" ng-readonly="true" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label input-sm">Direcci&oacute;n</label>
+						<label class="col-sm-2 control-label">{{'address' | translate}}</label>
 						<div class="col-sm-4">
 							<input type='text' class="form-control" ng-model="newStore.address.road" ng-readonly="true" />
 						</div>
-						<label class="col-sm-2 control-label input-sm">N&uacte;mero</label>
+						<label class="col-sm-2 control-label">{{'number' | translate}}</label>
 						<div class="col-sm-4">
 							<input type='text' class="form-control" ng-model="newStore.address.number" ng-readonly="true" />
 						</div>
