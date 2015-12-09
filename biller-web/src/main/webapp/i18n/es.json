@@ -50,6 +50,7 @@
 	"companies": "Empresas",
 	"companyGroup": "Grupo de empresas",
 	"companyGroups": "Grupos de empresas",
+	"companyGroup.remove.confirmation": "¿Se va a eliminar el grupo?",
 	"concept": "Concepto",
 	"concept.NR": "NR",
 	"concept.NGR": "NGR",
