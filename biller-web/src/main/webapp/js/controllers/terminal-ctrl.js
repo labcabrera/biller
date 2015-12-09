@@ -36,7 +36,7 @@
 	
 	billerModule.controller('TerminalDetailCtrl', [ '$scope', '$rootScope', '$location', '$routeParams', '$http', 'messageService', function($scope, $rootScope, $location, $routeParams, $http, messageService) {
 		if(messageService.hasMessage()) {
-			$scope.displayAlert(messageService.getMessage());
+			$scope.message = messageService.getMessage();
 		}
 		$scope.load = function() {
 			$http.get('rest/terminals/id/' + $routeParams.id).success(function(data) {
@@ -44,7 +44,7 @@
 		});};
 		$scope.update = function() {
 			$http.post('rest/terminals/merge/', $scope.entity).success(function(data) {
-				$scope.displayAlert(data);
+				$scope.message = data;
 				if(data.code == 200) {
 					$scope.entity = data.payload;
 					$rootScope.isReadOnly = true;				
@@ -54,7 +54,11 @@
 		$scope.remove = function() {
 			if($rootScope.autoconfirm || window.confirm('Se va a eliminar el terminal')) {
 				$http.post('rest/terminals/remove/' + $scope.entity.id).success(function(data) {
-					if(data.code == 200) { $location.path("terminals"); } else { $scope.displayAlert(data); }
+					if(data.code == 200) {
+						$location.path("terminals");
+					} else {
+						$scope.message = data;
+					}
 				});
 			}
 		};
@@ -70,7 +74,7 @@
 					messageService.setMessage(data);
 					$location.path("terminals/id/" + data.payload.id);				
 				} else {
-					$scope.displayAlert(data);
+					$scope.message = data;
 				}
 			});
 		};

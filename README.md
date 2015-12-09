@@ -3,7 +3,6 @@
 * Cargar los controladores de forma selectiva para cada pagina (includes de javascript)
 
 # TODO
-* Unificar componentes de fechas (eliminar directivas calendar y calendar-real) 
 * Report de resumen de liquidaciones
 * Revisar funcionamiento de la generacion de numeros de facturas
 * Unificar mensajes de alerta. Quitar los $scope.displayAlert(data);
