@@ -44,7 +44,7 @@ public class BillerModule extends AbstractModule {
 	@Override
 	public void configure() {
 		LOG.debug("Configuring Biller core module");
-		SettingsManager settingsManager = new SettingsManager().load(Constants.APP_CONFIG_FILE);
+		SettingsManager settingsManager = new SettingsManager().load();
 		bind(SettingsManager.class).toInstance(settingsManager);
 		Names.bindProperties(binder(), settingsManager.getProperties(Constants.CONFIG_SECTION_GLOBAL));
 		installJpaModule(settingsManager);

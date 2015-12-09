@@ -1,6 +1,8 @@
 package com.luckia.biller.core.common;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -78,9 +80,26 @@ public class SettingsManager {
 		}
 	}
 
+	public SettingsManager load() {
+		String home = System.getProperty("user.home");
+		File config = new File(home, ".biller.config");
+		if (config.exists()) {
+			try {
+				FileInputStream in;
+				in = new FileInputStream(config);
+				load(in);
+			} catch (Exception ex) {
+				throw new RuntimeException("Error loading application config", ex);
+			}
+		} else {
+			throw new RuntimeException("Missing application config " + config.getAbsolutePath());
+		}
+		return this;
+	}
+
 	public SettingsManager load(String classPathResource) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		InputStream configInputStream = classLoader.getResourceAsStream(Constants.APP_CONFIG_FILE);
+		InputStream configInputStream = classLoader.getResourceAsStream(classPathResource);
 		Validate.notNull(configInputStream, String.format("Missing configuration file '%s' in classpath", Constants.APP_CONFIG_FILE));
 		return load(configInputStream);
 	}
