@@ -1,6 +1,7 @@
 # FIX
 * En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar
 * Cargar los controladores de forma selectiva para cada pagina (includes de javascript)
+* Arreglar el funcionamiento del serializador cuando se utiliza eclipselink-weaving 
 
 # TODO
 * Report de resumen de liquidaciones
