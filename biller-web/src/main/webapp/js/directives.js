@@ -18,9 +18,7 @@
 					$scope.placeHolder= 'DD/MM/YYYY';
 					$scope.showCalendar = false;
 					$scope.loadRealCalendar = function() {
-						if(!$scope.isReadOnly) {
-							$scope.showCalendar = true;
-						};
+						$scope.showCalendar = true;
 					};
 			}],
 			require : '^ngModel',

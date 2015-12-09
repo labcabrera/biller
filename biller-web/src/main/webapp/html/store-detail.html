@@ -82,11 +82,21 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">{{'store.start' | translate}}</label>
 					<div class="col-sm-4">
-						<div calendar ng-model="entity.startDate | limitTo: 10" require="false" is-read-only="isReadOnly"></div>
+						<div class="input-group">
+							<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="entity.startDate"
+								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas"
+								ng-readonly="isReadOnly" clear-text="Borrar"/>
+							<span class="input-group-addon glyphicon glyphicon-calendar"></span>
+						</div>
 					</div>
 					<label class="col-sm-2 control-label">{{'store.end' | translate}}</label>
 					<div class="col-sm-4">
-						<div calendar ng-model="entity.endDate | limitTo: 10" require="false" is-read-only="isReadOnly"></div>
+						<div class="input-group">
+							<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="entity.endDate"
+								ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas"
+								ng-readonly="isReadOnly" clear-text="Borrar"/>
+							<span class="input-group-addon glyphicon glyphicon-calendar"></span>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
