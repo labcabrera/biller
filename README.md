@@ -5,6 +5,7 @@
 
 # TODO
 * Formato separador miles en el front
+* Revisar PDF con el desglose de ajustes en las miniliquidaciones
 * Revisar excel el auto-size de las columnas
 * Report de resumen de liquidaciones
 * Revisar funcionamiento de la generacion de numeros de facturas
@@ -15,7 +16,6 @@
 * Configuracion de logback en produccion / preproducción
 * Añadir los RegisterActivity que faltan
 * Historico en la relacion de terminales y locales
-* Optimizacion relaciones JPA
 * Revisión seguridad descargas (no usan ahora el sessionid y tienen el @PermitAll)
 * Sacar named queries a orm.xml (quedan 23 por migrar)
 * No generar el PDF de las facturas que están a cero y eliminar las que estan generadas
@@ -24,10 +24,11 @@
 * Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
 * Buscador titulares: posibilidad de buscar eliminados
 
+
 # CHECK-LIST
+* Revisar comportamiento fechas y UTC
 * Revisar reporte de liquidaciones tras cambio de modelo
 * Proceso de migración de facturas y liquidaciones
-* Optimización serializadores
 * Revisar error paginacion facturas (por ejemplo SOLMAR VALENCIA en septiembre)
 * Unificar cuadros de mensajes
 * Migración de MANUAL_WITH_LIQUIDATION y MANUAL_WITHOUT_LIQUIDATION (2 registros solamente)	
