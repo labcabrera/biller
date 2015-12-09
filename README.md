@@ -1,9 +1,6 @@
 # FIX
-* Componente para campos tipo fecha
-* Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
 * En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar
-* En pre no aparece el usuario en el listado de actividad
-* Cargar los controladores de forma selectiva para cada pagina
+* Cargar los controladores de forma selectiva para cada pagina (includes de javascript)
 
 # TODO
 * Unificar componentes de fechas (eliminar directivas calendar y calendar-real) 
@@ -26,6 +23,7 @@
 * Eliminar los conceptos de ajuste de caja del modelo
 * Eliminar la facturas sin resultado
 * Cambio en los modelos de facturacion. Tener un modelo para bares y otro diferentes para operadores
+* Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
 
 # CHECK-LIST
 * Revisar reporte de liquidaciones tras cambio de modelo
