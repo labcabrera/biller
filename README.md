@@ -10,21 +10,17 @@
 * Revisar funcionamiento de la generacion de numeros de facturas
 * Unificar mensajes de alerta. Quitar los $scope.displayAlert(data);
 * El isReadOnly esta definido a nivel de $rootScope. Hacer que sea a nivel de scope
-* Eliminar los "window.confirm(..."
 * Quitar los mensajes de javascript y recuperarlos a traves del filter translate
 * Meter como parte de la build la fecha de generación (lo estoy haciendo ahora manualmente)
 * Configuracion de logback en produccion / preproducción
-* Eliminar el reportFile de la liquidacion
 * Añadir los RegisterActivity que faltan
 * Historico en la relacion de terminales y locales
 * Optimizacion relaciones JPA
 * Revisión seguridad descargas (no usan ahora el sessionid y tienen el @PermitAll)
 * Sacar named queries a orm.xml (quedan 23 por migrar)
-* No generar el PDF de las facturas que están a cero
+* No generar el PDF de las facturas que están a cero y eliminar las que estan generadas
 * Administrador de roles y permisos
-* Eliminar los conceptos de ajuste de caja del modelo
-* Eliminar la facturas sin resultado
-* Cambio en los modelos de facturacion. Tener un modelo para bares y otro diferentes para operadores
+* Refactor de los modelos de facturacion. Tener un modelo para bares y otro diferentes para operadores
 * Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
 * Buscador titulares: posibilidad de buscar eliminados
 
