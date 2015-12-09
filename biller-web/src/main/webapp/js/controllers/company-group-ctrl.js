@@ -19,7 +19,7 @@
 			} else {
 				predicateBuilder.appendKey("auditData.deleted=!n=");
 			}
-			return REST_PATH + '/groups/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
+			return 'rest/groups/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
 		$scope.search = function() {
 			$scope.searchMessage = "Loading...";
@@ -44,21 +44,21 @@
 			$scope.message = messageService.getMessage();
 		}
 		$scope.load = function() {
-			$http.get(REST_PATH + '/groups/id/' + $routeParams.id).success(function(data) {
+			$http.get('rest/groups/id/' + $routeParams.id).success(function(data) {
 				$scope.entity = data;
 			});
 			$rootScope.isReadOnly = true;
 			$scope.setCompanyPage(1);
 		};
 		$scope.update = function() {
-			$http.post(REST_PATH + '/groups/merge/', $scope.entity).success(function(data) {
+			$http.post('rest/groups/merge/', $scope.entity).success(function(data) {
 				$scope.message = data;
 				$rootScope.isReadOnly = true;
 			});
 		};
 		$scope.remove = function() {
 			if($rootScope.autoconfirm || window.confirm('Se va a eliminar el grupo')) {
-				$http.post(REST_PATH + '/groups/remove/' + $scope.entity.id).success(function(data) {
+				$http.post('rest/groups/remove/' + $scope.entity.id).success(function(data) {
 					if(data.code == 200) {
 						$location.path("groups");
 					} else {
@@ -81,7 +81,7 @@
 	billerModule.controller('GroupNewCtrl', [ '$scope', '$routeParams', '$http', '$location', 'messageService', function($scope, $routeParams, $http, $location, messageService) {
 		$scope.isReadOnly = false;
 		$scope.update = function() {
-			$http.post(REST_PATH + '/groups/merge/', $scope.entity).success(function(data) {
+			$http.post('rest/groups/merge/', $scope.entity).success(function(data) {
 				if(data.code == 200) {
 					messageService.setMessage(data);
 					$location.path("groups/id/" + data.payload.id);				
@@ -90,7 +90,7 @@
 				}
 			});
 		};
-		$scope.provinces = function(name) { return $http.get(REST_PATH + "/provinces/find/" + name).then(function(response) { return response.data; }); };
+		$scope.provinces = function(name) { return $http.get('rest/provinces/find/' + name).then(function(response) { return response.data; }); };
 	} ]);
 
 })();

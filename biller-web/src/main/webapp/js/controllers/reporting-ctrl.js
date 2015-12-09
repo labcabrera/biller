@@ -4,7 +4,7 @@
 
 	billerModule.controller('ReportTerminalsCtrl', [ '$scope', '$location', '$window', function($scope, $location, $window) {
 		$scope.generate = function() {
-			var url = REST_PATH + '/report/terminals';
+			var url = 'rest/report/terminals';
 			if($scope.reportData != null && $scope.reportData.company != null && $scope.reportData.company.id != null) {
 				url += '?companyId=' + $scope.reportData.company.id;
 			}
@@ -21,7 +21,7 @@
 			}
 			var from = $scope.reportData.from != null ? $filter('date')($scope.reportData.from, "yyyy-MM-dd") : '';
 			var to = $scope.reportData.to != null ? $filter('date')($scope.reportData.to, "yyyy-MM-dd") : '';
-			var url = REST_PATH + '/report/liquidations?ids=' + ids + '&from=' + from + '&to=' + to;
+			var url = 'rest/report/liquidations?ids=' + ids + '&from=' + from + '&to=' + to;
 			$window.open(url, '_blank');
 		};
 	} ]);
@@ -33,7 +33,7 @@
 			var to = $scope.reportData.to != null ? $filter('date')($scope.reportData.to, "yyyy-MM-dd") : '';
 			var companyId = $scope.reportData.company != null ? $scope.reportData.company.id : "";
 			var costCenterId = $scope.reportData.costCenter != null ? $scope.reportData.costCenter.id : "";
-			var url = REST_PATH + '/report/liquidation-summary?from=' + from + '&to=' + to + "&companyId=" + companyId + "&costCenterId=" + costCenterId;
+			var url = 'rest/report/liquidation-summary?from=' + from + '&to=' + to + "&companyId=" + companyId + "&costCenterId=" + costCenterId;
 			$window.open(url, '_blank');
 		};
 	}]);

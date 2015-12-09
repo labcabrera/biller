@@ -115,7 +115,7 @@
 			templateUrl : 'html/components/cost-center-searchbox.html',
 			controller : ['$scope', '$http', function($scope, $http) {
 				$scope.costCenters = function(name) {
-					return $http.get(REST_PATH + '/costcenters/find?q=name=lk=' + name).then(function(response) {
+					return $http.get('rest/costcenters/find?q=name=lk=' + name).then(function(response) {
 						return response.data.results;
 					});
 				};
@@ -160,7 +160,7 @@
 	
 	billerModule.controller('CompanyCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.companies = function(name) {
-			return $http.get(REST_PATH + '/companies/find?q=name=lk=' + name).then(function(response) {
+			return $http.get('rest/companies/find?q=name=lk=' + name).then(function(response) {
 				return response.data.results;
 			});
 		};
@@ -168,7 +168,7 @@
 
 	billerModule.controller('CompanyGroupCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.companies = function(name) {
-			return $http.get(REST_PATH + '/groups/find?q=name=lk=' + name).then(function(response) {
+			return $http.get('rest/groups/find?q=name=lk=' + name).then(function(response) {
 				return response.data.results;
 			});
 		};
@@ -176,7 +176,7 @@
 	
 	billerModule.controller('StoreCtrl', ['$scope', '$http', function($scope, $http) {
 		$scope.stores = function(name) {
-			return $http.get(REST_PATH + '/stores/find?q=name=lk=' + name).then(function(response) {
+			return $http.get('rest/stores/find?q=name=lk=' + name).then(function(response) {
 				return response.data.results;
 			});
 		};

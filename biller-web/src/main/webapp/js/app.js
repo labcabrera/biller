@@ -71,7 +71,7 @@ billerModule.directive('typeahead', function() {
 billerModule.config(['$translateProvider', function($translateProvider) {
 	$translateProvider.preferredLanguage('es');
 	$translateProvider.useStaticFilesLoader({
-		prefix: CONTEXT_PATH + '/i18n/',
+		prefix: 'i18n/',
 		suffix: '.json'
 	});
 }]);

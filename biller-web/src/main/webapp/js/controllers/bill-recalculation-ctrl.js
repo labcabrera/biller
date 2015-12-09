@@ -51,7 +51,7 @@
 			$scope.options = { mode: $scope.modes[0]};
 		};
 		$scope.prepareBill = function() {
-			$http.get(REST_PATH + '/recalculation/prepare/bill', {
+			$http.get('rest/recalculation/prepare/bill', {
 				params: {
 					y: $scope.options.year,
 					m: $scope.options.month != null ? $scope.options.month.id : null,
@@ -72,7 +72,7 @@
 				$scope.message = {code: 200, info: ['billRecalculation.inProgress']};
 				$scope.isLoading = true;
 				$scope.prepareResult.recalculateLiquidation = $scope.recalculateLiquidation;
-				$http.post(REST_PATH + '/recalculation/execute/bill', $scope.prepareResult
+				$http.post('rest/recalculation/execute/bill', $scope.prepareResult
 				).success(function(data) {
 					$scope.message = data;
 					$scope.results = data.payload;
