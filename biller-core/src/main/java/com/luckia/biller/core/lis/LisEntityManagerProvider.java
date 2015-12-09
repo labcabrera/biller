@@ -39,6 +39,6 @@ public class LisEntityManagerProvider implements Provider<EntityManager> {
 	}
 
 	private Properties readLisProperties() {
-		return new SettingsManager().load(Constants.APP_CONFIG_FILE).getProperties(Constants.CONFIG_SECTION_JPA_LIS);
+		return new SettingsManager().load().getProperties(Constants.CONFIG_SECTION_JPA_LIS);
 	}
 }
