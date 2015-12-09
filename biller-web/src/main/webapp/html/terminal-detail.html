@@ -8,21 +8,21 @@
 		
 		<message-error-panel ng-model="message" auto-close="true"></message-error-panel>
 		
-		<h4>Terminal</h4>
+		<h4>{{'terminal' | translate}}</h4>
 		<div class="m-top-15">
 			<form class="form-horizontal" role="form">
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">C&oacute;digo</label>
+					<label class="col-sm-2 control-label">{{'code' | translate}}</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.code" ng-readonly="isReadOnly" />
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label input-sm">Establecimiento</label>
+					<label class="col-sm-2 control-label">{{'store' | translate}}</label>
 					<div class="col-sm-4">
 						<div class="input-group">
 							<input type="text" class="form-control" ng-model="entity.store" ng-readonly="isReadOnly" typeahead="store as store.name for store in stores($viewValue)" typeahead-editable="false" />
-							<span  class="input-group-addon input-sm">
+							<span  class="input-group-addon">
 								<a ng-if="entity.store != null" href="#/stores/id/{{entity.store.id}}"><span class="glyphicon glyphicon-search"></span></a>
 								<span ng-if="entity.store == null" class="glyphicon glyphicon-search"></span>
 							</span>
@@ -34,8 +34,8 @@
 		
 		<div style="margin-top: 40px;" >
 			<ul class="nav nav-tabs">
-				<li class="active"><a data-target="#commentsTab" data-toggle="tab">Observaciones</a></li>
-				<li><a data-target="#auditTab" data-toggle="tab">Auditor&iacute;a</a></li>
+				<li class="active"><a data-target="#commentsTab" data-toggle="tab">{{'comments' | translate}}</a></li>
+				<li><a data-target="#auditTab" data-toggle="tab">{{'auditData' | translate}}</a></li>
 			</ul>
 			<!-- Tab panes -->
 			<div class="tab-content">

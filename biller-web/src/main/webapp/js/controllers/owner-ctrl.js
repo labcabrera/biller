@@ -41,7 +41,7 @@
 		$scope.search();
 	} ]);
 	
-	billerModule.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, messageService) {
+	billerModule.controller('OwnerDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', '$filter', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, $filter, dialogs, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.message = messageService.getMessage();
 		}
@@ -64,15 +64,16 @@
 			});
 		};
 		$scope.remove = function() {
-			if($rootScope.autoconfirm || window.confirm('Se va a eliminar el titular')) {
+			var dlg = dialogs.confirm($filter('translate')('remove.confirmation.title') ,$filter('translate')('owner.remove.confirmation'));
+			dlg.result.then(function(btn){
 				$http.post('rest/owners/remove/' + $scope.entity.id).success(function(data) {
 					if(data.code == 200) {
 						$location.path("owners");
 					} else {
 						$scope.message = data;
 					}
-				});
-			}
+				});				
+			});
 		};
 		$scope.setStorePage = function(page) {
 		    $scope.currentPage = page;

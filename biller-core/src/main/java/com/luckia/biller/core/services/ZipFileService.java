@@ -16,6 +16,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
@@ -45,7 +46,7 @@ public class ZipFileService {
 			in = fileService.getInputStream(liquidation.getPdfFile());
 			addZipEntry(in, zipOutputStream, name);
 			for (Bill bill : liquidation.getBills()) {
-				if (bill.getPdfFile() != null) {
+				if (MathUtils.isNotZero(bill.getAmount()) && bill.getPdfFile() != null) {
 					name = fileService.getAbstractBillFileName(bill, "pdf");
 					in = fileService.getInputStream(bill.getPdfFile());
 					addZipEntry(in, zipOutputStream, FORMAT_BILL_FOLDER + name);

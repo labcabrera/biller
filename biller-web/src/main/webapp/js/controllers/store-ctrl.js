@@ -47,7 +47,7 @@
 		$scope.search();
 	} ]);
 
-	billerModule.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, dialogs, messageService) {
+	billerModule.controller('StoreDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$location', '$filter', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $location, $filter, dialogs, messageService) {
 		if(messageService.hasMessage()) {
 			$scope.message = messageService.getMessage();
 		}
@@ -88,19 +88,27 @@
 		};
 		$scope.addTerminal = function() {
 			var current = $scope.newTerminal.store != null ? $scope.newTerminal.store.name : null;
-			if(current == null || ($rootScope.autoconfirm || window.confirm('El terminal esta actualmente asociado con la empresa ' + current))) {
-				$scope.newTerminal.store = $scope.entity;
-				$scope.isSaving = true;
-				$http.post('rest/terminals/merge', $scope.newTerminal).success(function(data) {
-					$scope.isSaving = false;
-					$scope.message = data;
-					if(data.code == 200) {
-						$scope.load();
-						$scope.newTerminal = null;
-						$("#addTerminalModal").modal('hide');
-					}
+			if(current != null) {
+				var dlg = dialogs.confirm($filter('translate')('terminal.move.confirmation'),'El terminal esta actualmente asociado con la empresa ' + current);
+				dlg.result.then(function(btn){
+					$scope.addTerminalInternal();
 				});
+			} else {
+				$scope.addTerminalInternal();
 			}
+		};
+		$scope.addTerminalInternal = function() {
+			$scope.newTerminal.store = $scope.entity;
+			$scope.isSaving = true;
+			$http.post('rest/terminals/merge', $scope.newTerminal).success(function(data) {
+				$scope.isSaving = false;
+				$scope.message = data;
+				if(data.code == 200) {
+					$scope.load();
+					$scope.newTerminal = null;
+					$("#addTerminalModal").modal('hide');
+				}
+			});
 		};
 		$scope.removeTerminal = function(data) {
 			data.store = null;

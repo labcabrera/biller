@@ -4,6 +4,8 @@
 * Arreglar el funcionamiento del serializador cuando se utiliza eclipselink-weaving 
 
 # TODO
+* Formato separador miles en el front
+* Revisar excel el auto-size de las columnas
 * Report de resumen de liquidaciones
 * Revisar funcionamiento de la generacion de numeros de facturas
 * Unificar mensajes de alerta. Quitar los $scope.displayAlert(data);
@@ -24,6 +26,7 @@
 * Eliminar la facturas sin resultado
 * Cambio en los modelos de facturacion. Tener un modelo para bares y otro diferentes para operadores
 * Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
+* Buscador titulares: posibilidad de buscar eliminados
 
 # CHECK-LIST
 * Revisar reporte de liquidaciones tras cambio de modelo

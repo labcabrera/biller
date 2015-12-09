@@ -179,14 +179,6 @@
 			$rootScope.isReadOnly = true;
 		};
 		$scope.confirm = function() {
-			if($rootScope.autoconfirm || window.confirm('Se va a aceptar el rappel')) {
-				$http.post('rest/rappel/stores/confirm/' + $scope.entity.id).success(function(data) {
-					$scope.message = data;
-					if(data.code == 200) {
-						$scope.entity = data.payload;
-					}
-				});
-			}
 		};
 		$scope.load();
 	} ]);
