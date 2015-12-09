@@ -55,23 +55,19 @@
 					</select>
 				</div>
 				<div class="form-group">
-					<label>Desde</label>
+					<label>{{'dateFrom' | translate}}</label>
 					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="searchOptions.from"
-							ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
-						<span class="input-group-addon glyphicon glyphicon-calendar"></span>
+						<div date ng-model="searchOptions.from"></div>
 					</div>
 				</div>
 				<div class="form-group">
-					<label>Hasta</label>
+					<label>{{'dateTo' | translate}}</label>
 					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{dateFormat}}" ng-model="searchOptions.to"
-							ng-required="false" show-weeks="false" current-text="Hoy" close-text="Cerrar" toggle-weeks-text="Semanas" clear-text="Borrar"/>
-						<span class="input-group-addon glyphicon glyphicon-calendar"></span>
+						<div date ng-model="searchOptions.from"></div>
 					</div>
 				</div>
-				<button class="btn btn-primary btn-sm" ng-click="search()">Buscar</button>
-				<button class="btn btn-primary btn-sm" ng-click="reset()">Reset</button>
+				<button class="btn btn-primary btn-sm" ng-click="search()">{{'search' | translate}}</button>
+				<button class="btn btn-primary btn-sm" ng-click="reset()">{{'reset' | translate}}</button>
 			</form>
 		</div>
 	</div>
