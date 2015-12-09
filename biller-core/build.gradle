@@ -21,11 +21,11 @@ dependencies {
 /**
  * Profile activation. Execute gradle build with the followin option: "-Pprofile=pre"
  */
-if (project.hasProperty('profile')) {
-    println "Target environment: $profile"
-    sourceSets.main.resources.srcDir "src/main/profile/$profile"
-} else {
-	sourceSets.main.resources.srcDir "src/main/profile/local"
-}
+// if (project.hasProperty('profile')) {
+//     println "Target environment: $profile"
+//     sourceSets.main.resources.srcDir "src/main/profile/$profile"
+// } else {
+// 	sourceSets.main.resources.srcDir "src/main/profile/local"
+// }
 
 

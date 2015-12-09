@@ -82,7 +82,7 @@ public class SettingsManager {
 
 	public SettingsManager load() {
 		String home = System.getProperty("user.home");
-		File config = new File(home, ".biller.config");
+		File config = new File(home, ".biller/biller.config");
 		if (config.exists()) {
 			try {
 				FileInputStream in;
