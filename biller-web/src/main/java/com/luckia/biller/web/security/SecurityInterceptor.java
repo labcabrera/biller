@@ -24,9 +24,6 @@ import com.luckia.biller.core.services.SecurityService;
 public class SecurityInterceptor implements ContainerRequestFilter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SecurityInterceptor.class);
-
-	private static final boolean DISABLE_SECURITY = false;
-
 	private static final String AUTHORIZATION_PROPERTY = "sessionid";
 	private static final ServerResponse ACCESS_FORBIDDEN = new ServerResponse("{\"message\":\"Access forbidden\"}", 403, new Headers<Object>());;
 
@@ -37,9 +34,6 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
-		if (DISABLE_SECURITY) {
-			return;
-		}
 		ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
 		Method method = methodInvoker.getMethod();
 		if (!method.isAnnotationPresent(PermitAll.class)) {

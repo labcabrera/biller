@@ -3,8 +3,6 @@ package com.luckia.biller.web.rest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -13,7 +11,6 @@ import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.GET;
@@ -42,10 +39,10 @@ import com.luckia.biller.core.reporting.TerminalReportGenerator;
 import com.luckia.biller.core.services.FileService;
 
 /**
- * Servicio REST encargado de la generacion de informes
+ * Servicio REST encargado de la generacion de informes.
  */
 @Path("/report")
-public class ReportRestService {
+public class ReportRestService extends AbstractBinaryRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ReportRestService.class);
 
@@ -57,8 +54,6 @@ public class ReportRestService {
 	private LiquidationSummaryReportGenerator liquidationSummaryReportGenerator;
 	@Inject
 	private FileService fileService;
-	@Inject
-	private Provider<EntityManager> entityManagerProvider;
 
 	/**
 	 * Crea el informe de terminales a una fecha dada
@@ -126,7 +121,10 @@ public class ReportRestService {
 	@Path("/liquidation-summary")
 	@PermitAll
 	public Response liquidationSummary(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString, @QueryParam("companyId") String companyId,
-			@QueryParam("costCenterId") String costCenterId, @QueryParam("companyGroupId") String companyGroupId) {
+			@QueryParam("costCenterId") String costCenterId, @QueryParam("companyGroupId") String companyGroupId, @QueryParam("s") String sessionId) {
+		if (!checkSessionId(sessionId)) {
+
+		}
 		try {
 			LOG.debug("Generating liquidation summary report ({},{},{},{})", fromAsString, toAsString, companyId, costCenterId);
 			Mutable<Date> from = new MutableObject<Date>();
@@ -143,11 +141,7 @@ public class ReportRestService {
 			response.header("Content-Type", FileService.CONTENT_TYPE_EXCEL);
 			return response.build();
 		} catch (NoAvailableDataException ex) {
-			try {
-				return Response.temporaryRedirect(new URI("../#/204")).build();
-			} catch (URISyntaxException ignore) {
-				throw new RuntimeException("Liquidation report summary generation error", ex);
-			}
+			return sendRedirect(REDIRECT_NO_CONTENT_URI);
 		} catch (Exception ex) {
 			throw new RuntimeException("Liquidation report summary generation error", ex);
 		}
@@ -166,5 +160,4 @@ public class ReportRestService {
 			LOG.warn("Error setting report date range", ignore);
 		}
 	}
-
 }
