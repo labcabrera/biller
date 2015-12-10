@@ -21,6 +21,7 @@ import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
+import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.BillRawData;
 import com.luckia.biller.core.model.BillingModel;
@@ -82,7 +83,7 @@ public class BillDetailProcessor {
 				if (MathUtils.isNotZero(model.getStoreModel().getStakesPercent())) {
 					BigDecimal percent = model.getStoreModel().getStakesPercent();
 					BigDecimal value = stakes.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
-					addLiquidationPercentConcept(bill, BillConcept.STAKES, value, percent, vatPercent);
+					addBillConcept(bill, BillConcept.STAKES, value, stakes, percent);
 				}
 
 				// Calculamos los conceptos de la liquidacion definidos a nivel de los porcentajes de las variables del terminal:
@@ -164,6 +165,21 @@ public class BillDetailProcessor {
 			bill.setLiquidationDetails(new ArrayList<BillLiquidationDetail>());
 		}
 		bill.getLiquidationDetails().add(detail);
+	}
+
+	private void addBillConcept(Bill bill, BillConcept concept, BigDecimal value, BigDecimal total, BigDecimal percent) {
+		BillDetail detail = new BillDetail();
+		detail.setId(UUID.randomUUID().toString());
+		detail.setConcept(concept);
+		detail.setValue(value);
+		detail.setBill(bill);
+		detail.setPercent(percent);
+		detail.setUnits(BigDecimal.ONE);
+		detail.setName(billDetailNameProvider.getName(detail));
+		if (bill.getBillDetails() == null) {
+			bill.setBillDetails(new ArrayList<BillDetail>());
+		}
+		bill.getBillDetails().add(detail);
 	}
 
 	private List<String> resolveTerminals(Store store) {

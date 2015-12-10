@@ -26,7 +26,9 @@
 	} ]);
 	
 	billerModule.controller('UserListCtrl', [ '$scope', '$http', function($scope, $http) {
-		$http.get('rest/users').success(function(data) { $scope.users = data; });
+		$http.get('rest/users/find').success(function(data) {
+			$scope.results = data;
+		});
 		$scope.orderProp = 'name';
 	} ]);
 	
