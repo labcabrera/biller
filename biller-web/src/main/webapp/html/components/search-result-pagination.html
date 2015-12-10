@@ -1,6 +1,16 @@
-<div class="center" ng-show="searchResults.totalItems > 0 && searchResults.totalItems > searchResults.itemsPerPage">
-	<pagination class="pagination-sm" boundary-links="true" rotate="false"
-	total-items="searchResults.totalItems" items-per-page="searchResults.itemsPerPage" ng-model="searchResults.currentPage" num-pages="searchResults.totalPages"
-	ng-change="setPage(searchResults.currentPage)" max-size="10"
-	first-text="{{'first' | translate}}" last-text="{{'last' | translate}}" next-text="{{'next' | translate}}" previous-text="{{'previous' | translate}}"></pagination>
-</div>		
+<div class="center" ng-show="results.totalItems > 0 && results.totalItems > results.itemsPerPage">
+	<pagination
+		class="pagination"
+		boundary-links="true"
+		rotate="false"
+		total-items="results.totalItems"
+		items-per-page="results.itemsPerPage"
+		page="results.currentPage"
+		on-select-page="setPage(page)"
+		max-size="10"
+		first-text="{{'first' | translate}}"
+		last-text="{{'last' | translate}}"
+		next-text="{{'next' | translate}}"
+		previous-text="{{'previous' | translate}}"></pagination>
+</div>
+

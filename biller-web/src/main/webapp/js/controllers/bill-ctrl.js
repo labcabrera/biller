@@ -36,6 +36,7 @@
 			$scope.setPage(1);
 		};
 		$scope.setPage = function(page) {
+			console.log("set page >> " + page);
 		    $scope.currentPage = page;
 		    $scope.results = null;
 		    $scope.searchMessage = "Loading...";

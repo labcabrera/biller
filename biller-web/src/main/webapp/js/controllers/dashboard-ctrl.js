@@ -181,11 +181,13 @@
 	appModule.controller('DashboardPendingLiquidationsCtrl', ['$scope', '$rootScope', '$routeParams', '$http', '$modal', '$translate', function($scope, $rootScope, $routeParams, $http, $modal, $translate) {
 		$scope.searchResults = {};
 		$scope.setPage  = function(page) {
+			console.log("setPage(" + page + ")");
 			$scope.currentPage = page;
-			$http.get('rest/dashboard/liquidation/pending', {
+			$http.get('rest/liquidations/find', {
 				params : {
 					p : $scope.currentPage,
-					n : 4
+					n : 15,
+					q : 'currentState.stateDefinition.id==Draft'
 				}
 			}).success(function(data) {
 				$scope.searchResults = data;

@@ -1,9 +1,3 @@
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-</head>
-<body>
-
 <div class="row">
 	<div class="col-sm-9">
 		<h4>
@@ -39,12 +33,8 @@
 					<td><a href="#/bills/id/{{result.id}}"><span class="glyphicon glyphicon-search"></span></a></td>
 				</tr>
 			</table>
-			<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)"
-				max-size="10" boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
+			<search-result-pagination></search-result-pagination>
 		</div>
-		<!--
-		<pre>{{searchOptions|json}}</pre>
-		-->
 	</div>
 
 	<div class="col-sm-3">
@@ -85,5 +75,3 @@
 		</div>
 	</div>
 </div>
-</body>
-</html>
