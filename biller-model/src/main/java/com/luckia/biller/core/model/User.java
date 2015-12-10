@@ -56,6 +56,10 @@ public class User implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date created;
 
+	@Column(name = "DISABLED")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date disabled;
+
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "S_USER_ROLE_RELATION", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") })
 	private List<UserRole> roles;
@@ -126,4 +130,11 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
+	public Date getDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(Date disabled) {
+		this.disabled = disabled;
+	}
 }

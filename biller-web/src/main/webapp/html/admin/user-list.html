@@ -11,19 +11,24 @@
 				<tr>
 					<th>{{'alias' | translate}}</th>
 					<th>{{'name' | translate}}</th>
-					<th>{{'enabled' | translate}}</th>
+					<th>{{'email' | translate}}</th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr class="animate-pagination" ng-repeat="user in searchResults.results">
-					<td>{{user.aluas}}</td>
+				<tr class="animate-pagination" ng-repeat="user in results.results">
+					<td>{{user.alias}}</td>
 					<td>{{user.name}}</td>
-					<td>{{user.passwordDigest}}</td>
+					<td>{{user.email}}</td>
 					<td class="vert-align">
+						<a class="btn btn-warning btn-sm" href="#/admin/users/id/{{user.id}}">
+							<span class="glyphicon glyphicon-edit"></span>
+						</a>
+						<!--
 						<button type="button" class="btn btn-warning btn-sm" ng-click="edit(task)">
 							<span class="glyphicon glyphicon-edit"></span>
 						</button>
+						-->
 					</td>
 				</tr>
 			</tbody>

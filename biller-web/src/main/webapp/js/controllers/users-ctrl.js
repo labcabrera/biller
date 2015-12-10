@@ -32,8 +32,38 @@
 		$scope.orderProp = 'name';
 	} ]);
 	
-	billerModule.controller('UserDetailCtrl', [ '$scope', '$routeParams', '$http', function($scope, $routeParams, $http) {
-		$http.get('rest/users/' + $routeParams.id).success(function(data) { $scope.user = data; });
+	billerModule.controller('UserDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $filter, dialogs, messageService) {
+		if(messageService.hasMessage()) {
+			$scope.message = messageService.getMessage();
+		}
+		$scope.load = function() {
+			$http.get('rest/users/id/' + $routeParams.id).success(function(data) {
+				$scope.entity = data;
+			});
+			$http.get('rest/users/roles').success(function(data) {
+				$scope.roles = data;
+			});
+			$rootScope.isReadOnly = true;
+		};
+		$scope.update = function() {
+			$http.post('rest/users/merge/', $scope.entity).success(function(data) {
+				$scope.message = data;
+				$rootScope.isReadOnly = true;
+			});
+		};
+		$scope.remove = function() {
+			var dlg = dialogs.confirm($filter('translate')('remove.confirmation.title') ,$filter('translate')('user.remove.confirmation'));
+			dlg.result.then(function(btn){
+				$http.post('rest/users/remove/' + $scope.entity.id).success(function(data) {
+					if(data.code == 200) {
+						$location.path("admin/users");
+					} else {
+						$scope.message = data;
+					}
+				});				
+			});
+		};
+		$scope.load();
 	} ]);
 	
 })();

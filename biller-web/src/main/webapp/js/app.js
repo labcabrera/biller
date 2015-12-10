@@ -32,6 +32,7 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/bills/id/:id', { templateUrl : 'html/bill-detail.html', controller : 'BillDetailCtrl'
 	}).when('/liquidations', { templateUrl : 'html/liquidation-list.html', controller : 'LiquidationListCtrl'
 	}).when('/liquidations/id/:id', { templateUrl : 'html/liquidation-detail.html', controller : 'LiquidationDetailCtrl'
+	}).when('/adjustments', { templateUrl : 'html/adjustment-list.html', controller : 'AdjustmentListCtrl'
 	}).when('/rappel/stores/', { templateUrl : 'html/rappel-store-list.html', controller : 'RappelStoreListCtrl'
 	}).when('/rappel/stores/id/:id', { templateUrl : 'html/rappel-store-detail.html', controller : 'RappelStoreDetailCtrl'
 	}).when('/reports/terminals', { templateUrl : 'html/reports/report-terminals.html', controller : 'ReportTerminalsCtrl'

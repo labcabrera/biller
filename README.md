@@ -4,6 +4,12 @@
 * Arreglar el funcionamiento del serializador cuando se utiliza eclipselink-weaving 
 
 # TODO
+* Desglose ajustes manuales en el PDF de liquidacion
+* Dos flags a nivel de operadora para enviar liquidaciones o miniliquidaciones
+* Hacer el PDF de miniliquidaciones
+* Añadir el centro de coste a los informes de liquidaciones
+* Formato separador miles formateo BigDecimal
+* Gestion de usuarios y permisos
 * Filtro de summary report por centro de coste (el problema es que esta asociado a los locales, no a los operadores)
 * Formato separador miles en el front
 * Revisar PDF con el desglose de ajustes en las miniliquidaciones

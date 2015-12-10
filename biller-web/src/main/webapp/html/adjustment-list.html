@@ -1,0 +1,64 @@
+<div class="row">
+
+	<div class="col-sm-9">
+		
+		<h4>{{'adjustments' | translate}} <small>{{searchMessage}}</small></h4>
+		
+		<div ng-if="results.results.length < 1">{{'noResults' | translate}}</div>
+		<div ng-if="results.results.length > 0">
+			<table class="table table-hover table-condensed">
+				<tr>
+					<th>{{'company' | translate}}</th>
+					<th>{{'name' | translate}}</th>
+					<th>{{'value' | translate}}</th>
+				</tr>
+				<tr ng-repeat="result in results.results">
+					<td></a></td>
+					<td>{{result.name}}</td>
+					<td class="amount">{{result.value}}</td>
+				</tr>
+			</table>
+		</div>
+		<search-result-pagination></search-result-pagination>
+	</div>
+
+	<div class="col-sm-3">
+		<div>
+			<h4>{{'filterResults' | translate}}</h4>
+			<form role="form">
+				<div class="form-group">
+					<label>{{'name' | translate}}</label>
+					<input type="text" class="form-control" ng-model="searchOptions.name" />
+				</div>
+				<div class="form-group">
+					<label>{{'company' | translate}}</label>
+					<div company ng-model="searchOptions.company"></div>
+				</div>
+				<div class="form-group">
+					<label>{{'companyGroup' | translate}}</label>
+					<div company-group ng-model="searchOptions.company"></div>
+				</div>
+				<div class="form-group">
+					<label>{{'costCenter' | translate}}</label>
+					<div class="input-group col-sm-12">
+						<div cost-center ng-model="searchOptions.costCenter" require="false"></div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{'dateFrom' | translate}}</label>
+					<div class="input-group col-sm-12">
+						<div date ng-model="searchOptions.from" require="false"></div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label>{{'dateTo' | translate}}</label>
+					<div class="input-group col-sm-12">
+						<div date ng-model="searchOptions.to" require="false"></div>
+					</div>
+				</div>
+				<button class="btn btn-primary btn-sm" ng-click="search()">{{'search' | translate}}</button>
+				<button class="btn btn-primary btn-sm" ng-click="reset()">{{'reset' | translate}}</button>
+			</form>
+		</div>
+	</div>
+</div>
