@@ -1,22 +1,25 @@
 <div class="row">
 
 	<div class="col-sm-9">
-		<h4>{{'scheduler' | translate}}</h4>
+		
+		<h4>{{'users' | translate}}</h4>
+		
 		<message-error-panel ng-model="message" auto-close="true"></message-error-panel>
+		
 		<table class="table table-condensed">
 			<thead>
 				<tr>
+					<th>{{'alias' | translate}}</th>
 					<th>{{'name' | translate}}</th>
-					<th>{{'cronExpression' | translate}}</th>
 					<th>{{'enabled' | translate}}</th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr class="animate-pagination" ng-repeat="task in searchResults.results">
-					<td>{{task.name}}</td>
-					<td>{{task.cronExpression}}</td>
-					<td><span ng-if="task.enabled" class="glyphicon glyphicon-ok"></span></td>
+				<tr class="animate-pagination" ng-repeat="user in searchResults.results">
+					<td>{{user.aluas}}</td>
+					<td>{{user.name}}</td>
+					<td>{{user.passwordDigest}}</td>
 					<td class="vert-align">
 						<button type="button" class="btn btn-warning btn-sm" ng-click="edit(task)">
 							<span class="glyphicon glyphicon-edit"></span>

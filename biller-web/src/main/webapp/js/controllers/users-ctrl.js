@@ -2,11 +2,6 @@
 	
 	var billerModule = angular.module('billerModule');
 
-	/* ----------------------------------------------------------------------------
-	 * USUARIOS
-	 * ----------------------------------------------------------------------------
-	 */
-	
 	billerModule.controller('LoginCtrl', [ '$scope', '$rootScope', '$location', '$http', '$window', '$cookies', function($scope, $rootScope, $location, $http, $window, $cookies) {
 		$scope.login = function(user, password) {
 			var request = { "user": $scope.username, "password": $scope.password};

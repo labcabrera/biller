@@ -127,6 +127,9 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 	}
 
 	public void setPercent(BigDecimal percent) {
+		if (percent.compareTo(new BigDecimal("100")) > 0) {
+			System.out.println();
+		}
 		this.percent = percent;
 	}
 
