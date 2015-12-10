@@ -10,14 +10,14 @@ import javax.ws.rs.core.MediaType;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
-import com.luckia.biller.core.services.entities.AdjustmentEntityService;
+import com.luckia.biller.core.services.entities.BillLiquidationDetailEntityService;
 
-@Path("adjustments")
+@Path("adjustments/store")
 @Produces(MediaType.APPLICATION_JSON)
-public class AdjustmentRestService {
+public class BillLiquidationDetailRestService {
 
 	@Inject
-	private AdjustmentEntityService entityService;
+	private BillLiquidationDetailEntityService entityService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -27,7 +27,8 @@ public class AdjustmentRestService {
 		params.setItemsPerPage(maxResults);
 		params.setCurrentPage(page);
 		params.setQueryString(queryString);
-		return entityService.find(params);
+		SearchResults<BillLiquidationDetail> results = entityService.find(params);
+		return results;
 	}
 
 }

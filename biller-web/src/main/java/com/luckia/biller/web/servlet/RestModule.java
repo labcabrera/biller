@@ -7,7 +7,7 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.web.json.GsonMessageBodyHandler;
-import com.luckia.biller.web.rest.AdjustmentRestService;
+import com.luckia.biller.web.rest.BillLiquidationDetailRestService;
 import com.luckia.biller.web.rest.BillRestService;
 import com.luckia.biller.web.rest.BillingModelRestService;
 import com.luckia.biller.web.rest.BinaryRestService;
@@ -16,6 +16,7 @@ import com.luckia.biller.web.rest.CompanyRestService;
 import com.luckia.biller.web.rest.CostCenterRestService;
 import com.luckia.biller.web.rest.DashboardRestService;
 import com.luckia.biller.web.rest.EnumerationRestService;
+import com.luckia.biller.web.rest.LiquidationDetailRestService;
 import com.luckia.biller.web.rest.LiquidationRestService;
 import com.luckia.biller.web.rest.OwnerRestService;
 import com.luckia.biller.web.rest.ProvinceTaxesRestService;
@@ -54,8 +55,8 @@ public class RestModule implements Module {
 		// Security
 		binder.bind(SecurityInterceptor.class);
 		// Rest services
-		binder.bind(AdjustmentRestService.class);
 		binder.bind(BillingModelRestService.class);
+		binder.bind(BillLiquidationDetailRestService.class);
 		binder.bind(BillRestService.class);
 		binder.bind(BinaryRestService.class);
 		binder.bind(CompanyGroupRestService.class);
@@ -63,6 +64,7 @@ public class RestModule implements Module {
 		binder.bind(CostCenterRestService.class);
 		binder.bind(DashboardRestService.class);
 		binder.bind(EnumerationRestService.class);
+		binder.bind(LiquidationDetailRestService.class);
 		binder.bind(LiquidationRestService.class);
 		binder.bind(OwnerRestService.class);
 		binder.bind(ProvincesRestService.class);
