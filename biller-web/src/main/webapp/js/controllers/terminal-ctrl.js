@@ -7,20 +7,21 @@
 		$scope.searchName = '';
 		$scope.reset = function() {
 			$scope.searchOptions = {
-				'terminal': { 'code': ''},
+				'terminal': '',
 				'showOrphan' : false,
 				'showDeleted': false,
 			};
 		};
 		$scope.getSearchUrl = function() {
 			var predicateBuilder = new PredicateBuilder('');
-			predicateBuilder.append("code=lk=", $scope.searchOptions.terminal.code);			
+			predicateBuilder.append("code=lk=", $scope.searchOptions.terminal);			
 			if($scope.searchOptions.showOrphan) { predicateBuilder.appendKey("store=n="); }
 			if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
 			return 'rest/terminals/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
 		$scope.search = function() {
 			$scope.searchMessage = "Loading...";
+			$scope.results = null;
 			$http.get($scope.getSearchUrl()).success(function(data) {
 				$scope.results = data;
 				$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
@@ -28,7 +29,7 @@
 		};
 		$scope.setPage = function(page) {
 		    $scope.currentPage = page;
-			$http.get($scope.getSearchUrl()).success(function(data) { $scope.results = data; });
+		    $scope.search();
 		};
 		$scope.reset();
 		$scope.search();

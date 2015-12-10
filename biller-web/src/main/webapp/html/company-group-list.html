@@ -7,17 +7,34 @@
 	
 	<div class="col-sm-9">
 		<div>
+			
 			<h4>{{'companyGroups' | translate}}  <small>{{searchMessage}}</small></h4>
-			<div ng-if="results.results.length == 0">{{'noResults' | translate}}</div>
-			<ul class="list-group">
-				<li class="list-group-item" ng-repeat="group in results.results">
-					<a href="#/groups/id/{{group.id}}">{{group.name}}</a>
-				</li>
-			</ul>
-			<div class="pull-right">
-				<a href="#/groups/new">{{'addCompanyGroup' | translate}}</a>
+			
+			<div ng-if="results.results.length < 1">{{'noResults' | translate}}</div>
+			<div ng-if="results.results.length > 0">
+				<table class="table table-hover table-condensed">
+					<tr>
+						<th>{{'name' | translate}}</th>
+						<th>{{'idCard' | translate}}</th>
+						<th>{{'province' | translate}}</th>
+					</tr>
+					<tr ng-repeat="group in results.results">
+						<td><a href="#/groups/id/{{group.id}}">{{group.name}}</a></td>
+						<td>{{group.idCard.number}}</td>
+						<td>{{group.address.province.name}}</td>
+						<td></td>
+					</tr>
+				</table>
 			</div>
-			<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)"></pagination>
+
+			<search-result-pagination></search-result-pagination>
+			<div class="pull-right">
+				<a href="#/groups/new">
+					<h1>
+						<span class="glyphicon glyphicon-plus-sign text-primary" aria-hidden="true"></span>
+					</h1>
+				</a>
+			</div>
 		</div>
 	</div>
 

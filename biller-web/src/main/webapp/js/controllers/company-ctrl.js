@@ -25,12 +25,11 @@
 		};
 		$scope.setPage = function(page) {
 		    $scope.currentPage = page;
-			$http.get($scope.getSearchUrl()).success(function(data) {
-				$scope.results = data;
-			});
+			$scope.search();
 		};
 		$scope.search = function() {
 			$scope.searchMessage = 'Loading...';
+			$scope.results = null;
 			$http.get($scope.getSearchUrl()).success(function(data) {
 				$scope.results = data;
 				$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
