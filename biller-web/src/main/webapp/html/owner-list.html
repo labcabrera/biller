@@ -1,24 +1,30 @@
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-</head>
-<body>
 <div class="row">
 
 	<div class="col-sm-9">
+		
 		<h4>{{'owners' | translate}} <small>{{searchMessage}}</small></h4>
-		<ul class="list-group">
-			<li class="list-group-item" ng-repeat="result in results.results | filter:query | orderBy:orderProp">
-				<div>
-					<a href="#/owners/id/{{result.id}}">{{result.name}} {{result.firstSurname}} {{result.secondSurname}}</a>
-				</div>
-			</li>
-		</ul>
+		
+		<div ng-if="results.results.length < 1">{{'noResults' | translate}}</div>
+		<div ng-if="results.results.length > 0">
+			<table class="table table-hover table-condensed">
+				<tr>
+					<th>{{'name' | translate}}</th>
+					<th>{{'phoneNumber' | translate}}</th>
+					<th>{{'idCard' | translate}}</th>
+					<th>{{'province' | translate}}</th>
+				</tr>
+				<tr ng-repeat="result in results.results">
+					<td><a href="#/owners/id/{{result.id}}">{{result.name}} {{result.firstSurname}} {{result.secondSurname}}</a></td>
+					<td>{{result.phoneNumber}}</td>
+					<td>{{result.idCard.number}}</td>
+					<td>{{result.address.province.name}}</td>
+				</tr>
+			</table>
+		</div>
 		<div class="pull-right">
 			<a href="#/owners/new">{{'addOwner' | translate}}</a>
 		</div>
-		<pagination total-items="results.totalItems" page="results.currentPage" items-per-page="results.itemsPerPage" on-select-page="setPage(page)" max-size="10"
-			boundary-links="true" first-text="Primero" previous-text="Anterior" next-text="Siguiente" last-text="&Uacute;ltimo"></pagination>
+		<search-result-pagination></search-result-pagination>
 	</div>
 
 	<div class="col-sm-3">
@@ -39,5 +45,3 @@
 		</div>
 	</div>
 </div>
-</body>
-</html>
