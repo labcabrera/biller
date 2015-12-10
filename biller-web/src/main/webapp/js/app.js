@@ -49,6 +49,7 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/index', { templateUrl : 'html/index.html'
 	}).when('/sequence-prefix', { templateUrl : 'html/sequence-prefix.html'
 	}).when('/forbidden', { templateUrl : 'html/403.html'
+	}).when('/204', { templateUrl : 'html/204.html'
 	}).when('/', { templateUrl : 'html/index.html'
 	}).otherwise({ templateUrl : 'html/404.html'
 	});

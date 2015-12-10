@@ -3,6 +3,8 @@ package com.luckia.biller.web.rest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -28,6 +30,7 @@ import org.apache.commons.lang3.mutable.MutableObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.NoAvailableDataException;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CompanyGroup;
@@ -139,8 +142,14 @@ public class ReportRestService {
 			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "Resumen de liquidaciones.xls"));
 			response.header("Content-Type", FileService.CONTENT_TYPE_EXCEL);
 			return response.build();
+		} catch (NoAvailableDataException ex) {
+			try {
+				return Response.temporaryRedirect(new URI("../#/204")).build();
+			} catch (URISyntaxException ignore) {
+				throw new RuntimeException("Liquidation report summary generation error", ex);
+			}
 		} catch (Exception ex) {
-			throw new RuntimeException("Error la generar el informe de liquidaciones", ex);
+			throw new RuntimeException("Liquidation report summary generation error", ex);
 		}
 	}
 

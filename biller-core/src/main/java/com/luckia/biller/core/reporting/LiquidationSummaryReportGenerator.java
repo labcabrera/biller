@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.common.MathUtils;
+import com.luckia.biller.core.common.NoAvailableDataException;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
@@ -40,6 +41,9 @@ import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.services.FileService;
 
+/**
+ * Componente encargado de generar el report de resumen de liquidaciones.
+ */
 public class LiquidationSummaryReportGenerator extends BaseReport {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LiquidationSummaryReportGenerator.class);
@@ -60,6 +64,8 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 	 *            operadora (opcional)
 	 * @param costCenter
 	 *            centro de coste (opcional)
+	 * @param companyGroup
+	 *            grupo de empresas (opcional)
 	 * @return
 	 * @throws IOException
 	 */
@@ -96,6 +102,8 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			out.flush();
 			out.close();
 			return new Message<>(Message.CODE_SUCCESS, "Report generated");
+		} catch (NoAvailableDataException ex) {
+			throw ex;
 		} catch (Exception ex) {
 			throw new RuntimeException("Error generating summary liquidation report", ex);
 		}
@@ -104,6 +112,9 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 	private void createReportData(HSSFSheet sheet, Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
 		List<Liquidation> liquidations = findLiquidations(from, to, company, costCenter, companyGroup);
 		LOG.debug("Readed {} liquidations", liquidations.size());
+		if (liquidations.isEmpty()) {
+			throw new NoAvailableDataException();
+		}
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		BigDecimal totalCashStore = BigDecimal.ZERO;
 		BigDecimal totalAdjustements = BigDecimal.ZERO;
