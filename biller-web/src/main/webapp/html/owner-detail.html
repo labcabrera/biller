@@ -13,65 +13,66 @@
 		
 		<form class="form-horizontal" role="form">
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">{{'name' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'name' | translate}}</label>
 				<div class="col-sm-4">
 					<input type='text' class="form-control" ng-model="entity.name" ng-readonly="isReadOnly" />
 				</div>
-				<label class="col-sm-2 control-label input-sm">{{'idCard.nif' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'idCard.nif' | translate}}</label>
 				<div class="col-sm-4">
 					<input type='text' class="form-control" ng-model="entity.idCard.number" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">Primer apellido</label>
+				<label class="col-sm-2 control-label">{{'firstSurname' | translate}}</label>
 				<div class="col-sm-4">
 					<input type='text' class="form-control" ng-model="entity.firstSurname" ng-readonly="isReadOnly" />
 				</div>
-				<label class="col-sm-2 control-label input-sm">Segundo apellido</label>
+				<label class="col-sm-2 control-label">{{'secondSurname' | translate}}</label>
 				<div class="col-sm-4">
 					<input type='text' class="form-control" ng-model="entity.secondSurname" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">{{'phoneNumber' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'phoneNumber' | translate}}</label>
 				<div class="col-sm-4">
 					<input type="text" class="form-control" ng-model="entity.phoneNumber" ng-readonly="isReadOnly" />
 				</div>
-				<label class="col-sm-2 control-label input-sm">{{'email' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'email' | translate}}</label>
 				<div class="col-sm-4">
 					<input type="text" class="form-control" ng-model="entity.email" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">{{'province' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'province' | translate}}</label>
 				<div class="col-sm-4">
 					<div province ng-model="entity.address.province" is-read-only="isReadOnly"></div>
 					<!--
 					<input type="text" class="form-control" ng-model="entity.address.province" typeahead="province as province.name for province in provinces($viewValue)" ng-readonly="isReadOnly" />
 					-->
 				</div>
-				<label class="col-sm-2 control-label input-sm">Localidad</label>
+				<label class="col-sm-2 control-label">Localidad</label>
 				<div class="col-sm-4">
 					<input type='text' class="form-control" ng-model="entity.address.region" typeahead="region as region.name for region in regions($viewValue, entity.address.province.id)" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">Direcci&oacute;n</label>
+				<label class="col-sm-2 control-label">Direcci&oacute;n</label>
 				<div class="col-sm-4">
 					<input type="text" class="form-control" ng-model="entity.address.road" ng-readonly="isReadOnly" />
 				</div>
-				<label class="col-sm-2 control-label input-sm">{{'number' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'number' | translate}}</label>
 				<div class="col-sm-4">
 					<input type='text' class="form-control" ng-model="entity.address.number" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label input-sm">{{'zipCode' | translate}}</label>
+				<label class="col-sm-2 control-label">{{'zipCode' | translate}}</label>
 				<div class="col-sm-4">
 					<input type="text" class="form-control" ng-model="entity.address.zipCode" ng-readonly="isReadOnly" />
 				</div>
 			</div>
 		</form>
+		
 		<div class="m-top-40">
 			<ul class="nav nav-tabs">
 				<li class="active"><a data-target="#storesTab" data-toggle="tab">{{'stores' | translate}}</a></li>
@@ -79,7 +80,6 @@
 				<li><a data-target="#auditTab" data-toggle="tab">{{'auditData' | translate}}</a></li>
 			</ul>
 			<div class="tab-content">
-				<!-- Tab de los locales asociados al titular -->
 				<div class="tab-pane active" id="storesTab">
 					<div ng-include src="'templates/store-list.html'"></div>
 				</div>
