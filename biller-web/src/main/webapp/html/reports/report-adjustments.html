@@ -2,24 +2,34 @@
 	
 	<div class="col-sm-9">
 
-		<h4>{{'liquidationDetailReport' | translate}}</h4>
+		<h4>{{'adjustmentsReport' | translate}}</h4>
 
 		<div class="m-top-15">
 			<form class="form-horizontal" role="form">
 				<div class="form-group">
 					<label class="col-sm-2 control-label">{{'dateFrom' | translate}}</label>
 					<div class="col-sm-4">
-						<div date ng-model="reportData.from"></div>
+						<div date ng-model="searchOptions.from" require="false"></div>
 					</div>
 					<label class="col-sm-2 control-label">{{'dateTo' | translate}}</label>
 					<div class="col-sm-4">
-						<div date ng-model="reportData.to"></div>
+						<div date ng-model="searchOptions.to" require="false"></div>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">{{'company' | translate}}</label>
 					<div class="col-sm-4">
-						<div company ng-model="reportData.company"></div>
+						<div company ng-model="searchOptions.company"></div>
+					</div>
+					<label class="col-sm-2 control-label">{{'companyGroup' | translate}}</label>
+					<div class="col-sm-4">
+						<div company-group ng-model="searchOptions.company"></div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">{{'costCenter' | translate}}</label>
+					<div class="col-sm-4">
+						<div cost-center ng-model="searchOptions.costCenter" require="false"></div>
 					</div>
 				</div>
 				<div class="form-group">

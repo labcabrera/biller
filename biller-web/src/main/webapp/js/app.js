@@ -38,6 +38,7 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/reports/terminals', { templateUrl : 'html/reports/report-terminals.html', controller : 'ReportTerminalsCtrl'
 	}).when('/reports/liquidations', { templateUrl : 'html/reports/report-liquidations.html', controller : 'ReportLiquidationsCtrl'
 	}).when('/reports/liquidations-summary', { templateUrl : 'html/reports/report-liquidations-summary.html', controller : 'ReportLiquidationsSummaryCtrl'
+	}).when('/reports/adjustments', { templateUrl : 'html/reports/report-adjustments.html', controller : 'ReportAdjustmentsCtrl'
 	}).when('/admin/console', { templateUrl : 'html/admin/admin-console.html'
 	}).when('/admin/settings', { templateUrl : 'html/admin/admin-settings.html', controller: 'SettingsCtrl'
 	}).when('/admin/jobs', { templateUrl : 'html/admin/admin-jobs.html', controller: 'SettingsCtrl'
