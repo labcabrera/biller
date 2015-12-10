@@ -251,6 +251,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 				value = netValue.add(vatValue);
 				break;
 			default:
+				netValue = sourceValue;
+				value = sourceValue;
 				break;
 			}
 		} else {
