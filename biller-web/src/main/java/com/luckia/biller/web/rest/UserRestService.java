@@ -24,6 +24,7 @@ import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.entities.UserEntityService;
+import com.luckia.biller.core.services.security.UserSessionService;
 
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,6 +35,8 @@ public class UserRestService {
 
 	@Inject
 	private UserEntityService userEntityService;
+	@Inject
+	private UserSessionService userSessionService;
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 
@@ -76,6 +79,8 @@ public class UserRestService {
 				entityManager.merge(current);
 				message.addInfo("user.merge.success").withPayload(current);
 			} else {
+				String digest = userSessionService.calculatePasswordDigest(user.getPasswordDigest());
+				user.setPasswordDigest(digest);
 				entityManager.persist(user);
 				entityManager.flush();
 				message.addInfo("user.insert.success").withPayload(user);

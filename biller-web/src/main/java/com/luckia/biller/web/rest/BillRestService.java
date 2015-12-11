@@ -31,6 +31,7 @@ import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.UserActivityType;
+import com.luckia.biller.core.model.UserRole;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
@@ -42,6 +43,7 @@ import com.luckia.biller.core.services.entities.BillEntityService;
 import com.luckia.biller.core.services.mail.MailService;
 import com.luckia.biller.core.services.mail.SendAppFileMailTask;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
+import com.luckia.biller.core.services.security.RequiredRole;
 
 /**
  * Servicio REST que aparte del CRUD básico de facturas provee de las siguientes funcionalidades:
@@ -108,6 +110,7 @@ public class BillRestService {
 	@Path("/merge")
 	@Transactional
 	@RegisterActivity(type = UserActivityType.BILL_MERGE)
+	@RequiredRole(any = { UserRole.OPERATOR, UserRole.ADMIN })
 	public Message<Bill> merge(Bill bill) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -293,6 +296,7 @@ public class BillRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/{id}")
+	@RequiredRole(any = { UserRole.OPERATOR, UserRole.ADMIN })
 	public Message<Bill> recalculate(@PathParam("id") String billId) {
 		return billRecalculationService.recalculate(billId);
 	}

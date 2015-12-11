@@ -47,7 +47,7 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/admin/user-activity', { templateUrl : 'html/admin/user-activity/user-activity-list.html', controller: 'UserActivityListCtrl'
 	}).when('/admin/users', { templateUrl : 'html/admin/user-list.html', controller: 'UserListCtrl'
 	}).when('/admin/users/id/:id', { templateUrl : 'html/admin/user-detail.html', controller: 'UserDetailCtrl'
-	}).when('/admin/users/new', { templateUrl : 'html/admin/user-detail.html', controller: 'UserNewCtrl'
+	}).when('/admin/users/new', { templateUrl : 'html/admin/user-new.html', controller: 'UserNewCtrl'
 	}).when('/admin/scheduler', { templateUrl : 'html/admin/scheduler-list.html', controller: 'SchedulerListCtrl'
 	}).when('/dashboard/companies', { templateUrl : 'html/dashboard/dashboard-panel.html', controller : 'DashboardCtrl'
 	}).when('/login', { templateUrl : 'html/login.html', controller: 'LoginCtrl'
@@ -112,28 +112,20 @@ billerModule.run(function($rootScope, $http, $cookies, $location) {
 		$("#alertContainer").empty();
 	};
 	
-	$rootScope.displayAlertInternal = function(message, container) {
-		var t = container;
-		var d = $('<div/>').addClass('alert alert-dismissable').addClass(message.code == 200 ? 'alert-info' : 'alert-warning');
-		d.append($('<button/>').addClass("close").attr('type', 'button').attr('data-dismiss', 'alert').attr('aria-hiden', 'true').append('&times;'));
-		d.append($('<span>').append(message.message));
-		if(message.errors != null && message.errors.length > 0) {
-			var u = $('<ul>').addClass('style','unstyled');
-			for(var i = 0; i < message.errors.length; i++) {
-				u.append($('<li>').append(message.errors[i]));
-			}
-			d.append(u);
-		}
-		t.empty();
-		t.append(d);
-	};
-	
-	$rootScope.displayAlert = function(message) {
-		$rootScope.displayAlertInternal(message, $("#alertContainer"));
-	};
-	
-	$rootScope.displayAlertModal = function(message, containerId) {
-		$rootScope.displayAlertInternal(message, $("#modalAlertContainer"));
+	$rootScope.checkRole = function(names) {
+		var result = false;
+		if($rootScope.user != null && $rootScope.user.roles != null) {
+			for(var i=0; i<$rootScope.user.roles.length; i++) {
+				var check = $rootScope.user.roles[i].name;
+				var index = names.indexOf(check);
+				console.log("check " + check + ": " + index);
+				if(index > -1) {
+					result = true;
+					break;
+				};
+			};
+		};
+		return result;
 	};
 	
 	$rootScope.logout = function() {

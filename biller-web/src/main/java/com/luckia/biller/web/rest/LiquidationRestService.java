@@ -268,7 +268,6 @@ public class LiquidationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/{id}")
-	// @RequiredRole(any = { UserRole.OPERATOR, UserRole.ADMIN })
 	public Message<Liquidation> recalculate(@PathParam("id") String liquidationId) {
 		try {
 			Liquidation liquidation = liquidationProcessor.recalculate(liquidationId);
