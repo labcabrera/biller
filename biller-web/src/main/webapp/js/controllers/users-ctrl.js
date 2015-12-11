@@ -53,6 +53,17 @@
 					};
 				});
 			});
+			$scope.update = function() {
+				$scope.isSaving = true;
+				$http.post('rest/users/merge', $scope.entity).success(function(data) {
+					$scope.isSaving = false;
+					$scope.message = data;
+					if(data.code == 200) {
+						$scope.entity = data.payload;
+						$rootScope.isReadOnly = true;
+					}
+				});
+			};
 			$rootScope.isReadOnly = true;
 		};
 		$scope.update = function() {

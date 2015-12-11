@@ -18,8 +18,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.eclipse.persistence.annotations.Index;
-
 import com.luckia.biller.core.serialization.NotSerializable;
 
 /**
@@ -29,7 +27,7 @@ import com.luckia.biller.core.serialization.NotSerializable;
 @Table(name = "S_USER")
 @SuppressWarnings("serial")
 @NamedQueries({ @NamedQuery(name = "User.selectByAlias", query = "select e from User e where e.alias = :alias") })
-public class User implements Serializable {
+public class User implements Serializable, Mergeable<User> {
 
 	@Id
 	@GeneratedValue
@@ -37,15 +35,12 @@ public class User implements Serializable {
 	private Long id;
 
 	@Column(name = "COMPLETE_NAME", unique = true, length = 128, nullable = false)
-	@Index(name = "IX_S_USER_NAME")
 	private String name;
 
 	@Column(name = "ALIAS", unique = true, length = 128, nullable = false)
-	@Index(name = "IX_S_USER_ALIAS")
 	private String alias;
 
 	@Column(name = "EMAIL", unique = true, length = 128, nullable = false)
-	@Index(name = "IX_S_USER_EMAIL")
 	private String email;
 
 	@Column(name = "PASSWORD_DIGEST", length = 256, nullable = false)
@@ -136,5 +131,15 @@ public class User implements Serializable {
 
 	public void setDisabled(Date disabled) {
 		this.disabled = disabled;
+	}
+
+	@Override
+	public void merge(User entity) {
+		if (entity != null) {
+			this.alias = entity.alias;
+			this.name = entity.name;
+			this.email = entity.email;
+			this.roles = entity.roles;
+		}
 	}
 }

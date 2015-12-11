@@ -23,8 +23,32 @@
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.email" ng-readonly="isReadOnly">
 					</div>
+					<label class="col-sm-2 control-label">{{'created' | translate}}</label>
+					<div class="col-sm-4">
+						<input type='text' class="form-control" ng-model="entity.created" ng-readonly="true">
+					</div>
 				</div>
 				<div class="form-group">
+					<div class="col-sm-4 col-sm-offset-2">
+						<div class="panel panel-default">
+							<div class="panel-heading">{{'roles' | translate}}</div>
+							<div class="panel-body" ng-repeat="role in entity.roles">
+								<div class="pull-left">{{role.name}}</div>
+								<div class="pull-right" ng-if="!isReadOnly"><a ng-click="removeRole(role)">{{'remove' | translate}}</a></div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4 col-sm-offset-2">
+						<div class="panel panel-default">
+							<div class="panel-heading">Roles disponibles</div>
+							<div class="panel-body" ng-repeat="role in availableRoles">
+								<div class="pull-left">{{role.name}}</div>
+								<div class="pull-right" ng-if="!isReadOnly"><a ng-click="addRole(role)">{{'add' | translate}}</a></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group" ng-if="!isReadOnly">
 					<label class="col-sm-2 control-label">{{'password' | translate}}</label>
 					<div class="col-sm-4">
 						<input type='text' class="form-control" ng-model="entity.password" ng-readonly="isReadOnly">
@@ -34,29 +58,11 @@
 						<input type='text' class="form-control" ng-model="entity.passwordConfirm" ng-readonly="isReadOnly">
 					</div>
 				</div>
-				<div class="form-group">
-					<label class="col-sm-2 control-label">{{'roles' | translate}}</label>
-					<div class="col-sm-4">
-						<div class="panel panel-default">
-							<div class="panel-heading">Roles</div>
-							<div class="panel-body" ng-repeat="role in entity.roles">
-								<div class="pull-left">{{role.name}}</div>
-								<div class="pull-right"><a ng-click="removeRole(role)">{{'remove' | translate}}</a></div>
-							</div>
-						</div>
-					</div>
-					<label class="col-sm-2 control-label">{{'roles' | translate}}</label>
-					<div class="col-sm-4">
-						<div class="panel panel-default">
-							<div class="panel-heading">Roles disponibles</div>
-							<div class="panel-body" ng-repeat="role in availableRoles">
-								<div class="pull-left">{{role.name}}</div>
-								<div class="pull-right"><a ng-click="addRole(role)">{{'add' | translate}}</a></div>
-							</div>
-						</div>
+				<div class="form-group" ng-if="!isReadOnly">
+					<div class="pull-right">
+						<button class="btn btn-sm btn-primary">{{'changePassword' | translate}}</button>
 					</div>
 				</div>
-				
 			</form>
 		</div>
 	</div>

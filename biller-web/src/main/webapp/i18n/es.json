@@ -43,6 +43,7 @@
 	"cashStoreAmountTooltip": "Apostado – Cancelado – Pagado + Credito",
 	"cashStoreEffectiveAmount": "Salgo de caja tras ajustes manuales",
 	"cashStoreEffectiveAmountTooltip": "Saldo de caja - ajustes manuales",
+	"changePassword": "Actualizar contraseña",
 	"cif": "CIF",
 	"code": "Código",
 	"commercialService" : "Atención comercial",

@@ -5,22 +5,32 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.User;
 import com.luckia.biller.core.model.UserRole;
+import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.entities.UserEntityService;
 
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class UserRestService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(UserRestService.class);
 
 	@Inject
 	private UserEntityService userEntityService;
@@ -47,6 +57,34 @@ public class UserRestService {
 		params.setCurrentPage(page);
 		params.setQueryString(queryString);
 		return userEntityService.find(params);
+	}
+
+	@POST
+	@Path("/merge")
+	@Transactional
+	// TODO mover a un servicio para que la logica no este en la capa rest
+	public Message<User> merge(User user) {
+		Message<User> message = new Message<>();
+		try {
+			if (user.getPasswordDigest() != null) {
+				// TODO
+			}
+			EntityManager entityManager = entityManagerProvider.get();
+			if (user.getId() != null) {
+				User current = entityManager.find(User.class, user.getId());
+				current.merge(user);
+				entityManager.merge(current);
+				message.addInfo("user.merge.success").withPayload(current);
+			} else {
+				entityManager.persist(user);
+				entityManager.flush();
+				message.addInfo("user.insert.success").withPayload(user);
+			}
+		} catch (Exception ex) {
+			LOG.error("User merge error");
+			message.withCode(Message.CODE_GENERIC_ERROR).addError("user.merge.error");
+		}
+		return message;
 	}
 
 	@GET
