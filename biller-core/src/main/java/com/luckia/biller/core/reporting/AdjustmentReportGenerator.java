@@ -87,7 +87,7 @@ public class AdjustmentReportGenerator extends BaseReport {
 		if (costCenter != null) {
 			sb.append("and s.costCenter = :costCenter ");
 		}
-		sb.append("order by l.billDate desc, l.id");
+		sb.append("order by l.billDate, l.id");
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<Liquidation> query = entityManager.createQuery(sb.toString(), Liquidation.class);
 		query.setParameter("states", Arrays.asList(CommonState.Confirmed, CommonState.Sent));
@@ -146,6 +146,7 @@ public class AdjustmentReportGenerator extends BaseReport {
 			currentRow++;
 			for (Bill bill : liquidation.getBills()) {
 				for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
+					cell = 0;
 					switch (detail.getConcept()) {
 					case MANUAL:
 						createCell(sheet, currentRow, cell++, liquidation.getSender().getName());
@@ -163,7 +164,6 @@ public class AdjustmentReportGenerator extends BaseReport {
 					default:
 						break;
 					}
-
 				}
 			}
 		}
