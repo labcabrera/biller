@@ -2,6 +2,8 @@
 	
 	<div class="col-sm-9">
 
+		<message-error-panel ng-model="message"></message-error-panel>
+
 		<h4>{{'adjustmentsReport' | translate}}</h4>
 
 		<div class="m-top-15">
@@ -9,27 +11,27 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">{{'dateFrom' | translate}}</label>
 					<div class="col-sm-4">
-						<div date ng-model="searchOptions.from" require="false"></div>
+						<div date ng-model="reportData.from" require="false"></div>
 					</div>
 					<label class="col-sm-2 control-label">{{'dateTo' | translate}}</label>
 					<div class="col-sm-4">
-						<div date ng-model="searchOptions.to" require="false"></div>
+						<div date ng-model="reportData.to" require="false"></div>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">{{'company' | translate}}</label>
 					<div class="col-sm-4">
-						<div company ng-model="searchOptions.company"></div>
+						<div company ng-model="reportData.company"></div>
 					</div>
 					<label class="col-sm-2 control-label">{{'companyGroup' | translate}}</label>
 					<div class="col-sm-4">
-						<div company-group ng-model="searchOptions.company"></div>
+						<div company-group ng-model="reportData.companyGroup"></div>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">{{'costCenter' | translate}}</label>
 					<div class="col-sm-4">
-						<div cost-center ng-model="searchOptions.costCenter" require="false"></div>
+						<div cost-center ng-model="reportData.costCenter" require="false"></div>
 					</div>
 				</div>
 				<div class="form-group">

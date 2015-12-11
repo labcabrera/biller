@@ -23,9 +23,9 @@ import com.luckia.biller.core.services.SecurityService;
 @Provider
 public class SecurityInterceptor implements ContainerRequestFilter {
 
+	public static final ServerResponse ACCESS_FORBIDDEN = new ServerResponse("{\"message\":\"Access forbidden\"}", 403, new Headers<Object>());;
 	private static final Logger LOG = LoggerFactory.getLogger(SecurityInterceptor.class);
 	private static final String AUTHORIZATION_PROPERTY = "sessionid";
-	private static final ServerResponse ACCESS_FORBIDDEN = new ServerResponse("{\"message\":\"Access forbidden\"}", 403, new Headers<Object>());;
 
 	@Inject
 	private javax.inject.Provider<EntityManager> entityManagerProvider;

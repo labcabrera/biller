@@ -51,7 +51,6 @@
 	billerModule.controller('ReportAdjustmentsCtrl', [ '$scope', '$location', '$window', '$filter', function($scope, $location, $window, $filter) {
 		$scope.reportData = {};
 		$scope.generate = function() {
-			/*
 			$scope.message = null;
 			var from = $scope.reportData.from != null ? $filter('date')($scope.reportData.from, "yyyy-MM-dd") : null;
 			var to = $scope.reportData.to != null ? $filter('date')($scope.reportData.to, "yyyy-MM-dd") : null;
@@ -62,13 +61,12 @@
 				$scope.message = {code: 200, warnings: [ 'Es necesario establecer las fechas' ]};
 				return;
 			}
-			var url = 'rest/report/liquidation-summary?from=' + from;
+			var url = 'rest/report/adjustments?from=' + from;
 			url += '&to=' + to;
 			url += "&companyId=" + companyId;
 			url += "&costCenterId=" + costCenterId;
 			url += "&companyGroupId=" + companyGroupId;
 			$window.open(url, '_blank');
-			*/
 		};
 	}]);
 

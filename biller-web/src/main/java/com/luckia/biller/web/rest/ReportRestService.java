@@ -33,6 +33,7 @@ import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.common.Message;
+import com.luckia.biller.core.reporting.AdjustmentReportGenerator;
 import com.luckia.biller.core.reporting.LiquidationReportGenerator;
 import com.luckia.biller.core.reporting.LiquidationSummaryReportGenerator;
 import com.luckia.biller.core.reporting.TerminalReportGenerator;
@@ -45,6 +46,7 @@ import com.luckia.biller.core.services.FileService;
 public class ReportRestService extends AbstractBinaryRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ReportRestService.class);
+	private static final String DATE_FORMAT = "yyyy-MM-dd";
 
 	@Inject
 	private TerminalReportGenerator terminalReportGenerator;
@@ -52,6 +54,8 @@ public class ReportRestService extends AbstractBinaryRestService {
 	private LiquidationReportGenerator liquidationReportGenerator;
 	@Inject
 	private LiquidationSummaryReportGenerator liquidationSummaryReportGenerator;
+	@Inject
+	private AdjustmentReportGenerator adjustmentReportGenerator;
 	@Inject
 	private FileService fileService;
 
@@ -147,13 +151,45 @@ public class ReportRestService extends AbstractBinaryRestService {
 		}
 	}
 
+	@GET
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Path("/adjustments")
+	@PermitAll
+	public Response adjustments(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString, @QueryParam("companyId") String companyId,
+			@QueryParam("costCenterId") String costCenterId, @QueryParam("companyGroupId") String companyGroupId, @QueryParam("sessionid") String sessionId) {
+		if (!checkSessionId(sessionId)) {
+			// return SecurityInterceptor.ACCESS_FORBIDDEN;
+		}
+		try {
+			LOG.debug("Generating liquidation summary report ({},{},{},{})", fromAsString, toAsString, companyId, costCenterId);
+			EntityManager entityManager = entityManagerProvider.get();
+			Mutable<Date> from = new MutableObject<Date>();
+			Mutable<Date> to = new MutableObject<Date>();
+			calculateRange(fromAsString, toAsString, from, to);
+			Company company = StringUtils.isNotBlank(companyId) ? entityManager.find(Company.class, Long.parseLong(companyId)) : null;
+			CostCenter costCenter = StringUtils.isNotBlank(costCenterId) ? entityManager.find(CostCenter.class, Long.parseLong(costCenterId)) : null;
+			CompanyGroup companyGroup = StringUtils.isNotBlank(companyGroupId) ? entityManager.find(CompanyGroup.class, Long.parseLong(companyGroupId)) : null;
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			adjustmentReportGenerator.generate(from.getValue(), to.getValue(), company, companyGroup, costCenter, out);
+			InputStream in = new ByteArrayInputStream(out.toByteArray());
+			ResponseBuilder response = Response.ok(in);
+			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "Ajustes manuales.xls"));
+			response.header("Content-Type", FileService.CONTENT_TYPE_EXCEL);
+			return response.build();
+		} catch (NoAvailableDataException ex) {
+			return sendRedirect(REDIRECT_NO_CONTENT_URI);
+		} catch (Exception ex) {
+			throw new RuntimeException("Liquidation report summary generation error", ex);
+		}
+	}
+
 	private void calculateRange(String fromAsString, String toAsString, Mutable<Date> resultFrom, Mutable<Date> resultTo) {
 		try {
 			if (StringUtils.isNotBlank(fromAsString)) {
-				resultFrom.setValue(new SimpleDateFormat("yyyy-MM-dd").parse(fromAsString));
+				resultFrom.setValue(new SimpleDateFormat(DATE_FORMAT).parse(fromAsString));
 			}
 			if (StringUtils.isNotBlank(toAsString)) {
-				resultTo.setValue(new SimpleDateFormat("yyyy-MM-dd").parse(toAsString));
+				resultTo.setValue(new SimpleDateFormat(DATE_FORMAT).parse(toAsString));
 			}
 			return;
 		} catch (Exception ignore) {
