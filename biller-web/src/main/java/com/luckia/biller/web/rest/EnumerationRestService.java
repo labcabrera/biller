@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.StoreType;
 import com.luckia.biller.core.model.UserActivityType;
+import com.luckia.biller.core.model.VatLiquidationType;
 
 @Path("/enumeration")
 @Consumes({ "application/json; charset=UTF-8" })
@@ -33,6 +34,12 @@ public class EnumerationRestService {
 	@Path("/storeType")
 	public List<StoreType> storeTypes() {
 		return Arrays.asList(StoreType.values());
+	}
+
+	@GET
+	@Path("/vatLiquidationType")
+	public List<VatLiquidationType> vatLiquidationType() {
+		return Arrays.asList(VatLiquidationType.values());
 	}
 
 	@GET

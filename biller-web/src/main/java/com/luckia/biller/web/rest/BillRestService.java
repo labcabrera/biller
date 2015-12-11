@@ -215,7 +215,7 @@ public class BillRestService {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			Bill bill = entityManager.find(Bill.class, id);
-			stateMachineService.createTransition(bill, CommonState.Draft.name());
+			stateMachineService.createTransition(bill, CommonState.DRAFT.name());
 			return new Message<>(Message.CODE_SUCCESS, "Estado actualizado", bill);
 		} catch (Exception ex) {
 			LOG.error("Error al revertir el estado de la factura", ex);

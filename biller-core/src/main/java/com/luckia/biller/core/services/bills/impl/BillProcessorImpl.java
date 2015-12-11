@@ -95,7 +95,7 @@ public class BillProcessorImpl implements BillProcessor {
 		}
 		auditService.processCreated(bill);
 		entityManager.persist(bill);
-		stateMachineService.createTransition(bill, CommonState.Initial.name());
+		stateMachineService.createTransition(bill, CommonState.INITIAL.name());
 		return bill;
 	}
 
@@ -116,7 +116,7 @@ public class BillProcessorImpl implements BillProcessor {
 			entityManager.merge(i);
 		}
 		entityManager.merge(bill);
-		stateMachineService.createTransition(bill, CommonState.Draft.name());
+		stateMachineService.createTransition(bill, CommonState.DRAFT.name());
 		entityManager.flush();
 	}
 
@@ -191,7 +191,7 @@ public class BillProcessorImpl implements BillProcessor {
 	public void confirmBill(Bill bill) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
-			stateMachineService.createTransition(bill, CommonState.Confirmed.name());
+			stateMachineService.createTransition(bill, CommonState.CONFIRMED.name());
 			// NOTA: pudiera ser que la factura se ha regenerado, en cuyo caso mantenemos el mismo numero de factura anterior
 			if (StringUtils.isBlank(bill.getCode())) {
 				billCodeGenerator.generateCode(bill);
@@ -219,7 +219,7 @@ public class BillProcessorImpl implements BillProcessor {
 	@Transactional
 	public Bill rectifyBill(Bill bill) {
 		EntityManager entityManager = entityManagerProvider.get();
-		stateMachineService.createTransition(bill, CommonState.Rectified.name());
+		stateMachineService.createTransition(bill, CommonState.RECTIFIED.name());
 		Bill rectified = new Bill();
 		rectified.setId(UUID.randomUUID().toString());
 		rectified.setBillDate(bill.getBillDate());
@@ -242,7 +242,7 @@ public class BillProcessorImpl implements BillProcessor {
 			entityManager.persist(rectified);
 		}
 		entityManager.merge(rectified);
-		stateMachineService.createTransition(rectified, CommonState.Draft.name());
+		stateMachineService.createTransition(rectified, CommonState.DRAFT.name());
 		processResults(bill);
 		return rectified;
 	}

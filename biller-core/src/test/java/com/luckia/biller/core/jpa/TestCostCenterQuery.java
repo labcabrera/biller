@@ -35,7 +35,7 @@ public class TestCostCenterQuery {
 			sb.append("order by l.billDate desc, l.id");
 
 			TypedQuery<Liquidation> query = entityManager.createQuery(sb.toString(), Liquidation.class);
-			query.setParameter("states", Arrays.asList(CommonState.Confirmed, CommonState.Sent));
+			query.setParameter("states", Arrays.asList(CommonState.CONFIRMED, CommonState.SENT));
 			query.setMaxResults(5);
 			List<Liquidation> list = query.getResultList();
 			for (Liquidation i : list) {

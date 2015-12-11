@@ -10,11 +10,12 @@
 				<table class="table table-hover table-condensed">
 					<tr>
 						<th>{{'name' | translate}}</a></th>
-						<th>{{'stakes' | translate}}</th>
-						<th>{{'GGR' | translate}}</th>
-						<th>{{'NGR' | translate}}</th>
-						<th>{{'NR' | translate}}</th>
-						<th>{{'SAT' | translate}}</th>
+						<th class="data-amount">{{'stakes' | translate}}</th>
+						<th class="data-amount">{{'GGR' | translate}}</th>
+						<th class="data-amount">{{'NGR' | translate}}</th>
+						<th class="data-amount">{{'NR' | translate}}</th>
+						<th class="data-amount">{{'SAT' | translate}}</th>
+						<th class="data-amount">{{'coOperatingMonthlyFees' | translate}}</th>
 						<th></th>
 					</tr>
 					<tr ng-repeat="model in results.results">
@@ -24,6 +25,7 @@
 						<td class="data-amount">{{model.companyModel.ngrPercent}}</td>
 						<td class="data-amount">{{model.companyModel.nrPercent}}</td>
 						<td class="data-amount">{{model.companyModel.satMonthlyFees}}</td>
+						<td class="data-amount">{{model.companyModel.coOperatingMonthlyFees}}</td>
 						<td>
 							<a class="btn btn-warning btn-sm" href="#/models/id/{{model.id}}">
 								<span class="glyphicon glyphicon-edit"></span>

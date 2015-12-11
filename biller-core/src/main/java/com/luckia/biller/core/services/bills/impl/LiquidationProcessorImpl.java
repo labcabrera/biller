@@ -114,7 +114,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		}
 		entityManager.merge(liquidation);
 		LOG.debug("Procesada la liquidacion de {}. Creando transicion a estado borrador", company.getName());
-		stateMachineService.createTransition(liquidation, CommonState.Draft.name());
+		stateMachineService.createTransition(liquidation, CommonState.DRAFT.name());
 		return liquidation;
 	}
 
@@ -189,7 +189,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		preValidateConfirmLiquidation(liquidation);
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
-			stateMachineService.createTransition(liquidation, CommonState.Confirmed.name());
+			stateMachineService.createTransition(liquidation, CommonState.CONFIRMED.name());
 			// NOTA: pudiera ser que la liquidacion se ha regenerado, en cuyo caso mantenemos el mismo numero de liquidacion
 			if (StringUtils.isBlank(liquidation.getCode())) {
 				liquidationCodeGenerator.generateCode(liquidation);
@@ -314,7 +314,7 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	 */
 	private void preValidateConfirmLiquidation(Liquidation liquidation) {
 		for (Bill i : liquidation.getBills()) {
-			if (CommonState.Draft.name().equals(i.getCurrentState().getStateDefinition().getId())) {
+			if (CommonState.DRAFT.name().equals(i.getCurrentState().getStateDefinition().getId())) {
 				throw new ValidationException(i18nService.getMessage("liquidation.confirm.error.unconfirmedBills"));
 			}
 		}

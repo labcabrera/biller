@@ -65,7 +65,7 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 			bonus.setBonusDate(range.getMaximum());
 			EntityManager entityManager = entityManagerProvider.get();
 			auditService.processCreated(bonus);
-			stateMachineService.createTransition(bonus, CommonState.Draft.name());
+			stateMachineService.createTransition(bonus, CommonState.DRAFT.name());
 			entityManager.persist(bonus);
 		} catch (Exception ex) {
 			throw new RuntimeException("Error al calcular el rappel del establecimiento " + store.getName(), ex);
@@ -91,7 +91,7 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	@Transactional
 	public void confirm(RappelStoreBonus bonus) {
 		EntityManager entityManager = entityManagerProvider.get();
-		stateMachineService.createTransition(bonus, CommonState.Confirmed.name());
+		stateMachineService.createTransition(bonus, CommonState.CONFIRMED.name());
 		entityManager.persist(bonus);
 	}
 

@@ -146,7 +146,7 @@ public abstract class PDFGenerator<T> {
 	 * @param bill
 	 */
 	protected void addWaterMark(Document document, PdfWriter writer, AbstractBill bill) {
-		if (CommonState.Draft.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
+		if (CommonState.DRAFT.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
 			PdfContentByte canvas = writer.getDirectContent();
 			Phrase phrase = new Phrase("BORRADOR", waterMarkFont);
 			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase, 280f, 400f, 45f);

@@ -152,7 +152,7 @@ public class LiquidationRestService {
 			entityManager.getEntityManagerFactory().getCache().evictAll();
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
 			for (Bill bill : liquidation.getBills()) {
-				if (CommonState.Draft.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
+				if (CommonState.DRAFT.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
 					billProcessor.confirmBill(bill);
 				}
 			}
@@ -286,7 +286,7 @@ public class LiquidationRestService {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
-			stateMachineService.createTransition(liquidation, CommonState.Draft.name());
+			stateMachineService.createTransition(liquidation, CommonState.DRAFT.name());
 			return new Message<>(Message.CODE_SUCCESS, "Estado actualizado", liquidation);
 		} catch (Exception ex) {
 			LOG.error("Error al revertir el estado de la liquidacion", ex);

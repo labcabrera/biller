@@ -19,7 +19,7 @@ public class StateDefinitionFeeder implements Feeder<StateDefinition> {
 	public void loadEntities(InputStream source) {
 		EntityManager entityManager = entityManagerProvider.get();
 		for (CommonState state : CommonState.values()) {
-			entityManager.persist(new StateDefinition(state.name(), Bill.class, state.desc()));
+			entityManager.persist(new StateDefinition(state.name(), Bill.class, state.name()));
 		}
 	}
 }

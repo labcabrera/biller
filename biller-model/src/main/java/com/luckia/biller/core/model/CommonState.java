@@ -1,45 +1,43 @@
 package com.luckia.biller.core.model;
 
 /**
- * Tipo enumerado que establece diferentes estados genéricos de las entidades.
+ * Tipo enumerado que establece diferentes estados genéricos de las entidades factura y liquidacion.
+ * 
+ * @see AbstractBill
+ * @see Bill
+ * @see Liquidation
+ * @see StateDefinition
  */
 public enum CommonState {
+
 	/**
 	 * El elemento La factura ha sido creada y persistida pero aun no se han calculado los detalles que la componen.
 	 */
-	Initial("Creada"),
+	INITIAL,
 
 	/**
 	 * Elemento generado de forma automatica que está pendiente de ser validado por un operador de la aplicación.
 	 */
-	Draft("Borrador"),
+	DRAFT,
 
 	/**
 	 * Elemento aprobado por un operador.
 	 */
-	Confirmed("Confirmada"),
-
-	/** Elemento enviado por correo. */
-	Sent("Enviada"),
-
-	/** El elemento sin efecto carente de información.  */
-	Empty("Sin resultado"),
-
-	/** La factura se ha rectificado. */
-	Rectified("Rectificada");
-
-	private String desc;
-
-	private CommonState(String desc) {
-		this.desc = desc;
-	}
+	CONFIRMED,
 
 	/**
-	 * Obtiene el literal asociado al estado.
-	 * 
-	 * @return literal
+	 * Elemento enviado por correo.
 	 */
-	public String desc() {
-		return desc;
-	}
+	SENT,
+
+	/**
+	 * El elemento sin efecto carente de información.
+	 */
+	EMPTY,
+
+	/**
+	 * La factura ha sido rectificada.
+	 */
+	RECTIFIED;
+
 }

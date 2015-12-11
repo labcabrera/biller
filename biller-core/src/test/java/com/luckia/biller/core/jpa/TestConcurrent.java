@@ -31,7 +31,7 @@ public class TestConcurrent {
 		EntityManager entityManager = entityManagerProvider.get();
 		String qlString = "select e from Liquidation e where e.currentState.stateDefinition.id = :state";
 		TypedQuery<Liquidation> query = entityManager.createQuery(qlString, Liquidation.class);
-		query.setParameter("state", CommonState.Sent.name());
+		query.setParameter("state", CommonState.SENT.name());
 		query.setMaxResults(1);
 		Liquidation liquidation = query.getSingleResult();
 

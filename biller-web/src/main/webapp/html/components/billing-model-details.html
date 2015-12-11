@@ -67,11 +67,10 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label input-sm">{{'vatLiquidationType' | translate}}</label>
 				<div class="col-sm-6">
-					<select class="form-control" ng-model="entity.vatLiquidationType" ng-readonly="isReadOnly">
-						<option value="EXCLUDED">{{'vatLiquidationType.EXCLUDED' | translate}}</option>
-						<option value="LIQUIDATION_INCLUDED">{{'vatLiquidationType.LIQUIDATION_INCLUDED' | translate}}</option>
-						<option value="LIQUIDATION_ADDED">{{'vatLiquidationType.LIQUIDATION_ADDED' | translate}}</option>
-					</select>
+					<div select-enum enum-name="vatLiquidationType" ng-model="entity.vatLiquidationType" is-read-only="isReadOnly"></div>
+				</div>
+				<div class="checkbox">
+					<label> <input type="checkbox"> {{'includePdfBills' | translate}}</label>
 				</div>
 			</div>
 			<div class="form-group">
@@ -79,8 +78,10 @@
 				<div class="col-sm-6">
 					<div company ng-model="entity.receiver" is-read-only="isReadOnly"></div>
 				</div>
+				<div class="checkbox">
+					<label> <input type="checkbox"> {{'includePdfDetails' | translate}}</label>
+				</div>
 			</div>
-
 		</div>
 		<div class="panel-heading">{{'store' | translate}}</div>
 		<div class="panel-body">

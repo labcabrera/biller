@@ -47,7 +47,7 @@ public class LiquidationMailService {
 			SendLocalFileMailTask task = new SendLocalFileMailTask(emailAddress, tmpFile.getAbsolutePath(), title, title, body, mailService, deleteOnExit);
 			new Thread(task).start();
 			if (updateState) {
-				stateMachineService.createTransition(liquidation, CommonState.Sent.name());
+				stateMachineService.createTransition(liquidation, CommonState.SENT.name());
 			}
 		} catch (Exception ex) {
 			throw new RuntimeException("Error durante el envio del correo", ex);

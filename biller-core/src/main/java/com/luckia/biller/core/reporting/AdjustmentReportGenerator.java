@@ -88,7 +88,7 @@ public class AdjustmentReportGenerator extends BaseReport {
 		sb.append("order by l.billDate, l.id");
 		EntityManager entityManager = entityManagerProvider.get();
 		TypedQuery<Liquidation> query = entityManager.createQuery(sb.toString(), Liquidation.class);
-		query.setParameter("states", Arrays.asList(CommonState.Confirmed, CommonState.Sent));
+		query.setParameter("states", Arrays.asList(CommonState.CONFIRMED, CommonState.SENT));
 		query.setParameter("from", from);
 		query.setParameter("to", to);
 		if (company != null) {

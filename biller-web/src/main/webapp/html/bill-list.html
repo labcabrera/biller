@@ -8,9 +8,9 @@
 		<div ng-if="results.results.length > 0">
 			<table class="table table-hover table-condensed">
 				<tr>
-					<th>{{'number' | translate}}</th>
 					<th>{{'store' | translate}}</th>
 					<th>{{'company' | translate}}</th>
+					<th>{{'code' | translate}}</th>
 					<th>{{'state' | translate}}</th>
 					<th>{{'date' | translate}}</th>
 					<th>{{'type' | translate}}</th>
@@ -18,9 +18,9 @@
 					<th></th>
 				</tr>
 				<tr ng-repeat="result in results.results">
-					<td><a href="#/bills/id/{{result.id}}">{{result.code != null ? result.code : 'Borrador'}}</a></td>
-					<td>{{ result.sender.name | limitTo: 18 }}{{result.sender.name.length > 18 ? '...' : ''}}</td>
-					<td>{{ result.receiver.name | limitTo: 18 }}{{result.receiver.name.length > 18 ? '...' : ''}}</td>
+					<td><a href="#/bills/id/{{result.id}}">{{ result.sender.name | limitTo: 18 }}{{result.sender.name.length > 18 ? '...' : ''}}</a></td>
+					<td><a href="#/bills/id/{{result.id}}">{{ result.receiver.name | limitTo: 18 }}{{result.receiver.name.length > 18 ? '...' : ''}}</a></td>
+					<td>{{result.code != null ? result.code : 'Borrador'}}</a></td>
 					<td>
 						<center>
 							<span ng-if="result.currentState.stateDefinition.id == 'Draft'" class="glyphicon glyphicon-exclamation-sign text-danger" title="Borrador"></span>

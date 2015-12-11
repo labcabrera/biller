@@ -68,11 +68,11 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 	@Embedded
 	private AuditData auditData;
 
-	/**
-	 * Flag que determina si las facturas se incluyen dentro de la liquidacion de un operador.
-	 */
-	@Column(name = "INCLUDE_STORES")
-	private Boolean includeStoresInZipFile;
+	@Column(name = "INCLUDE_PDF_BILLS")
+	private Boolean includePdfBills;
+
+	@Column(name = "INCLUDE_PDF_DETAILS")
+	private Boolean includePdfDetails;
 
 	/**
 	 * Tipo de calculo del IVA aplicado.
@@ -138,12 +138,20 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 		this.auditData = auditData;
 	}
 
-	public Boolean getIncludeStoresInZipFile() {
-		return includeStoresInZipFile;
+	public Boolean getIncludePdfBills() {
+		return includePdfBills;
 	}
 
-	public void setIncludeStoresInZipFile(Boolean includeStoresInZipFile) {
-		this.includeStoresInZipFile = includeStoresInZipFile;
+	public void setIncludePdfBills(Boolean includePdfBills) {
+		this.includePdfBills = includePdfBills;
+	}
+
+	public Boolean getIncludePdfDetails() {
+		return includePdfDetails;
+	}
+
+	public void setIncludePdfDetails(Boolean includePdfDetails) {
+		this.includePdfDetails = includePdfDetails;
 	}
 
 	public VatLiquidationType getVatLiquidationType() {
@@ -181,7 +189,8 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 				}
 				storeModel.merge(entity.storeModel);
 			}
-			this.includeStoresInZipFile = entity.includeStoresInZipFile;
+			this.includePdfBills = entity.includePdfBills;
+			this.includePdfDetails = entity.includePdfDetails;
 			this.name = entity.name;
 			this.vatLiquidationType = entity.vatLiquidationType;
 			this.receiver = entity.receiver;

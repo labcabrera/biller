@@ -9,4 +9,23 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet author="lab.cabrera" id="model-changes">
+		<addColumn tableName="B_BILLING_MODEL">
+			<column name="INCLUDE_PDF_BILLS" type="BOOLEAN" />
+			<column name="INCLUDE_PDF_DETAILS" type="BOOLEAN" />
+		</addColumn>
+		<dropColumn tableName="B_BILLING_MODEL">
+			<column name="INCLUDE_STORES"></column>
+		</dropColumn>
+	</changeSet>
+
+	<changeSet author="lab.cabrera" id="refactor-common-states">
+		<sql>update S_STATE set STATE_DEFINITION_ID = 'INITIAL' where STATE_DEFINITION_ID = 'Initial'</sql>
+		<sql>update S_STATE set STATE_DEFINITION_ID = 'DRAFT' where STATE_DEFINITION_ID = 'Draft'</sql>
+		<sql>update S_STATE set STATE_DEFINITION_ID = 'CONFIRMED' where STATE_DEFINITION_ID = 'Confirmed'</sql>
+		<sql>update S_STATE set STATE_DEFINITION_ID = 'SENT' where STATE_DEFINITION_ID = 'Sent'</sql>
+		<sql>update S_STATE set STATE_DEFINITION_ID = 'EMPTY' where STATE_DEFINITION_ID = 'Empty'</sql>
+		<sql>update S_STATE set STATE_DEFINITION_ID = 'RECTIFIED' where STATE_DEFINITION_ID = 'Rectified'</sql>
+	</changeSet>
+
 </databaseChangeLog>
