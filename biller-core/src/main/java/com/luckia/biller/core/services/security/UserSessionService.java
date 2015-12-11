@@ -1,6 +1,5 @@
 package com.luckia.biller.core.services.security;
 
-import java.security.MessageDigest;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -16,27 +15,20 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.User;
 import com.luckia.biller.core.model.UserSession;
 import com.luckia.biller.core.model.common.Message;
+import com.luckia.biller.core.services.entities.UserService;
 
 public class UserSessionService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(UserSessionService.class);
-
-	@Inject	
-	private Provider<EntityManager> entityManagerProvider;
-
 	@Inject
-	@Named("security.password-digest-algoritm")
-	private String passwordDigestAlgoritm;
+	private Provider<EntityManager> entityManagerProvider;
+	@Inject
+	private UserService userService;
 
 	@Inject
 	@Named("security.session-expiration-minutes")
@@ -51,7 +43,7 @@ public class UserSessionService {
 			return result.withCode("404").addError("login.invalid.user");
 		}
 		for (User user : users) {
-			String digest = calculatePasswordDigest(password);
+			String digest = userService.calculatePasswordDigest(password);
 			if (digest.equals(user.getPasswordDigest())) {
 				UserSession session = createSession(user);
 				Map<String, Object> map = new LinkedHashMap<>();
@@ -116,19 +108,6 @@ public class UserSessionService {
 		EntityManager entityManager = entityManagerProvider.get();
 		Query query = entityManager.createQuery("delete from UserSession e where e.session = :sessionId");
 		query.setParameter("sessionId", sessionId).executeUpdate();
-	}
-
-	public String calculatePasswordDigest(String password) {
-		try {
-			Validate.notNull(passwordDigestAlgoritm, "Invalid configuration digest password algoritm");
-			MessageDigest digest = MessageDigest.getInstance(passwordDigestAlgoritm);
-			digest.reset();
-			byte[] rawDigest = digest.digest(password.getBytes("UTF-8"));
-			return new String(Hex.encodeHex(rawDigest));
-		} catch (Exception ex) {
-			LOG.error("Digest calculation error", ex);
-			throw new RuntimeException(ex);
-		}
 	}
 
 	private Date calculateExpiration(Date date) {

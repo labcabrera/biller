@@ -59,6 +59,8 @@ public enum UserActivityType {
 
 	OWNER_REMOVE,
 
-	PROVINCE_TAX_MERGE
+	PROVINCE_TAX_MERGE,
+
+	USER_MERGE
 
 }
