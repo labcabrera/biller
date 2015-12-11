@@ -35,7 +35,6 @@ import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.UserActivityType;
-import com.luckia.biller.core.model.UserRole;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
@@ -46,7 +45,6 @@ import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.LiquidationEntityService;
 import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
-import com.luckia.biller.core.services.security.RequiredRole;
 
 /**
  * Servio REST asociado a las liquidaciones.
@@ -270,7 +268,7 @@ public class LiquidationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/{id}")
-	@RequiredRole(any = { UserRole.OPERATOR, UserRole.ADMIN })
+	// @RequiredRole(any = { UserRole.OPERATOR, UserRole.ADMIN })
 	public Message<Liquidation> recalculate(@PathParam("id") String liquidationId) {
 		try {
 			Liquidation liquidation = liquidationProcessor.recalculate(liquidationId);
