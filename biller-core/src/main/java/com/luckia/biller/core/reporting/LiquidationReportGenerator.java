@@ -82,9 +82,7 @@ public class LiquidationReportGenerator extends BaseReport {
 			currentRow = createFooter(sheet, currentRow, liquidation);
 			currentRow += 3;
 		}
-		for (int i = 0; i < 40; i++) {
-			sheet.autoSizeColumn(i);
-		}
+		autoSizeColumns(sheet, 40);
 	}
 
 	private int createHeader(HSSFSheet sheet, int currentRow) {

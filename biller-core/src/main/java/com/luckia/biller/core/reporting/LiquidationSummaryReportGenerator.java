@@ -95,9 +95,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			HSSFSheet sheet = workbook.createSheet(sheetName.toString());
 			configureHeaders(sheet);
 			createReportData(sheet, from, to, company, costCenter, companyGroup);
-			for (int i = 0; i < 30; i++) {
-				sheet.autoSizeColumn(i);
-			}
+			autoSizeColumns(sheet, 40);
 			workbook.write(out);
 			out.flush();
 			out.close();

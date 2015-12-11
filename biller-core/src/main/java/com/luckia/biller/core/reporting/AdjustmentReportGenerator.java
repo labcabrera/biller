@@ -56,9 +56,7 @@ public class AdjustmentReportGenerator extends BaseReport {
 				Liquidation liquidation = liquidations.get(i);
 				currentRow = createLiquidationDetails(sheet, currentRow, liquidation);
 			}
-			for (int i = 0; i < 40; i++) {
-				sheet.autoSizeColumn(i);
-			}
+			autoSizeColumns(sheet, 10);
 			workbook.write(out);
 			out.flush();
 			out.close();
@@ -169,4 +167,5 @@ public class AdjustmentReportGenerator extends BaseReport {
 		}
 		return currentRow;
 	}
+
 }

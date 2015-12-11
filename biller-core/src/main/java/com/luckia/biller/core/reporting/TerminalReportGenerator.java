@@ -116,9 +116,7 @@ public class TerminalReportGenerator extends BaseReport {
 					}
 				}
 			}
-			for (int i = 0; i < 20; i++) {
-				sheet.autoSizeColumn(i);
-			}
+			autoSizeColumns(sheet, 20);
 			workbook.write(out);
 			out.flush();
 			out.close();

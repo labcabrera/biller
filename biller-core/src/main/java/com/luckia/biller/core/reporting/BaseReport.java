@@ -152,4 +152,12 @@ public abstract class BaseReport {
 		style.setFont(font);
 		return style;
 	}
+
+	protected void autoSizeColumns(HSSFSheet sheet, int cols) {
+		for (int i = 0; i < cols; i++) {
+			sheet.autoSizeColumn(i);
+			int w = sheet.getColumnWidth(i);
+			sheet.setColumnWidth(i, w + 20);
+		}
+	}
 }
