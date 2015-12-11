@@ -31,6 +31,9 @@
 	<changeSet author="lab.cabrera" id="billing-model-receiver">
 		<sql>update B_BILLING_MODEL set RECEIVER_ID = 198 where RECEIVER_ID is null</sql>
 	</changeSet>
-	
+
+	<changeSet author="lab.cabrera" id="billing-model-includes">
+		<sql>update B_BILLING_MODEL set INCLUDE_PDF_BILLS = true, INCLUDE_PDF_DETAILS = false</sql>
+	</changeSet>
 
 </databaseChangeLog>

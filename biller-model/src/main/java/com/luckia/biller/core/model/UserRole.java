@@ -9,6 +9,10 @@ import javax.persistence.Table;
 @Table(name = "S_USER_ROLE")
 public class UserRole {
 
+	public static final String ADMIN = "Administrador";
+	public static final String OPERATOR = "Operador";
+	public static final String READ_ONLY = "Lectura";
+
 	@Id
 	@Column(name = "ID")
 	private Long id;

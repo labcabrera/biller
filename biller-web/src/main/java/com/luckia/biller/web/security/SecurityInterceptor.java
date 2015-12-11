@@ -17,8 +17,11 @@ import org.jboss.resteasy.core.ServerResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.model.User;
+import com.luckia.biller.core.model.UserRole;
 import com.luckia.biller.core.model.UserSession;
 import com.luckia.biller.core.services.SecurityService;
+import com.luckia.biller.core.services.security.RequiredRole;
 
 @Provider
 public class SecurityInterceptor implements ContainerRequestFilter {
@@ -53,6 +56,24 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 				LOG.debug("Session not found");
 				requestContext.abortWith(ACCESS_FORBIDDEN);
 				return;
+			}
+			if (method.isAnnotationPresent(RequiredRole.class)) {
+				User user = session.getUser();
+				RequiredRole requiredRole = method.getAnnotation(RequiredRole.class);
+				boolean validRole = false;
+				for (String role : requiredRole.any()) {
+					for (UserRole userRole : user.getRoles()) {
+						if (role.equals(userRole.getName())) {
+							validRole = true;
+							break;
+						}
+					}
+				}
+				if (!validRole) {
+					LOG.debug("Invalid role groups");
+					requestContext.abortWith(ACCESS_FORBIDDEN);
+					return;
+				}
 			}
 			securityService.setCurrentUser(session.getUser());
 		}

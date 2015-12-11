@@ -1,8 +1,8 @@
 subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse-wtp'
-    apply plugin: 'findbugs'
-    //apply plugin: 'sonar'
+    // apply plugin: 'findbugs'
+    // apply plugin: 'sonar'
 
     repositories {
        mavenCentral()
