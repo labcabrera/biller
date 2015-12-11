@@ -70,7 +70,7 @@
 					<div select-enum enum-name="vatLiquidationType" ng-model="entity.vatLiquidationType" is-read-only="isReadOnly"></div>
 				</div>
 				<div class="checkbox">
-					<label> <input type="checkbox"> {{'includePdfBills' | translate}}</label>
+					<label> <input type="checkbox" ng-model="entity.includePdfBills" ng-readonly="isReadOnly"> {{'includePdfBills' | translate}}</label>
 				</div>
 			</div>
 			<div class="form-group">
@@ -79,7 +79,7 @@
 					<div company ng-model="entity.receiver" is-read-only="isReadOnly"></div>
 				</div>
 				<div class="checkbox">
-					<label> <input type="checkbox"> {{'includePdfDetails' | translate}}</label>
+					<label> <input type="checkbox" ng-model="entity.includePdfDetails" ng-readonly="isReadOnly"> {{'includePdfDetails' | translate}}</label>
 				</div>
 			</div>
 		</div>
