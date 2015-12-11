@@ -27,5 +27,10 @@
 		<sql>update S_STATE set STATE_DEFINITION_ID = 'EMPTY' where STATE_DEFINITION_ID = 'Empty'</sql>
 		<sql>update S_STATE set STATE_DEFINITION_ID = 'RECTIFIED' where STATE_DEFINITION_ID = 'Rectified'</sql>
 	</changeSet>
+	
+	<changeSet author="lab.cabrera" id="billing-model-receiver">
+		<sql>update B_BILLING_MODEL set RECEIVER_ID = 198 where RECEIVER_ID is null</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>
