@@ -6,28 +6,41 @@
 		
 		<message-error-panel ng-model="message" auto-close="true"></message-error-panel>
 		
-		<table class="table table-condensed">
-			<thead>
-				<tr>
-					<th>{{'alias' | translate}}</th>
-					<th>{{'name' | translate}}</th>
-					<th>{{'email' | translate}}</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr class="animate-pagination" ng-repeat="user in results.results">
-					<td>{{user.alias}}</td>
-					<td>{{user.name}}</td>
-					<td>{{user.email}}</td>
-					<td>
-						<a class="btn btn-warning btn-sm" href="#/admin/users/id/{{user.id}}">
-							<span class="glyphicon glyphicon-edit"></span>
-						</a>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<div ng-if="results.results.length < 1">{{'noResults' | translate}}</div>
+		<div ng-if="results.results.length > 0">
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>{{'alias' | translate}}</th>
+						<th>{{'name' | translate}}</th>
+						<th>{{'email' | translate}}</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="animate-pagination" ng-repeat="user in results.results">
+						<td>{{user.alias}}</td>
+						<td>{{user.name}}</td>
+						<td>{{user.email}}</td>
+						<td>
+							<a class="btn btn-warning btn-sm" href="#/admin/users/id/{{user.id}}">
+								<span class="glyphicon glyphicon-edit"></span>
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<search-result-pagination></search-result-pagination>
+		<div class="pull-right">
+				<a href="#/admin/users/new">
+					<h1>
+						<span class="glyphicon glyphicon-plus-sign text-primary" aria-hidden="true"></span>
+					</h1>
+				</a>
+			</div>
+		
 	</div>
 	<div class="col-sm-3">
 		<div class="m-top-40">

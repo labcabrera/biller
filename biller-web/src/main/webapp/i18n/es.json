@@ -1,4 +1,5 @@
 {
+	"add": "Añadir",
 	"addAdjustment": "Añadir ajuste",
 	"addCompanyGroup": "Añadir grupo de empresas",
 	"addBillDetail": "Añadir ajuste",
@@ -165,6 +166,8 @@
 	"owner": "Titular",
 	"owners": "Titulares",
 	"owner.remove.confirmation": "¿Se va a eliminar el titular?",
+	"password": "Contraseña",
+	"passwordConfirm": "Confirmar contraseña",
 	"phoneNumber": "Número de teléfono",
 	"prepareBillRecalculation": "Preparar",
 	"previous": "Anterior",

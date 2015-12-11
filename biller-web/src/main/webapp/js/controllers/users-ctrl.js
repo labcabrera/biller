@@ -39,9 +39,19 @@
 		$scope.load = function() {
 			$http.get('rest/users/id/' + $routeParams.id).success(function(data) {
 				$scope.entity = data;
-			});
-			$http.get('rest/users/roles').success(function(data) {
-				$scope.roles = data;
+				$http.get('rest/users/roles').success(function(data) {
+					$scope.availableRoles = data;
+					var current = [];
+					for(var i=0; i<$scope.entity.roles.length; i++) {
+						current.push($scope.entity.roles[i].id);
+					};
+					console.log("current: " + current);
+					for(var i = $scope.availableRoles.length -1; i >= 0 ; i--){
+					    if(current.indexOf($scope.availableRoles[i].id) > -1){
+					    	$scope.availableRoles.splice(i, 1);
+					    }
+					};
+				});
 			});
 			$rootScope.isReadOnly = true;
 		};
@@ -63,7 +73,30 @@
 				});				
 			});
 		};
+		$scope.addRole = function(role) {
+			console.log("add role " + role)
+			if($scope.entity.roles == null) {
+				$scope.entity.roles = [];
+			}
+			$scope.entity.roles.push(role);
+			console.log("index " + role)
+			$scope.availableRoles.splice($scope.availableRoles.indexOf(role), 1);
+		};
+		$scope.removeRole = function(role) {
+			console.log("remove role " + role)
+			var index = $scope.entity.roles.indexOf(role);
+			console.log("index " + role)
+			$scope.entity.roles.splice(index, 1);
+			$scope.availableRoles.push(role);
+		};
 		$scope.load();
 	} ]);
+	
+	billerModule.controller('UserNewCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $filter, dialogs, messageService) {
+		$scope.load = function() {
+			$rootScope.isReadOnly = false;
+		}
+		$scope.load();
+	} ]);	
 	
 })();
