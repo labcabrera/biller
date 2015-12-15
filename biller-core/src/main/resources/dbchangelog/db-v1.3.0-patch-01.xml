@@ -79,5 +79,12 @@
 		<sql>update B_BILLING_MODEL set INCLUDE_PDF_BILLS = true, INCLUDE_PDF_DETAILS = false</sql>
 	</changeSet>
 	
+	<changeSet author="lab.cabrera" id="legal-entity-version">
+		<addColumn tableName="B_LEGAL_ENTITY">
+			<column name="VERSION" type="INT" />
+		</addColumn>
+		<sql>update B_LEGAL_ENTITY set VERSION = 1</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>

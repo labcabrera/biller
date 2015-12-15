@@ -17,6 +17,7 @@
 		<class>com.luckia.biller.core.model.Company</class>
 		<class>com.luckia.biller.core.model.CompanyGroup</class>
 		<class>com.luckia.biller.core.model.CostCenter</class>
+		<class>com.luckia.biller.core.model.EntityHistory</class>
 		<class>com.luckia.biller.core.model.IdCard</class>
 		<class>com.luckia.biller.core.model.IspInfo</class>
 		<class>com.luckia.biller.core.model.Liquidation</class>

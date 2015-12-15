@@ -31,13 +31,5 @@
 * Refactor de los modelos de facturacion. Tener un modelo para bares y otro diferentes para operadores
 * Revisar apartado de modificacion del rappel del modelo (esta provocando un error)
 * Buscador titulares: posibilidad de buscar eliminados
-
-
-# CHECK-LIST
-* Revisar comportamiento fechas y UTC
-* Revisar reporte de liquidaciones tras cambio de modelo
-* Proceso de migración de facturas y liquidaciones
-* Revisar error paginacion facturas (por ejemplo SOLMAR VALENCIA en septiembre)
-* Unificar cuadros de mensajes
-* Migración de MANUAL_WITH_LIQUIDATION y MANUAL_WITHOUT_LIQUIDATION (2 registros solamente)	
+* Cleanup: remove unused bval(js-303) components
 	

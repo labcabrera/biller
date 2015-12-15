@@ -16,15 +16,16 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 import org.eclipse.persistence.annotations.JoinFetch;
 import org.eclipse.persistence.annotations.JoinFetchType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Entidad abstracta que representa una entidad legal. Hay diferentes tipos de entidades legales: personas, establecimientos, empresas, etc.
@@ -34,9 +35,9 @@ import org.eclipse.persistence.annotations.JoinFetchType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.CHAR, length = 1)
 @SuppressWarnings("serial")
-@NamedQueries({ @NamedQuery(name = "LegalEntity.selectByName", query = "select e from LegalEntity e where e.name = :name") })
-// @ValidLegalEntity
 public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Auditable {
+
+	private static final Logger LOG = LoggerFactory.getLogger(LegalEntity.class);
 
 	@Id
 	@Column(name = "ID")
@@ -82,6 +83,10 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 
 	@Embedded
 	protected AuditData auditData;
+
+	@Version
+	@Column(name = "VERSION")
+	protected Integer version;
 
 	public Long getId() {
 		return id;
@@ -147,10 +152,12 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 		this.comments = comments;
 	}
 
+	@Override
 	public AuditData getAuditData() {
 		return auditData;
 	}
 
+	@Override
 	public void setAuditData(AuditData auditData) {
 		this.auditData = auditData;
 	}
@@ -179,6 +186,14 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 		this.endDate = endDate;
 	}
 
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
 	public LegalEntity withName(String name) {
 		this.name = name;
 		return this;
@@ -191,6 +206,13 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 
 	@Override
 	public void merge(LegalEntity entity) {
+		if (entity == null) {
+			throw new NullPointerException("Null reference received in merge operation");
+		} else if (version.equals(entity.version)) {
+			// TODO throw exception
+			LOG.warn("Invalid entity version. Current: {}. Received: {}", version, entity.version);
+
+		}
 		if (this.address == null && entity.address != null) {
 			this.address = new Address();
 		}

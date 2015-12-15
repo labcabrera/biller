@@ -55,6 +55,7 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/index', { templateUrl : 'html/index.html'
 	}).when('/sequence-prefix', { templateUrl : 'html/sequence-prefix.html'
 	}).when('/forbidden', { templateUrl : 'html/403.html'
+	}).when('/not-found', { templateUrl : 'html/404.html'
 	}).when('/204', { templateUrl : 'html/204.html'
 	}).when('/', { templateUrl : 'html/index.html'
 	}).otherwise({ templateUrl : 'html/404.html'
@@ -169,7 +170,9 @@ billerModule.factory('authInterceptor', ['$rootScope', '$q', '$location', '$cook
 			return $q.reject(rejection);
 		},
 		response: function (response) {
-			if (response.status === 401 || response.status === 403) {
+			if (response.status === 404) {
+				$location.url("not-found");
+			}else if (response.status === 401 || response.status === 403) {
 				$location.url("forbidden");
 			}
 			return response || $q.when(response);

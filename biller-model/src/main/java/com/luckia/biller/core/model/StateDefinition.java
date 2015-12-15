@@ -27,7 +27,6 @@ public class StateDefinition implements Serializable {
 	private String id;
 
 	@Column(name = "ENTITY_CLASS", nullable = false, columnDefinition = "VARCHAR(256)")
-
 	@Convert(converter = ClassConverter.class)
 	@NotSerializable
 	private Class<? extends HasState> hasStateClass;
