@@ -38,6 +38,9 @@
 		</query>
 	</named-query>
 
-
+	<named-query name="AlertReceiver.selectEnabled">
+		<query><![CDATA[select e from AlertReceiver e where e.disabled = false]]>
+		</query>
+	</named-query>
 
 </entity-mappings>

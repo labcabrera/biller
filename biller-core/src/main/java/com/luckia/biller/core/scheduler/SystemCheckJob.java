@@ -28,15 +28,15 @@ public class SystemCheckJob extends BaseJob {
 	private void checkRepositoryFolder() {
 		String repositoryPath = injector.getInstance(Key.get(String.class, Names.named("repositoryPath")));
 		if (repositoryPath == null) {
-			alertService.hangleAlert("Missing configuration repository folder. Check app configuration");
+			alertService.handleAlert("Missing configuration repository folder. Check app configuration");
 		} else {
 			File folder = new File(repositoryPath);
 			if (!folder.exists()) {
-				alertService.hangleAlert(String.format("Missing repository folder '%s'", repositoryPath));
+				alertService.handleAlert(String.format("Missing repository folder '%s'", repositoryPath));
 			} else if (!folder.canRead()) {
-				alertService.hangleAlert(String.format("Invalid folder permissions '%s': cant read", repositoryPath));
+				alertService.handleAlert(String.format("Invalid folder permissions '%s': cant read", repositoryPath));
 			} else if (folder.canWrite()) {
-				alertService.hangleAlert(String.format("Invalid folder permissions '%s': cant write", repositoryPath));
+				alertService.handleAlert(String.format("Invalid folder permissions '%s': cant write", repositoryPath));
 			}
 		}
 	}

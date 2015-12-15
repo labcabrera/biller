@@ -22,7 +22,7 @@ import com.luckia.biller.core.common.ASTNode;
 /**
  * Clase que genera a partir de una expresión FIQL un {@link Predicate} de JPA.<br>
  * 
- * @see <a href="http://cxf.apache.org/javadoc/latest/org/apache/cxf/jaxrs/ext/search/FiqlParser.html">CXF FiqlParser</a>
+ * @see <a href="https://tools.ietf.org/html/draft-nottingham-atompub-fiql-00">FIQL (The Feed Item Query Language)</a>
  */
 public class FiqlParser {
 
@@ -117,7 +117,7 @@ public class FiqlParser {
 			}
 		}
 		if (ors.getSubnodes().size() == 1) {
-			return (ASTNode<Predicate>) ors.getSubnodes().get(0);
+			return ors.getSubnodes().get(0);
 		} else {
 			return ors;
 		}
@@ -178,6 +178,7 @@ public class FiqlParser {
 			return s;
 		}
 
+		@Override
 		public Predicate build() {
 			List<Predicate> predicates = new ArrayList<Predicate>();
 			for (Iterator<ASTNode<Predicate>> it = getSubnodes().iterator(); it.hasNext();) {

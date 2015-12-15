@@ -24,18 +24,22 @@ public final class MathUtils {
 		return !isZero(value);
 	}
 
-	/** Estrictamente menor que cero */
+	/**
+	 * Estrictamente menor que cero.
+	 */
 	public static final boolean isNegative(BigDecimal value) {
 		return BigDecimal.ZERO.compareTo(value) > 0L;
 	}
 
-	/** Estrictamente mayor que cero */
+	/**
+	 * Estrictamente mayor que cero.
+	 */
 	public static final boolean isPositive(BigDecimal value) {
 		return BigDecimal.ZERO.compareTo(value) < 0L;
 	}
 
 	/**
-	 * Devuelve <code>true</code> cuando el valor recibido es superior a cero.
+	 * Return <code>true</code> if value is greater than zero.
 	 * 
 	 * @param value
 	 * @return
@@ -44,11 +48,14 @@ public final class MathUtils {
 		return value != null && value.compareTo(BigDecimal.ZERO) > 0;
 	}
 
-	private MathUtils() {
-	}
-
 	public static BigDecimal safeNull(BigDecimal value) {
 		return value == null ? BigDecimal.ZERO : value;
+	}
+
+	/**
+	 * Prevent class instantiation.
+	 */
+	private MathUtils() {
 	}
 
 }

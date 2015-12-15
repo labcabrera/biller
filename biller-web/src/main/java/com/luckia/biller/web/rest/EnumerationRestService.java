@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import com.luckia.biller.core.model.AlertLevel;
 import com.luckia.biller.core.model.CommonState;
 import com.luckia.biller.core.model.StoreType;
 import com.luckia.biller.core.model.UserActivityType;
@@ -40,6 +41,12 @@ public class EnumerationRestService {
 	@Path("/vatLiquidationType")
 	public List<VatLiquidationType> vatLiquidationType() {
 		return Arrays.asList(VatLiquidationType.values());
+	}
+
+	@GET
+	@Path("/alertLevel")
+	public List<AlertLevel> alertLevel() {
+		return Arrays.asList(AlertLevel.values());
 	}
 
 	@GET

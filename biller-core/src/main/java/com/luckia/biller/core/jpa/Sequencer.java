@@ -33,18 +33,15 @@ public class Sequencer {
 
 	private final ReentrantLock lock;
 
-	/** Nombre de la tabla de secuencias */
 	private final String tableName;
 
-	/** Nombre de la columna que almacena el nombre de la secuencia */
 	private final String fieldName;
 
-	/** Nombre de la columna que almacena el valor de la secuencia */
 	private final String fieldValue;
 
 	@Inject
 	public Sequencer(Provider<EntityManager> entityManagerProvider) throws NoSuchFieldException, SecurityException {
-		LOG.debug("Inicializando sequencer");
+		LOG.debug("Initializing sequencer");
 		this.entityManagerProvider = entityManagerProvider;
 		Session session = entityManagerProvider.get().unwrap(Session.class);
 		ClassDescriptor desc = session.getClassDescriptor(Sequence.class);
@@ -77,7 +74,6 @@ public class Sequencer {
 			insertQuery.setSQLString(sqlInsert);
 			insertQuery.addArgument(fieldName);
 			writeSession.executeQuery(insertQuery, queryParams);
-
 		} else {
 			result = current.longValue() + 1L;
 			DataModifyQuery queryUpdate = new DataModifyQuery();
@@ -89,7 +85,7 @@ public class Sequencer {
 		if (!currentTransaction) {
 			writeSession.commitTransaction();
 		}
-		LOG.trace("Generada secuencia {} para {} ({})", result, name, Thread.currentThread().getName());
+		LOG.trace("Updated sequence {} for {} ({})", result, name, Thread.currentThread().getName());
 		lock.unlock();
 		return result;
 	}

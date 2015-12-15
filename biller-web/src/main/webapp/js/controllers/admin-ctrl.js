@@ -2,6 +2,9 @@
 	
 	var billerModule = angular.module('billerModule');
 	
+	/**
+	 * User activity data.
+	 */
 	billerModule.controller('UserActivityListCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', 'dialogs', function($scope, $rootScope, $routeParams, $http, $filter, dialogs) {
 		$scope.currentPage = 1;
 		$scope.itemsPerPage = 20;
@@ -41,6 +44,9 @@
 		});
 	}]);
 	
+	/**
+	 * Scheduler management.
+	 */
 	billerModule.controller('SchedulerListCtrl', ['$scope', '$rootScope', '$routeParams', '$http', '$modal', '$translate', function($scope, $rootScope, $routeParams, $http, $modal, $translate) {
 		$scope.searchResults = {};
 		$scope.setPage  = function(page) {
@@ -121,5 +127,62 @@
 		$scope.getNextExecutions();
 	}]);
 	
+	/**
+	 * System alerts.
+	 */
+	billerModule.controller('AlertReceiverListCtrl', ['$scope', '$rootScope', '$routeParams', '$http', '$modal', '$translate', function($scope, $rootScope, $routeParams, $http, $modal, $translate) {
+		$scope.searchResults = {};
+		$scope.setPage  = function(page) {
+			$scope.currentPage = page;
+			$http.get('rest/alert-receivers/find').success(function(data) {
+				$scope.results = data;
+			});
+		};
+		$scope.setPage(1);
+		$scope.edit = function(task) {
+			$scope.open(task);
+		};
+		$scope.open = function(task) {
+		};
+	}]);
+	
+	billerModule.controller('AlertReceiverDetailCtrl', ['$scope', '$rootScope', '$routeParams', '$http', '$translate', 'messageService', function($scope, $rootScope, $routeParams, $http, $translate, messageService) {
+		$scope.init = function() {
+			$http.get('rest/alert-receivers/id/' + $routeParams.id).success(function(data) {
+				$scope.entity = data;
+			});
+		}
+		$scope.update = function() {
+			$http.post('rest/alert-receivers/merge', $scope.entity).success(function(data) {
+				$scope.message = data; 
+				$rootScope.isReadOnly = true;
+			});
+		};
+		$scope.cancel = function() {
+		};
+		$scope.enable = function() {
+		};
+		$scope.disable = function() {
+		};
+		$scope.init();
+	}]);
+
+	billerModule.controller('AlertReceiverNewCtrl', ['$scope', '$rootScope', '$location', '$http', 'messageService', function($scope, $rootScope, $location, $http, messageService) {
+		$scope.isReadOnly = false;
+		$scope.entity = {
+				disabled: false
+		}
+		$scope.update = function() {
+			$http.post('rest/alert-receivers/merge/', $scope.entity).success(function(data) {
+				if(data.code == '200') {
+					messageService.setMessage(data);
+					$location.path("admin/alert-management/id/" + data.payload.id);				
+				} else {
+					$scope.message = data;
+				}
+			});
+		};
+	}]);
+
 	
 })();

@@ -115,4 +115,16 @@ public class Message<I> {
 		errors.add(value);
 		return this;
 	}
+
+	public boolean isError() {
+		return this.errors != null && !this.errors.isEmpty();
+	}
+
+	public boolean isWarning() {
+		return !isError() && this.warnings != null && !this.warnings.isEmpty();
+	}
+
+	public boolean isDebug() {
+		return !isWarning() && this.info != null && !this.info.isEmpty();
+	}
 }
