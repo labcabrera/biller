@@ -121,9 +121,8 @@ billerModule.run(function($rootScope, $http, $cookies, $location) {
 		var result = false;
 		if($rootScope.user != null && $rootScope.user.roles != null) {
 			for(var i=0; i<$rootScope.user.roles.length; i++) {
-				var check = $rootScope.user.roles[i].name;
+				var check = $rootScope.user.roles[i].code;
 				var index = names.indexOf(check);
-				console.log("check " + check + ": " + index);
 				if(index > -1) {
 					result = true;
 					break;

@@ -33,7 +33,7 @@
 		ng-disabled="isSaving">{{'confirmDraft' | translate}}</button>
 	<button
 		ng-click="recalculate()"
-		ng-if="checkRole(['Operador', 'Administrador']) && entity.currentState.stateDefinition.id == 'DRAFT' || entity.currentState.stateDefinition.id == 'INITIAL'"
+		ng-if="checkRole(['ADMIN', 'OPERATOR']) && entity.currentState.stateDefinition.id == 'DRAFT' || entity.currentState.stateDefinition.id == 'INITIAL'"
 		class='btn btn-sm btn-success pull-right'
 		ng-disabled="isSaving" >{{'recalculate' | translate}}</button>
 	<button
