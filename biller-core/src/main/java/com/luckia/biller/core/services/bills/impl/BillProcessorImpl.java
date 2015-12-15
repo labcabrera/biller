@@ -1,8 +1,7 @@
 package com.luckia.biller.core.services.bills.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -41,9 +40,10 @@ import com.luckia.biller.core.services.bills.BillProcessor;
 import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
+import com.luckia.biller.core.services.pdf.PDFLiquidationDetailGenerator;
 
 /**
- * Implementacion de {@link BillProcessor}
+ * {@link BillProcessor} implementation.
  */
 public class BillProcessorImpl implements BillProcessor {
 
@@ -61,6 +61,8 @@ public class BillProcessorImpl implements BillProcessor {
 	private FileService fileService;
 	@Inject
 	private PDFBillGenerator pdfBillGenerator;
+	@Inject
+	private PDFLiquidationDetailGenerator pdfLiquidationDetailGenerator;
 	@Inject
 	private AuditService auditService;
 	@Inject
@@ -192,18 +194,21 @@ public class BillProcessorImpl implements BillProcessor {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			stateMachineService.createTransition(bill, CommonState.CONFIRMED.name());
-			// NOTA: pudiera ser que la factura se ha regenerado, en cuyo caso mantenemos el mismo numero de factura anterior
 			if (StringUtils.isBlank(bill.getCode())) {
 				billCodeGenerator.generateCode(bill);
 			}
-			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
-			FileOutputStream out = new FileOutputStream(tempFile);
-			pdfBillGenerator.generate(bill, out);
-			out.close();
-			FileInputStream in = new FileInputStream(tempFile);
+			// Bill file
+			ByteArrayOutputStream pdfBillOut = new ByteArrayOutputStream();
+			pdfBillGenerator.generate(bill, pdfBillOut);
 			String name = String.format("bill-%s.pdf", bill.getCode());
-			AppFile pdfFile = fileService.save(name, "application/pdf", in);
+			AppFile pdfFile = fileService.save(name, "application/pdf", new ByteArrayInputStream(pdfBillOut.toByteArray()));
 			bill.setPdfFile(pdfFile);
+			// Liquidation detail file
+			ByteArrayOutputStream pdfLiquidationDetailOut = new ByteArrayOutputStream();
+			pdfLiquidationDetailGenerator.generate(bill, pdfLiquidationDetailOut);
+			String liquidationDetailName = String.format("liquidation-detail-%s", bill.getCode());
+			AppFile pdfLiquidationDetailFile = fileService.save(liquidationDetailName, "application/pdf", new ByteArrayInputStream(pdfLiquidationDetailOut.toByteArray()));
+			bill.setLiquidationDetailFile(pdfLiquidationDetailFile);
 			entityManager.merge(bill);
 		} catch (Exception ex) {
 			throw new RuntimeException("Error al confirmar la factura", ex);

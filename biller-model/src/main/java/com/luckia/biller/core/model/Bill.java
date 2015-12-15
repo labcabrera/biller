@@ -11,6 +11,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -20,6 +21,8 @@ import javax.persistence.Table;
 
 import org.eclipse.persistence.annotations.ChangeTracking;
 import org.eclipse.persistence.annotations.ChangeTrackingType;
+import org.eclipse.persistence.annotations.JoinFetch;
+import org.eclipse.persistence.annotations.JoinFetchType;
 
 /**
  * Entidad que representa una factura. La aplicacion genera las facturas que emiten los establecimientos a sus operadores de máquinas de juego.
@@ -118,6 +121,11 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	 */
 	@Column(name = "STORE_CASH", precision = 18, scale = 2)
 	protected BigDecimal storeCash;
+
+	@ManyToOne(cascade = CascadeType.DETACH, optional = true)
+	@JoinTable(name = "B_BILL_LIQUIDATION_FILE", joinColumns = @JoinColumn(name = "BILL_ID") , inverseJoinColumns = @JoinColumn(name = "FILE_ID") )
+	@JoinFetch(JoinFetchType.OUTER)
+	protected AppFile liquidationDetailFile;
 
 	public Bill getParent() {
 		return parent;
@@ -261,6 +269,14 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	public void setLiquidationTotalNetAmount(BigDecimal liquidationTotalNetAmount) {
 		this.liquidationTotalNetAmount = liquidationTotalNetAmount;
+	}
+
+	public AppFile getLiquidationDetailFile() {
+		return liquidationDetailFile;
+	}
+
+	public void setLiquidationDetailFile(AppFile liquidationDetailFile) {
+		this.liquidationDetailFile = liquidationDetailFile;
 	}
 
 	/*
