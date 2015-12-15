@@ -35,7 +35,7 @@
 		$scope.search();
 	}]);
 	
-	billerModule.controller('UserActivityCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', 'dialogs', function($scope, $rootScope, $routeParams, $http, dialogs) {
+	billerModule.controller('UserActivityDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', 'dialogs', function($scope, $rootScope, $routeParams, $http, dialogs) {
 		$http.get('rest/user-activity/id/' + $routeParams.id).success(function(data) {
 			$scope.entity = data;
 		});

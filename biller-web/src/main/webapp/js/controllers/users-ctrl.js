@@ -33,6 +33,7 @@
 		};
 		$scope.getSearchUrl = function() {
 			var predicateBuilder = new PredicateBuilder('');
+			predicateBuilder.append("alias=lk=", $scope.searchOptions.alias);
 			predicateBuilder.append("name=lk=", $scope.searchOptions.name);
 			return 'rest/users/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
@@ -51,10 +52,6 @@
 		};
 		$scope.reset();
 		$scope.search();
-//		
-//		$http.get('rest/users/find').success(function(data) {
-//			$scope.results = data;
-//		});
 	} ]);
 	
 	billerModule.controller('UserDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', '$location', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $filter, $location, dialogs, messageService) {

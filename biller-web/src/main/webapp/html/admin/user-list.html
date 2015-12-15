@@ -44,6 +44,19 @@
 	</div>
 	<div class="col-sm-3">
 		<div class="m-top-40">
+			<h4>{{'filterResults' | translate}}</h4>
+			<form role="form">
+				<div class="form-group">
+					<label>{{'alias' | translate}}</label>
+					<input type="text" class="form-control" ng-model="searchOptions.alias" />
+				</div>
+				<div class="form-group">
+					<label>{{'name' | translate}}</label>
+					<input type="text" class="form-control" ng-model="searchOptions.name" />
+				</div>
+				<button class="btn btn-primary btn-sm" ng-click="search()">{{'search' | translate}}</button>
+				<button class="btn btn-primary btn-sm" ng-click="reset()">{{'reset' | translate}}</button>
+			</form>
 			<h4>{{'admin' | translate}}</h4>
 			<ul class="list-unstyled">
 				<li><a href="#/admin/recalculate/bill">{{'billRecalculation' | translate}}</a></li>
