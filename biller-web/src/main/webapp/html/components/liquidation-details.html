@@ -11,7 +11,7 @@
 		</tr>
 		<tr ng-repeat="bill in childs.results">
 			<td><a href="#/bills/id/{{bill.id}}">{{bill.sender.name}}</a></td>
-			<td>{{bill.currentState.stateDefinition.desc}}</td>
+			<td>{{'state.' + bill.currentState.stateDefinition.id | translate}}</td>
 			<td class="data-amount">{{bill.amount}}</td>
 			<td class="data-amount">{{bill.liquidationTotalNetAmount}}</td>
 			<td class="data-amount">{{bill.liquidationTotalVat}}</td>
