@@ -25,11 +25,36 @@
 		};
 	} ]);
 	
-	billerModule.controller('UserListCtrl', [ '$scope', '$http', function($scope, $http) {
-		$http.get('rest/users/find').success(function(data) {
-			$scope.results = data;
-		});
-		$scope.orderProp = 'name';
+	billerModule.controller('UserListCtrl', [ '$scope', '$http', 'messageService', function($scope, $http, messageService) {
+		$scope.currentPage = 1;
+		$scope.itemsPerPage = 10;
+		$scope.reset = function() {
+			$scope.searchOptions = {};
+		};
+		$scope.getSearchUrl = function() {
+			var predicateBuilder = new PredicateBuilder('');
+			predicateBuilder.append("name=lk=", $scope.searchOptions.name);
+			return 'rest/users/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
+		};
+		$scope.search = function() {
+			messageService.setMessage(null);
+			$scope.setPage(1);
+		};
+		$scope.setPage = function(page) {
+		    $scope.currentPage = page;
+		    $scope.results = null;
+		    $scope.searchMessage = "Loading...";
+		    $http.get($scope.getSearchUrl()).success(function(data) {
+		    	$scope.results = data;
+		    	$scope.searchMessage = "(" + data.totalItems + " en " + data.ms + " ms)";
+		    });
+		};
+		$scope.reset();
+		$scope.search();
+//		
+//		$http.get('rest/users/find').success(function(data) {
+//			$scope.results = data;
+//		});
 	} ]);
 	
 	billerModule.controller('UserDetailCtrl', [ '$scope', '$rootScope', '$routeParams', '$http', '$filter', '$location', 'dialogs', 'messageService', function($scope, $rootScope, $routeParams, $http, $filter, $location, dialogs, messageService) {

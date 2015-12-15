@@ -291,6 +291,7 @@
 	"userActivity.TERMINAL_RELATION_REMOVE": "Eliminar terminal",
 	"userActivity.OWNER_REMOVE": "Eliminación de titular",
 	"userActivity.STORE_REMOVE": " Eliminación de establecimiento",
+	"userActivity.USER_MERGE": "Actualización de usuario",
 	"users": "Usuarios",
 	"user.insert.success": "Usuario creado",
 	"user.merge.success": "Usuario actualizado",
