@@ -208,8 +208,8 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 	public void merge(LegalEntity entity) {
 		if (entity == null) {
 			throw new NullPointerException("Null reference received in merge operation");
-		} else if (version.equals(entity.version)) {
-			// TODO throw exception
+		} else if (version != null && entity.version != null && !version.equals(entity.version)) {
+			// TODO throw exception instead log
 			LOG.warn("Invalid entity version. Current: {}. Received: {}", version, entity.version);
 
 		}
