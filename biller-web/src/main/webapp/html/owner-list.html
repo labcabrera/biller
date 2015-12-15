@@ -43,6 +43,11 @@
 					<label>{{'idCard' | translate}}</label>
 					<input type="text" class="form-control" ng-model="searchOptions.idCardNumber"/>
 				</div>
+				<div class="form-group">
+					<div class="checkbox">
+						<label><input type="checkbox" ng-model="searchOptions.showDeleted">{{'showDeleted' | translate}}</label>
+					</div>
+				</div>
 				<button class="btn btn-primary btn-sm" ng-click="search()">{{'search' | translate}}</button>
 				<button class="btn btn-primary btn-sm" ng-click="reset()">{{'reset' | translate}}</button>
 			</form>

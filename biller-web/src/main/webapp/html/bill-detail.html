@@ -114,54 +114,7 @@
 				
 					<!-- Pestaña de detalles de la factura -->
 					<div class="tab-pane" id="detailTab">
-						<div class="m-top-15">
-							<div class="col-sm-12">
-								<table class="table table-condensed">
-									<tr>
-										<th>{{'concept' | translate}}</th>
-										<th class="data-amount" title="Ajuste operativo">Ajuste Op.</th>
-										<th class="data-amount">{{'units' | translate}}</th>
-										<th class="data-amount">{{'amount' | translate}}</th>
-										<th></th>
-									</tr>
-									<tr ng-repeat="detail in entity.billDetails">
-										<td>{{detail.name}}</td>
-										<td class="data-amount"><span ng-if="detail.concept = Adjustment">Si</span></td>
-										<td class="data-amount">{{detail.units}}</td>
-										<td class="data-amount">{{detail.value}}</td>
-										<td>
-											<a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'DRAFT'">
-												<span class="glyphicon glyphicon-pencil"></span>
-											</a>
-										</td>
-									</tr>
-									<tr>
-										<td><b>Base</b></td>
-										<td></td>
-										<td></td>
-										<td class="data-amount"><b>{{entity.netAmount}}</b></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td><b>IVA ({{entity.vatPercent}} %)</b></td>
-										<td></td>
-										<td></td>
-										<td class="data-amount"><b>{{entity.vatAmount}}</b></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td><b>Total</b></td>
-										<td></td>
-										<td></td>
-										<td class="data-amount"><b>{{entity.amount}}</b></td>
-										<td></td>
-									</tr>
-								</table>
-								<div class="btn-toolbar m-top-40" role="toolbar">
-									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'DRAFT'" class='btn btn-sm btn-primary' ng-disabled="isSaving">{{'addBillDetail' | translate}}</button>
-								</div>
-							</div>
-						</div>
+						<div ng-include src="'html/bill/bill-detail-tab.html'"></div>
 					</div>
 					
 					<!-- Pestaña de observaciones -->

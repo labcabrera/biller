@@ -28,7 +28,7 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 
 	@Override
 	public void generate(Bill bill, OutputStream out) {
-		LOG.debug("Generando PDF de la factura {}", bill.getCode());
+		LOG.debug("Generating bill {} PDF document", bill.getCode());
 		try {
 			Rectangle rectangle = PageSize.A3;
 			Document document = new Document(rectangle, 50f, 50f, 50f, 50f);
@@ -39,13 +39,11 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 
 			float halfTop = document.getPageSize().getTop() / 2f;
 
-			// Primera copia
 			printLegalEntities(document, bill.getSender(), bill.getReceiver());
 			printTitle(document, bill);
 			printDetails(document, bill);
 			printCommentsPdf(document, bill);
 
-			// Segunda copia
 			float currentVP = writer.getVerticalPosition(true);
 			float vpDiff = currentVP - halfTop;
 

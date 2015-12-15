@@ -19,7 +19,7 @@
 				predicateBuilder.appendKey(key);
 			}
 			predicateBuilder.append("idCard.number=lk=", $scope.searchOptions.idCardNumber);
-			if(!$scope.searchOptions.showDeleted) { predicateBuilder.appendKey("auditData.deleted=n="); }
+			predicateBuilder.appendKey($scope.searchOptions.showDeleted ? "auditData.deleted=!n=" : "auditData.deleted=n=");
 			return 'rest/owners/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
 		$scope.setPage = function(page) {

@@ -45,19 +45,15 @@ import com.luckia.biller.core.services.entities.BillEntityService;
 import com.luckia.biller.core.services.mail.MailService;
 import com.luckia.biller.core.services.mail.SendAppFileMailTask;
 import com.luckia.biller.core.services.pdf.PDFBillGenerator;
+import com.luckia.biller.core.services.pdf.PDFLiquidationDetailGenerator;
 import com.luckia.biller.core.services.security.RequiredRole;
 
 /**
- * Servicio REST que aparte del CRUD básico de facturas provee de las siguientes funcionalidades:
- * <ul>
- * <li>Aceptación de la factura</li>
- * <li>Rectificación de la factura</li>
- * <li>CRUD de detalles de facturación</li>
- * <li>Descarga del borrador de la factura</li>
- * <li>Envío de la factura por email</li>
- * </ul>
+ * Common bill REST operations.
  */
 @Path("/bills")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class BillRestService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BillRestService.class);
@@ -71,6 +67,8 @@ public class BillRestService {
 	@Inject
 	private PDFBillGenerator pdfBillGenerator;
 	@Inject
+	private PDFLiquidationDetailGenerator pdfLiquidationDetailGenerator;
+	@Inject
 	private MailService mailService;
 	@Inject
 	private FileService fileService;
@@ -82,7 +80,6 @@ public class BillRestService {
 	private BillRecalculationService billRecalculationService;
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Bill findById(@PathParam("id") String primaryKey) {
 		Bill result = billService.findById(primaryKey);
@@ -93,7 +90,6 @@ public class BillRestService {
 	}
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
 	public SearchResults<Bill> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
@@ -104,15 +100,12 @@ public class BillRestService {
 	}
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/id/{id}")
 	public BillDetail find(@PathParam("id") String id) {
 		return entityManagerProvider.get().find(BillDetail.class, id);
 	}
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/merge")
 	@Transactional
 	@RegisterActivity(type = UserActivityType.BILL_MERGE)
@@ -131,8 +124,6 @@ public class BillRestService {
 	}
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/remove/{id}")
 	@Transactional
 	public Message<Bill> remove(@PathParam("id") String billId) {
@@ -148,7 +139,6 @@ public class BillRestService {
 	}
 
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("confirm/{id}")
 	@Transactional
 	public Message<Bill> confirm(@PathParam("id") String id) {
@@ -163,15 +153,12 @@ public class BillRestService {
 	}
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("detail/liquidation/id/{id}")
 	public BillLiquidationDetail findLiquidationDetail(@PathParam("id") String id) {
 		return entityManagerProvider.get().find(BillLiquidationDetail.class, id);
 	}
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/liquidation/merge")
 	@Transactional
 	public Message<Bill> mergeLiquidationDetail(BillLiquidationDetail detail) {
@@ -185,8 +172,6 @@ public class BillRestService {
 	}
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/liquidation/remove/{id}")
 	@Transactional
 	public Message<Bill> removeLiquidationDetail(@PathParam("id") String id) {
@@ -202,8 +187,6 @@ public class BillRestService {
 	}
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/detail/merge")
 	@Transactional
 	public Message<Bill> mergeBillDetail(BillDetail detail) {
@@ -217,7 +200,6 @@ public class BillRestService {
 	}
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/draft/{id}")
 	@Transactional
 	public Message<Bill> draft(@PathParam("id") String id) {
@@ -233,7 +215,6 @@ public class BillRestService {
 	}
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/detail/remove/{id}")
 	@Transactional
 	public Message<Bill> removeBillDetail(@PathParam("id") String id) {
@@ -257,7 +238,6 @@ public class BillRestService {
 	 * @return
 	 */
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/send/{id}")
 	public Message<Bill> sendEmail(@PathParam("id") String id, String emailAddress) {
 		try {
@@ -284,7 +264,6 @@ public class BillRestService {
 	}
 
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/rectify/{id}")
 	public Message<Bill> rectify(@PathParam("id") String id) {
 		try {
@@ -300,7 +279,6 @@ public class BillRestService {
 	}
 
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/{id}")
 	@RequiredRole(any = { UserRole.CODE_OPERATOR, UserRole.CODE_ADMIN })
 	public Message<Bill> recalculate(@PathParam("id") String billId) {
@@ -309,14 +287,34 @@ public class BillRestService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@Path("/draft/{id}")
+	@Path("/draft/bill/{id}")
 	@PermitAll
-	public Response getArtifactBinaryContent(@PathParam("id") String id) {
+	public Response generatePdfDraft(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			Bill bill = entityManager.find(Bill.class, id);
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			pdfBillGenerator.generate(bill, out);
+			ResponseBuilder response = Response.ok(new ByteArrayInputStream(out.toByteArray()));
+			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "borrador.pdf"));
+			response.header("Content-Type", "application/pdf");
+			return response.build();
+		} catch (Exception ex) {
+			LOG.error("Error al generar el borrador", ex);
+			throw new RuntimeException("Error la generar el borrador");
+		}
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Path("/draft/liquidation-detail/{id}")
+	@PermitAll
+	public Response generatePdfLiquidationDetailDraft(@PathParam("id") String id) {
+		try {
+			EntityManager entityManager = entityManagerProvider.get();
+			Bill bill = entityManager.find(Bill.class, id);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			pdfLiquidationDetailGenerator.generate(bill, out);
 			ResponseBuilder response = Response.ok(new ByteArrayInputStream(out.toByteArray()));
 			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "borrador.pdf"));
 			response.header("Content-Type", "application/pdf");
