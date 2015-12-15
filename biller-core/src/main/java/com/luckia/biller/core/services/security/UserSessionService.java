@@ -47,6 +47,7 @@ public class UserSessionService {
 			if (digest.equals(user.getPasswordDigest())) {
 				UserSession session = createSession(user);
 				Map<String, Object> map = new LinkedHashMap<>();
+				map.put("id", user.getId());
 				map.put("name", user.getName());
 				map.put("alias", user.getAlias());
 				map.put("email", user.getEmail());

@@ -107,12 +107,11 @@
 									<a ng-click="logout()"><span class="glyphicon glyphicon-off" aria-hidden="true"></span> {{'logout' | translate}}</a>
 								</li>
 								<li>
-									<a href="#/profile"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{'profile' | translate}}</a>
+									<a href="#/admin/users/id/{{user.id}}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{'profile' | translate}}</a>
 								</li>
 							</ul>
 						</li>
 						<li ng-if="user == null"><a href="#/login">{{'login' | translate}}</a></li>
-						
 					</ul>
 				</div>
 			</div>
