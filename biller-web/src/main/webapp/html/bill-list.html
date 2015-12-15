@@ -23,8 +23,8 @@
 					<td>{{result.code != null ? result.code : 'Borrador'}}</a></td>
 					<td>
 						<center>
-							<span ng-if="result.currentState.stateDefinition.id == 'Draft'" class="glyphicon glyphicon-exclamation-sign text-danger" title="Borrador"></span>
-							<span ng-if="result.currentState.stateDefinition.id == 'Rectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
+							<span ng-if="result.currentState.stateDefinition.id == 'DRAFT'" class="glyphicon glyphicon-exclamation-sign text-danger" title="Borrador"></span>
+							<span ng-if="result.currentState.stateDefinition.id == 'RECTIFIED'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
 						</center>
 					</td>
 					<td>{{result.billDate.substr(0,10)}}</td>

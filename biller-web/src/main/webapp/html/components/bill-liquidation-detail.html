@@ -23,7 +23,7 @@
 			<td class="data-amount">{{detail.vatValue}}</td>
 			<td class="data-amount">{{detail.value}}</td>
 			<td>
-				<a ng-if="entity.currentState.stateDefinition.id == 'Draft'" ng-click="editLiquidationDetail(detail.id)">
+				<a ng-if="entity.currentState.stateDefinition.id == 'DRAFT'" ng-click="editLiquidationDetail(detail.id)">
 					<span class="glyphicon glyphicon-pencil"></span>
 				</a>
 			</td>
@@ -64,7 +64,7 @@
 			<td class="data-amount">-</td>
 			<td class="data-amount">{{detail.value}}</td>
 			<td>
-				<a ng-if="entity.currentState.stateDefinition.id == 'Draft'" ng-click="editLiquidationDetail(detail.id)">
+				<a ng-if="entity.currentState.stateDefinition.id == 'DRAFT'" ng-click="editLiquidationDetail(detail.id)">
 					<span class="glyphicon glyphicon-pencil"></span>
 				</a>
 			</td>

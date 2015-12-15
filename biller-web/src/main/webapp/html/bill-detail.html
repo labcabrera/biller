@@ -130,7 +130,7 @@
 										<td class="data-amount">{{detail.units}}</td>
 										<td class="data-amount">{{detail.value}}</td>
 										<td>
-											<a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'">
+											<a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'DRAFT'">
 												<span class="glyphicon glyphicon-pencil"></span>
 											</a>
 										</td>
@@ -158,7 +158,7 @@
 									</tr>
 								</table>
 								<div class="btn-toolbar m-top-40" role="toolbar">
-									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'Draft'" class='btn btn-sm btn-primary' ng-disabled="isSaving">{{'addBillDetail' | translate}}</button>
+									<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'DRAFT'" class='btn btn-sm btn-primary' ng-disabled="isSaving">{{'addBillDetail' | translate}}</button>
 								</div>
 							</div>
 						</div>

@@ -172,7 +172,8 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, liquidation.getSender().getName());
 			createCell(sheet, currentRow, cell++, bill.getSender().getName());
 			createCell(sheet, currentRow, cell++, bill.getBillDate());
-			createCell(sheet, currentRow, cell++, bill.getCurrentState().getStateDefinition().getDesc().toUpperCase());
+			// TODO i18n state definition
+			createCell(sheet, currentRow, cell++, bill.getCurrentState().getStateDefinition().getId());
 			createCell(sheet, currentRow, cell++, bill.getAmount());
 			createCell(sheet, currentRow, cell++, bill.getLiquidationTotalAmount());
 			createCell(sheet, currentRow, cell++, bill.getDateFrom());

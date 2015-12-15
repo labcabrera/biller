@@ -16,7 +16,11 @@
 			<td class="data-amount">{{bill.liquidationTotalNetAmount}}</td>
 			<td class="data-amount">{{bill.liquidationTotalVat}}</td>
 			<td class="data-amount">{{bill.liquidationTotalAmount}}</td>
-			<td><a href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+			<td>
+				<a href="#/bills/id/{{bill.id}}" ng-if="entity.currentState.stateDefinition.id == 'DRAFT'">
+					<span class="glyphicon glyphicon-pencil"></span>
+				</a>
+			</td>
 		</tr>
 		<tr ng-repeat="detail in entity.details | filter: {liquidationIncluded: true}" class="text-info">
 			<td>{{detail.name}}</td>
@@ -25,7 +29,11 @@
 			<td class="data-amount">{{detail.netValue}}</td>
 			<td class="data-amount">{{detail.vatValue}}</td>
 			<td class="data-amount">{{detail.value}}</td>
-			<td><a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'"><span class="glyphicon glyphicon-pencil"></span></a></td>
+			<td>
+				<a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'DRAFT'">
+					<span class="glyphicon glyphicon-pencil"></span>
+				</a>
+			</td>
 		</tr>
 		<tr class="active">
 			<td colspan="3"><b>{{'liquidationAmount' | translate}}</b></td>
@@ -69,7 +77,7 @@
 			<td></td>
 			<td class="data-amount">{{detail.value}}</td>
 			<td>
-				<a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'Draft'">
+				<a ng-click="editDetail(detail.id)" href="" ng-if="entity.currentState.stateDefinition.id == 'DRAFT'">
 					<span class="glyphicon glyphicon-pencil"></span>
 				</a>
 			</td>

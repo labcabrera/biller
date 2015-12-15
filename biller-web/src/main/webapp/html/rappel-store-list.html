@@ -20,8 +20,8 @@
 				<tr ng-repeat="result in results.results">
 					<td><a href="#/rappel/stores/id/{{result.id}}">{{result.store.name}}</a></td>
 					<td>
-						<span ng-if="result.currentState.stateDefinition.id == 'Draft'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
-						<span ng-if="result.currentState.stateDefinition.id == 'Rectified'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
+						<span ng-if="result.currentState.stateDefinition.id == 'DRAFT'" class="glyphicon glyphicon-exclamation-sign text-muted" title="Borrador"></span>
+						<span ng-if="result.currentState.stateDefinition.id == 'RECTIFIED'" class="glyphicon glyphicon-fire text-danger" title="Rectificada"></span>
 					</td>
 					<td>{{result.bonusDate.substr(0,10)}}</td>
 					<td class="data-amount">{{result.value}}</td>

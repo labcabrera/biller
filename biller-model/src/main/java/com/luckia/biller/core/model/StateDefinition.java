@@ -32,16 +32,12 @@ public class StateDefinition implements Serializable {
 	@NotSerializable
 	private Class<? extends HasState> hasStateClass;
 
-	@Column(name = "STATE_DESC", nullable = false, length = 64)
-	private String desc;
-
 	public StateDefinition() {
 	}
 
-	public StateDefinition(String id, Class<? extends HasState> hasStateClass, String desc) {
+	public StateDefinition(String id, Class<? extends HasState> hasStateClass) {
 		this.id = id;
 		this.hasStateClass = hasStateClass;
-		this.desc = desc;
 	}
 
 	public String getId() {
@@ -58,13 +54,5 @@ public class StateDefinition implements Serializable {
 
 	public void setHasStateClass(Class<? extends HasState> hasStateClass) {
 		this.hasStateClass = hasStateClass;
-	}
-
-	public String getDesc() {
-		return desc;
-	}
-
-	public void setDesc(String desc) {
-		this.desc = desc;
 	}
 }

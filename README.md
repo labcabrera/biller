@@ -1,9 +1,10 @@
 # FIX
 * En el response cuando no hay datos en los reports hacer un redirect a no se encuentra la informacion o algo similar
 * Cargar los controladores de forma selectiva para cada pagina (includes de javascript)
-* Arreglar el funcionamiento del serializador cuando se utiliza eclipselink-weaving 
+* Arreglar el funcionamiento del serializador cuando se utiliza eclipselink-weaving
 
 # TODO
+* Añadir @Version a las entidades para controlar cambios concurrentes
 * Desglose ajustes manuales en el PDF de liquidacion
 * Dos flags a nivel de operadora para enviar liquidaciones o miniliquidaciones
 * Hacer el PDF de miniliquidaciones

@@ -13,11 +13,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +85,11 @@ public class BillRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Bill findById(@PathParam("id") String primaryKey) {
-		return billService.findById(primaryKey);
+		Bill result = billService.findById(primaryKey);
+		if (result == null) {
+			throw new WebApplicationException(HttpStatus.SC_NOT_FOUND);
+		}
+		return result;
 	}
 
 	@GET
