@@ -20,7 +20,6 @@ import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchParams;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.entities.UserEntityService;
-import com.luckia.biller.core.services.entities.UserService;
 
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,8 +28,6 @@ public class UserRestService {
 
 	@Inject
 	private UserEntityService userEntityService;
-	@Inject
-	private UserService userService;
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 
@@ -59,7 +56,13 @@ public class UserRestService {
 	@POST
 	@Path("/merge")
 	public Message<User> merge(User user) {
-		return userService.merge(user);
+		return userEntityService.merge(user);
+	}
+
+	@POST
+	@Path("/remove/{id}")
+	public Message<User> remove(@PathParam("id") Long id) {
+		return userEntityService.remove(id);
 	}
 
 	@GET

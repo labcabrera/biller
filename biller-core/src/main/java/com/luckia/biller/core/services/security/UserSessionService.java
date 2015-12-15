@@ -21,14 +21,14 @@ import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.model.User;
 import com.luckia.biller.core.model.UserSession;
 import com.luckia.biller.core.model.common.Message;
-import com.luckia.biller.core.services.entities.UserService;
+import com.luckia.biller.core.services.entities.UserEntityService;
 
 public class UserSessionService {
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 	@Inject
-	private UserService userService;
+	private UserEntityService userService;
 
 	@Inject
 	@Named("security.session-expiration-minutes")
