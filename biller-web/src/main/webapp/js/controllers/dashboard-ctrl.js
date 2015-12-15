@@ -187,7 +187,7 @@
 				params : {
 					p : $scope.currentPage,
 					n : 15,
-					q : 'currentState.stateDefinition.id==Draft'
+					q : 'currentState.stateDefinition.id==DRAFT'
 				}
 			}).success(function(data) {
 				$scope.searchResults = data;
