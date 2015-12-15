@@ -146,6 +146,7 @@ public class LiquidationRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("bills/confirm/{id}")
+	@RegisterActivity(type = UserActivityType.LIQUIDATION_CONFIRM_ALL_BILLS)
 	public Message<List<Bill>> confirmAllPendingBills(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
