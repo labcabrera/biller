@@ -74,7 +74,7 @@ public class UserRestService {
 	@Path("/roles")
 	public List<UserRole> roles() {
 		EntityManager entityManager = entityManagerProvider.get();
-		return entityManager.createQuery("select e from UserRole e order by e.name", UserRole.class).getResultList();
+		return entityManager.createQuery("select e from UserRole e order by e.code", UserRole.class).getResultList();
 
 	}
 }

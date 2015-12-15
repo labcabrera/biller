@@ -9,16 +9,16 @@ import javax.persistence.Table;
 @Table(name = "S_USER_ROLE")
 public class UserRole {
 
-	public static final String ADMIN = "Administrador";
-	public static final String OPERATOR = "Operador";
-	public static final String READ_ONLY = "Lectura";
+	public static final String CODE_ADMIN = "ADMIN";
+	public static final String CODE_OPERATOR = "OPERATOR";
+	public static final String CODE_READ_ONLY = "READ_ONLY";
 
 	@Id
 	@Column(name = "ID")
 	private Long id;
 
-	@Column(name = "NAME", length = 32)
-	private String name;
+	@Column(name = "CODE", length = 32)
+	private String code;
 
 	public Long getId() {
 		return id;
@@ -28,11 +28,11 @@ public class UserRole {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getCode() {
+		return code;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCode(String code) {
+		this.code = code;
 	}
 }

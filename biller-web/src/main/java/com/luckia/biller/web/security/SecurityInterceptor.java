@@ -63,7 +63,7 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 				boolean validRole = false;
 				for (String role : requiredRole.any()) {
 					for (UserRole userRole : user.getRoles()) {
-						if (role.equals(userRole.getName())) {
+						if (role.equals(userRole.getCode())) {
 							validRole = true;
 							break;
 						}

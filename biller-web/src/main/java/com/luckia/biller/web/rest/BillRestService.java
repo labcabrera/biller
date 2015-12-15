@@ -116,7 +116,7 @@ public class BillRestService {
 	@Path("/merge")
 	@Transactional
 	@RegisterActivity(type = UserActivityType.BILL_MERGE)
-	@RequiredRole(any = { UserRole.OPERATOR, UserRole.ADMIN })
+	@RequiredRole(any = { UserRole.CODE_OPERATOR, UserRole.CODE_ADMIN })
 	public Message<Bill> merge(Bill bill) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
@@ -302,7 +302,7 @@ public class BillRestService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/recalculate/{id}")
-	@RequiredRole(any = { UserRole.OPERATOR, UserRole.ADMIN })
+	@RequiredRole(any = { UserRole.CODE_OPERATOR, UserRole.CODE_ADMIN })
 	public Message<Bill> recalculate(@PathParam("id") String billId) {
 		return billRecalculationService.recalculate(billId);
 	}

@@ -102,5 +102,20 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet author="lab.cabrera" id="user-role-refactor">
+		<validCheckSum>any</validCheckSum>
+		<sql>delete from S_USER_ROLE_RELATION</sql>
+		<sql>delete from S_USER_ROLE</sql>
+		<dropColumn tableName="S_USER_ROLE">
+			<column name="NAME"></column>
+		</dropColumn>
+		<addColumn tableName="S_USER_ROLE">
+			<column name="CODE" type="VARCHAR(32)"></column>
+		</addColumn>
+		<sql>insert into S_USER_ROLE(ID, CODE) values(1, 'ADMIN')</sql>
+		<sql>insert into S_USER_ROLE(ID, CODE) values(2, 'OPERATOR')</sql>
+		<sql>insert into S_USER_ROLE(ID, CODE) values(3, 'READ_ONLY')</sql>
+	</changeSet>
 
 </databaseChangeLog>
