@@ -212,7 +212,7 @@ billerModule.factory('messageService', function() {
 billerModule.directive('numberOnlyInput', function () {
     return {
         restrict: 'EA',
-        template: '<input class="form-control input-sm data-amount" name="{{inputName}}" ng-model="inputValue" />',
+        template: '<input class="form-control data-amount" name="{{inputName}}" ng-model="inputValue" />',
         scope: {
             inputValue: '=',
             inputName: '='
