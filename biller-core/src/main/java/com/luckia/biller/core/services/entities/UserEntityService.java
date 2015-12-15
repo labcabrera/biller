@@ -1,5 +1,6 @@
 package com.luckia.biller.core.services.entities;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.List;
 
@@ -59,6 +60,16 @@ public class UserEntityService extends EntityService<User> {
 			message.withCode(Message.CODE_GENERIC_ERROR).addError("user.merge.error");
 		}
 		return message;
+	}
+
+	@Override
+	@Transactional
+	public Message<User> remove(Serializable primaryKey) {
+		EntityManager entityManager = entityManagerProvider.get();
+		User current = entityManager.find(User.class, primaryKey);
+		current.setDisabled(new DateTime().toDate());
+		entityManager.merge(current);
+		return new Message<User>().withPayload(current).withMessage("user.remove.success");
 	}
 
 	public String calculatePasswordDigest(String password) {

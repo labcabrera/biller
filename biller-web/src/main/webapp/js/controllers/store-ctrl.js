@@ -28,7 +28,6 @@
 				predicateBuilder.appendKey("auditData.deleted=n=");
 			} else {
 				predicateBuilder.appendKey("auditData.deleted=!n=");
-				
 			}
 			return 'rest/stores/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};

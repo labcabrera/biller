@@ -29,12 +29,15 @@
 		$scope.currentPage = 1;
 		$scope.itemsPerPage = 10;
 		$scope.reset = function() {
-			$scope.searchOptions = {};
+			$scope.searchOptions = {
+				showDeleted: false
+			};
 		};
 		$scope.getSearchUrl = function() {
 			var predicateBuilder = new PredicateBuilder('');
 			predicateBuilder.append("alias=lk=", $scope.searchOptions.alias);
 			predicateBuilder.append("name=lk=", $scope.searchOptions.name);
+			predicateBuilder.appendKey($scope.searchOptions.showDeleted ? "disabled=!n=" : "disabled=n=");
 			return 'rest/users/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
 		};
 		$scope.search = function() {
