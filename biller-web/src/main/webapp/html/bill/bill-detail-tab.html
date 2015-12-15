@@ -45,6 +45,12 @@
 			<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'DRAFT'" class='btn btn-sm btn-primary' ng-disabled="isSaving">{{'addBillDetail' | translate}}</button>
 			<a
 				class="btn btn-primary btn-sm"
+				ng-if="entity.currentState.stateDefinition.id != 'DRAFT' && entity.currentState.stateDefinition.id != 'CANCELLED' && entity.currentState.stateDefinition.id != 'INITIAL'"
+				href="rest/binary/download/{{entity.pdfFile.id}}"
+				role="button"
+				ng-disabled="isSaving">{{'download' | translate}}</a>
+			<a
+				class="btn btn-primary btn-sm"
 				ng-if="entity.currentState.stateDefinition.id == 'DRAFT' || entity.currentState.stateDefinition.id == 'INITIAL'"
 				href="rest/bills/draft/bill/{{entity.id}}"
 				role="button"

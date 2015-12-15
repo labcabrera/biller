@@ -4,7 +4,7 @@
 * Arreglar el funcionamiento del serializador cuando se utiliza eclipselink-weaving
 
 # TODO
-* Añadir @Version a las entidades para controlar cambios concurrentes
+* Añadir @Version a las entidades para controlar cambios concurrentes (solo esta para la jerarquia de LegalEntity)
 * Desglose ajustes manuales en el PDF de liquidacion
 * Dos flags a nivel de operadora para enviar liquidaciones o miniliquidaciones
 * Hacer el PDF de miniliquidaciones
