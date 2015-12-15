@@ -39,6 +39,8 @@ public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 			entityManager.merge(current);
 			message = i18nService.getMessage("owner.merge");
 		}
+		entityManager.flush();
+		entityManager.refresh(current);
 		return new Message<Owner>(Message.CODE_SUCCESS, message, current);
 	}
 

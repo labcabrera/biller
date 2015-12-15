@@ -36,6 +36,8 @@ public class CompanyEntityService extends LegalEntityBaseService<Company> {
 			entityManager.merge(current);
 			message = i18nService.getMessage("company.merge");
 		}
+		entityManager.flush();
+		entityManager.refresh(current);
 		return new Message<Company>(Message.CODE_SUCCESS, message, current);
 	}
 

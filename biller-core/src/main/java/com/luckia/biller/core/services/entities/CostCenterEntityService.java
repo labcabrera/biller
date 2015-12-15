@@ -41,6 +41,8 @@ public class CostCenterEntityService extends EntityService<CostCenter> {
 			entityManager.merge(current);
 			message = i18nService.getMessage("costCenter.merge");
 		}
+		entityManager.flush();
+		entityManager.refresh(current);
 		return new Message<CostCenter>(Message.CODE_SUCCESS, message, current);
 	}
 

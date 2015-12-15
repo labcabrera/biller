@@ -46,6 +46,8 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 			current = entityManager.merge(current);
 			message = i18nService.getMessage("store.merge");
 		}
+		entityManager.flush();
+		entityManager.refresh(current);
 		return new Message<>(Message.CODE_SUCCESS, message, current);
 
 	}

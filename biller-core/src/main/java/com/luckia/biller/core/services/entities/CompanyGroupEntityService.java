@@ -37,6 +37,8 @@ public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGro
 			entityManager.persist(current);
 			message = i18nService.getMessage("companyGroup.merge");
 		}
+		entityManager.flush();
+		entityManager.refresh(current);
 		return new Message<CompanyGroup>(Message.CODE_SUCCESS, message, current);
 	}
 
