@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Injector;
 import com.luckia.biller.core.model.AlertReceiver;
 import com.luckia.biller.core.model.common.Message;
+import com.luckia.biller.core.services.mail.MailMessageConverter;
+import com.luckia.biller.core.services.mail.MailService;
 
 public class SendAlertTask implements Runnable {
 
@@ -28,7 +30,8 @@ public class SendAlertTask implements Runnable {
 	@Override
 	public void run() {
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
-		TypedQuery<AlertReceiver> query = entityManager.createNamedQuery("AlertReceiver.selectEnabled", AlertReceiver.class);
+		TypedQuery<AlertReceiver> query = entityManager.createNamedQuery("AlertReceiver.selectEnabled",
+				AlertReceiver.class);
 		List<AlertReceiver> recipients = query.getResultList();
 		List<String> emails = new ArrayList<>();
 		for (AlertReceiver recipient : recipients) {
@@ -53,6 +56,14 @@ public class SendAlertTask implements Runnable {
 		}
 		for (String email : emails) {
 			LOG.debug("Sending alert {} to {}", message.getMessage(), email);
+			MailMessageConverter converter = new MailMessageConverter(message);
+			String mailBody = converter.getBody();
+			MailService mailService = injector.getInstance(MailService.class);
+			try {
+				mailService.createEmail(email, "biller", "Biller notification", mailBody).send();
+			} catch (Exception ex) {
+				LOG.warn("Error sending notification", ex);
+			}
 		}
 	}
 }
