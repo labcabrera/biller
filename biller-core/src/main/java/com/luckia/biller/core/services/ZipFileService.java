@@ -18,18 +18,21 @@ import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
+import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.reporting.LiquidationReportGenerator;
 
 /**
- * Genera un ZIP con los ficheros de la liquidacion mensual. A partir de una liquidacion genera un ZIP dentro del cual se encuentran todas las facturas asociadas a la liquidación.
+ * Genera un ZIP con los ficheros de la liquidacion mensual. A partir de una liquidacion genera un ZIP dentro del cual se encuentran todas
+ * las facturas asociadas a la liquidación.
  */
 public class ZipFileService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ZipFileService.class);
 
 	private static final String FORMAT_BILL_FOLDER = "facturas/";
+	private static final String FORMAT_DETAILS_FOLDER = "detalles/";
 
 	@Inject
 	private FileService fileService;
@@ -45,15 +48,33 @@ public class ZipFileService {
 			name = fileService.getAbstractBillFileName(liquidation, "pdf");
 			in = fileService.getInputStream(liquidation.getPdfFile());
 			addZipEntry(in, zipOutputStream, name);
-			for (Bill bill : liquidation.getBills()) {
-				if (MathUtils.isNotZero(bill.getAmount()) && bill.getPdfFile() != null) {
-					name = fileService.getAbstractBillFileName(bill, "pdf");
-					in = fileService.getInputStream(bill.getPdfFile());
-					addZipEntry(in, zipOutputStream, FORMAT_BILL_FOLDER + name);
-				} else {
-					LOG.debug("No se incluye la factura de {}: carece de fichero asociado", bill.getSender().getName());
+
+			BillingModel model = liquidation.getModel();
+			boolean includeBills = model == null || model.getIncludePdfBills();
+			boolean includeDetails = model == null || model.getIncludePdfDetails();
+
+			if (includeBills) {
+				for (Bill bill : liquidation.getBills()) {
+					if (MathUtils.isNotZero(bill.getAmount()) && bill.getPdfFile() != null) {
+						name = fileService.getAbstractBillFileName(bill, "pdf");
+						in = fileService.getInputStream(bill.getPdfFile());
+						addZipEntry(in, zipOutputStream, FORMAT_BILL_FOLDER + name);
+					} else {
+						LOG.debug("No se incluye la factura de {}: carece de fichero asociado", bill.getSender().getName());
+					}
 				}
 			}
+
+			if (includeDetails) {
+				for (Bill bill : liquidation.getBills()) {
+					if (bill.getLiquidationDetailFile() != null) {
+						name = fileService.getAbstractBillFileName(bill, "pdf");
+						in = fileService.getInputStream(bill.getLiquidationDetailFile());
+						addZipEntry(in, zipOutputStream, FORMAT_DETAILS_FOLDER + name);
+					}
+				}
+			}
+
 			// Generamos el report
 			try {
 				Date from = liquidation.getDateFrom();

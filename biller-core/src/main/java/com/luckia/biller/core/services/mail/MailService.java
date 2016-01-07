@@ -20,8 +20,6 @@ public class MailService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
 
-	// @Inject
-	// private SettingsService settingsService;
 	@Inject
 	private SettingsManager settingsManager;
 
@@ -69,8 +67,7 @@ public class MailService {
 	 * @return
 	 * @throws EmailException
 	 */
-	public HtmlEmail createEmail(String address, String displayName, String title, String body,
-			List<EmailAttachment> attachments) throws EmailException {
+	public HtmlEmail createEmail(String address, String displayName, String title, String body, List<EmailAttachment> attachments) throws EmailException {
 		init();
 		LOG.debug("Creando email con titulo {}", displayName);
 		HtmlEmail email = new HtmlEmail();

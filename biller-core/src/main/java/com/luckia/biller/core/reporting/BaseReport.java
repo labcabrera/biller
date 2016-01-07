@@ -155,7 +155,7 @@ public abstract class BaseReport {
 
 	protected void autoSizeColumns(HSSFSheet sheet, int cols) {
 		for (int i = 0; i < cols; i++) {
-			sheet.autoSizeColumn(i, true);
+			sheet.autoSizeColumn(i);
 			sheet.setColumnWidth(i, sheet.getColumnWidth(i) + 600);
 		}
 	}
