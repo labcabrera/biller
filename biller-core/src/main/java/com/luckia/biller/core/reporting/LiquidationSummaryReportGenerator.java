@@ -6,18 +6,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -52,7 +44,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 	@Inject
 	private FileService fileService;
 	@Inject
-	private Provider<EntityManager> entityManagerProvider;
+	private ReportLiquidationResolver liquidationResolver;
 
 	/**
 	 * 
@@ -108,7 +100,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 	}
 
 	private void createReportData(HSSFSheet sheet, Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
-		List<Liquidation> liquidations = findLiquidations(from, to, company, costCenter, companyGroup);
+		List<Liquidation> liquidations = liquidationResolver.findLiquidations(from, to, company, costCenter, companyGroup);
 		LOG.debug("Readed {} liquidations", liquidations.size());
 		if (liquidations.isEmpty()) {
 			throw new NoAvailableDataException();
@@ -152,30 +144,6 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		createHeaderCell(sheet, rowIndex, col++, totalCashStore);
 		createHeaderCell(sheet, rowIndex, col++, totalAmount);
 		createHeaderCell(sheet, rowIndex, col++, totalResults);
-	}
-
-	private List<Liquidation> findLiquidations(Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
-		EntityManager entityManager = entityManagerProvider.get();
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Liquidation> criteria = builder.createQuery(Liquidation.class);
-		Root<Liquidation> root = criteria.from(Liquidation.class);
-		List<Predicate> predicates = new ArrayList<>();
-		if (from != null) {
-			predicates.add(builder.greaterThanOrEqualTo(root.<Date> get("billDate"), from));
-		}
-		if (to != null) {
-			predicates.add(builder.lessThanOrEqualTo(root.<Date> get("billDate"), to));
-		}
-		if (company != null) {
-			predicates.add(builder.equal(root.get("sender"), company));
-		}
-		if (companyGroup != null) {
-			predicates.add(builder.equal(root.get("sender").get("parent"), companyGroup));
-		}
-		criteria.where(predicates.toArray(new Predicate[predicates.size()]));
-		criteria.orderBy(builder.asc(root.<Date> get("billDate")), builder.asc(root.<String> get("sender").get("name")), builder.desc(root.<String> get("code")));
-		TypedQuery<Liquidation> query = entityManager.createQuery(criteria);
-		return query.getResultList();
 	}
 
 	private void configureHeaders(HSSFSheet sheet) {
