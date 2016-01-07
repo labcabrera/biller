@@ -30,8 +30,7 @@ public class SendAlertTask implements Runnable {
 	@Override
 	public void run() {
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
-		TypedQuery<AlertReceiver> query = entityManager.createNamedQuery("AlertReceiver.selectEnabled",
-				AlertReceiver.class);
+		TypedQuery<AlertReceiver> query = entityManager.createNamedQuery("AlertReceiver.selectEnabled", AlertReceiver.class);
 		List<AlertReceiver> recipients = query.getResultList();
 		List<String> emails = new ArrayList<>();
 		for (AlertReceiver recipient : recipients) {

@@ -27,6 +27,7 @@ import com.google.inject.persist.Transactional;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.AppFile;
+import com.luckia.biller.core.model.common.Message;
 
 /**
  * Servicio encargado de gestionar el repositorio de ficheros de la aplicación.
@@ -45,6 +46,8 @@ public class FileService {
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 	@Inject
+	private AlertService alertService;
+	@Inject
 	@Named("repositoryPath")
 	private String repositoryBasePath;
 
@@ -52,7 +55,8 @@ public class FileService {
 	 * Guarda en base de datos el descriptor del fichero y almacena su contenido en el repositorio de la aplicación.
 	 * 
 	 * @param name
-	 *            Nombre identificativo del fichero (no tiene por que ser el nombre real del fichero, sólo indica el nombre que tiene dentro de la aplicación)
+	 *            Nombre identificativo del fichero (no tiene por que ser el nombre real del fichero, sólo indica el nombre que tiene dentro
+	 *            de la aplicación)
 	 * @param contentType
 	 *            Media type del fichero
 	 * @param inputStream
@@ -90,7 +94,11 @@ public class FileService {
 	}
 
 	public InputStream getInputStream(AppFile appFile) {
-		File target = new File(getBasePath(), appFile.getInternalPath());
+		File repository = new File(getBasePath());
+		if (!repository.exists()) {
+			alertService.handleAlert(new Message<String>("Missing file").addError("Missing repository folder " + repository.getAbsolutePath()));
+		}
+		File target = new File(repository, appFile.getInternalPath());
 		Validate.isTrue(target.exists(), "No se encuentra el fichero " + appFile.getInternalPath());
 		try {
 			return new FileInputStream(target);
