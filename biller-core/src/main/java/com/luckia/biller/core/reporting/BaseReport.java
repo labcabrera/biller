@@ -153,12 +153,10 @@ public abstract class BaseReport {
 		return style;
 	}
 
-	// TODO el autosize no se aplica bien y algunos elementos aparecen cortados
 	protected void autoSizeColumns(HSSFSheet sheet, int cols) {
 		for (int i = 0; i < cols; i++) {
-			sheet.autoSizeColumn(i);
-			// int w = sheet.getColumnWidth(i);
-			// sheet.setColumnWidth(i, w + 50);
+			sheet.autoSizeColumn(i, true);
+			sheet.setColumnWidth(i, sheet.getColumnWidth(i) + 600);
 		}
 	}
 }
