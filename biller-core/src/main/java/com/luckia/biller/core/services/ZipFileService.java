@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -81,7 +80,7 @@ public class ZipFileService {
 				Date to = liquidation.getDateTo();
 				ByteArrayOutputStream reportOutputStream = new ByteArrayOutputStream();
 				Company company = liquidation.getSender().as(Company.class);
-				reportGenerator.generate(from, to, Arrays.asList(company), reportOutputStream);
+				reportGenerator.generate(from, to, company, null, null, reportOutputStream);
 				ByteArrayInputStream reportInputStream = new ByteArrayInputStream(reportOutputStream.toByteArray());
 				String fileName = fileService.getAbstractBillFileName(liquidation, "xls");
 				addZipEntry(reportInputStream, zipOutputStream, fileName);

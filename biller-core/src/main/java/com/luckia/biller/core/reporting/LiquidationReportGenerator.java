@@ -26,6 +26,8 @@ import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.BillRawData;
 import com.luckia.biller.core.model.BillerComparator;
 import com.luckia.biller.core.model.Company;
+import com.luckia.biller.core.model.CompanyGroup;
+import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.Store;
@@ -42,16 +44,13 @@ public class LiquidationReportGenerator extends BaseReport {
 	@Inject
 	private LiquidationReportDataSource dataSource;
 
-	public Message<String> generate(Date from, Date to, List<Company> entities, OutputStream out) {
+	public Message<String> generate(Date from, Date to, Company company, CompanyGroup companyGroup, CostCenter costCenter, OutputStream out) {
 		try {
 			Validate.notNull(from);
 			Validate.notNull(to);
-			LOG.debug("Generando informe de liquidacione entre {} y {}", DateFormatUtils.ISO_DATE_FORMAT.format(from),
-					DateFormatUtils.ISO_DATE_FORMAT.format(to));
-			for (LegalEntity i : entities) {
-				LOG.debug("  Operadora: {}", i.getName());
-			}
-			Map<LegalEntity, List<Liquidation>> liquidationMap = dataSource.getLiquidations(from, to, entities);
+			LOG.debug("Generando informe de liquidacione entre {} y {}", DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
+			List<Liquidation> allLiquidations = dataSource.findLiquidations(from, to, company, costCenter, companyGroup);
+			Map<LegalEntity, List<Liquidation>> liquidationMap = dataSource.groupByCompany(allLiquidations);
 			if (!liquidationMap.isEmpty()) {
 				HSSFWorkbook workbook = new HSSFWorkbook();
 				init(workbook);

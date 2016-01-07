@@ -44,7 +44,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 	@Inject
 	private FileService fileService;
 	@Inject
-	private ReportLiquidationResolver liquidationResolver;
+	private LiquidationReportDataSource dataSource;
 
 	/**
 	 * 
@@ -100,7 +100,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 	}
 
 	private void createReportData(HSSFSheet sheet, Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
-		List<Liquidation> liquidations = liquidationResolver.findLiquidations(from, to, company, costCenter, companyGroup);
+		List<Liquidation> liquidations = dataSource.findLiquidations(from, to, company, costCenter, companyGroup);
 		LOG.debug("Readed {} liquidations", liquidations.size());
 		if (liquidations.isEmpty()) {
 			throw new NoAvailableDataException();

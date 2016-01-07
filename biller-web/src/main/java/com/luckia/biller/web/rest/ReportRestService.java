@@ -4,15 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -48,6 +46,8 @@ public class ReportRestService extends AbstractBinaryRestService {
 	private static final Logger LOG = LoggerFactory.getLogger(ReportRestService.class);
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 
+	@Inject
+	private Provider<EntityManager> entityManagerProvider;
 	@Inject
 	private TerminalReportGenerator terminalReportGenerator;
 	@Inject
@@ -93,23 +93,19 @@ public class ReportRestService extends AbstractBinaryRestService {
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Path("/liquidations")
 	@PermitAll
-	public Response liquidations(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString, @QueryParam("ids") String entityIds) {
+	public Response liquidations(@QueryParam("from") String fromAsString, @QueryParam("to") String toAsString, @QueryParam("companyId") String companyId,
+			@QueryParam("costCenterId") String costCenterId, @QueryParam("companyGroupId") String companyGroupId) {
 		try {
-			LOG.debug("Generando informe de liquidacines ({},{},{}", fromAsString, toAsString, entityIds);
+			LOG.debug("Generando informe de liquidacines from {} to {}", fromAsString, toAsString);
+			EntityManager entityManager = entityManagerProvider.get();
 			Mutable<Date> from = new MutableObject<Date>();
 			Mutable<Date> to = new MutableObject<Date>();
+			Company company = StringUtils.isNotBlank(companyId) ? entityManager.find(Company.class, Long.parseLong(companyId)) : null;
+			CostCenter costCenter = StringUtils.isNotBlank(costCenterId) ? entityManager.find(CostCenter.class, Long.parseLong(costCenterId)) : null;
+			CompanyGroup companyGroup = StringUtils.isNotBlank(companyGroupId) ? entityManager.find(CompanyGroup.class, Long.parseLong(companyGroupId)) : null;
 			calculateRange(fromAsString, toAsString, from, to);
-			String[] ids = entityIds.split("\\s,\\s");
-			List<Company> entities;
-			if (StringUtils.isNotBlank(entityIds) && ids.length > 0) {
-				String qlString = "select e from LegalEntity e where e.id in :ids";
-				TypedQuery<Company> query = entityManagerProvider.get().createQuery(qlString, Company.class);
-				entities = query.setParameter("ids", Arrays.asList(ids)).getResultList();
-			} else {
-				entities = entityManagerProvider.get().createQuery("select e from Company e", Company.class).getResultList();
-			}
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			liquidationReportGenerator.generate(from.getValue(), to.getValue(), entities, out);
+			liquidationReportGenerator.generate(from.getValue(), to.getValue(), company, companyGroup, costCenter, out);
 			ResponseBuilder response = Response.ok(new ByteArrayInputStream(out.toByteArray()));
 			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "Liquidaciones.xls"));
 			response.header("Content-Type", FileService.CONTENT_TYPE_EXCEL);
