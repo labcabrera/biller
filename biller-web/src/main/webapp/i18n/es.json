@@ -306,6 +306,7 @@
 	"userActivity.OWNER_REMOVE": "Eliminación de titular",
 	"userActivity.STORE_REMOVE": " Eliminación de establecimiento",
 	"userActivity.USER_MERGE": "Actualización de usuario",
+	"userActivity.LIQUIDATION_CONFIRM_ALL_BILLS": "Confirmación de todas las facturas de una liquidación",
 	"users": "Usuarios",
 	"user.remove.confirmation": "¿Desea eliminar el usuario?",
 	"user.insert.success": "Usuario creado",
