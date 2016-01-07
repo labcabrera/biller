@@ -20,7 +20,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillLiquidationDetail;
-import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.VatLiquidationType;
 
 public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
@@ -37,7 +36,7 @@ public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 			addMetaData(document, bill);
 			document.open();
 			addWaterMark(document, writer, bill);
-			printLegalEntities(document, bill.getSender(), bill.getReceiver());
+			printLegalEntities(document, bill.getReceiver(), bill.getModel().getReceiver());
 			printTitle(document, bill);
 			printGeneralDetails(document, bill);
 			printCommentsPdf(document, bill);
