@@ -46,7 +46,8 @@ public class LiquidationReportGenerator extends BaseReport {
 		try {
 			Validate.notNull(from);
 			Validate.notNull(to);
-			LOG.debug("Generando informe de liquidacione entre {} y {}", DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
+			LOG.debug("Generando informe de liquidacione entre {} y {}", DateFormatUtils.ISO_DATE_FORMAT.format(from),
+					DateFormatUtils.ISO_DATE_FORMAT.format(to));
 			for (LegalEntity i : entities) {
 				LOG.debug("  Operadora: {}", i.getName());
 			}
@@ -131,6 +132,7 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "ATC");
 		createHeaderCell(sheet, currentRow, cell++, "CO-EXPLOTACIÓN");
 		createHeaderCell(sheet, currentRow, cell++, "COSTE UBICACION");
+		createHeaderCell(sheet, currentRow, cell++, "CREDITO");
 		createHeaderCell(sheet, currentRow, cell++, "OTROS");
 		cell++;
 		createHeaderCell(sheet, currentRow, cell++, "TERMINALES");
@@ -204,6 +206,7 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, bill.getModel().getCompanyModel().getCoOperatingMonthlyFees());
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.PRICE_PER_LOCATION));
 			// los ajustes ahora no se reflejan aqui
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CREDIT));
 			createCell(sheet, currentRow, cell++, BigDecimal.ZERO);
 			cell++;
 			StringBuffer sb = new StringBuffer();
