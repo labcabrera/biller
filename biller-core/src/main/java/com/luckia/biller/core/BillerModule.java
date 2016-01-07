@@ -12,6 +12,7 @@ import com.google.inject.name.Names;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.common.SettingsManager;
+import com.luckia.biller.core.integration.BillerCamelModule;
 import com.luckia.biller.core.lis.LisModule;
 import com.luckia.biller.core.services.UserActivityInterceptor;
 import com.luckia.biller.core.services.bills.BillDataProvider;
@@ -50,6 +51,7 @@ public class BillerModule extends AbstractModule {
 		installJpaModule(settingsManager);
 		install(new ValidationModule());
 		install(new LisModule());
+		install(new BillerCamelModule());
 		bind(BillProcessor.class).to(BillProcessorImpl.class);
 		bind(LiquidationProcessor.class).to(LiquidationProcessorImpl.class);
 		bind(RappelStoreProcessor.class).to(RappelStoreProcessorImpl.class);
