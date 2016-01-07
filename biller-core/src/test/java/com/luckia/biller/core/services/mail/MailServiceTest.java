@@ -21,8 +21,8 @@ public class MailServiceTest {
 			MailService mailService = injector.getInstance(MailService.class);
 			String address = "lab.cabrera@gmail.com";
 			String displayName = "displayName";
-			String title = "title";
-			String body = "body";
+			String title = "Liquidación";
+			String body = "Ejemplo con carácteres UNICODE como por ejemplo la palabra año";
 			List<EmailAttachment> emailAttachments = null;
 			HtmlEmail email = mailService.createEmail(address, displayName, title, body, emailAttachments);
 			email.send();

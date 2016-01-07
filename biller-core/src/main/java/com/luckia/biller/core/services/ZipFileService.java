@@ -67,7 +67,7 @@ public class ZipFileService {
 
 			if (includeDetails) {
 				for (Bill bill : liquidation.getBills()) {
-					if (bill.getLiquidationDetailFile() != null) {
+					if (bill.getLiquidationDetailFile() != null && MathUtils.isNotZero(bill.getLiquidationTotalAmount())) {
 						name = fileService.getAbstractBillFileName(bill, "pdf");
 						in = fileService.getInputStream(bill.getLiquidationDetailFile());
 						addZipEntry(in, zipOutputStream, FORMAT_DETAILS_FOLDER + name);

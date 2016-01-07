@@ -71,6 +71,7 @@ public class MailService {
 		init();
 		LOG.debug("Creando email con titulo {}", displayName);
 		HtmlEmail email = new HtmlEmail();
+		email.setCharset("utf-8");
 		if (emailUser != null && !emailUser.equals("") && emailPassword != null && !emailPassword.equals("")) {
 			email.setAuthentication(emailUser, emailPassword);
 		}
