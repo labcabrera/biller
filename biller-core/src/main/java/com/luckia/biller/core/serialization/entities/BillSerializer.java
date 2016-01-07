@@ -49,6 +49,9 @@ public class BillSerializer extends AbstractBillSerializer implements JsonSerial
 			if (src.getBillRawData() != null) {
 				bill.add("billRawData", context.serialize(src.getBillRawData()));
 			}
+			if (src.getLiquidationDetailFile() != null) {
+				bill.add("liquidationDetailFile", context.serialize(src.getLiquidationDetailFile()));
+			}
 			return bill;
 		} catch (RuntimeException ex) {
 			LOG.error("Bill serialization error: " + ex.getMessage());

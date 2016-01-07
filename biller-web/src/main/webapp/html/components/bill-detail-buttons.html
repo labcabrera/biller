@@ -15,12 +15,12 @@
 		href="rest/bills/draft/liquidation-detail/{{entity.id}}"
 		role="button"
 		ng-disabled="isSaving">{{'viewDraft' | translate}}</a>
-	<!-- a
+	<a
 		class="btn btn-primary btn-sm"
-		ng-if="entity.currentState.stateDefinition.id != 'DRAFT' && entity.currentState.stateDefinition.id != 'CANCELLED' && entity.currentState.stateDefinition.id != 'INITIAL'"
-		href="rest/binary/download/{{entity.pdfFile.id}}"
+		ng-if="entity.currentState.stateDefinition.id != 'DRAFT' || entity.liquidationDetailFile != null"
+		href="rest/binary/download/{{entity.liquidationDetailFile.id}}"
 		role="button"
-		ng-disabled="isSaving">{{'download' | translate}}</a -->
+		ng-disabled="isSaving">{{'download' | translate}}</a>
 	<button
 		ng-click="draft()"
 		ng-if="entity.currentState.stateDefinition.id == 'CONFIRMED' || entity.currentState.stateDefinition.id == 'SENT' || entity.currentState.stateDefinition.id == 'RECTIFIED'"
