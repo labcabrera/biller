@@ -1,5 +1,7 @@
 package com.luckia.biller.core.services.mail;
 
+import java.net.InetAddress;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.luckia.biller.core.model.common.Message;
@@ -28,6 +30,16 @@ public class MailMessageConverter {
 			}
 			sb.append("</ul>");
 		}
+		sb.append("Enviroment<br>");
+		sb.append("<ul>");
+		try {
+			sb.append("<li>host: ").append(InetAddress.getLocalHost().getHostName()).append("</li>");
+		} catch (Exception ignore) {
+		}
+		sb.append("<li>user.name: ").append(System.getProperty("user.name")).append("</li>");
+		sb.append("<li>user.home: ").append(System.getProperty("user.home")).append("</li>");
+		sb.append("<li>java.version: ").append(System.getProperty("java.version")).append("</li>");
+		sb.append("</ul>");
 		return sb.toString();
 	}
 }
