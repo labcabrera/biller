@@ -39,17 +39,20 @@
 						<div class="panel panel-default">
 							<div class="panel-heading">{{'roles' | translate}}</div>
 							<div class="panel-body" ng-repeat="role in entity.roles">
-								<div class="pull-left">{{role.name}}</div>
+								<div class="pull-left">{{'role.' + role.code | translate}}</div>
 								<div class="pull-right" ng-if="!isReadOnly"><a ng-click="removeRole(role)">{{'remove' | translate}}</a></div>
+							</div>
+							<div class="panel-body" ng-if="entity.roles == null || entity.roles.length < 1">
+								<div>{{'user.emptyRoleList' | translate}}</div>
 							</div>
 						</div>
 					</div>
 					<div class="col-sm-4 col-sm-offset-2">
-						<div class="panel panel-default">
+						<div class="panel panel-default" ng-if="!isReadOnly">
 							<div class="panel-heading">{{'availableRoles' | translate}}</div>
 							<div class="panel-body" ng-repeat="role in availableRoles">
-								<div class="pull-left">{{role.name}}</div>
-								<div class="pull-right" ng-if="!isReadOnly"><a ng-click="addRole(role)">{{'add' | translate}}</a></div>
+								<div class="pull-left">{{'role.' + role.code | translate}}</div>
+								<div class="pull-right"><a ng-click="addRole(role)">{{'add' | translate}}</a></div>
 							</div>
 						</div>
 					</div>
