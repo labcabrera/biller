@@ -88,28 +88,7 @@ public abstract class PDFGenerator<T> {
 		String billCodeLabel = isBill ? i18nService.getMessage("pdf.label.billCodeLabel") : i18nService.getMessage("pdf.label.liquidationCodeLabel");
 		String billPeriodLabel = isBill ? i18nService.getMessage("pdf.label.billPeriodLabel") : i18nService.getMessage("pdf.label.liquidationPeriodLabel");
 		String billDateLabel = i18nService.getMessage("pdf.label.billDate");
-
-		String billTitleLabel;
-		if (isBill) {
-			billTitleLabel = i18nService.getMessage("pdf.label.billTitle");
-		} else {
-			// Dependiendo de si es una co-explotacion o una factura mostramos un titulo u otro
-			Liquidation liquidation = (Liquidation) abstractBill;
-			VatLiquidationType vatType = VatLiquidationType.EXCLUDED;
-			if (liquidation.getModel() != null && liquidation.getModel().getVatLiquidationType() != null) {
-				vatType = liquidation.getModel().getVatLiquidationType();
-			} else {
-				vatType = liquidation.getBills().iterator().next().getModel().getVatLiquidationType();
-			}
-			switch (vatType) {
-			case EXCLUDED:
-				billTitleLabel = i18nService.getMessage("pdf.label.liquidationTitle");
-				break;
-			default:
-				billTitleLabel = i18nService.getMessage("pdf.label.liquidationTitleWithVat");
-				break;
-			}
-		}
+		String billTitleLabel = getPdfTitle(abstractBill);
 
 		List<PdfPCell> cells = new ArrayList<>();
 		cells.add(createCell(billCodeLabel, Element.ALIGN_LEFT, documentFont));
@@ -138,8 +117,35 @@ public abstract class PDFGenerator<T> {
 		document.add(paragraph);
 	}
 
+	protected String getPdfTitle(AbstractBill abstractBill) {
+		Boolean isBill = abstractBill.getClass().isAssignableFrom(Bill.class);
+		String billTitleLabel;
+		if (isBill) {
+			billTitleLabel = i18nService.getMessage("pdf.label.billTitle");
+		} else {
+			// Dependiendo de si es una co-explotacion o una factura mostramos un titulo u otro
+			Liquidation liquidation = (Liquidation) abstractBill;
+			VatLiquidationType vatType = VatLiquidationType.EXCLUDED;
+			if (liquidation.getModel() != null && liquidation.getModel().getVatLiquidationType() != null) {
+				vatType = liquidation.getModel().getVatLiquidationType();
+			} else {
+				vatType = liquidation.getBills().iterator().next().getModel().getVatLiquidationType();
+			}
+			switch (vatType) {
+			case EXCLUDED:
+				billTitleLabel = i18nService.getMessage("pdf.label.liquidationTitle");
+				break;
+			default:
+				billTitleLabel = i18nService.getMessage("pdf.label.liquidationTitleWithVat");
+				break;
+			}
+		}
+		return billTitleLabel;
+	}
+
 	/**
-	 * En caso de que la factura o liquidacion esten en estado <code>BillDraft</code> muestra una marca de agua indicando que el documento es un borrador.
+	 * En caso de que la factura o liquidacion esten en estado <code>BillDraft</code> muestra una marca de agua indicando que el documento
+	 * es un borrador.
 	 * 
 	 * @param document
 	 * @param writer

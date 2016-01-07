@@ -17,8 +17,11 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillLiquidationDetail;
+import com.luckia.biller.core.model.Liquidation;
+import com.luckia.biller.core.model.VatLiquidationType;
 
 public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 
@@ -103,34 +106,6 @@ public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 		cells.addAll(createEmptyCells(hasVat ? 5 : 3));
 		cells.add(createCell(formatAmount(bill.getStoreCash()), Element.ALIGN_RIGHT, boldFont));
 
-		// for (Entry<BillConcept, PDFLiquidationDetail> entry : outerDetails.entrySet()) {
-		// if (MathUtils.isNotZero(entry.getValue().getAmount())) {
-		// cells.add(createCell(entry.getValue().getName(), Element.ALIGN_LEFT, documentFont));
-		// cells.addAll(createEmptyCells(hasVat ? 5 : 3));
-		// cells.add(createCell(formatAmount(entry.getValue().getAmount()), Element.ALIGN_RIGHT, documentFont));
-		// }
-		// }
-		//
-		// if (!outerDetails.isEmpty()) {
-		// cells.add(createCell("Saldo de caja ajustado", Element.ALIGN_LEFT, boldFont));
-		// cells.addAll(createEmptyCells(hasVat ? 5 : 3));
-		// cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreEffectiveAmount()), Element.ALIGN_RIGHT, boldFont));
-		// }
-		//
-		// cells.add(createCell("Total liquidación a percibir por " + senderName, Element.ALIGN_LEFT, documentFont));
-		// cells.addAll(createEmptyCells(hasVat ? 5 : 3));
-		// cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getTotalAmount()), Element.ALIGN_RIGHT, documentFont));
-		//
-		// String message;
-		// if (StringUtils.isBlank(liquidation.getReceiver().getAccountNumber())) {
-		// message = String.format("Total a ingresar a %s", receiverName);
-		// } else {
-		// message = String.format("Total a ingresar a %s (%s)", receiverName, liquidation.getReceiver().getAccountNumber());
-		// }
-		// cells.add(createCell(message, Element.ALIGN_LEFT, boldFont));
-		// cells.addAll(createEmptyCells(hasVat ? 5 : 3));
-		// cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getEffectiveLiquidationAmount()), Element.ALIGN_RIGHT, boldFont));
-
 		int cols = hasVat ? 7 : 5;
 		int subtotalRow = 2 + bill.getLiquidationDetails().size();
 		for (int i = 0; i < cells.size(); i++) {
@@ -172,5 +147,26 @@ public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 	@Override
 	protected float getLineHeight() {
 		return 20;
+	}
+
+	@Override
+	protected String getPdfTitle(AbstractBill abstractBill) {
+		// Dependiendo de si es una co-explotacion o una factura mostramos un titulo u otro
+		String billTitleLabel;
+		Bill liquidation = (Bill) abstractBill;
+		VatLiquidationType vatType = VatLiquidationType.EXCLUDED;
+		if (liquidation.getModel() != null && liquidation.getModel().getVatLiquidationType() != null) {
+			vatType = liquidation.getModel().getVatLiquidationType();
+		}
+		switch (vatType) {
+		case EXCLUDED:
+			billTitleLabel = i18nService.getMessage("pdf.label.liquidationTitle");
+			break;
+		default:
+			billTitleLabel = i18nService.getMessage("pdf.label.liquidationTitleWithVat");
+			break;
+		}
+
+		return billTitleLabel;
 	}
 }
