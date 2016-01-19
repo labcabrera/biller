@@ -1,3 +1,13 @@
+# FIX 2016-01-19
+* No aplicar en el modelo SAT < 0
+* Informe liquidaciones: cambios margen -> saldo de caja (done)
+* Informe resument liquidaciones: error ajustes internos / externos (done)
+* Ajustes miniliquidaciones en report de ajustes
+* I18n envio correos (done)
+* Posibilidad de cambiar el IBAN (done)
+* Corregir NaN cuando se aplica el filtro de angular | abs (done)
+* Envio de facturas / miniliquidaciones. Separar funcionamiento y esconder el boton cuando la factura este a cero
+
 # FIX
 * Arreglar el funcionamiento del serializador cuando se utiliza eclipselink-weaving (esta deshabilitado de momento).
 * Serializacion en los listados de ajustes manuales
