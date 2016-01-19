@@ -1,7 +1,9 @@
 package com.luckia.biller.core.services.pdf;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -77,56 +79,44 @@ public class PDFLiquidationDetailProcessor {
 		return cleanEmptyResults(result);
 	}
 
-	public Map<BillConcept, PDFLiquidationDetail> loadOuterDetails(Liquidation liquidation) {
-		Map<BillConcept, PDFLiquidationDetail> result = new LinkedHashMap<>();
-		result.put(BillConcept.RAPPEL, new PDFLiquidationDetail().init("Rappel"));
-		result.put(BillConcept.LOAN_RECOVERY, new PDFLiquidationDetail().init("Rappel"));
-		result.put(BillConcept.ROBBERY, new PDFLiquidationDetail().init("Rappel"));
-		result.put(BillConcept.MANUAL, new PDFLiquidationDetail().init("Ajustes manuales de establecimientos"));
+	public List<PDFLiquidationDetail> loadOuterDetails(Liquidation liquidation) {
+		List<PDFLiquidationDetail> result = new ArrayList<>();
+
+		// A nivel de liquidacion
+		for (LiquidationDetail detail : liquidation.getDetails()) {
+			if (!detail.getLiquidationIncluded()) {
+				PDFLiquidationDetail pdfDetail = new PDFLiquidationDetail();
+				pdfDetail.setAmount(detail.getValue());
+				pdfDetail.setName(detail.getName());
+				result.add(pdfDetail);
+			}
+		}
+
+		// A nivel de facturas
 		for (Bill bill : liquidation.getBills()) {
 			for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
 				if (!detail.getLiquidationIncluded()) {
 					switch (detail.getConcept()) {
 					case MANUAL:
-						BillConcept targetConcept = BillConcept.MANUAL;
-						for (BillConcept i : BillConcept.values()) {
-							if (result.containsKey(i) && i.description().equals(detail.getName())) {
-								targetConcept = i;
-								break;
-							}
-						}
-						addConcept(result, targetConcept, detail);
+						PDFLiquidationDetail pdfDetail = new PDFLiquidationDetail();
+						pdfDetail.setName(detail.getName());
+						pdfDetail.setAmount(detail.getValue());
+						result.add(pdfDetail);
 						break;
 					default:
-						throw new RuntimeException("Unexpected concept type: " + detail.getConcept());
-					}
-				}
-			}
-		}
-		for (LiquidationDetail detail : liquidation.getDetails()) {
-			if (!detail.getLiquidationIncluded()) {
-				BillConcept targetConcept = BillConcept.MANUAL;
-				for (BillConcept i : BillConcept.values()) {
-					if (result.containsKey(i) && i.description().equals(detail.getName())) {
-						targetConcept = i;
 						break;
 					}
 				}
-				addConcept(result, targetConcept, detail);
 			}
 		}
-		return cleanEmptyResults(result);
+
+		return result;
 	}
 
 	private void addConcept(Map<BillConcept, PDFLiquidationDetail> map, BillConcept concept, BillLiquidationDetail detail) {
 		PDFLiquidationDetail i = map.get(concept);
 		i.setNetAmount(i.getNetAmount().add(MathUtils.safeNull(detail.getNetValue())));
 		i.setVatAmount(i.getVatAmount().add(MathUtils.safeNull(detail.getVatValue())));
-		i.setAmount(i.getAmount().add(MathUtils.safeNull(detail.getValue())));
-	}
-
-	private void addConcept(Map<BillConcept, PDFLiquidationDetail> map, BillConcept concept, LiquidationDetail detail) {
-		PDFLiquidationDetail i = map.get(concept);
 		i.setAmount(i.getAmount().add(MathUtils.safeNull(detail.getValue())));
 	}
 

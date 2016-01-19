@@ -37,7 +37,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 	private ProvinceTaxesService provinceTaxesService;
 
 	private Map<BillConcept, PDFLiquidationDetail> details;
-	private Map<BillConcept, PDFLiquidationDetail> outerDetails;
+	private List<PDFLiquidationDetail> outerDetails;
 
 	@Override
 	public void generate(Liquidation liquidation, OutputStream out) {
@@ -145,11 +145,11 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getCashStoreAmount()), Element.ALIGN_RIGHT, boldFont));
 
 		// Ajustes manuales externos a la liquidacion
-		for (Entry<BillConcept, PDFLiquidationDetail> entry : outerDetails.entrySet()) {
-			if (MathUtils.isNotZero(entry.getValue().getAmount())) {
-				cells.add(createCell(entry.getValue().getName(), Element.ALIGN_LEFT, documentFont));
+		for (PDFLiquidationDetail detail : outerDetails) {
+			if (MathUtils.isNotZero(detail.getAmount())) {
+				cells.add(createCell(detail.getName(), Element.ALIGN_LEFT, documentFont));
 				cells.addAll(createEmptyCells(hasVat ? 5 : 3));
-				cells.add(createCell(formatAmount(entry.getValue().getAmount()), Element.ALIGN_RIGHT, documentFont));
+				cells.add(createCell(formatAmount(detail.getAmount()), Element.ALIGN_RIGHT, documentFont));
 			}
 		}
 
