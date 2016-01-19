@@ -229,6 +229,7 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 		this.parent = entity.parent;
 		this.startDate = entity.startDate;
 		this.endDate = entity.endDate;
+		this.accountNumber = entity.accountNumber;
 		if (this.address != null) {
 			this.address.merge(entity.getAddress());
 		}

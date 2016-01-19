@@ -147,6 +147,7 @@ public class AdjustmentReportGenerator extends BaseReport {
 					cell = 0;
 					switch (detail.getConcept()) {
 					case MANUAL:
+					default:
 						createCell(sheet, currentRow, cell++, liquidation.getSender().getName());
 						createCell(sheet, currentRow, cell++, liquidation.getReceiver().getName());
 						createCell(sheet, currentRow, cell++, costCenter != null ? costCenter.getName() : StringUtils.EMPTY);
@@ -159,8 +160,8 @@ public class AdjustmentReportGenerator extends BaseReport {
 						createCell(sheet, currentRow, cell++, MathUtils.safeNull(i.getValue()));
 						currentRow++;
 						break;
-					default:
-						break;
+//					default:
+//						break;
 					}
 				}
 			}

@@ -3,16 +3,16 @@ package com.luckia.biller.core.model;
 /**
  * Tipo enumerado que establece los diferentes tipos de establecimiento
  * 
- * @author lab
- * 
  */
+// TODO normalize names + i18n update
+// TODO eliminar descripcion en el constructor del enumerado
 public enum StoreType {
 
 	Bar("Bar"),
 
 	SalonCorner("Córner en Salón"), CasinoCorner("Córner en casino"), BingoCorner("Córner en bingo"),
 
-	SpecifigStore("Establecimiento específico"), LSC("Luckia Sport Café"), CasaDeApuestas("Casa de apuestas");
+	SpecificStore("Establecimiento específico"), LSC("Luckia Sport Café"), CasaDeApuestas("Casa de apuestas");
 
 	private String desc;
 

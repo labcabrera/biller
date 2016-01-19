@@ -11,8 +11,8 @@
 		<tr ng-repeat="detail in entity.liquidationDetails | filter: {liquidationIncluded: true}" ng-if="detail.concept != 'MANUAL'">
 			<td>{{detail.name}}</td>
 			<td class="data-amount">{{detail.units}}</td>
-			<td class="data-amount">{{detail.netValue | abs}}</td>
-			<td class="data-amount">{{detail.vatValue | abs}}</td>
+			<td class="data-amount">{{detail.netValue}}</td>
+			<td class="data-amount">{{detail.vatValue}}</td>
 			<td class="data-amount">{{detail.value}}</td>
 			<td></td>
 		</tr>

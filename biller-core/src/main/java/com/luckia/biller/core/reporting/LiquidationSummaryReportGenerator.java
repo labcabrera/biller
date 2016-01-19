@@ -114,7 +114,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			int col = 0;
 			BigDecimal amount = MathUtils.safeNull(liquidation.getLiquidationResults().getTotalAmount());
 			BigDecimal cashStore = MathUtils.safeNull(liquidation.getLiquidationResults().getCashStoreAmount());
-			BigDecimal outerAdjustements = MathUtils.safeNull(getAdjustementAmount(liquidation, false));
+			BigDecimal outerAdjustements = MathUtils.safeNull(getAdjustementAmount(liquidation, true));
 			BigDecimal result = MathUtils.safeNull(liquidation.getLiquidationResults().getReceiverAmount());
 			BigDecimal betAmount = getAmountByConcept(liquidation, BillConcept.TOTAL_BET_AMOUNT);
 			BigDecimal winAmount = getAmountByConcept(liquidation, BillConcept.TOTAL_WIN_AMOUNT);

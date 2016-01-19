@@ -251,6 +251,7 @@ public class BillRestService {
 				String title = "Factura " + bill.getCode();
 				String body = "Adjunto PDF";
 				String[] recipients = emailAddress.split("\\s*;\\s*");
+				//TODO cuando se produce un error no se detecta y se devuelve el message success
 				for (String recipient : recipients) {
 					SendAppFileMailTask task = new SendAppFileMailTask(recipient, appFile, title, body, fileService, mailService);
 					new Thread(task).start();
