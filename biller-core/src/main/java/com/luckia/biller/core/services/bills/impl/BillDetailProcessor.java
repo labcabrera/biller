@@ -32,7 +32,8 @@ import com.luckia.biller.core.services.bills.BillDataProvider;
 import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 
 /**
- * Servicio encargado de crear los detalles de una factura a partir de los datos obtenidos a traves de {@link BillDataProvider}. Esto genera dos listas de conceptos:
+ * Servicio encargado de crear los detalles de una factura a partir de los datos obtenidos a traves de {@link BillDataProvider}. Esto genera
+ * dos listas de conceptos:
  * <ul>
  * <li>Conceptos de facturacion: en principio solo se facturara a los bares por un porcentaje de las ventas</li>
  * <li>Conceptos de liquidacion: en este punto se generan los conceptos a partir de los cuales se realizara la liquidacion conjunta.</li>
@@ -98,11 +99,11 @@ public class BillDetailProcessor {
 						addLiquidationPercentConcept(bill, concept, detailPercent, billingData, vatPercent);
 					}
 				}
-				// Calculamos los conceptos fijos
-				processLiquidationFixedConcepts(bill, model, range, terminals);
 			} else {
 				LOG.debug("No generamos resultados de liquidacion de {}: carece de operaciones en el rango de facturacion", store.getName());
 			}
+			// Calculamos los conceptos fijos
+			processLiquidationFixedConcepts(bill, model, range, terminals);
 			// Almacenamos el saldo de caja
 			bill.setStoreCash(billingData.containsKey(BillConcept.STORE_CASH) ? billingData.get(BillConcept.STORE_CASH).setScale(2, RoundingMode.HALF_EVEN) : BigDecimal.ZERO);
 		}
@@ -114,7 +115,7 @@ public class BillDetailProcessor {
 		fixedConcepts.put(BillConcept.SAT_MONTHLY_FEES, model.getCompanyModel().getSatMonthlyFees());
 		for (BillConcept concept : fixedConcepts.keySet()) {
 			BigDecimal value = fixedConcepts.get(concept);
-			if (MathUtils.isNotZeroPositive(value)) {
+			if (MathUtils.isNotZero(value)) {
 				addLiquidationFixedConcept(bill, concept, value);
 			}
 		}
