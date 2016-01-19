@@ -68,7 +68,7 @@ public class DashboardRestService {
 	public List<ChartModel> companyStoreDistributionByMonth(@QueryParam("companyId") Long companyId, @QueryParam("year") Integer year, @QueryParam("month") Integer month,
 			@QueryParam("negative") Boolean negative) {
 		year = year != null ? year : new DateTime().getYear();
-		month = month != null ? month : new DateTime().getMonthOfYear();
+		month = month != null ? month + 1 : new DateTime().getMonthOfYear();
 		DateTime from = new DateTime(year, month, 1, 0, 0, 0);
 		DateTime to = from.dayOfMonth().withMaximumValue();
 		return companyDistribution(companyId, from, to, negative);
