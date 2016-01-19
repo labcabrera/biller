@@ -17,6 +17,7 @@
 			var predicateBuilder = new PredicateBuilder('');
 			predicateBuilder.append("user.id=lk=", $scope.searchOptions.user);
 			predicateBuilder.append("user.name=lk=", $scope.searchOptions.name);
+			predicateBuilder.append("type=lk=", $scope.searchOptions.type);
 			predicateBuilder.append("date=ge=", $scope.searchOptions.from != null ? $filter('date')($scope.searchOptions.from, "yyyy-MM-dd") : null);
 			predicateBuilder.append("date=le=", $scope.searchOptions.to != null ? $filter('date')($scope.searchOptions.to, "yyyy-MM-dd") : null);
 			return 'rest/user-activity/find?p=' + $scope.currentPage + '&n=' + $scope.itemsPerPage + "&q=" + predicateBuilder.build();
