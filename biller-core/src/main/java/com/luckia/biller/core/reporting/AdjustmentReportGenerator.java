@@ -74,8 +74,8 @@ public class AdjustmentReportGenerator extends BaseReport {
 			sb.append("join Bill b on b.liquidation =  l ");
 			sb.append("join Store s on b.sender = s ");
 		}
-		sb.append("where l.currentState.stateDefinition.id in :states ");
-		sb.append("and l.billDate between :from and :to ");
+		sb.append("where l.billDate >= :from and l.billDate <= :to ");
+		sb.append("and l.currentState.stateDefinition.id in :states ");
 		if (company != null) {
 			sb.append("and l.sender = :sender ");
 		}
@@ -108,6 +108,7 @@ public class AdjustmentReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "EMISOR");
 		createHeaderCell(sheet, currentRow, cell++, "DESTINATARIO");
 		createHeaderCell(sheet, currentRow, cell++, "CENTRO DE COSTE");
+		createHeaderCell(sheet, currentRow, cell++, "ESTADO");
 		createHeaderCell(sheet, currentRow, cell++, "FECHA");
 		createHeaderCell(sheet, currentRow, cell++, "TIPO");
 		createHeaderCell(sheet, currentRow, cell++, "INCLUIDO");
@@ -119,21 +120,23 @@ public class AdjustmentReportGenerator extends BaseReport {
 	}
 
 	private int createLiquidationDetails(HSSFSheet sheet, int currentRow, Liquidation liquidation) {
-		for (LiquidationDetail i : liquidation.getDetails()) {
-			int cell = 0;
-			CostCenter costCenter = null;
-			if (!liquidation.getBills().isEmpty()) {
-				for (Bill bill : liquidation.getBills()) {
-					Store store = bill.getSender().as(Store.class);
-					if (store.getCostCenter() != null) {
-						costCenter = store.getCostCenter();
-						break;
-					}
+		CostCenter costCenter = null;
+		if (!liquidation.getBills().isEmpty()) {
+			for (Bill bill : liquidation.getBills()) {
+				Store store = bill.getSender().as(Store.class);
+				if (store.getCostCenter() != null) {
+					costCenter = store.getCostCenter();
+					break;
 				}
 			}
+		}
+		int cell = 0;
+		for (LiquidationDetail i : liquidation.getDetails()) {
+			cell = 0;
 			createCell(sheet, currentRow, cell++, liquidation.getSender().getName());
 			createCell(sheet, currentRow, cell++, liquidation.getReceiver().getName());
 			createCell(sheet, currentRow, cell++, costCenter != null ? costCenter.getName() : StringUtils.EMPTY);
+			createCell(sheet, currentRow, cell++, liquidation.getCurrentState().getStateDefinition().getId());
 			createCell(sheet, currentRow, cell++, liquidation.getBillDate());
 			createCell(sheet, currentRow, cell++, "OPERADOR");
 			createCell(sheet, currentRow, cell++, i.getLiquidationIncluded() ? "SI" : "NO");
@@ -142,27 +145,28 @@ public class AdjustmentReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, MathUtils.safeNull(i.getVatValue()));
 			createCell(sheet, currentRow, cell++, MathUtils.safeNull(i.getValue()));
 			currentRow++;
-			for (Bill bill : liquidation.getBills()) {
-				for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
-					cell = 0;
-					switch (detail.getConcept()) {
-					case MANUAL:
-					default:
-						createCell(sheet, currentRow, cell++, liquidation.getSender().getName());
-						createCell(sheet, currentRow, cell++, liquidation.getReceiver().getName());
-						createCell(sheet, currentRow, cell++, costCenter != null ? costCenter.getName() : StringUtils.EMPTY);
-						createCell(sheet, currentRow, cell++, liquidation.getBillDate());
-						createCell(sheet, currentRow, cell++, "ESTABLECIMIENTO");
-						createCell(sheet, currentRow, cell++, detail.getLiquidationIncluded() ? "SI" : "NO");
-						createCell(sheet, currentRow, cell++, detail.getName());
-						createCell(sheet, currentRow, cell++, MathUtils.safeNull(i.getNetValue()));
-						createCell(sheet, currentRow, cell++, MathUtils.safeNull(i.getVatValue()));
-						createCell(sheet, currentRow, cell++, MathUtils.safeNull(i.getValue()));
-						currentRow++;
-						break;
-//					default:
-//						break;
-					}
+		}
+		for (Bill bill : liquidation.getBills()) {
+			for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
+				cell = 0;
+				switch (detail.getConcept()) {
+				case MANUAL:
+					createCell(sheet, currentRow, cell++, liquidation.getSender().getName());
+					createCell(sheet, currentRow, cell++, liquidation.getReceiver().getName());
+					createCell(sheet, currentRow, cell++, costCenter != null ? costCenter.getName() : StringUtils.EMPTY);
+					createCell(sheet, currentRow, cell++, bill.getCurrentState().getStateDefinition().getId());
+					createCell(sheet, currentRow, cell++, liquidation.getBillDate());
+					createCell(sheet, currentRow, cell++, "ESTABLECIMIENTO");
+					createCell(sheet, currentRow, cell++, detail.getLiquidationIncluded() ? "SI" : "NO");
+					createCell(sheet, currentRow, cell++, detail.getName());
+					createCell(sheet, currentRow, cell++, MathUtils.safeNull(detail.getNetValue()));
+					createCell(sheet, currentRow, cell++, MathUtils.safeNull(detail.getVatValue()));
+					createCell(sheet, currentRow, cell++, MathUtils.safeNull(detail.getValue()));
+					createCell(sheet, currentRow, cell++, detail.getConcept().name());
+					currentRow++;
+					break;
+				default:
+					break;
 				}
 			}
 		}

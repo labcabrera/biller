@@ -4,9 +4,11 @@
 * Informe resument liquidaciones: error ajustes internos / externos (done)
 * Ajustes miniliquidaciones en report de ajustes
 * I18n envio correos (done)
+* I18n tipos local (done)
 * Posibilidad de cambiar el IBAN (done)
 * Corregir NaN cuando se aplica el filtro de angular | abs (done)
 * Envio de facturas / miniliquidaciones. Separar funcionamiento y esconder el boton cuando la factura este a cero
+* Desglose ajustes en el PDF de la liquidación
 
 # FIX
 * Arreglar el funcionamiento del serializador cuando se utiliza eclipselink-weaving (esta deshabilitado de momento).
