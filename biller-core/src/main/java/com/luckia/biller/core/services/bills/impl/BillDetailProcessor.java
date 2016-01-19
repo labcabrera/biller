@@ -171,6 +171,7 @@ public class BillDetailProcessor {
 		BillDetail detail = new BillDetail();
 		detail.setId(UUID.randomUUID().toString());
 		detail.setConcept(concept);
+		detail.setSourceValue(total);
 		detail.setValue(value);
 		detail.setBill(bill);
 		detail.setPercent(percent);
