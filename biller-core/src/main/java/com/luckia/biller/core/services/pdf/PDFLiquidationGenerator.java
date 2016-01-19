@@ -164,10 +164,12 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		cells.add(createCell(formatAmount(liquidation.getLiquidationResults().getTotalAmount()), Element.ALIGN_RIGHT, documentFont));
 
 		String message;
-		if (StringUtils.isBlank(liquidation.getReceiver().getAccountNumber())) {
+		String iban = liquidation.getReceiver().getAccountNumber();
+
+		if (StringUtils.isBlank(iban)) {
 			message = String.format("Total a ingresar a %s", receiverName);
 		} else {
-			message = String.format("Total a ingresar a %s (%s)", receiverName, liquidation.getReceiver().getAccountNumber());
+			message = String.format("Total a ingresar a %s (%s)", receiverName, iban);
 		}
 		cells.add(createCell(message, Element.ALIGN_LEFT, boldFont));
 		cells.addAll(createEmptyCells(hasVat ? 5 : 3));

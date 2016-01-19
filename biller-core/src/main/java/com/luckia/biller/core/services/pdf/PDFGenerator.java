@@ -128,7 +128,7 @@ public abstract class PDFGenerator<T> {
 			VatLiquidationType vatType = VatLiquidationType.EXCLUDED;
 			if (liquidation.getModel() != null && liquidation.getModel().getVatLiquidationType() != null) {
 				vatType = liquidation.getModel().getVatLiquidationType();
-			} else {
+			} else if (liquidation.getBills() != null && !liquidation.getBills().isEmpty()) {
 				vatType = liquidation.getBills().iterator().next().getModel().getVatLiquidationType();
 			}
 			switch (vatType) {
