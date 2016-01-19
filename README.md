@@ -1,14 +1,5 @@
 # FIX 2016-01-19
-* No aplicar en el modelo SAT < 0
-* Informe liquidaciones: cambios margen -> saldo de caja (done)
-* Informe resument liquidaciones: error ajustes internos / externos (done)
-* Ajustes miniliquidaciones en report de ajustes (done)
-* I18n envio correos (done)
-* I18n tipos local (done)
-* Posibilidad de cambiar el IBAN (done)
-* Corregir NaN cuando se aplica el filtro de angular | abs (done)
 * Envio de facturas / miniliquidaciones. Separar funcionamiento y esconder el boton cuando la factura este a cero
-* Desglose ajustes en el PDF de la liquidación
 
 # FIX
 * Arreglar el funcionamiento del serializador cuando se utiliza eclipselink-weaving (esta deshabilitado de momento).
@@ -16,6 +7,7 @@
 
 # TODO
 * Filtro por grupo y centro de coste en el report de liquidaciones
+* Listado de actividad por usuario
 
 # MINOR
 * Añadir @Version a las entidades para controlar cambios concurrentes (solo esta para la jerarquia de LegalEntity).
@@ -39,3 +31,14 @@
 * Gestion de usuarios y permisos.
 * Revisar excel el auto-size de las columnas.
 * No generar el PDF de las facturas que están a cero y eliminar las que estan generadas.
+
+# CHECK-LIST 2016-01-19
+* No aplicar en el modelo SAT < 0
+* Informe liquidaciones: cambios margen -> saldo de caja
+* Informe resument liquidaciones: error ajustes internos / externos
+* Ajustes miniliquidaciones en report de ajustes
+* I18n envio correos
+* I18n tipos local
+* Posibilidad de cambiar el IBAN
+* Corregir NaN cuando se aplica el filtro de angular | abs
+* Desglose ajustes en el PDF de la liquidación
