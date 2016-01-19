@@ -2,7 +2,7 @@
 * No aplicar en el modelo SAT < 0
 * Informe liquidaciones: cambios margen -> saldo de caja (done)
 * Informe resument liquidaciones: error ajustes internos / externos (done)
-* Ajustes miniliquidaciones en report de ajustes
+* Ajustes miniliquidaciones en report de ajustes (done)
 * I18n envio correos (done)
 * I18n tipos local (done)
 * Posibilidad de cambiar el IBAN (done)

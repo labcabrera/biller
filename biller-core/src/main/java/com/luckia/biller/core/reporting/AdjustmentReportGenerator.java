@@ -162,7 +162,6 @@ public class AdjustmentReportGenerator extends BaseReport {
 					createCell(sheet, currentRow, cell++, MathUtils.safeNull(detail.getNetValue()));
 					createCell(sheet, currentRow, cell++, MathUtils.safeNull(detail.getVatValue()));
 					createCell(sheet, currentRow, cell++, MathUtils.safeNull(detail.getValue()));
-					createCell(sheet, currentRow, cell++, detail.getConcept().name());
 					currentRow++;
 					break;
 				default:
