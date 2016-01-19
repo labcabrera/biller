@@ -183,6 +183,15 @@
 			});
 		};
 	}]);
+	
+	billerModule.controller('SystemInfoCtrl', ['$scope', '$rootScope', '$location', '$http', 'messageService', function($scope, $rootScope, $location, $http, messageService) {
+		$scope.init = function() {
+			$http.get('rest/system/info', $scope.entity).success(function(data) {
+				$scope.info = data;
+			});
+		};
+		$scope.init();
+	}]);
 
 	
 })();

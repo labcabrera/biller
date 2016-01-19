@@ -54,6 +54,8 @@ billerModule.config([ '$routeProvider', function($routeProvider, $rootScope, $lo
 	}).when('/admin/alert-management/new', { templateUrl : 'html/admin/alert-receiver/alert-receiver-detail.html', controller: 'AlertReceiverNewCtrl'
 	}).when('/admin/scheduler', { templateUrl : 'html/admin/scheduler-list.html', controller: 'SchedulerListCtrl'
 	}).when('/dashboard/companies', { templateUrl : 'html/dashboard/dashboard-panel.html', controller : 'DashboardCtrl'
+	}).when('/admin/scheduler', { templateUrl : 'html/admin/scheduler-list.html', controller: 'SchedulerListCtrl'
+	}).when('/admin/system-info', { templateUrl : 'html/admin/system-info.html', controller : 'SystemInfoCtrl'
 	}).when('/login', { templateUrl : 'html/login.html', controller: 'LoginCtrl'
 	}).when('/index', { templateUrl : 'html/index.html'
 	}).when('/sequence-prefix', { templateUrl : 'html/sequence-prefix.html'
