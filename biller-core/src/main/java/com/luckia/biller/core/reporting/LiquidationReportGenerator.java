@@ -89,12 +89,12 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, 2, "RESUMEN");
 		createHeaderCell(sheet, currentRow, 11, "FACTURA");
 		createHeaderCell(sheet, currentRow, 14, "DETALLE LIQUIDACION");
-		createHeaderCell(sheet, currentRow, 24, "MODELO APLICADO");
+		createHeaderCell(sheet, currentRow, 25, "MODELO APLICADO");
 		createHeaderCell(sheet, currentRow, 30, "GASTOS DIRECTOS");
 		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 2, 9));
 		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 11, 12));
-		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 14, 22));
-		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 24, 26));
+		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 14, 23));
+		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 24, 28));
 		sheet.addMergedRegion(new CellRangeAddress(currentRow, currentRow, 28, 32));
 		currentRow++;
 		int cell = 0;
@@ -117,7 +117,8 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "APOSTADO EFECTIVO (BASE)");
 		createHeaderCell(sheet, currentRow, cell++, "PAGADO (BASE)");
 		createHeaderCell(sheet, currentRow, cell++, "IMPUTABLE (BASE)");
-		createHeaderCell(sheet, currentRow, cell++, "MARGEN (BASE)");
+		createHeaderCell(sheet, currentRow, cell++, "CREDITO");
+		createHeaderCell(sheet, currentRow, cell++, "SALDO DE CAJA (BASE)");
 		createHeaderCell(sheet, currentRow, cell++, "GGR (BASE)");
 		createHeaderCell(sheet, currentRow, cell++, "NGR (BASE)");
 		createHeaderCell(sheet, currentRow, cell++, "NR (BASE)");
@@ -131,7 +132,6 @@ public class LiquidationReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "ATC");
 		createHeaderCell(sheet, currentRow, cell++, "CO-EXPLOTACIÓN");
 		createHeaderCell(sheet, currentRow, cell++, "COSTE UBICACION");
-		createHeaderCell(sheet, currentRow, cell++, "CREDITO");
 		createHeaderCell(sheet, currentRow, cell++, "OTROS");
 		cell++;
 		createHeaderCell(sheet, currentRow, cell++, "TERMINALES");
@@ -169,6 +169,13 @@ public class LiquidationReportGenerator extends BaseReport {
 		Collections.sort(liquidation.getBills(), new BillerComparator());
 		for (int i = 0; i < liquidation.getBills().size(); i++) {
 			Bill bill = liquidation.getBills().get(i);
+			BigDecimal credit = MathUtils.safeNull(getCredit(bill));
+			BigDecimal saldoCaja = BigDecimal.ZERO;
+			saldoCaja = saldoCaja.add(MathUtils.safeNull(getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_BET_AMOUNT)));
+			saldoCaja = saldoCaja.subtract(MathUtils.safeNull(getLiquidationConceptBaseValue(bill, BillConcept.CANCELLED)));
+			saldoCaja = saldoCaja.subtract(MathUtils.safeNull(getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_WIN_AMOUNT)));
+			saldoCaja = saldoCaja.add(credit);
+
 			int cell = 0;
 			createCell(sheet, currentRow, cell++, liquidation.getSender().getName());
 			createCell(sheet, currentRow, cell++, bill.getSender().getName());
@@ -190,7 +197,8 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.STAKES));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_WIN_AMOUNT));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_ATTRIBUTABLE));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.MARGIN));
+			createCell(sheet, currentRow, cell++, credit);
+			createCell(sheet, currentRow, cell++, saldoCaja);
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.GGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NGR));
 			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NR));
@@ -205,7 +213,6 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, bill.getModel().getCompanyModel().getCoOperatingMonthlyFees());
 			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.PRICE_PER_LOCATION));
 			// los ajustes ahora no se reflejan aqui
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.CREDIT));
 			createCell(sheet, currentRow, cell++, BigDecimal.ZERO);
 			cell++;
 			StringBuffer sb = new StringBuffer();
@@ -250,5 +257,18 @@ public class LiquidationReportGenerator extends BaseReport {
 			}
 		}
 		return null;
+	}
+
+	private BigDecimal getCredit(Bill bill) {
+		BigDecimal result = BigDecimal.ZERO;
+		if (bill.getBillRawData() != null) {
+			for (BillRawData i : bill.getBillRawData()) {
+				if (i.getConcept() == BillConcept.CREDIT) {
+					result = i.getAmount();
+					break;
+				}
+			}
+		}
+		return result;
 	}
 }
