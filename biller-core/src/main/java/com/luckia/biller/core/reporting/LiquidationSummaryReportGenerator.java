@@ -166,14 +166,14 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		BigDecimal result = BigDecimal.ZERO;
 		for (Bill bill : liquidation.getBills()) {
 			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
-				if (liquidationIncluded == i.getLiquidationIncluded()) {
+				if (!i.getLiquidationIncluded()) {
 					result = result.add(MathUtils.safeNull(i.getValue()));
 				}
 			}
 		}
 		if (liquidation.getDetails() != null) {
 			for (LiquidationDetail detail : liquidation.getDetails()) {
-				if (liquidationIncluded = detail.getLiquidationIncluded()) {
+				if (!detail.getLiquidationIncluded()) {
 					result = result.add(MathUtils.safeNull(detail.getValue()));
 				}
 			}
