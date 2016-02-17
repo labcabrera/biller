@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
-import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
@@ -27,17 +26,19 @@ import com.luckia.biller.core.model.LiquidationDetail;
  */
 public class PDFLiquidationDetailProcessor {
 
-	public Map<BillConcept, PDFLiquidationDetail> loadDetails(Liquidation liquidation) {
-		Map<BillConcept, PDFLiquidationDetail> result = new LinkedHashMap<>();
-		result.put(BillConcept.BETTING_FEES, new PDFLiquidationDetail().init("Honorarios por apuestas"));
-		result.put(BillConcept.STAKES, new PDFLiquidationDetail().init("Ventas"));
-		result.put(BillConcept.SAT_MONTHLY_FEES, new PDFLiquidationDetail().init("SAT"));
-		result.put(BillConcept.PRICE_PER_LOCATION, new PDFLiquidationDetail().init("Coste por ubicación"));
-		result.put(BillConcept.COMMERCIAL_MONTHLY_FEES, new PDFLiquidationDetail().init("Atención comercial"));
-		result.put(BillConcept.RAPPEL, new PDFLiquidationDetail().init(BillConcept.RAPPEL.description()));
-		result.put(BillConcept.LOAN_RECOVERY, new PDFLiquidationDetail().init(BillConcept.LOAN_RECOVERY.description()));
-		result.put(BillConcept.ROBBERY, new PDFLiquidationDetail().init(BillConcept.ROBBERY.description()));
-		result.put(BillConcept.MANUAL, new PDFLiquidationDetail().init("Ajustes manuales de establecimientos"));
+	private static final String HONORARIOS_APUESTAS = "Honorarios por apuestas";
+	private static final String VENTAS = "Ventas";
+	private static final String SAT = "SAT";
+	private static final String COSTE_UBICACION = "Coste por ubicación";
+	private static final String ATENCION_COMERCIAL = "Atención comercial";
+
+	public Map<String, PDFLiquidationDetail> loadDetails(Liquidation liquidation) {
+		Map<String, PDFLiquidationDetail> result = new LinkedHashMap<>();
+		result.put(HONORARIOS_APUESTAS, new PDFLiquidationDetail().init("Honorarios por apuestas"));
+		result.put(VENTAS, new PDFLiquidationDetail().init("Ventas"));
+		result.put(SAT, new PDFLiquidationDetail().init("SAT"));
+		result.put(COSTE_UBICACION, new PDFLiquidationDetail().init("Coste por ubicación"));
+		result.put(ATENCION_COMERCIAL, new PDFLiquidationDetail().init("Atención comercial"));
 		for (Bill bill : liquidation.getBills()) {
 			for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
 				if (detail.getLiquidationIncluded()) {
@@ -45,29 +46,22 @@ public class PDFLiquidationDetailProcessor {
 					case GGR:
 					case NGR:
 					case NR:
-						addConcept(result, BillConcept.BETTING_FEES, detail);
+						addConcept(result, HONORARIOS_APUESTAS, detail);
 						break;
 					case STAKES:
-						addConcept(result, BillConcept.STAKES, detail);
+						addConcept(result, VENTAS, detail);
 						break;
 					case SAT_MONTHLY_FEES:
-						addConcept(result, BillConcept.SAT_MONTHLY_FEES, detail);
+						addConcept(result, SAT, detail);
 						break;
 					case PRICE_PER_LOCATION:
-						addConcept(result, BillConcept.PRICE_PER_LOCATION, detail);
+						addConcept(result, COSTE_UBICACION, detail);
 						break;
 					case COMMERCIAL_MONTHLY_FEES:
-						addConcept(result, BillConcept.COMMERCIAL_MONTHLY_FEES, detail);
+						addConcept(result, ATENCION_COMERCIAL, detail);
 						break;
 					case MANUAL:
-						BillConcept targetConcept = BillConcept.MANUAL;
-						for (BillConcept i : BillConcept.values()) {
-							if (result.containsKey(i) && i.description().equals(detail.getName())) {
-								targetConcept = i;
-								break;
-							}
-						}
-						addConcept(result, targetConcept, detail);
+						addConcept(result, detail.getName(), detail);
 						break;
 					default:
 						throw new RuntimeException("Unexpected concept type: " + detail.getConcept());
@@ -113,16 +107,19 @@ public class PDFLiquidationDetailProcessor {
 		return result;
 	}
 
-	private void addConcept(Map<BillConcept, PDFLiquidationDetail> map, BillConcept concept, BillLiquidationDetail detail) {
+	private void addConcept(Map<String, PDFLiquidationDetail> map, String concept, BillLiquidationDetail detail) {
+		if (!map.containsKey(concept)) {
+			map.put(concept, new PDFLiquidationDetail().init(concept));
+		}
 		PDFLiquidationDetail i = map.get(concept);
 		i.setNetAmount(i.getNetAmount().add(MathUtils.safeNull(detail.getNetValue())));
 		i.setVatAmount(i.getVatAmount().add(MathUtils.safeNull(detail.getVatValue())));
 		i.setAmount(i.getAmount().add(MathUtils.safeNull(detail.getValue())));
 	}
 
-	private Map<BillConcept, PDFLiquidationDetail> cleanEmptyResults(Map<BillConcept, PDFLiquidationDetail> map) {
-		for (Iterator<Entry<BillConcept, PDFLiquidationDetail>> iterator = map.entrySet().iterator(); iterator.hasNext();) {
-			Entry<BillConcept, PDFLiquidationDetail> entry = iterator.next();
+	private Map<String, PDFLiquidationDetail> cleanEmptyResults(Map<String, PDFLiquidationDetail> map) {
+		for (Iterator<Entry<String, PDFLiquidationDetail>> iterator = map.entrySet().iterator(); iterator.hasNext();) {
+			Entry<String, PDFLiquidationDetail> entry = iterator.next();
 			if (MathUtils.isZero(entry.getValue().getAmount())) {
 				iterator.remove();
 			}

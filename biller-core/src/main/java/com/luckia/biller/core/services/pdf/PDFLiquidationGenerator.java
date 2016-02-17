@@ -22,7 +22,6 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.luckia.biller.core.common.MathUtils;
-import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.services.entities.ProvinceTaxesService;
@@ -36,7 +35,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 	@Inject
 	private ProvinceTaxesService provinceTaxesService;
 
-	private Map<BillConcept, PDFLiquidationDetail> details;
+	private Map<String, PDFLiquidationDetail> details;
 	private List<PDFLiquidationDetail> outerDetails;
 
 	@Override
@@ -96,7 +95,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 		cells.add(createCell("Importe", Element.ALIGN_RIGHT, boldFont));
 
 		// Main concepts
-		for (Entry<BillConcept, PDFLiquidationDetail> entry : details.entrySet()) {
+		for (Entry<String, PDFLiquidationDetail> entry : details.entrySet()) {
 			if (MathUtils.isNotZero(entry.getValue().getAmount())) {
 				cells.add(createCell("" + entry.getValue().getName(), Element.ALIGN_LEFT, documentFont));
 				cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
