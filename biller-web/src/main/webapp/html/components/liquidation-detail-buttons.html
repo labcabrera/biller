@@ -23,7 +23,7 @@
 		ng-disabled="isSaving">{{'recreatePdf' | translate}}</button>
 	<a
 		class="btn btn-primary btn-sm"
-		href="rest/report/liquidations?from={{entity.dateFrom | limitTo: 10}}&to={{entity.dateTo | limitTo: 10}}&ids={{entity.sender.id}}"
+		href="rest/report/liquidations?from={{entity.dateFrom | limitTo: 10}}&to={{entity.dateTo | limitTo: 10}}&companyId={{entity.sender.id}}"
 		role="button"
 		ng-disabled="isSaving">{{'viewReport' | translate}}</a>
 	<button
