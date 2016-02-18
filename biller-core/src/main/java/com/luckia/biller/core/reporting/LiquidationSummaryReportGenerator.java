@@ -114,12 +114,12 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			int col = 0;
 			BigDecimal amount = MathUtils.safeNull(liquidation.getLiquidationResults().getTotalAmount());
 			BigDecimal cashStore = MathUtils.safeNull(liquidation.getLiquidationResults().getCashStoreAmount());
-			BigDecimal outerAdjustements = MathUtils.safeNull(getAdjustementAmount(liquidation, true));
+			BigDecimal outerAdjustements = MathUtils.safeNull(getAdjustementOuterAmount(liquidation));
 			BigDecimal result = MathUtils.safeNull(liquidation.getLiquidationResults().getReceiverAmount());
 			BigDecimal betAmount = getAmountByConcept(liquidation, BillConcept.TOTAL_BET_AMOUNT);
 			BigDecimal winAmount = getAmountByConcept(liquidation, BillConcept.TOTAL_WIN_AMOUNT);
 			BigDecimal credit = getAmountByConcept(liquidation, BillConcept.CREDIT);
-			BigDecimal innerAdjustements = MathUtils.safeNull(getAdjustementAmount(liquidation, false));
+			BigDecimal innerAdjustements = MathUtils.safeNull(getAdjustementInnerAmount(liquidation));
 			totalAmount = totalAmount.add(amount);
 			totalCashStore = totalCashStore.add(cashStore);
 			totalAdjustements = totalAdjustements.add(outerAdjustements);
@@ -162,7 +162,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		createHeaderCell(sheet, col, index++, "AJUSTES INTERNOS");
 	}
 
-	private BigDecimal getAdjustementAmount(Liquidation liquidation, boolean liquidationIncluded) {
+	private BigDecimal getAdjustementOuterAmount(Liquidation liquidation) {
 		BigDecimal result = BigDecimal.ZERO;
 		for (Bill bill : liquidation.getBills()) {
 			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
@@ -174,6 +174,25 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		if (liquidation.getDetails() != null) {
 			for (LiquidationDetail detail : liquidation.getDetails()) {
 				if (!detail.getLiquidationIncluded()) {
+					result = result.add(MathUtils.safeNull(detail.getValue()));
+				}
+			}
+		}
+		return result;
+	}
+
+	private BigDecimal getAdjustementInnerAmount(Liquidation liquidation) {
+		BigDecimal result = BigDecimal.ZERO;
+		for (Bill bill : liquidation.getBills()) {
+			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
+				if (i.getLiquidationIncluded()) {
+					result = result.add(MathUtils.safeNull(i.getValue()));
+				}
+			}
+		}
+		if (liquidation.getDetails() != null) {
+			for (LiquidationDetail detail : liquidation.getDetails()) {
+				if (detail.getLiquidationIncluded()) {
 					result = result.add(MathUtils.safeNull(detail.getValue()));
 				}
 			}

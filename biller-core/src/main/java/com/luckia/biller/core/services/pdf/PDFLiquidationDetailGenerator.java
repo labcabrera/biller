@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +23,14 @@ import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.VatLiquidationType;
+import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 
 public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PDFLiquidationDetailGenerator.class);
+
+	@Inject
+	private ProvinceTaxesService provinceTaxesService;
 
 	@Override
 	public void generate(Bill bill, OutputStream out) {
@@ -50,7 +56,7 @@ public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 		String senderName = bill.getSender().getName();
 		// String receiverName = liquidation.getReceiver().getName();
 		boolean hasVat = bill.getLiquidation().vatApplies(bill.getLiquidation().getModel());
-		BigDecimal vatPercent = BigDecimal.ZERO;
+		BigDecimal vatPercent = provinceTaxesService.getVatPercent(bill);
 		PdfPTable table;
 		if (hasVat) {
 			table = new PdfPTable(new float[] { 50f, 10f, 10f, 10f, 10f, 10f, 10f });
