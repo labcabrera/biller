@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.joda.time.DateTime;
@@ -25,6 +26,7 @@ import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.BillRawData;
+import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.CompanyGroup;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.LegalEntity;
@@ -125,8 +127,12 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			totalAdjustements = totalAdjustements.add(outerAdjustements);
 			totalResults = totalResults.add(result);
 			createCell(sheet, rowIndex, col++, ISODateTimeFormat.date().print(new DateTime(liquidation.getBillDate())));
-			createCell(sheet, rowIndex, col++, liquidation.getReceiver().getName());
-			createCell(sheet, rowIndex, col++, liquidation.getSender().getName());
+			String group = StringUtils.EMPTY;
+			try {
+				group = liquidation.getSender().as(Company.class).getParent().getName();
+			} catch (Exception ignore) {
+			}
+			createCell(sheet, rowIndex, col++, group);
 			createCell(sheet, rowIndex, col++, amount);
 			createCell(sheet, rowIndex, col++, cashStore);
 			createCell(sheet, rowIndex, col++, outerAdjustements);
