@@ -33,8 +33,8 @@ import org.eclipse.persistence.annotations.JoinFetchType;
  * <li>Liquidaciones de rappel: {@link RappelLiquidation}</li>
  * </ul>
  * <p>
- * Esta clase define todos los elementos comunes tales como la fecha e intervalo de facturación, emisor y destinatario, estado (borrador, aceptado, enviado, etc), comentarios o
- * importe entre otros.
+ * Esta clase define todos los elementos comunes tales como la fecha e intervalo de facturación, emisor y destinatario, estado (borrador,
+ * aceptado, enviado, etc), comentarios o importe entre otros.
  * </p>
  */
 @Entity

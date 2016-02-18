@@ -196,7 +196,7 @@ public class BillDetailProcessor {
 
 	private void processVatDetail(BillLiquidationDetail detail, Bill bill, BigDecimal percent) {
 		Validate.notNull(detail.getSourceValue());
-		BigDecimal vatPercent = new BigDecimal("21"); // provinceTaxesService.getVatPercent(bill);
+		BigDecimal vatPercent = provinceTaxesService.getVatPercent(bill);
 		BigDecimal sourceValue = detail.getSourceValue();
 		BigDecimal effectiveSource = sourceValue.multiply(percent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
 		BillingModel model = bill.getModel();

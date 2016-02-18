@@ -17,10 +17,10 @@ import javax.persistence.Table;
 import com.luckia.biller.core.serialization.NotSerializable;
 
 /**
- * Representa una liquidación. A diferencia de las facturas las liquidaciones no devengan IVA. Las liquidaciones se realizan a las empresas como un agregado de todas las facturas
- * emitidas a los establecimientos pertenecientes a la empresa.<br>
- * Para cada empresa operadora se generan n facturas dependiendo de los centros de coste a los que estén asociados los establecimientos. Por ejemplo, si una empresa opera en
- * Galicia y Valencia, se generarán dos liquidaciones para esa empresa, una para cada comunidad autónoma.
+ * Representa una liquidación. A diferencia de las facturas las liquidaciones no devengan IVA. Las liquidaciones se realizan a las empresas
+ * como un agregado de todas las facturas emitidas a los establecimientos pertenecientes a la empresa.<br>
+ * Para cada empresa operadora se generan n facturas dependiendo de los centros de coste a los que estén asociados los establecimientos. Por
+ * ejemplo, si una empresa opera en Galicia y Valencia, se generarán dos liquidaciones para esa empresa, una para cada comunidad autónoma.
  * <ul>
  * <li>El emisor de la factura será la empresa operadora</li>
  * <li>El receptor de la factura será el centro de coste</li>
@@ -108,7 +108,7 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 		}
 	}
 
-	public boolean vatApplies() {
+	public boolean vatApplies(BillingModel model) {
 		boolean hasVat = false;
 		if (model != null && model.getVatLiquidationType() != null) {
 			switch (model.getVatLiquidationType()) {
@@ -121,5 +121,19 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 			}
 		}
 		return hasVat;
+	}
+
+	@Override
+	public BillingModel getModel() {
+		if (model != null) {
+			return model;
+		} else if (bills != null) {
+			for (Bill bill : bills) {
+				if (bill.getModel() != null) {
+					return bill.getModel();
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -67,7 +67,7 @@ public class PDFLiquidationGenerator extends PDFGenerator<Liquidation> {
 	private void printGeneralDetails(Document document, Liquidation liquidation) throws DocumentException {
 		String senderName = liquidation.getSender().getName();
 		String receiverName = liquidation.getReceiver().getName();
-		boolean hasVat = liquidation.vatApplies();
+		boolean hasVat = liquidation.vatApplies(liquidation.getModel());
 		BigDecimal vatPercent = BigDecimal.ZERO;
 		PdfPTable table;
 		if (hasVat) {

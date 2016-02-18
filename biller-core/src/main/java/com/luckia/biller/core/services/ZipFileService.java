@@ -49,8 +49,8 @@ public class ZipFileService {
 			addZipEntry(in, zipOutputStream, name);
 
 			BillingModel model = liquidation.getModel();
-			boolean includeBills = model == null || model.getIncludePdfBills();
-			boolean includeDetails = model == null || model.getIncludePdfDetails();
+			boolean includeBills = model == null || model.getIncludePdfBills() != null || model.getIncludePdfBills();
+			boolean includeDetails = model == null || model.getIncludePdfDetails() != null || model.getIncludePdfDetails();
 
 			if (includeBills) {
 				for (Bill bill : liquidation.getBills()) {
