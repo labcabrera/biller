@@ -133,6 +133,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			} catch (Exception ignore) {
 			}
 			createCell(sheet, rowIndex, col++, group);
+			createCell(sheet, rowIndex, col++, liquidation.getSender().getName());
 			createCell(sheet, rowIndex, col++, amount);
 			createCell(sheet, rowIndex, col++, cashStore);
 			createCell(sheet, rowIndex, col++, outerAdjustements);
@@ -191,7 +192,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		BigDecimal result = BigDecimal.ZERO;
 		for (Bill bill : liquidation.getBills()) {
 			for (BillLiquidationDetail i : bill.getLiquidationDetails()) {
-				if (i.getLiquidationIncluded()) {
+				if (i.getLiquidationIncluded() && i.getConcept() == BillConcept.MANUAL) {
 					result = result.add(MathUtils.safeNull(i.getValue()));
 				}
 			}
