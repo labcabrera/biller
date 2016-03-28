@@ -191,10 +191,13 @@
 				});
 			});
 		};
-		$scope.editSendMail = function() { $('#sendMailModal').modal('show'); };
+		$scope.editSendMail = function(option) {
+			$scope.sendMail.option = option;
+			$('#sendMailModal').modal('show');
+		};
 		$scope.sendMail = function() {
 			$scope.isSaving = true;
-			$http.post('rest/bills/send/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {
+			$http.post('rest/bills/send/' + $scope.sendMail.option + '/' + $scope.entity.id, $scope.sendMail.value).success(function(data) {
 				$scope.isSaving = false;
 				$scope.message = data;
 				$('#sendMailModal').modal('hide');

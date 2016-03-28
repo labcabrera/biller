@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Enviar por correo</h4>
+				<h4 class="modal-title">{{'sendMail' | translate}}</h4>
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal" role="form">
@@ -13,14 +13,14 @@
 							<input type='text' class="form-control" ng-model="sendMail.value" id="mailAddress" name="mailAddress" />
 						</div>
 						<div class="col-sm-8 col col-sm-offset-2">
-							<span class="help-block">Para enviar a más de una direcci&oacute;n separe con punto y coma</span>
+							<span class="help-block">{{'sendMailInfo' | translate}}</span>
 						</div>
 					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">Cancelar</button>
-				<button type="button" class="btn btn-success btn-sm" ng-click="sendMail()">Enviar</button>
+				<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">{{'cancel' | translate}}</button>
+				<button type="button" class="btn btn-success btn-sm" ng-click="sendMail()">{{'send' | translate}}</button>
 			</div>
 		</div>
 	</div>

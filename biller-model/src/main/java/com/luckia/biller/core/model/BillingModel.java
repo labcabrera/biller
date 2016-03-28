@@ -189,8 +189,8 @@ public class BillingModel implements Serializable, Mergeable<BillingModel>, Audi
 				}
 				storeModel.merge(entity.storeModel);
 			}
-			this.includePdfBills = entity.includePdfBills;
-			this.includePdfDetails = entity.includePdfDetails;
+			this.includePdfBills = entity.includePdfBills != null ? entity.includePdfBills : true;
+			this.includePdfDetails = entity.includePdfDetails != null ? entity.includePdfDetails : true;
 			this.name = entity.name;
 			this.vatLiquidationType = entity.vatLiquidationType;
 			this.receiver = entity.receiver;

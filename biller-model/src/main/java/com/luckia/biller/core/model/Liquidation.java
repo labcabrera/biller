@@ -136,4 +136,9 @@ public class Liquidation extends AbstractBill implements Mergeable<Liquidation> 
 		}
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("Liquidation/%s/%s", sender != null ? sender.getName() : null, id);
+	}
 }

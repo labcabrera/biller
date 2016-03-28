@@ -37,7 +37,7 @@
 		class='btn btn-sm btn-success pull-right'
 		ng-disabled="isSaving" >{{'recalculate' | translate}}</button>
 	<button
-		ng-click="editSendMail()"
+		ng-click="editSendMail('liquidation')"
 		ng-if="entity.currentState.stateDefinition.id == 'CONFIRMED' || entity.currentState.stateDefinition.id == 'SENT'"
 		class='btn btn-sm btn-success pull-right'
 		ng-disabled="isSaving">{{'send' | translate}}</button>

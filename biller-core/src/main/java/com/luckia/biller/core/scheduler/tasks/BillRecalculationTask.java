@@ -103,10 +103,15 @@ public class BillRecalculationTask implements Runnable {
 		}
 		if (update) {
 			LOG.info("Actualizando el modelo de la factura");
-			entityManager.getTransaction().begin();
+			boolean currentTx = entityManager.getTransaction().isActive();
+			if (!currentTx) {
+				entityManager.getTransaction().begin();
+			}
 			bill.setModel(model);
 			entityManager.merge(bill);
-			entityManager.getTransaction().commit();
+			if (!currentTx) {
+				entityManager.getTransaction().commit();
+			}
 		}
 	}
 }

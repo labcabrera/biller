@@ -69,14 +69,14 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	/**
 	 * Lista de detalles que componen la factura
 	 */
-	@OneToMany(cascade = CascadeType.DETACH, mappedBy = "bill")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "bill")
 	@OrderBy("value DESC")
 	private List<BillDetail> billDetails;
 
 	/**
 	 * Lista de detalles que componen la liquidacion
 	 */
-	@OneToMany(cascade = CascadeType.DETACH, mappedBy = "bill")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "bill")
 	@OrderBy("value DESC")
 	private List<BillLiquidationDetail> liquidationDetails;
 

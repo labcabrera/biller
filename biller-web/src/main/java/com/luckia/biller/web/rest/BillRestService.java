@@ -230,7 +230,7 @@ public class BillRestService {
 	}
 
 	/**
-	 * Envia el PDF por correo a un destinatario.
+	 * Envia el PDF de la liquidacion por correo a un destinatario.
 	 * 
 	 * @param id
 	 * @param emailAddress
@@ -238,8 +238,8 @@ public class BillRestService {
 	 * @return
 	 */
 	@POST
-	@Path("/send/{id}")
-	public Message<Bill> sendEmail(@PathParam("id") String id, String emailAddress) {
+	@Path("/send/{option}/{id}")
+	public Message<Bill> sendEmail(@PathParam("option") String option, @PathParam("id") String id, String emailAddress) {
 		try {
 			if (StringUtils.isBlank(emailAddress)) {
 				return new Message<>(Message.CODE_GENERIC_ERROR, "No se ha establecido el destinatario");
@@ -247,11 +247,19 @@ public class BillRestService {
 				EntityManager entityManager = entityManagerProvider.get();
 				entityManager.clear();
 				Bill bill = entityManager.find(Bill.class, id);
-				AppFile appFile = bill.getPdfFile();
+				AppFile appFile;
+				switch (option != null ? option : StringUtils.EMPTY) {
+				case "bill":
+					appFile = bill.getPdfFile();
+					break;
+				default:
+					appFile = bill.getLiquidationDetailFile();
+					break;
+				}
 				String title = "Factura " + bill.getCode();
 				String body = "Adjunto PDF";
 				String[] recipients = emailAddress.split("\\s*;\\s*");
-				//TODO cuando se produce un error no se detecta y se devuelve el message success
+				// TODO cuando se produce un error no se detecta y se devuelve el message success
 				for (String recipient : recipients) {
 					SendAppFileMailTask task = new SendAppFileMailTask(recipient, appFile, title, body, fileService, mailService);
 					new Thread(task).start();

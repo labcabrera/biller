@@ -42,7 +42,17 @@
 			</tr>
 		</table>
 		<div class="btn-toolbar m-top-40" role="toolbar">
-			<button ng-click="editDetail()" ng-if="entity.currentState.stateDefinition.id == 'DRAFT'" class='btn btn-sm btn-primary' ng-disabled="isSaving">{{'addBillDetail' | translate}}</button>
+			<button
+				ng-click="editDetail()"
+				ng-if="entity.currentState.stateDefinition.id == 'DRAFT'"
+				class='btn btn-sm btn-primary'
+				ng-disabled="isSaving">{{'addBillDetail' | translate}}</button>
+			<button
+				class='btn btn-sm btn-success pull-right'
+				ng-if="entity.currentState.stateDefinition.id != 'DRAFT' && entity.currentState.stateDefinition.id != 'CANCELLED' && entity.currentState.stateDefinition.id != 'INITIAL'"
+				ng-click="editSendMail('bill')"
+				role="button"
+				ng-disabled="isSaving">{{'sendBillMail' | translate}}</button>
 			<a
 				class="btn btn-primary btn-sm"
 				ng-if="entity.currentState.stateDefinition.id != 'DRAFT' && entity.currentState.stateDefinition.id != 'CANCELLED' && entity.currentState.stateDefinition.id != 'INITIAL'"
