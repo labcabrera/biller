@@ -1,10 +1,11 @@
 # FIX 2016-03-17
-* Inicializar los valores de incluir o no incluir en el modelo en el zip (se queda a null)
 * Arreglar cálculo líneas de separación en PDF de mini-liquidaciones
 * Añadir en la mini-liquidacion una fila adicional con el saldo de caja ajustado tras los conceptos de ajustes externos
 * Ajuste manual externo combo-2 solo a nivel de liquidacion
-* Botón para enviar la factura por correo (ahora sólo se envía la miniliquidacion)
 * Sumatorio del resto de conceptos del informe summary
+
+* Inicializar los valores de incluir o no incluir en el modelo en el zip (se queda a null)
+* Botón para enviar la factura por correo (ahora sólo se envía la miniliquidacion)
 
 # FIX 2016-01-19
 * Envio de facturas / miniliquidaciones. Separar funcionamiento y esconder el boton cuando la factura este a cero

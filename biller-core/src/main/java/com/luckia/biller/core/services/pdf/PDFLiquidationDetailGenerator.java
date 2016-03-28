@@ -19,6 +19,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillLiquidationDetail;
@@ -113,9 +114,11 @@ public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 		cells.addAll(createEmptyCells(hasVat ? 5 : 3));
 		cells.add(createCell(formatAmount(bill.getStoreCash()), Element.ALIGN_RIGHT, boldFont));
 
-		// Main concepts
+		// Liquidation adjustements
+		int adjustmentCount = 0;
 		for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
 			if (!detail.getLiquidationIncluded()) {
+				adjustmentCount++;
 				cells.add(createCell("" + detail.getName(), Element.ALIGN_LEFT, documentFont));
 				cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
 				cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
@@ -124,8 +127,14 @@ public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 			}
 		}
 
+		if (adjustmentCount > 0) {
+			cells.add(createCell("Saldo de caja ajustado", Element.ALIGN_LEFT, boldFont));
+			cells.addAll(createEmptyCells(hasVat ? 5 : 3));
+			cells.add(createCell(formatAmount(bill.getStoreCash().add(MathUtils.safeNull(bill.getLiquidationOuterAmount()))), Element.ALIGN_RIGHT, boldFont));
+		}
+
 		int cols = hasVat ? 7 : 5;
-		int subtotalRow = 2 + bill.getLiquidationDetails().size();
+		int subtotalRow = 2 + bill.getLiquidationDetails().size() - adjustmentCount;
 		for (int i = 0; i < cells.size(); i++) {
 			int col = i % cols;
 			int row = i / cols;
