@@ -111,6 +111,10 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		BigDecimal totalCashStore = BigDecimal.ZERO;
 		BigDecimal totalAdjustements = BigDecimal.ZERO;
 		BigDecimal totalResults = BigDecimal.ZERO;
+		BigDecimal totalBetAmount = BigDecimal.ZERO;
+		BigDecimal totalWinAmount = BigDecimal.ZERO;
+		BigDecimal totalCredit = BigDecimal.ZERO;
+		BigDecimal totalInnerAdjustements = BigDecimal.ZERO;
 		int rowIndex = 1;
 		for (Liquidation liquidation : liquidations) {
 			int col = 0;
@@ -126,6 +130,10 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			totalCashStore = totalCashStore.add(cashStore);
 			totalAdjustements = totalAdjustements.add(outerAdjustements);
 			totalResults = totalResults.add(result);
+			totalBetAmount = totalBetAmount.add(betAmount);
+			totalWinAmount = totalWinAmount.add(winAmount);
+			totalCredit = totalCredit.add(credit);
+			totalInnerAdjustements = totalInnerAdjustements.add(innerAdjustements);
 			createCell(sheet, rowIndex, col++, ISODateTimeFormat.date().print(new DateTime(liquidation.getBillDate())));
 			String group = StringUtils.EMPTY;
 			try {
@@ -151,6 +159,10 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		createHeaderCell(sheet, rowIndex, col++, totalCashStore);
 		createHeaderCell(sheet, rowIndex, col++, totalAmount);
 		createHeaderCell(sheet, rowIndex, col++, totalResults);
+		createHeaderCell(sheet, rowIndex, col++, totalBetAmount);
+		createHeaderCell(sheet, rowIndex, col++, totalWinAmount);
+		createHeaderCell(sheet, rowIndex, col++, totalCredit);
+		createHeaderCell(sheet, rowIndex, col++, totalInnerAdjustements);
 	}
 
 	private void configureHeaders(HSSFSheet sheet) {
