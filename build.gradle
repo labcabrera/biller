@@ -36,10 +36,7 @@ subprojects {
 	
 	repositories {
 		mavenLocal()	   
-		//mavenCentral()
-		maven {
-			url "http://nexus:8080/nexus/content/groups/public/"
-		}
+		mavenCentral()
 	}
 
 	dependencies {
