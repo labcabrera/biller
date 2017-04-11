@@ -1,1 +1,4 @@
-include "biller-model", "biller-core", "biller-deploy", "biller-web"
+include ":biller-model",
+	":biller-core",
+	":biller-deploy",
+	":biller-web"

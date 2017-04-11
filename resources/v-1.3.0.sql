@@ -145,8 +145,6 @@ COMMIT;
 DELETE FROM S_USER WHERE COMPLETE_NAME <> 'admin';
 
 INSERT INTO S_USER (CREATED, EMAIL, COMPLETE_NAME, PASSWORD_DIGEST, ALIAS) VALUES ('2015-12-01 13:57:53', 'lab.cabera@gmail.com', 'Luis Cabrera', '3UyIwFUp9Kgwe8z+HaWeetKMdhY=', 'lcabrera');
-INSERT INTO S_USER (CREATED, EMAIL, COMPLETE_NAME, PASSWORD_DIGEST, ALIAS) VALUES ('2015-12-01 13:57:53', 'migue.celemin@luckia.es', 'Miguel Celemín', '3UyIwFUp9Kgwe8z+HaWeetKMdhY=', 'mcelemin');
-INSERT INTO S_USER (CREATED, EMAIL, COMPLETE_NAME, PASSWORD_DIGEST, ALIAS) VALUES ('2015-12-01 13:57:53', 'barbara.alvarez@lukia.es', 'Bárbara Alvarez', '3UyIwFUp9Kgwe8z+HaWeetKMdhY=', 'balvarez');
 
 UPDATE S_USER SET PASSWORD_DIGEST = 'f574132cc6061e55700cff99e8bda19c00275c719ee7d2bc9ffb1d9f4c02afbd';
 
