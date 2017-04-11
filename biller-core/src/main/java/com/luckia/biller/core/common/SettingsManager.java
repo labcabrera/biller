@@ -109,13 +109,11 @@ public class SettingsManager {
 		try {
 			sections = new HashMap<String, Properties>();
 			Pattern patternSection = Pattern.compile(PATTERN_SECTION);
-			// Pattern patternKeyValue = Pattern.compile(PATTERN_KEY_VALUE);
 			String currentSection = StringUtils.EMPTY;
 			String line;
 			while ((line = reader.readLine()) != null) {
 				if (!StringUtils.isBlank(line) && !StringUtils.trim(line).startsWith("#") && !StringUtils.trim(line).startsWith("//")) {
 					Matcher matcherSection = patternSection.matcher(line);
-					// Matcher matcherKeyValue = patternKeyValue.matcher(line);
 					if (matcherSection.matches()) {
 						currentSection = matcherSection.group(1);
 						sections.put(currentSection, new Properties());

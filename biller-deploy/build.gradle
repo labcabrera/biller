@@ -1,6 +1,0 @@
-dependencies {
-	compile project(':biller-core')
-	compile 'net.sf.flatpack:flatpack:3.1.1'
-	compile 'org.apache.poi:poi:3.13'
-	compile 'org.apache.poi:poi-ooxml:3.13'
-}

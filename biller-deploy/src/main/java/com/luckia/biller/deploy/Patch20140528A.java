@@ -25,17 +25,6 @@ public class Patch20140528A extends PatchSupport implements Runnable {
 		new Patch20140528A().run();
 	}
 
-	/**
-	 * Faltan las siguientes facturas: <br>
-	 * 
-	 * <pre>
-	 * CAMAROTE
-	 * ACUARI
-	 * FUTBOLEROS
-	 * SALON LEYFER
-	 * 
-	 * <pre>
-	 */
 	public void run() {
 		if (!confirm()) {
 			System.out.println("Application aborted");

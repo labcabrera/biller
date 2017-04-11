@@ -32,7 +32,7 @@ public class Patch20140523A {
 
 		Date from = new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate();
 		Date to = new DateTime(2014, 3, 31, 0, 0, 0, 0).toDate();
-		String companyName = "Replay, S.L. (bares)";
+		String companyName = "XYZ, S.L. (bares)";
 
 		String qlStringCompany = "select e from Company e where e.name = :name";
 		String qlStringLiquidation = "select e from Liquidation e where e.sender = :company and e.billDate >= :from and e.billDate <= :to";
