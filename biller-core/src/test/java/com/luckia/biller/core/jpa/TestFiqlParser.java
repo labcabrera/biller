@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -19,6 +20,7 @@ import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.common.ASTNode;
 import com.luckia.biller.core.model.Bill;
 
+@Ignore("required-database")
 public class TestFiqlParser {
 
 	@Test

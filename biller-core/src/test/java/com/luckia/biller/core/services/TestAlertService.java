@@ -1,11 +1,13 @@
 package com.luckia.biller.core.services;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.BillerModule;
 
+@Ignore("required-database")
 public class TestAlertService {
 
 	@Test

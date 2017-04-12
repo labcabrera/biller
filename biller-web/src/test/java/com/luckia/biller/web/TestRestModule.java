@@ -1,5 +1,6 @@
 package com.luckia.biller.web;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -7,6 +8,7 @@ import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
 import com.luckia.biller.web.servlet.RestModule;
 
+@Ignore("required-database")
 public class TestRestModule {
 
 	@Test
