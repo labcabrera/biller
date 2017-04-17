@@ -14,7 +14,8 @@ import com.luckia.biller.core.model.State;
 import com.luckia.biller.core.model.StateDefinition;
 
 /**
- * Servicio encargado de realizar los cambios de estado de las entidades {@link com.luckia.biller.core.model.HasState}
+ * Servicio encargado de realizar los cambios de estado de las entidades
+ * {@link com.luckia.biller.core.model.HasState}
  */
 public class StateMachineService {
 
@@ -24,7 +25,8 @@ public class StateMachineService {
 	@Transactional
 	public void createTransition(HasState hasState, String stateDefinitionId) {
 		EntityManager entityManager = entityManagerProvider.get();
-		StateDefinition stateDefinition = entityManager.find(StateDefinition.class, stateDefinitionId);
+		StateDefinition stateDefinition = entityManager.find(StateDefinition.class,
+				stateDefinitionId);
 		Date now = Calendar.getInstance().getTime();
 		State state = new State();
 		state.setId(UUID.randomUUID().toString());

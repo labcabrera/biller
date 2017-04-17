@@ -28,7 +28,8 @@ import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 
 public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PDFLiquidationDetailGenerator.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(PDFLiquidationDetailGenerator.class);
 
 	@Inject
 	private ProvinceTaxesService provinceTaxesService;
@@ -43,25 +44,30 @@ public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 			addMetaData(document, bill);
 			document.open();
 			addWaterMark(document, writer, bill);
-			printLegalEntities(document, bill.getReceiver(), bill.getModel().getReceiver());
+			printLegalEntities(document, bill.getReceiver(),
+					bill.getModel().getReceiver());
 			printTitle(document, bill);
 			printGeneralDetails(document, bill);
 			printCommentsPdf(document, bill);
 			document.close();
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al generar el PDF de la liquidacion", ex);
 		}
 	}
 
-	private void printGeneralDetails(Document document, Bill bill) throws DocumentException {
+	private void printGeneralDetails(Document document, Bill bill)
+			throws DocumentException {
 		String senderName = bill.getSender().getName();
 		// String receiverName = liquidation.getReceiver().getName();
-		boolean hasVat = bill.getLiquidation().vatApplies(bill.getLiquidation().getModel());
+		boolean hasVat = bill.getLiquidation()
+				.vatApplies(bill.getLiquidation().getModel());
 		BigDecimal vatPercent = provinceTaxesService.getVatPercent(bill);
 		PdfPTable table;
 		if (hasVat) {
 			table = new PdfPTable(new float[] { 50f, 10f, 10f, 10f, 10f, 10f, 10f });
-		} else {
+		}
+		else {
 			table = new PdfPTable(new float[] { 60f, 10f, 10f, 10f, 10f });
 		}
 		table.setWidthPercentage(100f);
@@ -85,52 +91,72 @@ public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 		// Main concepts
 		for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
 			if (detail.getLiquidationIncluded()) {
-				cells.add(createCell("" + detail.getName(), Element.ALIGN_LEFT, documentFont));
+				cells.add(createCell("" + detail.getName(), Element.ALIGN_LEFT,
+						documentFont));
 				cells.add(createCell("1", Element.ALIGN_RIGHT, documentFont));
-				cells.add(createCell(formatAmount(detail.getNetValue()), Element.ALIGN_RIGHT, documentFont));
-				cells.add(createCell(formatAmount(detail.getNetValue()), Element.ALIGN_RIGHT, documentFont));
+				cells.add(createCell(formatAmount(detail.getNetValue()),
+						Element.ALIGN_RIGHT, documentFont));
+				cells.add(createCell(formatAmount(detail.getNetValue()),
+						Element.ALIGN_RIGHT, documentFont));
 				if (hasVat) {
-					cells.add(createCell(formatAmount(vatPercent, false) + "%", Element.ALIGN_RIGHT, documentFont));
-					cells.add(createCell(formatAmount(detail.getVatValue()), Element.ALIGN_RIGHT, documentFont));
+					cells.add(createCell(formatAmount(vatPercent, false) + "%",
+							Element.ALIGN_RIGHT, documentFont));
+					cells.add(createCell(formatAmount(detail.getVatValue()),
+							Element.ALIGN_RIGHT, documentFont));
 				}
-				cells.add(createCell(formatAmount(detail.getValue()), Element.ALIGN_RIGHT, documentFont));
+				cells.add(createCell(formatAmount(detail.getValue()), Element.ALIGN_RIGHT,
+						documentFont));
 			}
 		}
 
 		cells.add(createCell("TOTAL LIQUIDACIÓN", Element.ALIGN_LEFT, boldFont));
 		if (hasVat) {
 			cells.addAll(createEmptyCells(2));
-			cells.add(createCell(formatAmount(bill.getLiquidationTotalNetAmount()), Element.ALIGN_RIGHT, boldFont));
-			cells.add(createCell(formatAmount(vatPercent, false) + "%", Element.ALIGN_RIGHT, boldFont));
-			cells.add(createCell(formatAmount(bill.getLiquidationTotalVat()), Element.ALIGN_RIGHT, boldFont));
-		} else {
+			cells.add(createCell(formatAmount(bill.getLiquidationTotalNetAmount()),
+					Element.ALIGN_RIGHT, boldFont));
+			cells.add(createCell(formatAmount(vatPercent, false) + "%",
+					Element.ALIGN_RIGHT, boldFont));
+			cells.add(createCell(formatAmount(bill.getLiquidationTotalVat()),
+					Element.ALIGN_RIGHT, boldFont));
+		}
+		else {
 			cells.addAll(createEmptyCells(3));
 		}
-		cells.add(createCell(formatAmount(bill.getLiquidationTotalAmount()), Element.ALIGN_RIGHT, boldFont));
+		cells.add(createCell(formatAmount(bill.getLiquidationTotalAmount()),
+				Element.ALIGN_RIGHT, boldFont));
 
 		cells.addAll(createEmptyCells(hasVat ? 7 : 5));
 
-		cells.add(createCell("Saldo de caja de " + senderName, Element.ALIGN_LEFT, boldFont));
+		cells.add(createCell("Saldo de caja de " + senderName, Element.ALIGN_LEFT,
+				boldFont));
 		cells.addAll(createEmptyCells(hasVat ? 5 : 3));
-		cells.add(createCell(formatAmount(bill.getStoreCash()), Element.ALIGN_RIGHT, boldFont));
+		cells.add(createCell(formatAmount(bill.getStoreCash()), Element.ALIGN_RIGHT,
+				boldFont));
 
 		// Liquidation adjustements
 		int adjustmentCount = 0;
 		for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
 			if (!detail.getLiquidationIncluded()) {
 				adjustmentCount++;
-				cells.add(createCell("" + detail.getName(), Element.ALIGN_LEFT, documentFont));
+				cells.add(createCell("" + detail.getName(), Element.ALIGN_LEFT,
+						documentFont));
 				cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
 				cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
 				cells.add(createCell("", Element.ALIGN_RIGHT, documentFont));
-				cells.add(createCell(formatAmount(detail.getValue()), Element.ALIGN_RIGHT, documentFont));
+				cells.add(createCell(formatAmount(detail.getValue()), Element.ALIGN_RIGHT,
+						documentFont));
 			}
 		}
 
 		if (adjustmentCount > 0) {
 			cells.add(createCell("Saldo de caja ajustado", Element.ALIGN_LEFT, boldFont));
 			cells.addAll(createEmptyCells(hasVat ? 5 : 3));
-			cells.add(createCell(formatAmount(bill.getStoreCash().add(MathUtils.safeNull(bill.getLiquidationOuterAmount()))), Element.ALIGN_RIGHT, boldFont));
+			cells.add(
+					createCell(
+							formatAmount(bill.getStoreCash()
+									.add(MathUtils
+											.safeNull(bill.getLiquidationOuterAmount()))),
+							Element.ALIGN_RIGHT, boldFont));
 		}
 
 		int cols = hasVat ? 7 : 5;
@@ -146,18 +172,22 @@ public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 
 			if (col == 0) {
 				cell.setBorderWidthLeft(2f);
-			} else if (col == cols - 1) {
+			}
+			else if (col == cols - 1) {
 				cell.setBorderWidthRight(2f);
 			}
 			if (row == 0) {
 				cell.setBorderWidthTop(2f);
-			} else if (row == 1) {
+			}
+			else if (row == 1) {
 				cell.setBorderWidthBottom(1f);
 				cell.setPaddingBottom(8f);
-			} else if (row == subtotalRow) {
+			}
+			else if (row == subtotalRow) {
 				cell.setPaddingBottom(8f);
 				cell.setBorderWidthBottom(1f);
-			} else if (row == (cells.size() / cols) - 1) {
+			}
+			else if (row == (cells.size() / cols) - 1) {
 				cell.setPaddingBottom(8f);
 				cell.setBorderWidthBottom(2f);
 			}
@@ -178,11 +208,13 @@ public class PDFLiquidationDetailGenerator extends PDFGenerator<Bill> {
 
 	@Override
 	protected String getPdfTitle(AbstractBill abstractBill) {
-		// Dependiendo de si es una co-explotacion o una factura mostramos un titulo u otro
+		// Dependiendo de si es una co-explotacion o una factura mostramos un titulo u
+		// otro
 		String billTitleLabel;
 		Bill liquidation = (Bill) abstractBill;
 		VatLiquidationType vatType = VatLiquidationType.EXCLUDED;
-		if (liquidation.getModel() != null && liquidation.getModel().getVatLiquidationType() != null) {
+		if (liquidation.getModel() != null
+				&& liquidation.getModel().getVatLiquidationType() != null) {
 			vatType = liquidation.getModel().getVatLiquidationType();
 		}
 		switch (vatType) {

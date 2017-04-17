@@ -12,9 +12,10 @@ import javax.validation.Payload;
 import com.luckia.biller.core.validation.CostCenterValidator;
 
 /**
- * Definición de la validacin de un centro de coste 
+ * Definición de la validacin de un centro de coste
  */
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.TYPE })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE,
+		ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CostCenterValidator.class)
 @Documented

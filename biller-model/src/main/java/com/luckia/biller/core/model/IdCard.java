@@ -10,11 +10,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * Representa el numero de identificacion fiscal (NIF o CIF) asociado a una entidad legal.
  */
 @Entity
 @Table(name = "S_IDCARD")
+@Data
+@NoArgsConstructor
 @SuppressWarnings("serial")
 public class IdCard implements Serializable, Mergeable<IdCard> {
 
@@ -29,28 +34,9 @@ public class IdCard implements Serializable, Mergeable<IdCard> {
 	@Column(name = "ID_CARD_NUMBER")
 	private String number;
 
-	public IdCard() {
-	}
-
 	public IdCard(IdCardType type, String number) {
 		this.type = type;
 		this.number = number;
-	}
-
-	public String getNumber() {
-		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
-	}
-
-	public IdCardType getType() {
-		return type;
-	}
-
-	public void setType(IdCardType type) {
-		this.type = type;
 	}
 
 	@Override

@@ -11,8 +11,11 @@ import com.luckia.biller.core.model.Liquidation;
 public class LiquidationEntityService extends EntityService<Liquidation> {
 
 	@Override
-	protected void buildOrderCriteria(CriteriaQuery<Liquidation> criteria, CriteriaBuilder builder, Root<Liquidation> root) {
-		criteria.orderBy(builder.desc(root.<Date> get("billDate")), builder.asc(root.<String> get("sender").get("name")), builder.desc(root.<String> get("code")));
+	protected void buildOrderCriteria(CriteriaQuery<Liquidation> criteria,
+			CriteriaBuilder builder, Root<Liquidation> root) {
+		criteria.orderBy(builder.desc(root.<Date>get("billDate")),
+				builder.asc(root.<String>get("sender").get("name")),
+				builder.desc(root.<String>get("code")));
 	}
 
 	@Override

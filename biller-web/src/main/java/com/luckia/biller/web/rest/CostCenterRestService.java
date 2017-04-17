@@ -23,7 +23,8 @@ import com.luckia.biller.core.services.entities.CostCenterEntityService;
 @Path("/costcenters")
 public class CostCenterRestService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CostCenterRestService.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(CostCenterRestService.class);
 
 	@Inject
 	private CostCenterEntityService costCenterEntityService;
@@ -40,7 +41,8 @@ public class CostCenterRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<CostCenter> find(@QueryParam("p") Integer page, @QueryParam("n") Integer itemsPerPage, @QueryParam("q") String queryString) {
+	public SearchResults<CostCenter> find(@QueryParam("p") Integer page,
+			@QueryParam("n") Integer itemsPerPage, @QueryParam("q") String queryString) {
 		SearchParams searchParams = new SearchParams();
 		searchParams.setItemsPerPage(itemsPerPage);
 		searchParams.setCurrentPage(page);
@@ -55,9 +57,11 @@ public class CostCenterRestService {
 	public Message<CostCenter> merge(CostCenter entity) {
 		try {
 			return costCenterEntityService.merge(entity);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al actualizar el centro de coste", ex);
-			return new Message<CostCenter>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("costCenter.error.merge"));
+			return new Message<CostCenter>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("costCenter.error.merge"));
 		}
 	}
 
@@ -68,9 +72,11 @@ public class CostCenterRestService {
 	public Message<CostCenter> remove(@PathParam("id") Long id) {
 		try {
 			return costCenterEntityService.remove(id);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al eliminar el centro de coste", ex);
-			return new Message<CostCenter>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("costCenter.error.remove"));
+			return new Message<CostCenter>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("costCenter.error.remove"));
 		}
 	}
 

@@ -26,7 +26,8 @@ public class TestLegalEntityValidation {
 	@Test
 	public void test() {
 		Locale locale = new Locale("es", "ES");
-		ResourceBundle messages = ResourceBundle.getBundle("com.luckia.biller.core.i18n.messages", locale);
+		ResourceBundle messages = ResourceBundle
+				.getBundle("com.luckia.biller.core.i18n.messages", locale);
 		Injector injector = Guice.createInjector(new BillerModule());
 		Validator validator = injector.getInstance(Validator.class);
 		LegalEntity legalEntity = new LegalEntity();
@@ -38,7 +39,8 @@ public class TestLegalEntityValidation {
 		legalEntity.getAddress().setRegion(new Region());
 		legalEntity.getAddress().getRegion().setProvince(new Province());
 		legalEntity.getAddress().getRegion().getProvince().setId("2");
-		Set<ConstraintViolation<LegalEntity>> violations = validator.validate(legalEntity);
+		Set<ConstraintViolation<LegalEntity>> violations = validator
+				.validate(legalEntity);
 		System.out.println(violations);
 		if (!violations.isEmpty()) {
 			for (ConstraintViolation<LegalEntity> i : violations) {

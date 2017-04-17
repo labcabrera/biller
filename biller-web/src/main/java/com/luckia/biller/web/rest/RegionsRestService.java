@@ -38,20 +38,23 @@ public class RegionsRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find/{expression}")
-	public List<Region> find(@PathParam("expression") String expression, @QueryParam("province") String province) {
+	public List<Region> find(@PathParam("expression") String expression,
+			@QueryParam("province") String province) {
 		EntityManager entityManager = entityManagerProvider.get();
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Region> criteria = builder.createQuery(Region.class);
 		Root<Region> root = criteria.from(Region.class);
 		Predicate predicate = builder.conjunction();
 		if (StringUtils.isNotBlank(expression)) {
-			predicate = builder.and(predicate, builder.like(root.<String> get("name"), "%" + expression + "%"));
+			predicate = builder.and(predicate,
+					builder.like(root.<String>get("name"), "%" + expression + "%"));
 		}
 		if (province != null) {
-			predicate = builder.and(predicate, builder.equal(root.<Province> get("province").get("id"), province));
+			predicate = builder.and(predicate,
+					builder.equal(root.<Province>get("province").get("id"), province));
 		}
 		criteria.where(predicate);
-		criteria.orderBy(builder.asc(root.<String> get("name")));
+		criteria.orderBy(builder.asc(root.<String>get("name")));
 		TypedQuery<Region> typedQuery = entityManager.createQuery(criteria);
 		typedQuery.setMaxResults(15);
 		return typedQuery.getResultList();

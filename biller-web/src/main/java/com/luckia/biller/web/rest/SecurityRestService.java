@@ -35,7 +35,8 @@ public class SecurityRestService {
 			String key = request.getAsJsonObject().get("user").getAsString();
 			String password = request.getAsJsonObject().get("password").getAsString();
 			return userSessionService.login(key, password);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Login request error", ex);
 			throw new InternalServerErrorException("Login error", ex);
 		}
@@ -49,7 +50,8 @@ public class SecurityRestService {
 		try {
 			userSessionService.logout(sessionId);
 			return new Message<String>().withMessage("Success");
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Logout request error", ex);
 			throw new InternalServerErrorException("Logout error", ex);
 		}

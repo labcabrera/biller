@@ -1,7 +1,8 @@
 package com.luckia.biller.core.model;
 
 /**
- * Listado de todos los tipos conocidos de conceptos de facturacion y liquidacion aplicados.
+ * Listado de todos los tipos conocidos de conceptos de facturacion y liquidacion
+ * aplicados.
  */
 public enum BillConcept {
 
@@ -10,7 +11,8 @@ public enum BillConcept {
 
 	/**
 	 * Ingresos netos del juego: Net Gaming Revenue = GGR – Tasa juego<br>
-	 * La Tasa de juego es una tasa autonómica que actualmente es un 10% del GGR en todas las Comunidades Autónomas.
+	 * La Tasa de juego es una tasa autonómica que actualmente es un 10% del GGR en todas
+	 * las Comunidades Autónomas.
 	 */
 	NGR("NGR"),
 
@@ -20,7 +22,8 @@ public enum BillConcept {
 	GGR("GGR"),
 
 	/**
-	 * Importe apostado. Importe de los tickets de aa.dd. vendidos en un local para el periodo determinado.
+	 * Importe apostado. Importe de los tickets de aa.dd. vendidos en un local para el
+	 * periodo determinado.
 	 */
 	STAKES("Ventas"),
 
@@ -61,22 +64,27 @@ public enum BillConcept {
 
 	ROBBERY("Robo"),
 
-	@Deprecated BONUS("Bonus"),
+	@Deprecated
+	BONUS("Bonus"),
 
-	@Deprecated ADJUSTMENT("Ajuste manual"),
+	@Deprecated
+	ADJUSTMENT("Ajuste manual"),
 
 	/**
 	 * Ajuste manual incluído en la liquidación
 	 */
-	@Deprecated MANUAL_WITH_LIQUIDATION("Ajuste manual incluído en la liquidación"),
+	@Deprecated
+	MANUAL_WITH_LIQUIDATION("Ajuste manual incluído en la liquidación"),
 
 	/**
 	 * Ajuste manual no incluído en la liquidación
 	 */
-	@Deprecated MANUAL_WITHOUT_LIQUIDATION("Ajuste manual no incluído en la liquidación"),
+	@Deprecated
+	MANUAL_WITHOUT_LIQUIDATION("Ajuste manual no incluído en la liquidación"),
 
 	/** Cualquier otro concepto de facturacion que no este incluido en el modelo */
-	@Deprecated OTHER("Otros");
+	@Deprecated
+	OTHER("Otros");
 
 	private String description;
 

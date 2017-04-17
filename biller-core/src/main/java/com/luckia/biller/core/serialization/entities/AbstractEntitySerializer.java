@@ -9,10 +9,12 @@ import com.google.gson.JsonObject;
 
 public abstract class AbstractEntitySerializer {
 
-	protected void clean(JsonObject object, String propertyName, List<String> availableProperties) {
+	protected void clean(JsonObject object, String propertyName,
+			List<String> availableProperties) {
 		if (object.has(propertyName)) {
 			JsonObject jsonObject = object.get(propertyName).getAsJsonObject();
-			for (Iterator<Entry<String, JsonElement>> iterator = jsonObject.entrySet().iterator(); iterator.hasNext();) {
+			for (Iterator<Entry<String, JsonElement>> iterator = jsonObject.entrySet()
+					.iterator(); iterator.hasNext();) {
 				Entry<String, JsonElement> entrySet = iterator.next();
 				String key = entrySet.getKey();
 				if (!availableProperties.contains(key)) {

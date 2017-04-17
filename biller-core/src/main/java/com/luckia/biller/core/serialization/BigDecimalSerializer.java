@@ -12,10 +12,12 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class BigDecimalSerializer implements JsonSerializer<BigDecimal>, JsonDeserializer<BigDecimal> {
+public class BigDecimalSerializer
+		implements JsonSerializer<BigDecimal>, JsonDeserializer<BigDecimal> {
 
 	@Override
-	public JsonElement serialize(BigDecimal value, Type typeOfSrc, JsonSerializationContext context) {
+	public JsonElement serialize(BigDecimal value, Type typeOfSrc,
+			JsonSerializationContext context) {
 		JsonElement result = null;
 		if (value != null) {
 			NumberFormat numberFormat = NumberFormat.getNumberInstance();
@@ -28,7 +30,9 @@ public class BigDecimalSerializer implements JsonSerializer<BigDecimal>, JsonDes
 	}
 
 	@Override
-	public BigDecimal deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-		return json != null ? new BigDecimal(json.getAsString().replaceAll(",", "")) : null;
+	public BigDecimal deserialize(JsonElement json, Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
+		return json != null ? new BigDecimal(json.getAsString().replaceAll(",", ""))
+				: null;
 	}
 }

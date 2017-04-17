@@ -42,10 +42,11 @@ public class ProvincesRestService {
 		CriteriaQuery<Province> criteria = builder.createQuery(Province.class);
 		Root<Province> root = criteria.from(Province.class);
 		if (StringUtils.isNotBlank(expression)) {
-			Predicate predicate = builder.like(root.<String> get("name"), "%" + expression + "%");
+			Predicate predicate = builder.like(root.<String>get("name"),
+					"%" + expression + "%");
 			criteria.where(predicate);
 		}
-		criteria.orderBy(builder.asc(root.<String> get("name")));
+		criteria.orderBy(builder.asc(root.<String>get("name")));
 		TypedQuery<Province> typedQuery = entityManager.createQuery(criteria);
 		typedQuery.setMaxResults(15);
 		return typedQuery.getResultList();

@@ -8,12 +8,13 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
+import com.luckia.biller.core.common.BillerException;
+import com.luckia.biller.core.model.CostCenter;
+import com.luckia.biller.core.services.AuditService;
+
 import net.sf.flatpack.DataSet;
 import net.sf.flatpack.DefaultParserFactory;
 import net.sf.flatpack.Parser;
-
-import com.luckia.biller.core.model.CostCenter;
-import com.luckia.biller.core.services.AuditService;
 
 public class CostCenterFeeder implements Feeder<CostCenter> {
 
@@ -26,7 +27,8 @@ public class CostCenterFeeder implements Feeder<CostCenter> {
 	public void loadEntities(InputStream source) {
 		try {
 			Reader reader = new InputStreamReader(source, "UTF8");
-			Parser parser = DefaultParserFactory.getInstance().newDelimitedParser(reader, ',', '"');
+			Parser parser = DefaultParserFactory.getInstance().newDelimitedParser(reader,
+					',', '"');
 			DataSet dataSet = parser.parse();
 			EntityManager entityManager = entityManagerProvider.get();
 			while (dataSet.next()) {
@@ -37,8 +39,9 @@ public class CostCenterFeeder implements Feeder<CostCenter> {
 				entityManager.persist(center);
 			}
 			entityManager.flush();
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+		}
+		catch (Exception ex) {
+			throw new BillerException(ex);
 		}
 	}
 

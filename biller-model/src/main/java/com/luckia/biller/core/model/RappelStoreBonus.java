@@ -1,5 +1,6 @@
 package com.luckia.biller.core.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -17,12 +18,16 @@ import javax.persistence.TemporalType;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+
 /**
  * Entidad que representa el bonus anual por rappel a una empresa.
  */
 @Entity
 @Table(name = "B_RAPPEL_STORE_BONUS")
-public class RappelStoreBonus implements Auditable, HasState {
+@Data
+@SuppressWarnings("serial")
+public class RappelStoreBonus implements Auditable, HasState, Serializable {
 
 	@Id
 	@Column(name = "ID", length = 36)
@@ -67,87 +72,4 @@ public class RappelStoreBonus implements Auditable, HasState {
 	@Embedded
 	protected AuditData auditData;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Store getStore() {
-		return store;
-	}
-
-	public void setStore(Store store) {
-		this.store = store;
-	}
-
-	public BigDecimal getValue() {
-		return value;
-	}
-
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
-
-	public BigDecimal getBaseValue() {
-		return baseValue;
-	}
-
-	public void setBaseValue(BigDecimal baseValue) {
-		this.baseValue = baseValue;
-	}
-
-	public BigDecimal getProrata() {
-		return prorata;
-	}
-
-	public void setProrata(BigDecimal prorata) {
-		this.prorata = prorata;
-	}
-
-	public Date getBonusDate() {
-		return bonusDate;
-	}
-
-	public void setBonusDate(Date bonusDate) {
-		this.bonusDate = bonusDate;
-	}
-
-	@Override
-	public State getCurrentState() {
-		return currentState;
-	}
-
-	@Override
-	public void setCurrentState(State value) {
-		currentState = value;
-	}
-
-	@Override
-	public AuditData getAuditData() {
-		return auditData;
-	}
-
-	@Override
-	public void setAuditData(AuditData value) {
-		this.auditData = value;
-	}
-
-	public RappelLiquidation getRappelLiquidation() {
-		return rappelLiquidation;
-	}
-
-	public void setRappelLiquidation(RappelLiquidation rappelLiquidation) {
-		this.rappelLiquidation = rappelLiquidation;
-	}
-
-	public Rappel getRappel() {
-		return rappel;
-	}
-
-	public void setRappel(Rappel rappel) {
-		this.rappel = rappel;
-	}
 }

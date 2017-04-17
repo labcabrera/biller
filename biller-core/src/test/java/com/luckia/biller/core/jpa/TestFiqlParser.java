@@ -27,7 +27,8 @@ public class TestFiqlParser {
 	public void test() {
 		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
-		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
+		Provider<EntityManager> entityManagerProvider = injector
+				.getProvider(EntityManager.class);
 		Class<Bill> entityClass = Bill.class;
 		EntityManager entityManager = entityManagerProvider.get();
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();

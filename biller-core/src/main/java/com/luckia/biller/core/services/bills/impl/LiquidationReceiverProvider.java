@@ -8,11 +8,13 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.model.LegalEntity;
 
 /**
- * Componente encargado de resolver la entidad legal receptora por defecto de una liquidacion (Egasa Hattrick) cuando no este indicada en el modelo de facturacion.
+ * Componente encargado de resolver la entidad legal receptora por defecto de una
+ * liquidacion (Egasa Hattrick) cuando no este indicada en el modelo de facturacion.
  */
 public class LiquidationReceiverProvider {
 
@@ -25,10 +27,13 @@ public class LiquidationReceiverProvider {
 
 	public LegalEntity getReceiver() {
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Company> queryEgasa = entityManager.createQuery("select e from Company e where e.name = :name", Company.class);
-		List<Company> list = queryEgasa.setParameter("name", defaultReceiverName).getResultList();
+		TypedQuery<Company> queryEgasa = entityManager.createQuery(
+				"select e from Company e where e.name = :name", Company.class);
+		List<Company> list = queryEgasa.setParameter("name", defaultReceiverName)
+				.getResultList();
 		if (list.isEmpty()) {
-			throw new RuntimeException(String.format("No se encuentra la empresa %s", defaultReceiverName));
+			throw new BillerException(
+					String.format("No se encuentra la empresa %s", defaultReceiverName));
 		}
 		return list.iterator().next();
 	}

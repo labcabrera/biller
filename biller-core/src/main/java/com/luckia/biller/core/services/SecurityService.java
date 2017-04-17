@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import com.google.inject.Singleton;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.model.User;
 
 @Singleton
@@ -29,9 +30,12 @@ public class SecurityService {
 			return users.get();
 		}
 		try {
-			return entityManagerProvider.get().createNamedQuery("User.selectByAlias", User.class).setParameter("alias", "admin").getSingleResult();
-		} catch (NoResultException ex) {
-			throw new RuntimeException("Error al obtener el usuario activo", ex);
+			return entityManagerProvider.get()
+					.createNamedQuery("User.selectByAlias", User.class)
+					.setParameter("alias", "admin").getSingleResult();
+		}
+		catch (NoResultException ex) {
+			throw new BillerException("Error al obtener el usuario activo", ex);
 		}
 	}
 }

@@ -9,7 +9,8 @@ import java.io.Serializable;
  * <li>Número de resultados por página</li>
  * <li>Expresión FIQL con las condiciones de búsqueda</li>
  * </ul>
- * Generalmente las búsquedas devolverán un objeto de tipo {@link SearchResults} con los resultados.
+ * Generalmente las búsquedas devolverán un objeto de tipo {@link SearchResults} con los
+ * resultados.
  */
 @SuppressWarnings("serial")
 public class SearchParams implements Serializable {
@@ -25,7 +26,8 @@ public class SearchParams implements Serializable {
 	}
 
 	/**
-	 * Constructor a partir de la expresión de búsqueda, página actual y número de resultados por página
+	 * Constructor a partir de la expresión de búsqueda, página actual y número de
+	 * resultados por página
 	 * 
 	 * @param currentPage
 	 * @param itemsPerPage

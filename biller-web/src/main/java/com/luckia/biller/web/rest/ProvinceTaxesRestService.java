@@ -23,7 +23,8 @@ public class ProvinceTaxesRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<ProvinceTaxes> find(@QueryParam("p") Integer currentPage, @QueryParam("n") Integer itemsPerPage, @QueryParam("q") String queryString) {
+	public SearchResults<ProvinceTaxes> find(@QueryParam("p") Integer currentPage,
+			@QueryParam("n") Integer itemsPerPage, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams(currentPage, itemsPerPage, queryString);
 		return provinceTaxesService.find(params);
 	}

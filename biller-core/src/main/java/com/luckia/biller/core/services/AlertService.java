@@ -31,7 +31,8 @@ public class AlertService {
 	}
 
 	public void handleAlert(String message) {
-		handleAlert(new Message<String>().withCode(Message.CODE_GENERIC_ERROR).addError(message));
+		handleAlert(new Message<String>().withCode(Message.CODE_GENERIC_ERROR)
+				.addError(message));
 	}
 
 	public void handleAlert(Message<?> message) {

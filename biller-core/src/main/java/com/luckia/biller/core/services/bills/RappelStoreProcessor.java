@@ -14,7 +14,8 @@ import com.luckia.biller.core.model.Store;
 public interface RappelStoreProcessor {
 
 	/**
-	 * Calcula el rappel por defecto (sin aplicar prorateo) de un establecimiento para un determinado rango de tiempo.
+	 * Calcula el rappel por defecto (sin aplicar prorateo) de un establecimiento para un
+	 * determinado rango de tiempo.
 	 * 
 	 * @param store
 	 * @param range
@@ -22,7 +23,8 @@ public interface RappelStoreProcessor {
 	void processRappel(Store store, Range<Date> range);
 
 	/**
-	 * Actualiza el bonus de rappel de un establecimiento a partir de un determinado prorateo.
+	 * Actualiza el bonus de rappel de un establecimiento a partir de un determinado
+	 * prorateo.
 	 * 
 	 * @param rappelStoreBonus
 	 * @param prorata

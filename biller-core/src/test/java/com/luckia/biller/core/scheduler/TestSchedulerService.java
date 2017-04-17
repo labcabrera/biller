@@ -24,7 +24,8 @@ public class TestSchedulerService {
 		String cron = "0 0/1 * 1/1 * ? *";
 		Scheduler scheduler = service.getScheduler();
 		scheduler.getContext().put(Injector.class.getName(), injector);
-		JobDetail jobDetail = JobBuilder.newJob(MailJob.class).withDescription("Mail Job").withIdentity(MailJob.class.getName()).build();
+		JobDetail jobDetail = JobBuilder.newJob(MailJob.class).withDescription("Mail Job")
+				.withIdentity(MailJob.class.getName()).build();
 		CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
 		MutableTrigger trigger = scheduleBuilder.build();
 		trigger.setKey(new TriggerKey("test"));

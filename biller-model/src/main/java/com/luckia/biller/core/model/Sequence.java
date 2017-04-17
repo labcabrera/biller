@@ -6,8 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Entidad que representa una secuencia incremental asociada a un determinado identificador. Un ejemplo de esto sería la generacion de
- * números de facturas.
+ * Entidad que representa una secuencia incremental asociada a un determinado
+ * identificador. Un ejemplo de esto sería la generacion de números de facturas.
  * 
  * @see com.luckia.biller.core.jpa.Sequencer
  */

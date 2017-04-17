@@ -3,9 +3,6 @@ package com.luckia.biller.core.scheduler.tasks;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillDetail;
 import com.luckia.biller.core.model.BillLiquidationDetail;
@@ -15,24 +12,20 @@ import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Representa una tarea que recalcula los detalles de una factura.
  */
+@Slf4j
+@AllArgsConstructor
 public class BillRecalculationTask implements Runnable {
-
-	private static final Logger LOG = LoggerFactory.getLogger(BillRecalculationTask.class);
 
 	private final String billId;
 	private final Provider<EntityManager> entityManagerProvider;
 	private final BillProcessor billProcessor;
 	private final AuditService auditService;
-
-	public BillRecalculationTask(String billId, Provider<EntityManager> entityManagerProvider, BillProcessor billProcessor, AuditService auditService) {
-		this.billId = billId;
-		this.entityManagerProvider = entityManagerProvider;
-		this.billProcessor = billProcessor;
-		this.auditService = auditService;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -53,14 +46,16 @@ public class BillRecalculationTask implements Runnable {
 			billProcessor.processResults(bill);
 			auditService.processModified(bill);
 			entityManager.getTransaction().commit();
-		} catch (RuntimeException ex) {
-			LOG.error("Error al regenerar la factura {}", billId, ex);
+		}
+		catch (RuntimeException ex) {
+			log.error("Error al regenerar la factura {}", billId, ex);
 			entityManager.getTransaction().rollback();
 		}
 	}
 
 	/**
-	 * Elimina de base de datos los detalles generados anteriormente para volver a recalcular los resultados de la factura.
+	 * Elimina de base de datos los detalles generados anteriormente para volver a
+	 * recalcular los resultados de la factura.
 	 * 
 	 * @param bill
 	 * @param entityManager
@@ -92,17 +87,20 @@ public class BillRecalculationTask implements Runnable {
 		BillingModel model = bill.getSender(Store.class).getBillingModel();
 		boolean update = false;
 		if (bill.getModel() == null) {
-			LOG.warn("La factura no esta asociada a ningun modelo de facturacion");
+			log.warn("La factura no esta asociada a ningun modelo de facturacion");
 			if (model == null) {
-				LOG.error("No se puede generar la factura. El establecimiento carece de modelo de facturacion");
-			} else {
+				log.error(
+						"No se puede generar la factura. El establecimiento carece de modelo de facturacion");
+			}
+			else {
 				update = true;
 			}
-		} else if (model != null && model.getId() != bill.getModel().getId()) {
+		}
+		else if (model != null && model.getId() != bill.getModel().getId()) {
 			update = true;
 		}
 		if (update) {
-			LOG.info("Actualizando el modelo de la factura");
+			log.info("Actualizando el modelo de la factura");
 			boolean currentTx = entityManager.getTransaction().isActive();
 			if (!currentTx) {
 				entityManager.getTransaction().begin();

@@ -15,6 +15,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillingModel;
@@ -23,8 +24,9 @@ import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.reporting.LiquidationReportGenerator;
 
 /**
- * Genera un ZIP con los ficheros de la liquidacion mensual. A partir de una liquidacion genera un ZIP dentro del cual se encuentran todas
- * las facturas asociadas a la liquidación.
+ * Genera un ZIP con los ficheros de la liquidacion mensual. A partir de una liquidacion
+ * genera un ZIP dentro del cual se encuentran todas las facturas asociadas a la
+ * liquidación.
  */
 public class ZipFileService {
 
@@ -49,24 +51,31 @@ public class ZipFileService {
 			addZipEntry(in, zipOutputStream, name);
 
 			BillingModel model = liquidation.getModel();
-			boolean includeBills = model == null || model.getIncludePdfBills() != null || model.getIncludePdfBills();
-			boolean includeDetails = model == null || model.getIncludePdfDetails() != null || model.getIncludePdfDetails();
+			boolean includeBills = model == null || model.getIncludePdfBills() != null
+					|| model.getIncludePdfBills();
+			boolean includeDetails = model == null || model.getIncludePdfDetails() != null
+					|| model.getIncludePdfDetails();
 
 			if (includeBills) {
 				for (Bill bill : liquidation.getBills()) {
-					if (MathUtils.isNotZero(bill.getAmount()) && bill.getPdfFile() != null) {
+					if (MathUtils.isNotZero(bill.getAmount())
+							&& bill.getPdfFile() != null) {
 						name = fileService.getAbstractBillFileName(bill, "pdf");
 						in = fileService.getInputStream(bill.getPdfFile());
 						addZipEntry(in, zipOutputStream, FORMAT_BILL_FOLDER + name);
-					} else {
-						LOG.debug("No se incluye la factura de {}: carece de fichero asociado", bill.getSender().getName());
+					}
+					else {
+						LOG.debug(
+								"No se incluye la factura de {}: carece de fichero asociado",
+								bill.getSender().getName());
 					}
 				}
 			}
 
 			if (includeDetails) {
 				for (Bill bill : liquidation.getBills()) {
-					if (bill.getLiquidationDetailFile() != null && MathUtils.isNotZero(bill.getLiquidationTotalAmount())) {
+					if (bill.getLiquidationDetailFile() != null
+							&& MathUtils.isNotZero(bill.getLiquidationTotalAmount())) {
 						name = fileService.getAbstractBillFileName(bill, "pdf");
 						in = fileService.getInputStream(bill.getLiquidationDetailFile());
 						addZipEntry(in, zipOutputStream, FORMAT_DETAILS_FOLDER + name);
@@ -80,21 +89,26 @@ public class ZipFileService {
 				Date to = liquidation.getDateTo();
 				ByteArrayOutputStream reportOutputStream = new ByteArrayOutputStream();
 				Company company = liquidation.getSender().as(Company.class);
-				reportGenerator.generate(from, to, company, null, null, reportOutputStream);
-				ByteArrayInputStream reportInputStream = new ByteArrayInputStream(reportOutputStream.toByteArray());
+				reportGenerator.generate(from, to, company, null, null,
+						reportOutputStream);
+				ByteArrayInputStream reportInputStream = new ByteArrayInputStream(
+						reportOutputStream.toByteArray());
 				String fileName = fileService.getAbstractBillFileName(liquidation, "xls");
 				addZipEntry(reportInputStream, zipOutputStream, fileName);
-			} catch (Exception ignore) {
+			}
+			catch (Exception ignore) {
 				LOG.error("Error al adjuntar el report", ignore);
 			}
 			zipOutputStream.flush();
 			zipOutputStream.close();
-		} catch (Exception ex) {
-			throw new RuntimeException("Error al generar el ZIP con la liquidación", ex);
+		}
+		catch (Exception ex) {
+			throw new BillerException("Error al generar el ZIP con la liquidación", ex);
 		}
 	}
 
-	private void addZipEntry(InputStream inputStream, ZipOutputStream zipOutputStream, String name) throws IOException {
+	private void addZipEntry(InputStream inputStream, ZipOutputStream zipOutputStream,
+			String name) throws IOException {
 		ZipEntry zipEntry = new ZipEntry(name);
 		byte[] buf = new byte[1024];
 		int len;

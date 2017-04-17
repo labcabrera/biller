@@ -22,11 +22,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.poi.util.IOUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
@@ -46,13 +46,14 @@ import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.LiquidationEntityService;
 import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Servio REST asociado a las liquidaciones.
  */
 @Path("/liquidations")
+@Slf4j
 public class LiquidationRestService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(LiquidationRestService.class);
 
 	@Inject
 	private LiquidationEntityService entityService;
@@ -83,7 +84,8 @@ public class LiquidationRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<Liquidation> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
+	public SearchResults<Liquidation> find(@QueryParam("n") Integer maxResults,
+			@QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
 		params.setCurrentPage(page);
@@ -103,9 +105,11 @@ public class LiquidationRestService {
 			current.merge(bill);
 			entityManager.merge(current);
 			return new Message<>(Message.CODE_SUCCESS, "Liquidación actualizada", bill);
-		} catch (Exception ex) {
-			LOG.error("Error al actualizar la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al actualizar la liquidación");
+		}
+		catch (Exception ex) {
+			log.error("Error al actualizar la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al actualizar la liquidación");
 		}
 	}
 
@@ -116,12 +120,15 @@ public class LiquidationRestService {
 	public Message<Liquidation> remove(@PathParam("id") String liquidationId) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
-			Liquidation liquidation = entityManager.find(Liquidation.class, liquidationId);
+			Liquidation liquidation = entityManager.find(Liquidation.class,
+					liquidationId);
 			liquidationProcessor.remove(liquidation);
 			return new Message<>(Message.CODE_SUCCESS, "Liquidación eliminada");
-		} catch (Exception ex) {
-			LOG.error("Error al eliminar la liquidacion", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al eliminar la liquidación");
+		}
+		catch (Exception ex) {
+			log.error("Error al eliminar la liquidacion", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al eliminar la liquidación");
 		}
 	}
 
@@ -134,12 +141,17 @@ public class LiquidationRestService {
 			entityManager.getEntityManagerFactory().getCache().evictAll();
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
 			liquidationProcessor.confirm(liquidation);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.confirm.success"), liquidation);
-		} catch (ValidationException ex) {
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("liquidation.confirm.success"), liquidation);
+		}
+		catch (ValidationException ex) {
+			log.trace("Validation error", ex);
 			return new Message<>(Message.CODE_GENERIC_ERROR, ex.getMessage());
-		} catch (Exception ex) {
-			LOG.error("Error al confirmar la liquidacion", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("liquidation.confirm.error"));
+		}
+		catch (Exception ex) {
+			log.error("Error al confirmar la liquidacion", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("liquidation.confirm.error"));
 		}
 	}
 
@@ -153,16 +165,23 @@ public class LiquidationRestService {
 			entityManager.getEntityManagerFactory().getCache().evictAll();
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
 			for (Bill bill : liquidation.getBills()) {
-				if (CommonState.DRAFT.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
+				if (CommonState.DRAFT.name()
+						.equals(bill.getCurrentState().getStateDefinition().getId())) {
 					billProcessor.confirmBill(bill);
 				}
 			}
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.confirm.pending.bills.success"), liquidation.getBills());
-		} catch (ValidationException ex) {
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("liquidation.confirm.pending.bills.success"),
+					liquidation.getBills());
+		}
+		catch (ValidationException ex) {
+			log.trace("Validation error", ex);
 			return new Message<>(Message.CODE_GENERIC_ERROR, ex.getMessage());
-		} catch (Exception ex) {
-			LOG.error("Error al confirmar la liquidacion", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("liquidation.confirm.error"));
+		}
+		catch (Exception ex) {
+			log.error("Error al confirmar la liquidacion", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("liquidation.confirm.error"));
 		}
 	}
 
@@ -180,10 +199,13 @@ public class LiquidationRestService {
 	public Message<Liquidation> mergeDetail(LiquidationDetail detail) {
 		try {
 			Liquidation liquidation = liquidationProcessor.mergeDetail(detail);
-			return new Message<>(Message.CODE_SUCCESS, "Detalle actualizado", liquidation);
-		} catch (Exception ex) {
-			LOG.error("Error al confirmar la liquidacion", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al confirmar la liquidacion");
+			return new Message<>(Message.CODE_SUCCESS, "Detalle actualizado",
+					liquidation);
+		}
+		catch (Exception ex) {
+			log.error("Error al confirmar la liquidacion", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al confirmar la liquidacion");
 		}
 	}
 
@@ -192,12 +214,16 @@ public class LiquidationRestService {
 	@Path("/detail/remove/{id}")
 	public Message<Liquidation> removeDetail(@PathParam("id") String id) {
 		try {
-			LiquidationDetail detail = entityManagerProvider.get().find(LiquidationDetail.class, id);
+			LiquidationDetail detail = entityManagerProvider.get()
+					.find(LiquidationDetail.class, id);
 			Liquidation liquidation = liquidationProcessor.removeDetail(detail);
-			return new Message<>(Message.CODE_SUCCESS, "Detalle actualizado", liquidation);
-		} catch (Exception ex) {
-			LOG.error("Error al confirmar la liquidacion", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al confirmar la liquidacion");
+			return new Message<>(Message.CODE_SUCCESS, "Detalle actualizado",
+					liquidation);
+		}
+		catch (Exception ex) {
+			log.error("Error al confirmar la liquidacion", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al confirmar la liquidacion");
 		}
 	}
 
@@ -214,12 +240,14 @@ public class LiquidationRestService {
 			pdfLiquidationGenerator.generate(liquidation, out);
 			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 			ResponseBuilder response = Response.ok(in);
-			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "borrador.pdf"));
+			response.header("Content-Disposition",
+					String.format("attachment; filename=\"%s\"", "borrador.pdf"));
 			response.header("Content-Type", "application/pdf");
 			return response.build();
-		} catch (Exception ex) {
-			LOG.error("Error al generar el borrador", ex);
-			throw new RuntimeException("Error la generar el borrador");
+		}
+		catch (Exception ex) {
+			log.error("Error al generar el borrador", ex);
+			throw new BillerException("Error la generar el borrador");
 		}
 	}
 
@@ -227,7 +255,8 @@ public class LiquidationRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/send/{id}")
 	@RegisterActivity(type = UserActivityType.SEND_MAIL_LIQUIDATION)
-	public Message<Liquidation> sendEmail(@PathParam("id") String id, String emailAddress) {
+	public Message<Liquidation> sendEmail(@PathParam("id") String id,
+			String emailAddress) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			entityManager.clear();
@@ -236,10 +265,16 @@ public class LiquidationRestService {
 			for (String recipient : recipients) {
 				liquidationMailService.sendEmail(liquidation, recipient, false);
 			}
-			return new Message<>(Message.CODE_SUCCESS, String.format(i18nService.getMessage("liquidation.send.email.success"), emailAddress), liquidation);
-		} catch (Exception ex) {
-			LOG.error("Error al enviar la factura", ex);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.send.email.error"));
+			return new Message<>(Message.CODE_SUCCESS,
+					String.format(
+							i18nService.getMessage("liquidation.send.email.success"),
+							emailAddress),
+					liquidation);
+		}
+		catch (Exception ex) {
+			log.error("Error al enviar la factura", ex);
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("liquidation.send.email.error"));
 		}
 	}
 
@@ -248,21 +283,30 @@ public class LiquidationRestService {
 	@Path("/pdf/recreate/{id}")
 	@Transactional
 	public Message<Liquidation> recreatePdf(@PathParam("id") String id) {
+		FileInputStream in = null;
+		FileOutputStream out = null;
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
 			File tempFile = File.createTempFile("tmp-bill-", ".pdf");
-			FileOutputStream out = new FileOutputStream(tempFile);
+			out = new FileOutputStream(tempFile);
 			pdfLiquidationGenerator.generate(liquidation, out);
 			out.close();
-			FileInputStream in = new FileInputStream(tempFile);
+			in = new FileInputStream(tempFile);
 			String name = String.format("bill-%s.pdf", liquidation.getId());
 			AppFile pdfFile = fileService.save(name, "application/pdf", in);
 			liquidation.setPdfFile(pdfFile);
-			return new Message<>(Message.CODE_SUCCESS, "Se ha recreado el PDF de la liquidación", liquidation);
-		} catch (Exception ex) {
-			LOG.error("Error al recalcular la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al recrear el PDF de la liquidación", null);
+			return new Message<>(Message.CODE_SUCCESS,
+					"Se ha recreado el PDF de la liquidación", liquidation);
+		}
+		catch (Exception ex) {
+			log.error("Error al recalcular la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al recrear el PDF de la liquidación", null);
+		}
+		finally {
+			IOUtils.closeQuietly(in);
+			IOUtils.closeQuietly(out);
 		}
 	}
 
@@ -272,10 +316,13 @@ public class LiquidationRestService {
 	public Message<Liquidation> recalculate(@PathParam("id") String liquidationId) {
 		try {
 			Liquidation liquidation = liquidationProcessor.recalculate(liquidationId);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("liquidation.recalculate"), liquidation);
-		} catch (Exception ex) {
-			LOG.error("Error al recalcular la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("liquidation.recalculate.error"), null);
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("liquidation.recalculate"), liquidation);
+		}
+		catch (Exception ex) {
+			log.error("Error al recalcular la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("liquidation.recalculate.error"), null);
 		}
 	}
 
@@ -289,9 +336,11 @@ public class LiquidationRestService {
 			Liquidation liquidation = entityManager.find(Liquidation.class, id);
 			stateMachineService.createTransition(liquidation, CommonState.DRAFT.name());
 			return new Message<>(Message.CODE_SUCCESS, "Estado actualizado", liquidation);
-		} catch (Exception ex) {
-			LOG.error("Error al revertir el estado de la liquidacion", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al revertir el estado de la liquidacion");
+		}
+		catch (Exception ex) {
+			log.error("Error al revertir el estado de la liquidacion", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al revertir el estado de la liquidacion");
 		}
 	}
 }

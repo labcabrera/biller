@@ -8,7 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.validation.ValidCostCenter;
 
-public class CostCenterValidator implements ConstraintValidator<ValidCostCenter, CostCenter> {
+public class CostCenterValidator
+		implements ConstraintValidator<ValidCostCenter, CostCenter> {
 
 	@Override
 	public void initialize(ValidCostCenter constraintAnnotation) {
@@ -18,7 +19,8 @@ public class CostCenterValidator implements ConstraintValidator<ValidCostCenter,
 	public boolean isValid(CostCenter entity, ConstraintValidatorContext context) {
 		Boolean valid = true;
 		if (StringUtils.isBlank(entity.getCode())) {
-			context.buildConstraintViolationWithTemplate("costCenter.code.required").addConstraintViolation();
+			context.buildConstraintViolationWithTemplate("costCenter.code.required")
+					.addConstraintViolation();
 			// valid = false;
 		}
 		return valid;

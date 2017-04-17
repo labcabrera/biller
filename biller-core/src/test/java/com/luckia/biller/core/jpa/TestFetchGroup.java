@@ -17,7 +17,8 @@ import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.serialization.Serializer;
 
 /**
- * Nota: para probar esto es necesario tener el class-weaving de eclipse (esta configurado en gradle)
+ * Nota: para probar esto es necesario tener el class-weaving de eclipse (esta configurado
+ * en gradle)
  */
 @Ignore
 public class TestFetchGroup {
@@ -30,7 +31,8 @@ public class TestFetchGroup {
 			Serializer serializer = injector.getInstance(Serializer.class);
 			EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 			Long t0 = System.currentTimeMillis();
-			TypedQuery<Liquidation> query = entityManager.createQuery("select e from Liquidation e", Liquidation.class);
+			TypedQuery<Liquidation> query = entityManager
+					.createQuery("select e from Liquidation e", Liquidation.class);
 			query.setMaxResults(10);
 
 			query.setHint(QueryHints.FETCH_GROUP_NAME, "list");
@@ -41,7 +43,8 @@ public class TestFetchGroup {
 				System.out.println("--------------------------------------------");
 			}
 			System.out.println("Time: " + (System.currentTimeMillis() - t0) + " ms");
-		} catch (RuntimeException ex) {
+		}
+		catch (RuntimeException ex) {
 			ex.printStackTrace();
 			throw ex;
 		}

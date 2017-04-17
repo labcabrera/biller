@@ -1,5 +1,6 @@
 package com.luckia.biller.core.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -10,8 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.Data;
+
 /**
- * Entidad que agrupa los diferentes atributos que queremos almacenar para tener una mínima trazabilidad sobre las entidades:
+ * Entidad que agrupa los diferentes atributos que queremos almacenar para tener una
+ * mínima trazabilidad sobre las entidades:
  * <ul>
  * <li>Fecha de creación</li>
  * <li>Fecha de modificación</li>
@@ -23,7 +27,9 @@ import javax.persistence.TemporalType;
  * 
  */
 @Embeddable
-public class AuditData {
+@Data
+@SuppressWarnings("serial")
+public class AuditData implements Serializable {
 
 	@Column(name = "CREATED", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -41,35 +47,4 @@ public class AuditData {
 	@JoinColumn(name = "MODIFIED_BY")
 	private User modifiedBy;
 
-	public Date getCreated() {
-		return created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public Date getDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(Date deleted) {
-		this.deleted = deleted;
-	}
-
-	public Date getModified() {
-		return modified;
-	}
-
-	public void setModified(Date modified) {
-		this.modified = modified;
-	}
-
-	public User getModifiedBy() {
-		return modifiedBy;
-	}
-
-	public void setModifiedBy(User modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
 }

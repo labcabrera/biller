@@ -1,5 +1,6 @@
 package com.luckia.biller.core.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,9 +15,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "S_USER_ACTIVITY")
-public class UserActivity {
+@Data
+@SuppressWarnings("serial")
+public class UserActivity implements Serializable {
 
 	@Id
 	@Column(name = "ID")
@@ -37,43 +42,4 @@ public class UserActivity {
 	@Column(name = "DATA", columnDefinition = "TEXT", nullable = true)
 	private String data;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public UserActivityType getType() {
-		return type;
-	}
-
-	public void setType(UserActivityType type) {
-		this.type = type;
-	}
-
-	public String getData() {
-		return data;
-	}
-
-	public void setData(String data) {
-		this.data = data;
-	}
 }

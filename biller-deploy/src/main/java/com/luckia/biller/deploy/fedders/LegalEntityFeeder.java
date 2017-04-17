@@ -10,12 +10,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
-import net.sf.flatpack.DataSet;
-import net.sf.flatpack.DefaultParserFactory;
-import net.sf.flatpack.Parser;
-
 import org.apache.commons.lang3.StringUtils;
 
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.IdCard;
 import com.luckia.biller.core.model.IdCardType;
@@ -24,6 +21,12 @@ import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.Region;
 import com.luckia.biller.core.services.AuditService;
 
+import lombok.extern.slf4j.Slf4j;
+import net.sf.flatpack.DataSet;
+import net.sf.flatpack.DefaultParserFactory;
+import net.sf.flatpack.Parser;
+
+@Slf4j
 public abstract class LegalEntityFeeder<T> implements Feeder<T> {
 
 	@Inject
@@ -35,7 +38,8 @@ public abstract class LegalEntityFeeder<T> implements Feeder<T> {
 	public void loadEntities(InputStream source) {
 		try {
 			Reader reader = new InputStreamReader(source, "UTF8");
-			Parser parser = DefaultParserFactory.getInstance().newDelimitedParser(reader, ',', '"');
+			Parser parser = DefaultParserFactory.getInstance().newDelimitedParser(reader,
+					',', '"');
 			DataSet dataSet = parser.parse();
 			EntityManager entityManager = entityManagerProvider.get();
 			while (dataSet.next()) {
@@ -45,8 +49,10 @@ public abstract class LegalEntityFeeder<T> implements Feeder<T> {
 				entityManager.persist(entity);
 			}
 			entityManager.flush();
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+		}
+		catch (Exception ex) {
+			log.error("Feeder error", ex);
+			throw new BillerException(ex);
 		}
 	}
 
@@ -65,7 +71,8 @@ public abstract class LegalEntityFeeder<T> implements Feeder<T> {
 	protected void parseIdCar(LegalEntity entity, DataSet dataSet) {
 		if (dataSet.contains("CIF")) {
 			entity.setIdCard(new IdCard(IdCardType.CIF, dataSet.getString("CIF")));
-		} else {
+		}
+		else {
 			entity.setIdCard(new IdCard(IdCardType.NIF, dataSet.getString("NIF")));
 		}
 	}
@@ -77,7 +84,8 @@ public abstract class LegalEntityFeeder<T> implements Feeder<T> {
 		String road = dataSet.getString("ROAD");
 		entity.setAddress(new Address());
 		entity.getAddress().setProvince(entityManager.find(Province.class, provinceId));
-		entity.getAddress().setRegion(entityManager.find(Region.class, provinceId + regionId));
+		entity.getAddress()
+				.setRegion(entityManager.find(Region.class, provinceId + regionId));
 		entity.getAddress().setRoad(road);
 	}
 
@@ -87,11 +95,16 @@ public abstract class LegalEntityFeeder<T> implements Feeder<T> {
 			if (StringUtils.isNotBlank(parent)) {
 				try {
 					EntityManager entityManager = entityManagerProvider.get();
-					TypedQuery<LegalEntity> query = entityManager.createQuery("select i from LegalEntity i where i.idCard.number = :cif", LegalEntity.class);
-					LegalEntity legalEntityParent = query.setParameter("cif", parent).getSingleResult();
+					TypedQuery<LegalEntity> query = entityManager.createQuery(
+							"select i from LegalEntity i where i.idCard.number = :cif",
+							LegalEntity.class);
+					LegalEntity legalEntityParent = query.setParameter("cif", parent)
+							.getSingleResult();
 					entity.setParent(legalEntityParent);
-				} catch (NoResultException ex) {
-					throw new RuntimeException("No se encuentra la entidad legal con CIF " + parent);
+				}
+				catch (NoResultException ex) {
+					throw new BillerException(
+							"No se encuentra la entidad legal con CIF " + parent, ex);
 				}
 			}
 		}

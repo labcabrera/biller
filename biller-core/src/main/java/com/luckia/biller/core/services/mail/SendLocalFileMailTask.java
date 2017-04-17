@@ -5,12 +5,11 @@ import java.util.Arrays;
 
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.HtmlEmail;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class SendLocalFileMailTask implements Runnable {
-
-	private final Logger LOG = LoggerFactory.getLogger(SendLocalFileMailTask.class);
 
 	private final String emailAddress;
 	private final String filePath;
@@ -20,7 +19,8 @@ public class SendLocalFileMailTask implements Runnable {
 	private final MailService mailService;
 	private final Boolean deleteOnExit;
 
-	public SendLocalFileMailTask(String emailAddress, String filePath, String name, String title, String body, MailService mailService, Boolean deleteOnExit) {
+	public SendLocalFileMailTask(String emailAddress, String filePath, String name,
+			String title, String body, MailService mailService, Boolean deleteOnExit) {
 		this.emailAddress = emailAddress;
 		this.filePath = filePath;
 		this.name = name;
@@ -33,23 +33,29 @@ public class SendLocalFileMailTask implements Runnable {
 	@Override
 	public void run() {
 		try {
-			EmailAttachment attachment = mailService.createAttachment(name, name, filePath);
-			HtmlEmail email = mailService.createEmail(emailAddress, emailAddress, title, body, Arrays.asList(attachment));
+			EmailAttachment attachment = mailService.createAttachment(name, name,
+					filePath);
+			HtmlEmail email = mailService.createEmail(emailAddress, emailAddress, title,
+					body, Arrays.asList(attachment));
 			email.send();
 			if (deleteOnExit != null && deleteOnExit) {
 				deleteOnExit();
 			}
-		} catch (Exception ex) {
-			LOG.error("Error al enviar el correo", ex);
+		}
+		catch (Exception ex) {
+			log.error("Error al enviar el correo", ex);
 		}
 	}
 
 	private void deleteOnExit() {
 		try {
 			File file = new File(filePath);
-			file.delete();
-		} catch (Exception ignore) {
-
+			if (!file.delete()) {
+				log.trace("Delete file error");
+			}
+		}
+		catch (Exception ignore) {
+			log.trace("Delete file error", ignore);
 		}
 	}
 }

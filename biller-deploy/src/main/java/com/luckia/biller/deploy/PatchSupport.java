@@ -3,18 +3,17 @@ package com.luckia.biller.deploy;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class PatchSupport {
-
-	private static final Logger LOG = LoggerFactory.getLogger(PatchSupport.class);
 
 	protected boolean confirm() {
 		Boolean result;
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-			System.out.printf("Esta a punto de ejecutar el patch '%s'\n", getClass().getSimpleName());
+			System.out.printf("Esta a punto de ejecutar el patch '%s'%n",
+					getClass().getSimpleName());
 			String line;
 			do {
 				System.out.print("Desea continuar? [y/n]: ");
@@ -22,13 +21,16 @@ public class PatchSupport {
 				if ("y".equals(line) || "n".equals(line)) {
 					result = "y".equals(line);
 					break;
-				} else {
+				}
+				else {
 					System.out.println("Opcion no valida");
 				}
-			} while (true);
+			}
+			while (true);
 			return result;
-		} catch (Exception ex) {
-			LOG.error(ex.getMessage(), ex);
+		}
+		catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
 		}
 		return true;
 

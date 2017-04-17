@@ -27,8 +27,10 @@ import com.luckia.biller.core.validation.LegalEntityValidator;
 /**
  * Modulo de Guice principal de la aplicacion. Este modulo:
  * <ul>
- * <li>Inicia los componentes de JPA (tanto para el persistence unit de la aplicacion como para el de la comunicacion con LIS)</li>
- * <li>Registra las implementaciones asociadas a las interfaces definidas en la aplicacion</li>
+ * <li>Inicia los componentes de JPA (tanto para el persistence unit de la aplicacion como
+ * para el de la comunicacion con LIS)</li>
+ * <li>Registra las implementaciones asociadas a las interfaces definidas en la
+ * aplicacion</li>
  * <li>Registra el módulo de validacion de Apache BVal (JSR 303)</li>
  * </ul>
  */
@@ -46,7 +48,8 @@ public class BillerModule extends AbstractModule {
 		LOG.debug("Configuring Biller core module");
 		SettingsManager settingsManager = new SettingsManager().load();
 		bind(SettingsManager.class).toInstance(settingsManager);
-		Names.bindProperties(binder(), settingsManager.getProperties(Constants.CONFIG_SECTION_GLOBAL));
+		Names.bindProperties(binder(),
+				settingsManager.getProperties(Constants.CONFIG_SECTION_GLOBAL));
 		installJpaModule(settingsManager);
 		install(new ValidationModule());
 		install(new LisModule());
@@ -57,12 +60,14 @@ public class BillerModule extends AbstractModule {
 		bind(LegalEntityValidator.class);
 		UserActivityInterceptor userActivityInterceptor = new UserActivityInterceptor();
 		requestInjection(userActivityInterceptor);
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(RegisterActivity.class), userActivityInterceptor);
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(RegisterActivity.class),
+				userActivityInterceptor);
 		LOG.debug("Configured Biller core module");
 	}
 
 	protected void installJpaModule(SettingsManager settingsManager) {
-		Properties properties = settingsManager.getProperties(Constants.CONFIG_SECTION_JPA_BILLER);
+		Properties properties = settingsManager
+				.getProperties(Constants.CONFIG_SECTION_JPA_BILLER);
 		JpaPersistModule module = new JpaPersistModule(Constants.PERSISTENCE_UNIT_NAME);
 		module.properties(properties);
 		install(module);

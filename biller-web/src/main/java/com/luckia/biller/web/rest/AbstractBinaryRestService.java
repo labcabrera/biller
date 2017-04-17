@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.model.UserSession;
 
 public abstract class AbstractBinaryRestService {
@@ -21,14 +22,16 @@ public abstract class AbstractBinaryRestService {
 	protected Provider<EntityManager> entityManagerProvider;
 
 	protected boolean checkSessionId(String sessionId) {
-		return StringUtils.isNotBlank(sessionId) && entityManagerProvider.get().find(UserSession.class, sessionId) != null;
+		return StringUtils.isNotBlank(sessionId)
+				&& entityManagerProvider.get().find(UserSession.class, sessionId) != null;
 	}
 
 	protected Response sendRedirect(String uri) {
 		try {
 			return Response.temporaryRedirect(new URI(uri)).build();
-		} catch (URISyntaxException ex) {
-			throw new RuntimeException("Send redirection error", ex);
+		}
+		catch (URISyntaxException ex) {
+			throw new BillerException("Send redirection error", ex);
 		}
 	}
 }

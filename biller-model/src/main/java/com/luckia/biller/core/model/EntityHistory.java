@@ -1,5 +1,6 @@
 package com.luckia.biller.core.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,9 +11,13 @@ import javax.persistence.Table;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "S_ENTITY_HISTORY")
-public class EntityHistory {
+@Data
+@SuppressWarnings("serial")
+public class EntityHistory implements Serializable {
 
 	@Id
 	@Column(name = "ID", length = 36)
@@ -35,51 +40,4 @@ public class EntityHistory {
 	@Column(name = "ENTITY_AFTER", nullable = false, columnDefinition = "TEXT")
 	private String entityAfter;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getEntityId() {
-		return entityId;
-	}
-
-	public void setEntityId(String entityId) {
-		this.entityId = entityId;
-	}
-
-	public Class<?> getEntityClass() {
-		return entityClass;
-	}
-
-	public void setEntityClass(Class<?> entityClass) {
-		this.entityClass = entityClass;
-	}
-
-	public Date getEntityDate() {
-		return entityDate;
-	}
-
-	public void setEntityDate(Date entityDate) {
-		this.entityDate = entityDate;
-	}
-
-	public String getEntityBefore() {
-		return entityBefore;
-	}
-
-	public void setEntityBefore(String entityBefore) {
-		this.entityBefore = entityBefore;
-	}
-
-	public String getEntityAfter() {
-		return entityAfter;
-	}
-
-	public void setEntityAfter(String entityAfter) {
-		this.entityAfter = entityAfter;
-	}
 }

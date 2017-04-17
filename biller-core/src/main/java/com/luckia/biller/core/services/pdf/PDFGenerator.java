@@ -11,8 +11,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -39,9 +37,10 @@ import com.luckia.biller.core.model.Person;
 import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.VatLiquidationType;
 
-public abstract class PDFGenerator<T> {
+import lombok.extern.slf4j.Slf4j;
 
-	private static final Logger LOG = LoggerFactory.getLogger(PDFGenerator.class);
+@Slf4j
+public abstract class PDFGenerator<T> {
 
 	@Inject
 	protected I18nService i18nService;
@@ -56,11 +55,16 @@ public abstract class PDFGenerator<T> {
 	protected final Locale locale;
 
 	public PDFGenerator() {
-		documentFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9f, Font.NORMAL, BaseColor.BLACK);
-		boldFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9f, Font.BOLD, BaseColor.BLACK);
-		titleFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 12f, Font.BOLD, BaseColor.BLACK);
-		smallFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 8f, Font.ITALIC, BaseColor.BLACK);
-		waterMarkFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 80f, Font.BOLD, new BaseColor(240, 240, 240));
+		documentFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H,
+				BaseFont.EMBEDDED, 9f, Font.NORMAL, BaseColor.BLACK);
+		boldFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H,
+				BaseFont.EMBEDDED, 9f, Font.BOLD, BaseColor.BLACK);
+		titleFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H,
+				BaseFont.EMBEDDED, 12f, Font.BOLD, BaseColor.BLACK);
+		smallFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H,
+				BaseFont.EMBEDDED, 8f, Font.ITALIC, BaseColor.BLACK);
+		waterMarkFont = FontFactory.getFont("/fonts/CALIBRI.ttf", BaseFont.IDENTITY_H,
+				BaseFont.EMBEDDED, 80f, Font.BOLD, new BaseColor(240, 240, 240));
 		locale = new Locale("es", "ES");
 		dateFormat = "dd-MM-yyyy";
 		monthFormat = "MMMM yyyy";
@@ -81,12 +85,19 @@ public abstract class PDFGenerator<T> {
 		return nf.format(value) + (includeCurrency ? " €" : "");
 	}
 
-	protected void printTitle(Document document, AbstractBill abstractBill) throws DocumentException {
-		String dateFormated = new SimpleDateFormat(dateFormat).format(abstractBill.getBillDate());
-		String monthFormated = StringUtils.capitalize(new SimpleDateFormat(monthFormat, locale).format(abstractBill.getBillDate()));
+	protected void printTitle(Document document, AbstractBill abstractBill)
+			throws DocumentException {
+		String dateFormated = new SimpleDateFormat(dateFormat)
+				.format(abstractBill.getBillDate());
+		String monthFormated = StringUtils
+				.capitalize(new SimpleDateFormat(monthFormat, locale)
+						.format(abstractBill.getBillDate()));
 		Boolean isBill = abstractBill.getClass().isAssignableFrom(Bill.class);
-		String billCodeLabel = isBill ? i18nService.getMessage("pdf.label.billCodeLabel") : i18nService.getMessage("pdf.label.liquidationCodeLabel");
-		String billPeriodLabel = isBill ? i18nService.getMessage("pdf.label.billPeriodLabel") : i18nService.getMessage("pdf.label.liquidationPeriodLabel");
+		String billCodeLabel = isBill ? i18nService.getMessage("pdf.label.billCodeLabel")
+				: i18nService.getMessage("pdf.label.liquidationCodeLabel");
+		String billPeriodLabel = isBill
+				? i18nService.getMessage("pdf.label.billPeriodLabel")
+				: i18nService.getMessage("pdf.label.liquidationPeriodLabel");
 		String billDateLabel = i18nService.getMessage("pdf.label.billDate");
 		String billTitleLabel = getPdfTitle(abstractBill);
 
@@ -122,21 +133,28 @@ public abstract class PDFGenerator<T> {
 		String billTitleLabel;
 		if (isBill) {
 			billTitleLabel = i18nService.getMessage("pdf.label.billTitle");
-		} else {
-			// Dependiendo de si es una co-explotacion o una factura mostramos un titulo u otro
+		}
+		else {
+			// Dependiendo de si es una co-explotacion o una factura mostramos un titulo u
+			// otro
 			Liquidation liquidation = (Liquidation) abstractBill;
 			VatLiquidationType vatType = VatLiquidationType.EXCLUDED;
-			if (liquidation.getModel() != null && liquidation.getModel().getVatLiquidationType() != null) {
+			if (liquidation.getModel() != null
+					&& liquidation.getModel().getVatLiquidationType() != null) {
 				vatType = liquidation.getModel().getVatLiquidationType();
-			} else if (liquidation.getBills() != null && !liquidation.getBills().isEmpty()) {
-				vatType = liquidation.getBills().iterator().next().getModel().getVatLiquidationType();
+			}
+			else if (liquidation.getBills() != null
+					&& !liquidation.getBills().isEmpty()) {
+				vatType = liquidation.getBills().iterator().next().getModel()
+						.getVatLiquidationType();
 			}
 			switch (vatType) {
 			case EXCLUDED:
 				billTitleLabel = i18nService.getMessage("pdf.label.liquidationTitle");
 				break;
 			default:
-				billTitleLabel = i18nService.getMessage("pdf.label.liquidationTitleWithVat");
+				billTitleLabel = i18nService
+						.getMessage("pdf.label.liquidationTitleWithVat");
 				break;
 			}
 		}
@@ -144,32 +162,38 @@ public abstract class PDFGenerator<T> {
 	}
 
 	/**
-	 * En caso de que la factura o liquidacion esten en estado <code>BillDraft</code> muestra una marca de agua indicando que el documento
-	 * es un borrador.
+	 * En caso de que la factura o liquidacion esten en estado <code>BillDraft</code>
+	 * muestra una marca de agua indicando que el documento es un borrador.
 	 * 
 	 * @param document
 	 * @param writer
 	 * @param bill
 	 */
 	protected void addWaterMark(Document document, PdfWriter writer, AbstractBill bill) {
-		if (CommonState.DRAFT.name().equals(bill.getCurrentState().getStateDefinition().getId())) {
+		if (CommonState.DRAFT.name()
+				.equals(bill.getCurrentState().getStateDefinition().getId())) {
 			PdfContentByte canvas = writer.getDirectContent();
 			Phrase phrase = new Phrase("BORRADOR", waterMarkFont);
-			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase, 280f, 400f, 45f);
+			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase, 280f, 400f,
+					45f);
 		}
 	}
 
-	protected void printLegalEntities(Document document, LegalEntity sender, LegalEntity receiver) throws DocumentException {
+	protected void printLegalEntities(Document document, LegalEntity sender,
+			LegalEntity receiver) throws DocumentException {
 		printLegalEntities(document, sender, receiver, 0f);
 	}
 
-	protected void printLegalEntities(Document document, LegalEntity sender, LegalEntity receiver, float spacingBefore) throws DocumentException {
+	protected void printLegalEntities(Document document, LegalEntity sender,
+			LegalEntity receiver, float spacingBefore) throws DocumentException {
 		LegalEntity owner = null;
-		if (Store.class.isAssignableFrom(sender.getClass()) && ((Store) sender).getOwner() != null) {
-			LOG.debug("Using owner in sender header");
+		if (Store.class.isAssignableFrom(sender.getClass())
+				&& ((Store) sender).getOwner() != null) {
+			log.debug("Using owner in sender header");
 			owner = ((Store) sender).getOwner();
-		} else {
-			LOG.debug("Missing owner in sender header");
+		}
+		else {
+			log.debug("Missing owner in sender header");
 		}
 		PdfPTable table = new PdfPTable(new float[] { 40, 40f, 40 });
 		table.setWidthPercentage(100f);
@@ -184,26 +208,36 @@ public abstract class PDFGenerator<T> {
 		document.add(paragraph);
 	}
 
-	protected PdfPCell createLegalEntityCell(String title, LegalEntity legalEntity, LegalEntity owner) {
+	protected PdfPCell createLegalEntityCell(String title, LegalEntity legalEntity,
+			LegalEntity owner) {
 		PdfPCell cell = new PdfPCell();
 		cell.setBorder(0);
 		cell.addElement(new Paragraph(new Phrase(title, boldFont)));
 		cell.addElement(new Paragraph(new Phrase(legalEntity.getName(), documentFont)));
 		if (legalEntity.getAddress() != null) {
-			cell.addElement(new Paragraph(new Phrase("Dirección:\n" + formatAddress(legalEntity.getAddress()), documentFont)));
+			cell.addElement(new Paragraph(
+					new Phrase("Dirección:\n" + formatAddress(legalEntity.getAddress()),
+							documentFont)));
 		}
-		if (legalEntity.getIdCard() != null && StringUtils.isNotBlank(legalEntity.getIdCard().getNumber())) {
-			cell.addElement(new Paragraph(new Phrase("NIF/CIF: " + legalEntity.getIdCard().getNumber(), documentFont)));
+		if (legalEntity.getIdCard() != null
+				&& StringUtils.isNotBlank(legalEntity.getIdCard().getNumber())) {
+			cell.addElement(new Paragraph(new Phrase(
+					"NIF/CIF: " + legalEntity.getIdCard().getNumber(), documentFont)));
 		}
 		if (owner != null && owner.getId() != legalEntity.getId()) {
 
 			cell.addElement(new Paragraph(new Phrase("Titular:", boldFont)));
-			cell.addElement(new Paragraph(new Phrase(formatPersonName(owner), documentFont)));
+			cell.addElement(
+					new Paragraph(new Phrase(formatPersonName(owner), documentFont)));
 			if (owner.getAddress() != null) {
-				cell.addElement(new Paragraph(new Phrase("Dirección: " + formatAddress(owner.getAddress()), documentFont)));
+				cell.addElement(new Paragraph(
+						new Phrase("Dirección: " + formatAddress(owner.getAddress()),
+								documentFont)));
 			}
-			if (owner.getIdCard() != null && StringUtils.isNotBlank(owner.getIdCard().getNumber())) {
-				cell.addElement(new Paragraph(new Phrase("NIF/CIF: " + owner.getIdCard().getNumber(), documentFont)));
+			if (owner.getIdCard() != null
+					&& StringUtils.isNotBlank(owner.getIdCard().getNumber())) {
+				cell.addElement(new Paragraph(new Phrase(
+						"NIF/CIF: " + owner.getIdCard().getNumber(), documentFont)));
 			}
 		}
 		return cell;
@@ -227,7 +261,7 @@ public abstract class PDFGenerator<T> {
 	}
 
 	protected String formatAddress(Address address) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (StringUtils.isNotBlank(address.getRoad())) {
 			sb.append(address.getRoad()).append(" ");
 		}
@@ -251,7 +285,8 @@ public abstract class PDFGenerator<T> {
 		return createCell(string, horizontalAlignment, PdfPCell.NO_BORDER, 0, font);
 	}
 
-	protected PdfPCell createCell(String string, int horizontalAlignment, int border, int borderWidth, Font font) {
+	protected PdfPCell createCell(String string, int horizontalAlignment, int border,
+			int borderWidth, Font font) {
 		PdfPCell cell = new PdfPCell();
 		Paragraph paragraph = new Paragraph(string, font);
 		paragraph.setAlignment(horizontalAlignment);
@@ -274,7 +309,8 @@ public abstract class PDFGenerator<T> {
 		return list;
 	}
 
-	protected void printCanvas(Document document, PdfWriter writer, Font font, float x, float y, float maxWidth, List<String> text) {
+	protected void printCanvas(Document document, PdfWriter writer, Font font, float x,
+			float y, float maxWidth, List<String> text) {
 		PdfContentByte canvas = writer.getDirectContent();
 		List<String> splitedLines = new ArrayList<String>();
 		for (String str : text) {
@@ -297,12 +333,14 @@ public abstract class PDFGenerator<T> {
 		if (phraseWidth + x <= maxSize) {
 			result.add(line);
 			return result;
-		} else {
-			LOG.trace("Detectada frase que hay que cortar: [" + line + "]");
-			LOG.trace(String.format("PhraseWidth: %s, maxSize: %s, y: %s, diff: %s", phraseWidth, maxSize, x, (phraseWidth + x - maxSize)));
+		}
+		else {
+			log.trace("Detectada frase que hay que cortar: [" + line + "]");
+			log.trace(String.format("PhraseWidth: %s, maxSize: %s, y: %s, diff: %s",
+					phraseWidth, maxSize, x, (phraseWidth + x - maxSize)));
 			int indexValid = -1;
 			String[] subPhrases = line.split(" ");
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < subPhrases.length; i++) {
 				if (i != 0) {
 					sb.append(" ");
@@ -312,15 +350,17 @@ public abstract class PDFGenerator<T> {
 				float tmpWidth = ColumnText.getWidth(tmpPhrase);
 				if (x + tmpWidth < maxSize) {
 					indexValid = i; // continuamos buscando la frase
-				} else {
+				}
+				else {
 					break;
 				}
 			}
-			StringBuffer line0 = new StringBuffer();
+			StringBuilder line0 = new StringBuilder();
 			if (indexValid == -1 && !"".equals(line.trim())) {
 				line0.append(line);
-				LOG.info("Frase demasiado larga que no se puede separar: [" + line + "]");
-			} else {
+				log.info("Frase demasiado larga que no se puede separar: [" + line + "]");
+			}
+			else {
 				for (int i = 0; i <= indexValid; i++) {
 					if (i != 0) {
 						line0.append(" ");
@@ -338,7 +378,8 @@ public abstract class PDFGenerator<T> {
 		}
 	}
 
-	protected void printCommentsPdf(Document document, AbstractBill bill) throws DocumentException {
+	protected void printCommentsPdf(Document document, AbstractBill bill)
+			throws DocumentException {
 		if (StringUtils.isNotEmpty(bill.getCommentsPdf())) {
 			Paragraph paragraph = new Paragraph();
 			paragraph.setSpacingBefore(25f);

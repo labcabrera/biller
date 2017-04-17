@@ -17,8 +17,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.Range;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 import com.luckia.biller.core.model.Bill;
@@ -34,9 +32,10 @@ import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.AuditService;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
-public class BillRecalculationService {
+import lombok.extern.slf4j.Slf4j;
 
-	private static final Logger LOG = LoggerFactory.getLogger(BillRecalculationService.class);
+@Slf4j
+public class BillRecalculationService {
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
@@ -47,29 +46,40 @@ public class BillRecalculationService {
 	@Inject
 	private Injector injector;
 
-	public Message<BillRecalculationInfo> prepare(Company company, Store store, Range<Date> range) {
+	public Message<BillRecalculationInfo> prepare(Company company, Store store,
+			Range<Date> range) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 			CriteriaQuery<Bill> criteria = builder.createQuery(Bill.class);
 			Root<Bill> root = criteria.from(Bill.class);
 			List<Predicate> predicates = new ArrayList<Predicate>();
-			predicates.add(builder.greaterThanOrEqualTo(root.<Date> get("dateFrom"), range.getMinimum()));
-			predicates.add(builder.lessThanOrEqualTo(root.<Date> get("dateTo"), range.getMaximum()));
+			predicates.add(builder.greaterThanOrEqualTo(root.<Date>get("dateFrom"),
+					range.getMinimum()));
+			predicates.add(builder.lessThanOrEqualTo(root.<Date>get("dateTo"),
+					range.getMaximum()));
 			if (store != null) {
-				predicates.add(builder.equal(root.<LegalEntity> get("sender").<Long> get("id"), store.getId()));
+				predicates.add(builder.equal(
+						root.<LegalEntity>get("sender").<Long>get("id"), store.getId()));
 			}
 			if (company != null) {
-				predicates.add(builder.equal(root.<LegalEntity> get("receiver").<Long> get("id"), company.getId()));
+				predicates.add(
+						builder.equal(root.<LegalEntity>get("receiver").<Long>get("id"),
+								company.getId()));
 			}
 			criteria.where(predicates.toArray(new Predicate[predicates.size()]));
 			TypedQuery<Bill> query = entityManager.createQuery(criteria);
 			List<Bill> bills = query.getResultList();
-			BillRecalculationInfo payload = buildRecalculationInfo(company, store, range, bills);
+			BillRecalculationInfo payload = buildRecalculationInfo(company, store, range,
+					bills);
 			return new Message<BillRecalculationInfo>().withPayload(payload);
-		} catch (Exception ex) {
-			LOG.error("Error al recalcular la factura", ex);
-			return new Message<BillRecalculationInfo>().withCode(Message.CODE_GENERIC_ERROR).addError("billRecalculation.prepare.error").addError(ex.getMessage());
+		}
+		catch (Exception ex) {
+			log.error("Error al recalcular la factura", ex);
+			return new Message<BillRecalculationInfo>()
+					.withCode(Message.CODE_GENERIC_ERROR)
+					.addError("billRecalculation.prepare.error")
+					.addError(ex.getMessage());
 		}
 	}
 
@@ -82,14 +92,16 @@ public class BillRecalculationService {
 			if (info.getCurrentBills() != null) {
 				for (BillRecalculationDetail detail : info.getCurrentBills()) {
 					if (detail.getBillId() != null) {
-						tasks.add(new BillRecalculationTask(detail.getBillId(), entityManagerProvider, billProcessor, auditService));
+						tasks.add(new BillRecalculationTask(detail.getBillId(),
+								entityManagerProvider, billProcessor, auditService));
 					}
 				}
 			}
 			// En segundo lugar calculamos las facturas no existentes
 			if (info.getNonExistingBills() != null) {
 				for (BillRecalculationDetail detail : info.getNonExistingBills()) {
-					tasks.add(new BillTask(detail.getStoreId(), range, entityManagerProvider, billProcessor));
+					tasks.add(new BillTask(detail.getStoreId(), range,
+							entityManagerProvider, billProcessor));
 				}
 			}
 			if (!tasks.isEmpty()) {
@@ -99,31 +111,39 @@ public class BillRecalculationService {
 				}
 				executorService.shutdown();
 				executorService.awaitTermination(5, TimeUnit.HOURS);
-				LOG.debug("Finalizado el tratamiento de {} tareas", tasks.size());
+				log.debug("Finalizado el tratamiento de {} tareas", tasks.size());
 			}
-			if (info.getCompany() != null && info.getRecalculateLiquidation() != null && info.getRecalculateLiquidation()) {
+			if (info.getCompany() != null && info.getRecalculateLiquidation() != null
+					&& info.getRecalculateLiquidation()) {
 				EntityManager entityManager = entityManagerProvider.get();
-				TypedQuery<Liquidation> query = entityManager.createNamedQuery(Liquidation.QUERY_SEARCH_BY_COMPANY_IN_RANGE, Liquidation.class);
+				TypedQuery<Liquidation> query = entityManager.createNamedQuery(
+						Liquidation.QUERY_SEARCH_BY_COMPANY_IN_RANGE, Liquidation.class);
 				query.setParameter("sender", info.getCompany());
 				query.setParameter("from", info.getFrom());
 				query.setParameter("to", info.getTo());
 				List<Liquidation> list = query.getResultList();
 				if (list.isEmpty()) {
-					message.addInfo("Generando liquidación del operador " + info.getCompany().getName());
+					message.addInfo("Generando liquidación del operador "
+							+ info.getCompany().getName());
 					new LiquidationTask(info.getCompany().getId(), range, injector).run();
-				} else {
+				}
+				else {
 					if (list.size() > 1) {
-						message.addWarning("Se han encontrado {} liquidaciones del operador en el rango indicado.");
+						message.addWarning(
+								"Se han encontrado {} liquidaciones del operador en el rango indicado.");
 					}
 					for (Liquidation liquidation : list) {
-						new LiquidationRecalculationTask(liquidation.getId(), injector).run();
+						new LiquidationRecalculationTask(liquidation.getId(), injector)
+								.run();
 					}
 				}
 			}
 			return message.addInfo("billRecalculation.execute.success");
-		} catch (Exception ex) {
-			LOG.error("Error al recalcular la factura", ex);
-			return new Message<BillRecalculationInfo>(Message.CODE_SUCCESS, "Error al recalcular la factura: " + ex.getMessage());
+		}
+		catch (Exception ex) {
+			log.error("Error al recalcular la factura", ex);
+			return new Message<BillRecalculationInfo>(Message.CODE_SUCCESS,
+					"Error al recalcular la factura: " + ex.getMessage());
 		}
 	}
 
@@ -131,14 +151,20 @@ public class BillRecalculationService {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			Bill bill = entityManager.find(Bill.class, billId);
-			new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor, auditService).run();
-			return new Message<Bill>().addInfo("billRecalculation.bill.success").withPayload(bill);
-		} catch (Exception ex) {
-			return new Message<Bill>().withCode(Message.CODE_GENERIC_ERROR).addError("billRecalculation.bill.error");
+			new BillRecalculationTask(bill.getId(), entityManagerProvider, billProcessor,
+					auditService).run();
+			return new Message<Bill>().addInfo("billRecalculation.bill.success")
+					.withPayload(bill);
+		}
+		catch (Exception ex) {
+			log.error("Recalculate error", ex);
+			return new Message<Bill>().withCode(Message.CODE_GENERIC_ERROR)
+					.addError("billRecalculation.bill.error");
 		}
 	}
 
-	private BillRecalculationInfo buildRecalculationInfo(Company company, Store store, Range<Date> range, List<Bill> bills) {
+	private BillRecalculationInfo buildRecalculationInfo(Company company, Store store,
+			Range<Date> range, List<Bill> bills) {
 		BillRecalculationInfo result = new BillRecalculationInfo();
 		result.setFrom(range.getMinimum());
 		result.setTo(range.getMaximum());
@@ -161,7 +187,8 @@ public class BillRecalculationService {
 		}
 		if (company != null) {
 			EntityManager entityManager = entityManagerProvider.get();
-			TypedQuery<Store> query = entityManager.createNamedQuery(Store.QUERY_SELECT_BY_COMPANY, Store.class);
+			TypedQuery<Store> query = entityManager
+					.createNamedQuery(Store.QUERY_SELECT_BY_COMPANY, Store.class);
 			query.setParameter("company", company);
 			for (Store i : query.getResultList()) {
 				if (!findByStore(i.getId(), bills)) {

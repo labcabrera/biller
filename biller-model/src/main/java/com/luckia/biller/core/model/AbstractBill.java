@@ -25,6 +25,8 @@ import javax.persistence.TemporalType;
 import org.eclipse.persistence.annotations.JoinFetch;
 import org.eclipse.persistence.annotations.JoinFetchType;
 
+import lombok.Data;
+
 /**
  * Generalización de los siguientes tipos:
  * <ul>
@@ -33,14 +35,16 @@ import org.eclipse.persistence.annotations.JoinFetchType;
  * <li>Liquidaciones de rappel: {@link RappelLiquidation}</li>
  * </ul>
  * <p>
- * Esta clase define todos los elementos comunes tales como la fecha e intervalo de facturación, emisor y destinatario, estado (borrador,
- * aceptado, enviado, etc), comentarios o importe entre otros.
+ * Esta clase define todos los elementos comunes tales como la fecha e intervalo de
+ * facturación, emisor y destinatario, estado (borrador, aceptado, enviado, etc),
+ * comentarios o importe entre otros.
  * </p>
  */
 @Entity
 @Table(name = "B_ABSTRACT_BILL")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.CHAR, length = 1)
+@Data
 @SuppressWarnings("serial")
 public abstract class AbstractBill implements Serializable, HasState, Auditable {
 
@@ -114,122 +118,6 @@ public abstract class AbstractBill implements Serializable, HasState, Auditable 
 
 	@Embedded
 	protected AuditData auditData;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public Date getBillDate() {
-		return billDate;
-	}
-
-	public void setBillDate(Date billDate) {
-		this.billDate = billDate;
-	}
-
-	public Date getDateFrom() {
-		return dateFrom;
-	}
-
-	public void setDateFrom(Date dateFrom) {
-		this.dateFrom = dateFrom;
-	}
-
-	public Date getDateTo() {
-		return dateTo;
-	}
-
-	public void setDateTo(Date dateTo) {
-		this.dateTo = dateTo;
-	}
-
-	public LegalEntity getSender() {
-		return sender;
-	}
-
-	public void setSender(LegalEntity sender) {
-		this.sender = sender;
-	}
-
-	public LegalEntity getReceiver() {
-		return receiver;
-	}
-
-	public void setReceiver(LegalEntity receiver) {
-		this.receiver = receiver;
-	}
-
-	@Override
-	public State getCurrentState() {
-		return currentState;
-	}
-
-	@Override
-	public void setCurrentState(State currentState) {
-		this.currentState = currentState;
-	}
-
-	public BillingModel getModel() {
-		return model;
-	}
-
-	public void setModel(BillingModel model) {
-		this.model = model;
-	}
-
-	public BigDecimal getAmount() {
-		return amount;
-	}
-
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-
-	public String getComments() {
-		return comments;
-	}
-
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
-
-	public AppFile getPdfFile() {
-		return pdfFile;
-	}
-
-	public String getCommentsPdf() {
-		return commentsPdf;
-	}
-
-	public void setCommentsPdf(String commentsPdf) {
-		this.commentsPdf = commentsPdf;
-	}
-
-	public void setPdfFile(AppFile pdfFile) {
-		this.pdfFile = pdfFile;
-	}
-
-	@Override
-	public AuditData getAuditData() {
-		return auditData;
-	}
-
-	@Override
-	public void setAuditData(AuditData auditData) {
-		this.auditData = auditData;
-	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T getSender(Class<T> type) {

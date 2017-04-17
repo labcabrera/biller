@@ -1,15 +1,20 @@
 package com.luckia.biller.core.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import lombok.Data;
+
 /**
  * Entidad que agrupa los resultados de una liquidacion.
  */
 @Embeddable
-public class LiquidationResults implements Mergeable<LiquidationResults> {
+@Data
+@SuppressWarnings("serial")
+public class LiquidationResults implements Mergeable<LiquidationResults>, Serializable {
 
 	/**
 	 * Suma de todos los saldos de caja de los establecimientos.
@@ -39,7 +44,8 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	private BigDecimal liquidationManualInnerAmount;
 
 	/**
-	 * Suma de los ajustes manuales no incluidos en la liquidacion de todos los establecimientos.
+	 * Suma de los ajustes manuales no incluidos en la liquidacion de todos los
+	 * establecimientos.
 	 */
 	@Column(name = "STORE_MANUAL_OUTER_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal storeManualOuterAmount;
@@ -55,111 +61,11 @@ public class LiquidationResults implements Mergeable<LiquidationResults> {
 	private BigDecimal receiverAmount;
 
 	/**
-	 * Resultado efectivo de la liquidacion. Este valor es el resultado de la liquidacion al que se le suman los ajustes manuales no incluidos en el importe de liquidacion.
+	 * Resultado efectivo de la liquidacion. Este valor es el resultado de la liquidacion
+	 * al que se le suman los ajustes manuales no incluidos en el importe de liquidacion.
 	 */
 	@Column(name = "LIQUIDATION_EFFECTIVE_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal effectiveLiquidationAmount;
-
-	// obsoletes (migrar) -----------------------------------------------------------------
-
-	// /** Suma de todos los conceptos por apuestas de las facturas */
-	// @Column(name = "BET_AMOUNT", precision = 18, scale = 2)
-	// private BigDecimal betAmount;
-	//
-	// /** Suma de todos los conceptos de facturas cuando en el modelo se incluyen en la liquidacion */
-	// @Column(name = "STORE_AMOUNT", precision = 18, scale = 2)
-	// private BigDecimal storeAmount;
-	//
-	// /** Suma de todos los conceptos de servicio de atención al cliente de las facturas */
-	// @Column(name = "SAT_AMOUNT", precision = 18, scale = 2)
-	// private BigDecimal satAmount;
-	//
-	// @Column(name = "PRICE_PER_LOCATION_AMOUNT", precision = 18, scale = 2)
-	// private BigDecimal pricePerLocation;
-	//
-	// /** Resultado de la liquidacion del operador */
-	// @Column(name = "SENDER_AMOUNT", precision = 18, scale = 2)
-	// private BigDecimal senderAmount;
-
-	public BigDecimal getLiquidationManualInnerAmount() {
-		return liquidationManualInnerAmount;
-	}
-
-	public void setLiquidationManualInnerAmount(BigDecimal value) {
-		this.liquidationManualInnerAmount = value;
-	}
-
-	public BigDecimal getCashStoreAmount() {
-		return cashStoreAmount;
-	}
-
-	public void setCashStoreAmount(BigDecimal value) {
-		this.cashStoreAmount = value;
-	}
-
-	public BigDecimal getReceiverAmount() {
-		return receiverAmount;
-	}
-
-	public void setReceiverAmount(BigDecimal value) {
-		this.receiverAmount = value;
-	}
-
-	public BigDecimal getCashStoreEffectiveAmount() {
-		return cashStoreEffectiveAmount;
-	}
-
-	public void setCashStoreEffectiveAmount(BigDecimal value) {
-		this.cashStoreEffectiveAmount = value;
-	}
-
-	public BigDecimal getNetAmount() {
-		return netAmount;
-	}
-
-	public void setNetAmount(BigDecimal netAmount) {
-		this.netAmount = netAmount;
-	}
-
-	public BigDecimal getVatAmount() {
-		return vatAmount;
-	}
-
-	public void setVatAmount(BigDecimal vatAmount) {
-		this.vatAmount = vatAmount;
-	}
-
-	public BigDecimal getTotalAmount() {
-		return totalAmount;
-	}
-
-	public void setTotalAmount(BigDecimal value) {
-		this.totalAmount = value;
-	}
-
-	public BigDecimal getStoreManualOuterAmount() {
-		return storeManualOuterAmount;
-	}
-
-	public void setStoreManualOuterAmount(BigDecimal value) {
-		this.storeManualOuterAmount = value;
-	}
-
-	public BigDecimal getLiquidationManualOuterAmount() {
-		return liquidationManualOuterAmount;
-	}
-
-	public void setLiquidationManualOuterAmount(BigDecimal value) {
-		this.liquidationManualOuterAmount = value;
-	}
-
-	public BigDecimal getEffectiveLiquidationAmount() {
-		return effectiveLiquidationAmount;
-	}
-
-	public void setEffectiveLiquidationAmount(BigDecimal value) {
-		this.effectiveLiquidationAmount = value;
-	}
 
 	@Override
 	public void merge(LiquidationResults entity) {

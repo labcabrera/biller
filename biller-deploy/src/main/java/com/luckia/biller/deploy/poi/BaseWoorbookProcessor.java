@@ -9,32 +9,40 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.BillerException;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public abstract class BaseWoorbookProcessor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BaseWoorbookProcessor.class);
+	private static final int AMOUNT_SCALE = 2;
 
 	protected Date readCellAsDate(Cell cell) {
 		if (cell != null) {
 			try {
 				return cell.getDateCellValue();
-			} catch (Exception ex) {
-				ex.printStackTrace();
 			}
-
+			catch (Exception ex) {
+				log.error(ex.getMessage(), ex);
+			}
 			switch (cell.getCellType()) {
 			case Cell.CELL_TYPE_STRING:
 				try {
-					return new SimpleDateFormat("dd/MM/yyyy").parse(cell.getStringCellValue());
-				} catch (ParseException ex) {
-					throw new RuntimeException("Unsupported format: " + cell.getStringCellValue() + ". Expected: dd/MM/yyyyy");
+					return new SimpleDateFormat("dd/MM/yyyy")
+							.parse(cell.getStringCellValue());
+				}
+				catch (ParseException ex) {
+					throw new BillerException(
+							String.format("Unsupported format: %s. Expected: dd/MM/yyyyy",
+									cell.getStringCellValue()));
 				}
 			default:
-				throw new RuntimeException("Unsupported cell type: " + cell.getCellType());
+				throw new BillerException("Unsupported cell type: " + cell.getCellType());
 			}
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
@@ -46,13 +54,17 @@ public abstract class BaseWoorbookProcessor {
 	protected String readCellAsString(Cell cell, int type) {
 		if (cell == null) {
 			return null;
-		} else if (type == Cell.CELL_TYPE_NUMERIC) {
+		}
+		else if (type == Cell.CELL_TYPE_NUMERIC) {
 			return String.valueOf(cell.getNumericCellValue());
-		} else if (type == Cell.CELL_TYPE_FORMULA) {
-			FormulaEvaluator formulaEvaluator = cell.getRow().getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+		}
+		else if (type == Cell.CELL_TYPE_FORMULA) {
+			FormulaEvaluator formulaEvaluator = cell.getRow().getSheet().getWorkbook()
+					.getCreationHelper().createFormulaEvaluator();
 			int resultType = formulaEvaluator.evaluateFormulaCell(cell);
 			return readCellAsString(cell, resultType);
-		} else {
+		}
+		else {
 			return StringUtils.trim(cell.getStringCellValue());
 		}
 	}
@@ -67,39 +79,47 @@ public abstract class BaseWoorbookProcessor {
 			switch (type) {
 			case Cell.CELL_TYPE_NUMERIC:
 				try {
-					result = new BigDecimal(cell.getNumericCellValue());
+					result = BigDecimal.valueOf(cell.getNumericCellValue());
 					break;
-				} catch (Exception ex) {
-					throw new RuntimeException("Invalid cell number value");
+				}
+				catch (Exception ex) {
+					throw new BillerException("Invalid cell number value", ex);
 				}
 			case Cell.CELL_TYPE_STRING:
 				try {
 					result = new BigDecimal(cell.getStringCellValue());
 					break;
-				} catch (Exception ex) {
-					throw new RuntimeException("Unsupported number format: " + cell.getStringCellValue(), ex);
+				}
+				catch (Exception ex) {
+					throw new BillerException(
+							String.format("Unsupported number format: %s",
+									cell.getStringCellValue()),
+							ex);
 				}
 			case Cell.CELL_TYPE_FORMULA:
 				try {
-					FormulaEvaluator formulaEvaluator = cell.getRow().getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+					FormulaEvaluator formulaEvaluator = cell.getRow().getSheet()
+							.getWorkbook().getCreationHelper().createFormulaEvaluator();
 					int resultType = formulaEvaluator.evaluateFormulaCell(cell);
 					return readCellAsBigDecimal(cell, resultType);
-				} catch (Exception ex) {
-					throw new RuntimeException("Unsupported formula: " + cell.getStringCellValue(), ex);
+				}
+				catch (Exception ex) {
+					throw new BillerException(String.format("Unsupported formula: %s",
+							cell.getStringCellValue()), ex);
 				}
 			default:
-				throw new RuntimeException("Unsupported cell type: " + cell.getCellType());
+				throw new BillerException("Unsupported cell type: " + cell.getCellType());
 			}
 		}
 		if (result != null && result.scale() > getAmountScale()) {
-			LOG.warn("Invalid scale: " + result);
+			log.warn("Invalid scale: " + result);
 			result = result.setScale(getAmountScale(), RoundingMode.HALF_EVEN);
 		}
 		return result;
 	}
 
-	protected Integer getAmountScale() {
-		return 2;
+	protected int getAmountScale() {
+		return AMOUNT_SCALE;
 	}
 
 }

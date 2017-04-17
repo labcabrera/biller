@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -16,8 +17,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
@@ -34,45 +33,59 @@ import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.model.common.Message;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Componente encargado de generar los reportes de liquidaciones.
  */
+@Slf4j
 public class LiquidationReportGenerator extends BaseReport {
-
-	private static final Logger LOG = LoggerFactory.getLogger(LiquidationReportGenerator.class);
 
 	@Inject
 	private LiquidationReportDataSource dataSource;
 
-	public Message<String> generate(Date from, Date to, Company company, CompanyGroup companyGroup, CostCenter costCenter, OutputStream out) {
+	public Message<String> generate(Date from, Date to, Company company,
+			CompanyGroup companyGroup, CostCenter costCenter, OutputStream out) {
 		try {
-			Validate.notNull(from);
-			Validate.notNull(to);
-			LOG.debug("Generando informe de liquidacione entre {} y {}", DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
-			List<Liquidation> allLiquidations = dataSource.findLiquidations(from, to, company, costCenter, companyGroup);
-			Map<LegalEntity, List<Liquidation>> liquidationMap = dataSource.groupByCompany(allLiquidations);
+			Validate.notNull(from, "Missing date from");
+			Validate.notNull(to, "Missing date to");
+			log.debug("Generando informe de liquidacione entre {} y {}",
+					DateFormatUtils.ISO_DATE_FORMAT.format(from),
+					DateFormatUtils.ISO_DATE_FORMAT.format(to));
+			List<Liquidation> allLiquidations = dataSource.findLiquidations(from, to,
+					company, costCenter, companyGroup);
+			Map<LegalEntity, List<Liquidation>> liquidationMap = dataSource
+					.groupByCompany(allLiquidations);
 			if (!liquidationMap.isEmpty()) {
 				HSSFWorkbook workbook = new HSSFWorkbook();
 				init(workbook);
-				for (LegalEntity legalEntity : liquidationMap.keySet()) {
+				for (Entry<LegalEntity, List<Liquidation>> i : liquidationMap
+						.entrySet()) {
+					LegalEntity legalEntity = i.getKey();
 					List<Liquidation> liquidations = liquidationMap.get(legalEntity);
 					processSheet(legalEntity, liquidations, workbook);
 				}
 				workbook.write(out);
 				out.flush();
 				out.close();
-				return new Message<>(Message.CODE_SUCCESS, String.format("Generado report de %s liquidaciones", liquidationMap.size()));
-			} else {
-				return new Message<>(Message.CODE_SUCCESS, "No se han encontrado liquidaciones");
+				return new Message<>(Message.CODE_SUCCESS, String.format(
+						"Generado report de %s liquidaciones", liquidationMap.size()));
 			}
-		} catch (Exception ex) {
-			LOG.error("Error al generar el report de liquidaciones", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al generar el report de liquidaciones");
+			else {
+				return new Message<>(Message.CODE_SUCCESS,
+						"No se han encontrado liquidaciones");
+			}
+		}
+		catch (Exception ex) {
+			log.error("Error al generar el report de liquidaciones", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al generar el report de liquidaciones");
 		}
 	}
 
-	private void processSheet(LegalEntity operator, List<Liquidation> liquidations, HSSFWorkbook workbook) {
-		LOG.debug("Procesando hoja de liquidacion del operador {}", operator.getName());
+	private void processSheet(LegalEntity operator, List<Liquidation> liquidations,
+			HSSFWorkbook workbook) {
+		log.debug("Procesando hoja de liquidacion del operador {}", operator.getName());
 		HSSFSheet sheet = workbook.createSheet(operator.getName());
 		int currentRow = 0;
 		for (int i = 0; i < liquidations.size(); i++) {
@@ -144,36 +157,45 @@ public class LiquidationReportGenerator extends BaseReport {
 		int valueCol = 5;
 		createDisabledCell(sheet, currentRow, textCol, "AJUSTES");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(liquidation.getLiquidationResults().getLiquidationManualInnerAmount()));
+		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(
+				liquidation.getLiquidationResults().getLiquidationManualInnerAmount()));
 		currentRow++;
 		createDisabledCell(sheet, currentRow, textCol, "TOTAL");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(liquidation.getLiquidationResults().getTotalAmount()));
+		createDisabledCell(sheet, currentRow, valueCol,
+				MathUtils.safeNull(liquidation.getLiquidationResults().getTotalAmount()));
 		currentRow++;
 		createDisabledCell(sheet, currentRow, textCol, "SALDO DE CAJA");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(liquidation.getLiquidationResults().getCashStoreAmount()));
+		createDisabledCell(sheet, currentRow, valueCol, MathUtils
+				.safeNull(liquidation.getLiquidationResults().getCashStoreAmount()));
 		currentRow++;
 		createDisabledCell(sheet, currentRow, textCol, "AJUSTES DE CAJA");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(liquidation.getLiquidationResults().getLiquidationManualOuterAmount()));
+		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(
+				liquidation.getLiquidationResults().getLiquidationManualOuterAmount()));
 		currentRow++;
 		createDisabledCell(sheet, currentRow, textCol, "RESULTADO");
 		createDisabledCell(sheet, currentRow, blankCol, StringUtils.EMPTY);
-		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(liquidation.getLiquidationResults().getEffectiveLiquidationAmount()));
+		createDisabledCell(sheet, currentRow, valueCol, MathUtils.safeNull(
+				liquidation.getLiquidationResults().getEffectiveLiquidationAmount()));
 		return currentRow + 1;
 
 	}
 
-	private int createLiquidationDetails(HSSFSheet sheet, int currentRow, Liquidation liquidation) {
+	private int createLiquidationDetails(HSSFSheet sheet, int currentRow,
+			Liquidation liquidation) {
 		Collections.sort(liquidation.getBills(), new BillerComparator());
 		for (int i = 0; i < liquidation.getBills().size(); i++) {
 			Bill bill = liquidation.getBills().get(i);
 			BigDecimal credit = MathUtils.safeNull(getCredit(bill));
 			BigDecimal saldoCaja = BigDecimal.ZERO;
-			saldoCaja = saldoCaja.add(MathUtils.safeNull(getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_BET_AMOUNT)));
-			saldoCaja = saldoCaja.subtract(MathUtils.safeNull(getLiquidationConceptBaseValue(bill, BillConcept.CANCELLED)));
-			saldoCaja = saldoCaja.subtract(MathUtils.safeNull(getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_WIN_AMOUNT)));
+			saldoCaja = saldoCaja.add(MathUtils.safeNull(
+					getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_BET_AMOUNT)));
+			saldoCaja = saldoCaja.subtract(MathUtils.safeNull(
+					getLiquidationConceptBaseValue(bill, BillConcept.CANCELLED)));
+			saldoCaja = saldoCaja.subtract(MathUtils.safeNull(
+					getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_WIN_AMOUNT)));
 			saldoCaja = saldoCaja.add(credit);
 
 			int cell = 0;
@@ -181,7 +203,8 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, bill.getSender().getName());
 			createCell(sheet, currentRow, cell++, bill.getBillDate());
 			// TODO i18n state definition
-			createCell(sheet, currentRow, cell++, bill.getCurrentState().getStateDefinition().getId());
+			createCell(sheet, currentRow, cell++,
+					bill.getCurrentState().getStateDefinition().getId());
 			createCell(sheet, currentRow, cell++, bill.getAmount());
 			createCell(sheet, currentRow, cell++, bill.getLiquidationTotalAmount());
 			createCell(sheet, currentRow, cell++, bill.getDateFrom());
@@ -192,33 +215,50 @@ public class LiquidationReportGenerator extends BaseReport {
 			createCell(sheet, currentRow, cell++, bill.getNetAmount());
 			createCell(sheet, currentRow, cell++, bill.getVatAmount());
 			cell++;
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_BET_AMOUNT));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.CANCELLED));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.STAKES));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_WIN_AMOUNT));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_ATTRIBUTABLE));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_BET_AMOUNT));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptBaseValue(bill, BillConcept.CANCELLED));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptBaseValue(bill, BillConcept.STAKES));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_WIN_AMOUNT));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptBaseValue(bill, BillConcept.TOTAL_ATTRIBUTABLE));
 			createCell(sheet, currentRow, cell++, credit);
 			createCell(sheet, currentRow, cell++, saldoCaja);
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.GGR));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NGR));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptBaseValue(bill, BillConcept.NR));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptBaseValue(bill, BillConcept.GGR));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptBaseValue(bill, BillConcept.NGR));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptBaseValue(bill, BillConcept.NR));
 			cell++;
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.GGR));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NGR));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.NR));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptValue(bill, BillConcept.GGR));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptValue(bill, BillConcept.NGR));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptValue(bill, BillConcept.NR));
 			cell++;
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.STAKES));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.SAT_MONTHLY_FEES));
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.COMMERCIAL_MONTHLY_FEES));
-			createCell(sheet, currentRow, cell++, bill.getModel().getCompanyModel().getCoOperatingMonthlyFees());
-			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill, BillConcept.PRICE_PER_LOCATION));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptValue(bill, BillConcept.STAKES));
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptValue(bill, BillConcept.SAT_MONTHLY_FEES));
+			createCell(sheet, currentRow, cell++, getLiquidationConceptValue(bill,
+					BillConcept.COMMERCIAL_MONTHLY_FEES));
+			createCell(sheet, currentRow, cell++,
+					bill.getModel().getCompanyModel().getCoOperatingMonthlyFees());
+			createCell(sheet, currentRow, cell++,
+					getLiquidationConceptValue(bill, BillConcept.PRICE_PER_LOCATION));
 			// los ajustes ahora no se reflejan aqui
 			createCell(sheet, currentRow, cell++, BigDecimal.ZERO);
 			cell++;
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			if (Store.class.isAssignableFrom(bill.getSender().getClass())) {
 				Store store = bill.getSender().as(Store.class);
-				for (Iterator<TerminalRelation> iterator = store.getTerminalRelations().iterator(); iterator.hasNext();) {
+				for (Iterator<TerminalRelation> iterator = store.getTerminalRelations()
+						.iterator(); iterator.hasNext();) {
 					TerminalRelation relation = iterator.next();
 					sb.append(relation.getCode());
 					if (iterator.hasNext()) {

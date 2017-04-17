@@ -33,7 +33,8 @@ public class LiquidationReportDataSource {
 			LegalEntity sender = liquidation.getSender();
 			if (result.containsKey(sender)) {
 				result.get(sender).add(liquidation);
-			} else {
+			}
+			else {
 				List<Liquidation> tmp = new ArrayList<>();
 				tmp.add(liquidation);
 				result.put(sender, tmp);
@@ -42,7 +43,8 @@ public class LiquidationReportDataSource {
 		return result;
 	}
 
-	public List<Liquidation> findLiquidations(Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
+	public List<Liquidation> findLiquidations(Date from, Date to, LegalEntity company,
+			CostCenter costCenter, CompanyGroup companyGroup) {
 		EntityManager entityManager = entityManagerProvider.get();
 		if (costCenter == null) {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -51,39 +53,45 @@ public class LiquidationReportDataSource {
 			List<Predicate> predicates = new ArrayList<>();
 			// TODO state filter
 			if (from != null) {
-				predicates.add(builder.greaterThanOrEqualTo(root.<Date> get("billDate"), from));
+				predicates.add(
+						builder.greaterThanOrEqualTo(root.<Date>get("billDate"), from));
 			}
 			if (to != null) {
-				predicates.add(builder.lessThanOrEqualTo(root.<Date> get("billDate"), to));
+				predicates.add(builder.lessThanOrEqualTo(root.<Date>get("billDate"), to));
 			}
 			if (company != null) {
 				predicates.add(builder.equal(root.get("sender"), company));
 			}
 			if (companyGroup != null) {
-				predicates.add(builder.equal(root.get("sender").get("parent"), companyGroup));
+				predicates.add(
+						builder.equal(root.get("sender").get("parent"), companyGroup));
 			}
 			criteria.where(predicates.toArray(new Predicate[predicates.size()]));
 			criteria.orderBy( //
-					builder.asc(root.<Date> get("billDate")), //
-					builder.asc(root.<String> get("sender").get("name")), //
-					builder.desc(root.<String> get("code")));
+					builder.asc(root.<Date>get("billDate")), //
+					builder.asc(root.<String>get("sender").get("name")), //
+					builder.desc(root.<String>get("code")));
 			TypedQuery<Liquidation> query = entityManager.createQuery(criteria);
 			return query.getResultList();
-		} else {
+		}
+		else {
 			// TODO hard to use criteria api here due cost center relationship
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select distinct(l) from Liquidation l ");
 			sb.append("join Bill b on b.liquidation =  l ");
 			sb.append("join Store s on b.sender = s ");
 			sb.append("where l.currentState.stateDefinition.id in :states ");
 			sb.append("and l.billDate >= :from ");
 			sb.append("and l.billDate <= :to ");
-			sb.append(costCenter == null ? "" : "and s.costCenter.id = :costCenterId ");
+			sb.append("and s.costCenter.id = :costCenterId ");
 			sb.append(company == null ? "" : "and l.sender.id = :companyId ");
-			sb.append(companyGroup == null ? "" : "and l.sender.parent.id = :companyGroupId ");
+			sb.append(companyGroup == null ? ""
+					: "and l.sender.parent.id = :companyGroupId ");
 			sb.append("order by l.billDate desc, l.id");
-			TypedQuery<Liquidation> query = entityManager.createQuery(sb.toString(), Liquidation.class);
-			query.setParameter("states", Arrays.asList(CommonState.CONFIRMED, CommonState.SENT));
+			TypedQuery<Liquidation> query = entityManager.createQuery(sb.toString(),
+					Liquidation.class);
+			query.setParameter("states",
+					Arrays.asList(CommonState.CONFIRMED, CommonState.SENT));
 			query.setParameter("from", from);
 			query.setParameter("to", to);
 			if (company != null) {
@@ -92,9 +100,7 @@ public class LiquidationReportDataSource {
 			if (companyGroup != null) {
 				query.setParameter("companyGroupId", companyGroup.getId());
 			}
-			if (costCenter != null) {
-				query.setParameter("costCenterId", costCenter.getId());
-			}
+			query.setParameter("costCenterId", costCenter.getId());
 			return query.getResultList();
 		}
 	}

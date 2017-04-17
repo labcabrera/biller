@@ -15,6 +15,7 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.mutable.Mutable;
@@ -23,12 +24,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.BillerModule;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.model.Address;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.Company;
@@ -42,9 +42,11 @@ import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.TerminalRelation;
 import com.luckia.biller.core.services.AuditService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MasterWorkbookProcessor.class);
 	private static final String DATABASE_FILE = "./src/main/resources/bootstrap/hoja-maestra-facturacion.xlsx";
 
 	@Inject
@@ -66,7 +68,8 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 	public static void main(String... args) throws IOException {
 		InputStream in = new FileInputStream(DATABASE_FILE);
 		Injector injector = Guice.createInjector(new BillerModule());
-		MasterWorkbookProcessor processor = injector.getInstance(MasterWorkbookProcessor.class);
+		MasterWorkbookProcessor processor = injector
+				.getInstance(MasterWorkbookProcessor.class);
 		processor.process(in, true);
 	}
 
@@ -76,16 +79,18 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 
 	public void process(InputStream in, boolean persist) {
 		Validate.notNull(in, "Missing InputStream");
-		LOG.info("Cargando hoja maestra de facturacion");
+		log.info("Cargando hoja maestra de facturacion");
+		Workbook wb = null;
 		try {
-			Workbook wb = WorkbookFactory.create(in);
+			wb = WorkbookFactory.create(in);
 			sheetCompanies = wb.getSheet("Empresas operadoras");
 			sheetStores = wb.getSheet("Locales");
-			LOG.debug("Obteniendo empresas operadoras");
+			log.debug("Obteniendo empresas operadoras");
 			loadCompanies();
-			LOG.debug("Obteniendo establecimientos");
+			log.debug("Obteniendo establecimientos");
 			loadStores();
-			LOG.debug("Numero de modelos registrados: {}", billingModelResolver.getNewModels().size());
+			log.debug("Numero de modelos registrados: {}",
+					billingModelResolver.getNewModels().size());
 			if (persist) {
 				EntityManager entityManager = entityManagerProvider.get();
 				entityManager.getTransaction().begin();
@@ -116,10 +121,14 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 				entityManager.getTransaction().begin();
 				updateCostCenters();
 				entityManager.getTransaction().commit();
-				LOG.debug("Importacion finalizada");
+				log.debug("Importacion finalizada");
 			}
-		} catch (Exception ex) {
-			throw new RuntimeException(ex.getMessage(), ex);
+		}
+		catch (Exception ex) {
+			throw new BillerException(ex.getMessage(), ex);
+		}
+		finally {
+			IOUtils.closeQuietly(wb);
 		}
 	}
 
@@ -134,9 +143,12 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 					Long id = readCellAsBigDecimal(row.getCell(0)).longValue();
 					String cif = readCellAsString(row.getCell(2));
 					String road = readCellAsString(row.getCell(3));
-					Region region = entityResolver.resolveRegion(readCellAsString(row.getCell(4)));
-					Province province = entityResolver.resolveProvince(readCellAsString(row.getCell(5)));
-					LOG.debug(String.format("%-2s %-30s %-12s %-30s", id, name, cif, road));
+					Region region = entityResolver
+							.resolveRegion(readCellAsString(row.getCell(4)));
+					Province province = entityResolver
+							.resolveProvince(readCellAsString(row.getCell(5)));
+					log.debug(
+							String.format("%-2s %-30s %-12s %-30s", id, name, cif, road));
 					Company company = new Company();
 					company.setName(name);
 					company.setIdCard(new IdCard(IdCardType.CIF, cif));
@@ -146,11 +158,12 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 					company.getAddress().setRegion(region);
 					companies.put(id, company);
 				}
-			} catch (Exception ex) {
-				LOG.error("Error al leer la fila " + rowNumber, ex);
+			}
+			catch (Exception ex) {
+				log.error("Error al leer la fila " + rowNumber, ex);
 			}
 		}
-		LOG.info("Obtenidas {} companias", companies.size());
+		log.info("Obtenidas {} companias", companies.size());
 	}
 
 	private void loadStores() {
@@ -163,7 +176,8 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 				String idCompanyString = readCellAsString(row.getCell(0));
 				idCompanyString = idCompanyString.replaceAll(".0", "");
 				if (!StringUtils.isEmpty(name) && !"TBC".equals(idCompanyString)) {
-					Long idCompany = idCompanyString.matches("\\d+") ? Long.parseLong(idCompanyString) : null;
+					Long idCompany = idCompanyString.matches("\\d+")
+							? Long.parseLong(idCompanyString) : null;
 					String ownerCompleteName = readCellAsString(row.getCell(6));
 					String ownerIdCardNumber = readCellAsString(row.getCell(7));
 					String type = readCellAsString(row.getCell(2));
@@ -176,20 +190,26 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 					Mutable<String> ownerName = new MutableObject<String>();
 					Mutable<String> ownerFirstSurname = new MutableObject<String>();
 					Mutable<String> ownerSecondSurname = new MutableObject<String>();
-					personNameResolver.resolve(ownerCompleteName, ownerName, ownerFirstSurname, ownerSecondSurname);
-					LOG.debug(String.format("%-30s %-40s %-30s %-30s %-30s", name, ownerName, road, province, region));
+					personNameResolver.resolve(ownerCompleteName, ownerName,
+							ownerFirstSurname, ownerSecondSurname);
+					log.debug(String.format("%-30s %-40s %-30s %-30s %-30s", name,
+							ownerName, road, province, region));
 
-					StringBuffer comments = new StringBuffer();
+					StringBuilder comments = new StringBuilder();
 
 					Owner owner = null;
-					if (!"tbd".equals(ownerCompleteName) && !"?".equals(ownerCompleteName)) {
+					if (!"tbd".equals(ownerCompleteName)
+							&& !"?".equals(ownerCompleteName)) {
 						owner = new Owner();
 						owner.setName(ownerName.getValue());
 						owner.setFirstSurname(ownerFirstSurname.getValue());
 						owner.setSecondSurname(ownerSecondSurname.getValue());
 						owner.setIdCard(new IdCard(IdCardType.NIF, ownerIdCardNumber));
-					} else {
-						comments.append("No se ha definido el titular. En el campo aparece '" + ownerCompleteName + "'\n");
+					}
+					else {
+						comments.append(
+								"No se ha definido el titular. En el campo aparece '"
+										+ ownerCompleteName + "'\n");
 					}
 
 					Store store = new Store();
@@ -204,26 +224,33 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 						store.setParent(companies.get(idCompany));
 					}
 					if (region == null) {
-						comments.append("No se encuentra la region: " + regionName + "\n");
+						comments.append(
+								"No se encuentra la region: " + regionName + "\n");
 					}
 					if (province == null) {
-						comments.append("No se encuentra la provincia: " + regionName + "\n");
+						comments.append(
+								"No se encuentra la provincia: " + regionName + "\n");
 					}
 					store.setComments(comments.toString());
 					store.setTerminalRelations(new ArrayList<TerminalRelation>());
-					appendStoreTerminals(store, readCellAsString(row.getCell(3)).replaceAll(",", ""), true, store.getTerminalRelations());
-					appendStoreTerminals(store, readCellAsString(row.getCell(4)), false, store.getTerminalRelations());
+					appendStoreTerminals(store,
+							readCellAsString(row.getCell(3)).replaceAll(",", ""), true,
+							store.getTerminalRelations());
+					appendStoreTerminals(store, readCellAsString(row.getCell(4)), false,
+							store.getTerminalRelations());
 					store.setBillingModel(billingModelResolver.resolveBillingModel(row));
 					stores.add(store);
 				}
-			} catch (Exception ex) {
-				LOG.error("Error al procesar el establecimiento", ex);
+			}
+			catch (Exception ex) {
+				log.error("Error al procesar el establecimiento", ex);
 			}
 		}
-		LOG.info("Obtenidos {} establecimientos", stores.size());
+		log.info("Obtenidos {} establecimientos", stores.size());
 	}
 
-	private void appendStoreTerminals(Store store, String input, Boolean isMaster, List<TerminalRelation> list) {
+	private void appendStoreTerminals(Store store, String input, Boolean isMaster,
+			List<TerminalRelation> list) {
 		Pattern pattern = Pattern.compile("(\\d\\d+)");
 		Matcher matcher = pattern.matcher(input);
 		while (matcher.find()) {
@@ -248,9 +275,13 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 
 	private void deleteEntities() {
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.createQuery("update Bill e set e.sender = :value, e.receiver = :value").setParameter("value", null).executeUpdate();
-		entityManager.createQuery("update LegalEntity e set e.idCard = :value").setParameter("value", null).executeUpdate();
-		entityManager.createQuery("update Store e set e.owner = :value").setParameter("value", null).executeUpdate();
+		entityManager
+				.createQuery("update Bill e set e.sender = :value, e.receiver = :value")
+				.setParameter("value", null).executeUpdate();
+		entityManager.createQuery("update LegalEntity e set e.idCard = :value")
+				.setParameter("value", null).executeUpdate();
+		entityManager.createQuery("update Store e set e.owner = :value")
+				.setParameter("value", null).executeUpdate();
 		entityManager.createQuery("delete from TerminalRelation").executeUpdate();
 		entityManager.createQuery("delete from Owner").executeUpdate();
 		entityManager.createQuery("delete from Store").executeUpdate();
@@ -261,11 +292,14 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 	}
 
 	private void updateCostCenters() {
-		LOG.info("Actualizando centros de coste");
+		log.info("Actualizando centros de coste");
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<CostCenter> query = entityManager.createQuery("select c from CostCenter c where c.name = :name", CostCenter.class);
-		CostCenter valencia = query.setParameter("name", "Centro de Coste Valencia").getSingleResult();
-		CostCenter galicia = query.setParameter("name", "Centro de Coste Galicia").getSingleResult();
+		TypedQuery<CostCenter> query = entityManager.createQuery(
+				"select c from CostCenter c where c.name = :name", CostCenter.class);
+		CostCenter valencia = query.setParameter("name", "Centro de Coste Valencia")
+				.getSingleResult();
+		CostCenter galicia = query.setParameter("name", "Centro de Coste Galicia")
+				.getSingleResult();
 		Map<String, CostCenter> map = new HashMap<String, CostCenter>();
 		map.put("Alicante/Alacant", valencia);
 		map.put("Barcelona", valencia);
@@ -276,7 +310,8 @@ public class MasterWorkbookProcessor extends BaseWoorbookProcessor {
 		map.put("Pontevedra", galicia);
 		map.put("Valencia/Valéncia", valencia);
 		entityManager.flush();
-		List<Store> stores = entityManager.createQuery("select s from Store s", Store.class).getResultList();
+		List<Store> stores = entityManager
+				.createQuery("select s from Store s", Store.class).getResultList();
 		for (Store store : stores) {
 			if (store.getAddress() != null && store.getAddress().getProvince() != null) {
 				store.setCostCenter(map.get(store.getAddress().getProvince().getName()));

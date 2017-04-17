@@ -21,7 +21,8 @@ public class SendAppFileMailTask implements Runnable {
 	private final FileService fileService;
 	private final MailService mailService;
 
-	public SendAppFileMailTask(String emailAddress, AppFile appFile, String title, String body, FileService fileService, MailService mailService) {
+	public SendAppFileMailTask(String emailAddress, AppFile appFile, String title,
+			String body, FileService fileService, MailService mailService) {
 		this.emailAddress = emailAddress;
 		this.appFile = appFile;
 		this.title = title;
@@ -34,10 +35,13 @@ public class SendAppFileMailTask implements Runnable {
 	public void run() {
 		try {
 			String filePath = fileService.getFilePath(appFile);
-			EmailAttachment attachment = mailService.createAttachment(appFile.getName(), appFile.getName(), filePath);
-			HtmlEmail email = mailService.createEmail(emailAddress, emailAddress, title, body, Arrays.asList(attachment));
+			EmailAttachment attachment = mailService.createAttachment(appFile.getName(),
+					appFile.getName(), filePath);
+			HtmlEmail email = mailService.createEmail(emailAddress, emailAddress, title,
+					body, Arrays.asList(attachment));
 			email.send();
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al enviar el correo", ex);
 		}
 	}

@@ -26,7 +26,8 @@ import com.luckia.biller.core.services.entities.BillingModelEntityService;
 @Path("/models")
 public class BillingModelRestService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BillingModelRestService.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(BillingModelRestService.class);
 
 	@Inject
 	private BillingModelEntityService billingModelService;
@@ -45,7 +46,8 @@ public class BillingModelRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<BillingModel> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
+	public SearchResults<BillingModel> find(@QueryParam("n") Integer maxResults,
+			@QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setCurrentPage(page);
 		params.setItemsPerPage(maxResults);
@@ -68,9 +70,11 @@ public class BillingModelRestService {
 	public Message<BillingModel> remove(@PathParam("id") Long id) {
 		try {
 			return billingModelService.remove(id);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al eliminar el grupo", ex);
-			return new Message<BillingModel>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("companyGroup.error.remove"));
+			return new Message<BillingModel>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("companyGroup.error.remove"));
 		}
 	}
 

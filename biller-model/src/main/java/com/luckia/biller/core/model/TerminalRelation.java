@@ -17,14 +17,19 @@ import javax.persistence.Table;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+
 /**
  * Entidad que establece la relación entre un establecimiento y un terminal de apuestas.
  */
 @Entity
 @Table(name = "B_TERMINAL_RELATION")
+@NamedQueries({
+		@NamedQuery(name = "TerminalRelation.selectAll", query = "select t from TerminalRelation t order by t.code") })
+@Data
 @SuppressWarnings("serial")
-@NamedQueries({ @NamedQuery(name = "TerminalRelation.selectAll", query = "select t from TerminalRelation t order by t.code") })
-public class TerminalRelation implements Serializable, Auditable, Mergeable<TerminalRelation> {
+public class TerminalRelation
+		implements Serializable, Auditable, Mergeable<TerminalRelation> {
 
 	@Id
 	@Column(name = "ID")
@@ -47,54 +52,6 @@ public class TerminalRelation implements Serializable, Auditable, Mergeable<Term
 
 	@Embedded
 	protected AuditData auditData;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public Store getStore() {
-		return store;
-	}
-
-	public void setStore(Store store) {
-		this.store = store;
-	}
-
-	public Boolean getIsMaster() {
-		return isMaster;
-	}
-
-	public void setIsMaster(Boolean isMaster) {
-		this.isMaster = isMaster;
-	}
-
-	public AuditData getAuditData() {
-		return auditData;
-	}
-
-	public void setAuditData(AuditData auditData) {
-		this.auditData = auditData;
-	}
-
-	public String getComments() {
-		return comments;
-	}
-
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
 
 	@Override
 	public void merge(TerminalRelation entity) {

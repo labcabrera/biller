@@ -2,6 +2,7 @@ package com.luckia.biller.core.services.bills.impl;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,16 +15,19 @@ import com.luckia.biller.core.jpa.Sequencer;
 import com.luckia.biller.core.services.bills.CodeGenerator;
 
 /**
- * Servicio encargado de generar los codigos de facturas y liquidaciones. Estos codigos han de ser consecutivos. Cada establecimiento puede
- * definir una plantilla de factura con un formato similar al siguiente:
+ * Servicio encargado de generar los codigos de facturas y liquidaciones. Estos codigos
+ * han de ser consecutivos. Cada establecimiento puede definir una plantilla de factura
+ * con un formato similar al siguiente:
  * 
  * <pre>
  * A{year}/1035/{sequence, 4}
  * </pre>
  * 
- * Esta expresión define un conjunto de reemplazos posibles que introduciremos como <code>{expressionName}</code>, el valor de la secuencia
- * que se generará junto con su tamaño (por defecto será 6 completando con ceros por la izquierda hasta llegar a esa longitud) y texto fijo.
- * a continuación se muestran unos ejemplos en los que se muestran los codigos asociados a diferentes plantillas:
+ * Esta expresión define un conjunto de reemplazos posibles que introduciremos como
+ * <code>{expressionName}</code>, el valor de la secuencia que se generará junto con su
+ * tamaño (por defecto será 6 completando con ceros por la izquierda hasta llegar a esa
+ * longitud) y texto fijo. a continuación se muestran unos ejemplos en los que se muestran
+ * los codigos asociados a diferentes plantillas:
  * <table>
  * <tr>
  * <th>Expresión</th>
@@ -63,8 +67,9 @@ public abstract class AbstractCodeGenerator<T> implements CodeGenerator<T> {
 	protected String generateCode(String template) {
 		Map<Pattern, String> values = configureReplacements();
 		String prefix = template;
-		for (Pattern pattern : values.keySet()) {
-			String replacement = values.get(pattern);
+		for (Entry<Pattern, String> entry : values.entrySet()) {
+			Pattern pattern = entry.getKey();
+			String replacement = entry.getValue();
 			Matcher matcher = pattern.matcher(prefix);
 			if (matcher.find()) {
 				prefix = matcher.replaceAll(replacement);
@@ -83,9 +88,12 @@ public abstract class AbstractCodeGenerator<T> implements CodeGenerator<T> {
 
 	protected Map<Pattern, String> configureReplacements() {
 		Map<Pattern, String> values = new LinkedHashMap<Pattern, String>();
-		values.put(Pattern.compile("\\{year\\}"), String.valueOf(new DateTime().getYear()));
-		values.put(Pattern.compile("\\{month\\}"), String.valueOf(new DateTime().getMonthOfYear()));
-		values.put(Pattern.compile("\\{month\\s*,\\s*2\\}"), StringUtils.leftPad(String.valueOf(new DateTime().getMonthOfYear()), 2, "0"));
+		values.put(Pattern.compile("\\{year\\}"),
+				String.valueOf(new DateTime().getYear()));
+		values.put(Pattern.compile("\\{month\\}"),
+				String.valueOf(new DateTime().getMonthOfYear()));
+		values.put(Pattern.compile("\\{month\\s*,\\s*2\\}"), StringUtils
+				.leftPad(String.valueOf(new DateTime().getMonthOfYear()), 2, "0"));
 		return values;
 	}
 }

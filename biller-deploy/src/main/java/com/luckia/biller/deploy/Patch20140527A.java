@@ -33,16 +33,20 @@ public class Patch20140527A extends PatchSupport implements Runnable {
 			LOG.info("Ejecutando patch");
 			Injector injector = Guice.createInjector(new BillerModule());
 			injector.getInstance(PersistService.class).start();
-			Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
-			PDFLiquidationGenerator generator = injector.getInstance(PDFLiquidationGenerator.class);
+			Provider<EntityManager> entityManagerProvider = injector
+					.getProvider(EntityManager.class);
+			PDFLiquidationGenerator generator = injector
+					.getInstance(PDFLiquidationGenerator.class);
 			EntityManager entityManager = entityManagerProvider.get();
 			String liquidationId = "71a7c1e7-83ec-4186-8aea-3bd694e7bdbd";
-			Liquidation liquidation = entityManager.find(Liquidation.class, liquidationId);
+			Liquidation liquidation = entityManager.find(Liquidation.class,
+					liquidationId);
 			Validate.notNull(liquidation, "Missing liquidation " + liquidationId);
 			FileOutputStream out = new FileOutputStream("./target/liquidation-test.pdf");
 			generator.generate(liquidation, out);
 			out.close();
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
 		}
 	}

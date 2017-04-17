@@ -12,7 +12,8 @@ import com.luckia.biller.core.model.Owner;
 import com.luckia.biller.core.model.Person;
 
 /**
- * {@link JsonSerializer} que genera el nombre completo de la persona para evitar hacerlo desde el cliente.
+ * {@link JsonSerializer} que genera el nombre completo de la persona para evitar hacerlo
+ * desde el cliente.
  */
 public class OwnerSerializer implements JsonSerializer<Owner> {
 
@@ -24,7 +25,7 @@ public class OwnerSerializer implements JsonSerializer<Owner> {
 	}
 
 	private String getCompleteName(Owner owner) {
-		StringBuffer sb = new StringBuffer(owner.getName());
+		StringBuilder sb = new StringBuilder(owner.getName());
 		if (StringUtils.isNotBlank(owner.getFirstSurname())) {
 			sb.append(" ").append(owner.getFirstSurname());
 		}

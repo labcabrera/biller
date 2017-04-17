@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.Constants;
 
 /**
- * Servicio encargado de obtener los mensajes de la aplicacion. Los mensajes se recuperan desde el bundle
- * <code>luckia-messages.properties</code>.
+ * Servicio encargado de obtener los mensajes de la aplicacion. Los mensajes se recuperan
+ * desde el bundle <code>luckia-messages.properties</code>.
  */
 @Singleton
 public class I18nService {
@@ -38,7 +38,8 @@ public class I18nService {
 	public String getMessage(String key) {
 		if (messages.containsKey(key)) {
 			return messages.getString(key);
-		} else {
+		}
+		else {
 			LOG.warn("Missing message {}", key);
 			return String.format("*%s*", key);
 		}

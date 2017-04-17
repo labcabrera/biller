@@ -9,6 +9,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import com.luckia.biller.core.Constants;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.common.SettingsManager;
 
 @Singleton
@@ -22,9 +23,11 @@ public class LisEntityManagerProvider implements Provider<EntityManager> {
 		try {
 			entityManager = new ThreadLocal<EntityManager>();
 			persistenceProperties = readLisProperties();
-			entityManagerFactory = Persistence.createEntityManagerFactory(Constants.PERSISTENCE_UNIT_NAME_LIS, persistenceProperties);
-		} catch (Exception ex) {
-			throw new RuntimeException("Error loading Lis entity manager provider", ex);
+			entityManagerFactory = Persistence.createEntityManagerFactory(
+					Constants.PERSISTENCE_UNIT_NAME_LIS, persistenceProperties);
+		}
+		catch (Exception ex) {
+			throw new BillerException("Error loading Lis entity manager provider", ex);
 		}
 	}
 
@@ -39,6 +42,7 @@ public class LisEntityManagerProvider implements Provider<EntityManager> {
 	}
 
 	private Properties readLisProperties() {
-		return new SettingsManager().load().getProperties(Constants.CONFIG_SECTION_JPA_LIS);
+		return new SettingsManager().load()
+				.getProperties(Constants.CONFIG_SECTION_JPA_LIS);
 	}
 }

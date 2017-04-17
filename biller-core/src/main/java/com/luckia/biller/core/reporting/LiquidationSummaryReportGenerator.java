@@ -19,6 +19,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.common.NoAvailableDataException;
 import com.luckia.biller.core.model.AppFile;
@@ -32,6 +33,7 @@ import com.luckia.biller.core.model.CostCenter;
 import com.luckia.biller.core.model.LegalEntity;
 import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
+import com.luckia.biller.core.model.LiquidationResults;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.services.FileService;
 
@@ -40,7 +42,9 @@ import com.luckia.biller.core.services.FileService;
  */
 public class LiquidationSummaryReportGenerator extends BaseReport {
 
-	private static final Logger LOG = LoggerFactory.getLogger(LiquidationSummaryReportGenerator.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(LiquidationSummaryReportGenerator.class);
+	private static final String REPORT_FILE_NAME = "Resumen-liquidaciones.xls";
 	private static final String DATE_FORMAT = "dd-MM-yyyy";
 
 	@Inject
@@ -50,29 +54,26 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 
 	/**
 	 * 
-	 * @param from
-	 *            fecha desde (obligatorio)
-	 * @param to
-	 *            fecha hasta (obligatorio)
-	 * @param company
-	 *            operadora (opcional)
-	 * @param costCenter
-	 *            centro de coste (opcional)
-	 * @param companyGroup
-	 *            grupo de empresas (opcional)
+	 * @param from fecha desde (obligatorio)
+	 * @param to fecha hasta (obligatorio)
+	 * @param company operadora (opcional)
+	 * @param costCenter centro de coste (opcional)
+	 * @param companyGroup grupo de empresas (opcional)
 	 * @return
 	 * @throws IOException
 	 */
-	public Message<AppFile> generate(Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
+	public Message<AppFile> generate(Date from, Date to, LegalEntity company,
+			CostCenter costCenter, CompanyGroup companyGroup) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		generate(from, to, company, costCenter, companyGroup, out);
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-		String fileName = String.format("Resumen-liquidaciones.xls");
-		AppFile appFile = fileService.save(fileName, FileService.CONTENT_TYPE_EXCEL, in);
-		return new Message<AppFile>(Message.CODE_SUCCESS, "Report file created", appFile);
+		AppFile appFile = fileService.save(REPORT_FILE_NAME,
+				FileService.CONTENT_TYPE_EXCEL, in);
+		return new Message<>(Message.CODE_SUCCESS, "Report file created", appFile);
 	}
 
-	public Message<AppFile> generate(Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup, OutputStream out) {
+	public Message<AppFile> generate(Date from, Date to, LegalEntity company,
+			CostCenter costCenter, CompanyGroup companyGroup, OutputStream out) {
 		LOG.debug("Generating liquidation summary report");
 		try {
 			HSSFWorkbook workbook = new HSSFWorkbook();
@@ -94,15 +95,19 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			out.flush();
 			out.close();
 			return new Message<>(Message.CODE_SUCCESS, "Report generated");
-		} catch (NoAvailableDataException ex) {
+		}
+		catch (NoAvailableDataException ex) {
 			throw ex;
-		} catch (Exception ex) {
-			throw new RuntimeException("Error generating summary liquidation report", ex);
+		}
+		catch (Exception ex) {
+			throw new BillerException("Error generating summary liquidation report", ex);
 		}
 	}
 
-	private void createReportData(HSSFSheet sheet, Date from, Date to, LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
-		List<Liquidation> liquidations = dataSource.findLiquidations(from, to, company, costCenter, companyGroup);
+	private void createReportData(HSSFSheet sheet, Date from, Date to,
+			LegalEntity company, CostCenter costCenter, CompanyGroup companyGroup) {
+		List<Liquidation> liquidations = dataSource.findLiquidations(from, to, company,
+				costCenter, companyGroup);
 		LOG.debug("Readed {} liquidations", liquidations.size());
 		if (liquidations.isEmpty()) {
 			throw new NoAvailableDataException();
@@ -117,15 +122,20 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		BigDecimal totalInnerAdjustements = BigDecimal.ZERO;
 		int rowIndex = 1;
 		for (Liquidation liquidation : liquidations) {
+			LiquidationResults lr = liquidation.getLiquidationResults();
 			int col = 0;
-			BigDecimal amount = MathUtils.safeNull(liquidation.getLiquidationResults().getTotalAmount());
-			BigDecimal cashStore = MathUtils.safeNull(liquidation.getLiquidationResults().getCashStoreAmount());
-			BigDecimal outerAdjustements = MathUtils.safeNull(getAdjustementOuterAmount(liquidation));
-			BigDecimal result = MathUtils.safeNull(liquidation.getLiquidationResults().getReceiverAmount());
-			BigDecimal betAmount = getAmountByConcept(liquidation, BillConcept.TOTAL_BET_AMOUNT);
-			BigDecimal winAmount = getAmountByConcept(liquidation, BillConcept.TOTAL_WIN_AMOUNT);
+			BigDecimal amount = MathUtils.safeNull(lr.getTotalAmount());
+			BigDecimal cashStore = MathUtils.safeNull(lr.getCashStoreAmount());
+			BigDecimal outerAdjustements = MathUtils
+					.safeNull(getAdjustementOuterAmount(liquidation));
+			BigDecimal result = MathUtils.safeNull(lr.getReceiverAmount());
+			BigDecimal betAmount = getAmountByConcept(liquidation,
+					BillConcept.TOTAL_BET_AMOUNT);
+			BigDecimal winAmount = getAmountByConcept(liquidation,
+					BillConcept.TOTAL_WIN_AMOUNT);
 			BigDecimal credit = getAmountByConcept(liquidation, BillConcept.CREDIT);
-			BigDecimal innerAdjustements = MathUtils.safeNull(getAdjustementInnerAmount(liquidation));
+			BigDecimal innerAdjustements = MathUtils
+					.safeNull(getAdjustementInnerAmount(liquidation));
 			totalAmount = totalAmount.add(amount);
 			totalCashStore = totalCashStore.add(cashStore);
 			totalAdjustements = totalAdjustements.add(outerAdjustements);
@@ -134,11 +144,14 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			totalWinAmount = totalWinAmount.add(winAmount);
 			totalCredit = totalCredit.add(credit);
 			totalInnerAdjustements = totalInnerAdjustements.add(innerAdjustements);
-			createCell(sheet, rowIndex, col++, ISODateTimeFormat.date().print(new DateTime(liquidation.getBillDate())));
+			createCell(sheet, rowIndex, col++, ISODateTimeFormat.date()
+					.print(new DateTime(liquidation.getBillDate())));
 			String group = StringUtils.EMPTY;
 			try {
 				group = liquidation.getSender().as(Company.class).getParent().getName();
-			} catch (Exception ignore) {
+			}
+			catch (Exception ignore) {
+				LOG.trace("Missing group", ignore);
 			}
 			createCell(sheet, rowIndex, col++, group);
 			createCell(sheet, rowIndex, col++, liquidation.getSender().getName());
@@ -149,7 +162,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 			createCell(sheet, rowIndex, col++, betAmount);
 			createCell(sheet, rowIndex, col++, winAmount);
 			createCell(sheet, rowIndex, col++, credit);
-			createCell(sheet, rowIndex, col++, innerAdjustements);
+			createCell(sheet, rowIndex, col, innerAdjustements);
 			rowIndex++;
 		}
 		rowIndex++;
@@ -162,7 +175,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		createHeaderCell(sheet, rowIndex, col++, totalBetAmount);
 		createHeaderCell(sheet, rowIndex, col++, totalWinAmount);
 		createHeaderCell(sheet, rowIndex, col++, totalCredit);
-		createHeaderCell(sheet, rowIndex, col++, totalInnerAdjustements);
+		createHeaderCell(sheet, rowIndex, col, totalInnerAdjustements);
 	}
 
 	private void configureHeaders(HSSFSheet sheet) {
@@ -178,7 +191,7 @@ public class LiquidationSummaryReportGenerator extends BaseReport {
 		createHeaderCell(sheet, col, index++, "APOSTADO");
 		createHeaderCell(sheet, col, index++, "PAGADO");
 		createHeaderCell(sheet, col, index++, "CREDITO");
-		createHeaderCell(sheet, col, index++, "AJUSTES INTERNOS");
+		createHeaderCell(sheet, col, index, "AJUSTES INTERNOS");
 	}
 
 	private BigDecimal getAdjustementOuterAmount(Liquidation liquidation) {

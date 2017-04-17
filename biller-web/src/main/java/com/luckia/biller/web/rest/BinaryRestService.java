@@ -15,19 +15,18 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.services.FileService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Servicio de descarga de ficheros.
  */
 @Path("/binary")
+@Slf4j
 public class BinaryRestService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(BinaryRestService.class);
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
@@ -38,18 +37,20 @@ public class BinaryRestService {
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@PermitAll
 	@Path("download/{id}")
-	public Response getArtifactBinaryContent(@PathParam("id") Long id) throws Exception {
+	public Response getArtifactBinaryContent(@PathParam("id") Long id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			AppFile appFile = entityManager.find(AppFile.class, id);
 			Validate.notNull(appFile, "No se encuentra el contenido " + id);
 			InputStream contentInputStream = fileService.getInputStream(appFile);
 			ResponseBuilder response = Response.ok(contentInputStream);
-			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", appFile.getName()));
+			response.header("Content-Disposition",
+					String.format("attachment; filename=\"%s\"", appFile.getName()));
 			response.header("Content-Type", appFile.getContentType());
 			return response.build();
-		} catch (Exception ex) {
-			LOG.error(ex.getMessage(), ex);
+		}
+		catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}

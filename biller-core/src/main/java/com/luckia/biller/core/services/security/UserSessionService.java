@@ -23,6 +23,9 @@ import com.luckia.biller.core.model.UserSession;
 import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.services.entities.UserEntityService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class UserSessionService {
 
 	@Inject
@@ -62,15 +65,22 @@ public class UserSessionService {
 	public Message<Boolean> validateSession(String sessionId) {
 		Message<Boolean> result = new Message<>();
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Date> query = entityManager.createNamedQuery("User.validateSession", Date.class);
+		TypedQuery<Date> query = entityManager.createNamedQuery("User.validateSession",
+				Date.class);
 		try {
-			Date expiration = query.setParameter("sessionId", sessionId).getSingleResult();
-			if (expiration == null || expiration.before(Calendar.getInstance().getTime())) {
+			Date expiration = query.setParameter("sessionId", sessionId)
+					.getSingleResult();
+			if (expiration == null
+					|| expiration.before(Calendar.getInstance().getTime())) {
 				return result.withPayload(true);
-			} else {
-				return result.withPayload(false).withCode("501").addError("Expired session");
 			}
-		} catch (NoResultException ex) {
+			else {
+				return result.withPayload(false).withCode("501")
+						.addError("Expired session");
+			}
+		}
+		catch (NoResultException ex) {
+			log.trace("No result", ex);
 			return result.withPayload(false).withCode("502").addError("Missing session");
 		}
 
@@ -79,7 +89,8 @@ public class UserSessionService {
 	@Transactional
 	public UserSession createSession(User user) {
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.createNamedQuery("User.deleteSession").setParameter("user", user).executeUpdate();
+		entityManager.createNamedQuery("User.deleteSession").setParameter("user", user)
+				.executeUpdate();
 		UserSession session = new UserSession();
 		Date now = new DateTime().toDate();
 		session.setSession(UUID.randomUUID().toString());
@@ -107,12 +118,14 @@ public class UserSessionService {
 	@Transactional
 	public void logout(String sessionId) {
 		EntityManager entityManager = entityManagerProvider.get();
-		Query query = entityManager.createQuery("delete from UserSession e where e.session = :sessionId");
+		Query query = entityManager
+				.createQuery("delete from UserSession e where e.session = :sessionId");
 		query.setParameter("sessionId", sessionId).executeUpdate();
 	}
 
 	private Date calculateExpiration(Date date) {
-		return sessionExpiration != null && sessionExpiration > 0 ? new DateTime(date).plusMinutes(sessionExpiration).toDate() : null;
+		return sessionExpiration != null && sessionExpiration > 0
+				? new DateTime(date).plusMinutes(sessionExpiration).toDate() : null;
 	}
 
 }

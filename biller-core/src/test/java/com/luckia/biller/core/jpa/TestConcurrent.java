@@ -25,19 +25,24 @@ public class TestConcurrent {
 	public void test() throws InterruptedException {
 		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
-		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
-		LiquidationProcessor liquidationProcessor = injector.getInstance(LiquidationProcessor.class);
+		Provider<EntityManager> entityManagerProvider = injector
+				.getProvider(EntityManager.class);
+		LiquidationProcessor liquidationProcessor = injector
+				.getInstance(LiquidationProcessor.class);
 
 		EntityManager entityManager = entityManagerProvider.get();
 		String qlString = "select e from Liquidation e where e.currentState.stateDefinition.id = :state";
-		TypedQuery<Liquidation> query = entityManager.createQuery(qlString, Liquidation.class);
+		TypedQuery<Liquidation> query = entityManager.createQuery(qlString,
+				Liquidation.class);
 		query.setParameter("state", CommonState.SENT.name());
 		query.setMaxResults(1);
 		Liquidation liquidation = query.getSingleResult();
 
 		List<Thread> threads = new ArrayList<Thread>();
-		threads.add(new Thread(new InternalRunnable(liquidation.getId(), liquidationProcessor)));
-		threads.add(new Thread(new InternalRunnable(liquidation.getId(), liquidationProcessor)));
+		threads.add(new Thread(
+				new InternalRunnable(liquidation.getId(), liquidationProcessor)));
+		threads.add(new Thread(
+				new InternalRunnable(liquidation.getId(), liquidationProcessor)));
 
 		for (Thread thread : threads) {
 			thread.start();
@@ -52,7 +57,8 @@ public class TestConcurrent {
 		private final LiquidationProcessor liquidationProcessor;
 		private final String liquidationId;
 
-		public InternalRunnable(String liquidationId, LiquidationProcessor liquidationProcessor) {
+		public InternalRunnable(String liquidationId,
+				LiquidationProcessor liquidationProcessor) {
 			this.liquidationId = liquidationId;
 			this.liquidationProcessor = liquidationProcessor;
 		}

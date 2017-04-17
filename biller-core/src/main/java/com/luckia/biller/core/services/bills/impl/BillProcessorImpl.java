@@ -13,12 +13,14 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.AppFile;
@@ -75,7 +77,8 @@ public class BillProcessorImpl implements BillProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.billing.BillProcessor#generateBill(com.luckia.biller.core.model.Store, org.apache.commons.lang3.Range)
+	 * @see com.luckia.biller.core.services.billing.BillProcessor#generateBill(com.luckia.
+	 * biller.core.model.Store, org.apache.commons.lang3.Range)
 	 */
 	@Override
 	@Transactional
@@ -92,8 +95,11 @@ public class BillProcessorImpl implements BillProcessor {
 		bill.setBillType(BillType.Common);
 		if (store.getParent() != null) {
 			bill.setReceiver(store.getParent());
-		} else {
-			throw new RuntimeException("No se puede generar la factura: no se ha definido la empresa del local " + store);
+		}
+		else {
+			throw new BillerException(
+					"No se puede generar la factura: no se ha definido la empresa del local "
+							+ store);
 		}
 		auditService.processCreated(bill);
 		entityManager.persist(bill);
@@ -104,7 +110,9 @@ public class BillProcessorImpl implements BillProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.billing.BillProcessor#processDetails(com.luckia.biller.core.model.Bill)
+	 * @see
+	 * com.luckia.biller.core.services.billing.BillProcessor#processDetails(com.luckia.
+	 * biller.core.model.Bill)
 	 */
 	@Override
 	@Transactional
@@ -125,7 +133,9 @@ public class BillProcessorImpl implements BillProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.billing.BillProcessor#processResults(com.luckia.biller.core.model.Bill)
+	 * @see
+	 * com.luckia.biller.core.services.billing.BillProcessor#processResults(com.luckia.
+	 * biller.core.model.Bill)
 	 */
 	@Override
 	@Transactional
@@ -136,7 +146,8 @@ public class BillProcessorImpl implements BillProcessor {
 			netAmount = netAmount.add(detail.getValue());
 		}
 		BigDecimal vatPercent = provinceTaxesService.getVatPercent(bill);
-		BigDecimal vatAmount = netAmount.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+		BigDecimal vatAmount = netAmount.multiply(vatPercent).divide(MathUtils.HUNDRED, 2,
+				RoundingMode.HALF_EVEN);
 		BigDecimal amount = netAmount.add(vatAmount);
 		bill.setNetAmount(netAmount);
 		bill.setAmount(amount);
@@ -158,9 +169,11 @@ public class BillProcessorImpl implements BillProcessor {
 				liquidationVatAmount = liquidationVatAmount.add(vatPartial);
 				liquidationNetAmount = liquidationNetAmount.add(netPartial);
 				if (detail.getConcept() == BillConcept.MANUAL) {
-					liquidationManualAmount = liquidationManualAmount.add(MathUtils.safeNull(detail.getValue()));
+					liquidationManualAmount = liquidationManualAmount
+							.add(MathUtils.safeNull(detail.getValue()));
 				}
-			} else {
+			}
+			else {
 				liquidationOuterAmount = liquidationOuterAmount.add(partial);
 			}
 		}
@@ -175,7 +188,8 @@ public class BillProcessorImpl implements BillProcessor {
 		if (bill.getLiquidation() != null) {
 			entityManager.flush();
 			entityManager.clear();
-			Liquidation liquidation = entityManager.find(Liquidation.class, bill.getLiquidation().getId());
+			Liquidation liquidation = entityManager.find(Liquidation.class,
+					bill.getLiquidation().getId());
 			LOG.debug("Actualizando resultados de la liquidacion {}", liquidation);
 			liquidationProcessor.processResults(liquidation);
 			entityManager.merge(liquidation);
@@ -185,7 +199,9 @@ public class BillProcessorImpl implements BillProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.BillProcessor#confirmBill(com.luckia.biller.core.model.Bill)
+	 * @see
+	 * com.luckia.biller.core.services.bills.BillProcessor#confirmBill(com.luckia.biller.
+	 * core.model.Bill)
 	 */
 	@Override
 	@Transactional
@@ -201,24 +217,31 @@ public class BillProcessorImpl implements BillProcessor {
 			ByteArrayOutputStream pdfBillOut = new ByteArrayOutputStream();
 			pdfBillGenerator.generate(bill, pdfBillOut);
 			String name = String.format("bill-%s.pdf", bill.getCode());
-			AppFile pdfFile = fileService.save(name, "application/pdf", new ByteArrayInputStream(pdfBillOut.toByteArray()));
+			AppFile pdfFile = fileService.save(name, "application/pdf",
+					new ByteArrayInputStream(pdfBillOut.toByteArray()));
 			bill.setPdfFile(pdfFile);
 			// Liquidation detail file
 			ByteArrayOutputStream pdfLiquidationDetailOut = new ByteArrayOutputStream();
 			pdfLiquidationDetailGenerator.generate(bill, pdfLiquidationDetailOut);
-			String liquidationDetailName = String.format("liquidation-detail-%s", bill.getCode());
-			AppFile pdfLiquidationDetailFile = fileService.save(liquidationDetailName, "application/pdf", new ByteArrayInputStream(pdfLiquidationDetailOut.toByteArray()));
+			String liquidationDetailName = String.format("liquidation-detail-%s",
+					bill.getCode());
+			AppFile pdfLiquidationDetailFile = fileService.save(liquidationDetailName,
+					"application/pdf",
+					new ByteArrayInputStream(pdfLiquidationDetailOut.toByteArray()));
 			bill.setLiquidationDetailFile(pdfLiquidationDetailFile);
 			entityManager.merge(bill);
-		} catch (Exception ex) {
-			throw new RuntimeException("Error al confirmar la factura", ex);
+		}
+		catch (Exception ex) {
+			throw new BillerException("Error al confirmar la factura", ex);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.BillProcessor#rectifyBill(com.luckia.biller.core.model.Bill)
+	 * @see
+	 * com.luckia.biller.core.services.bills.BillProcessor#rectifyBill(com.luckia.biller.
+	 * core.model.Bill)
 	 */
 	@Override
 	@Transactional
@@ -240,7 +263,7 @@ public class BillProcessorImpl implements BillProcessor {
 		auditService.processCreated(rectified);
 		entityManager.persist(rectified);
 		for (BillDetail detail : bill.getBillDetails()) {
-			BillDetail copy = detail.clone();
+			BillDetail copy = SerializationUtils.clone(detail);
 			copy.setBill(rectified);
 			copy.setId(UUID.randomUUID().toString());
 			rectified.getBillDetails().add(copy);
@@ -255,22 +278,27 @@ public class BillProcessorImpl implements BillProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.BillProcessor#mergeDetail(com.luckia.biller.core.model.BillDetail)
+	 * @see
+	 * com.luckia.biller.core.services.bills.BillProcessor#mergeDetail(com.luckia.biller.
+	 * core.model.BillDetail)
 	 */
 	@Override
 	@Transactional
 	public Bill mergeBillDetail(BillDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Boolean isNew = detail.getId() == null;
-		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
-		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
+		detail.setValue(detail.getValue() != null
+				? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
+		detail.setUnits(detail.getUnits() != null
+				? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
 		Bill bill;
 		if (isNew) {
 			bill = entityManager.find(Bill.class, detail.getBill().getId());
 			detail.setId(UUID.randomUUID().toString());
 			entityManager.persist(detail);
 			bill.getBillDetails().add(detail);
-		} else {
+		}
+		else {
 			BillDetail current = entityManager.find(BillDetail.class, detail.getId());
 			current.merge(detail);
 			entityManager.merge(current);
@@ -289,8 +317,10 @@ public class BillProcessorImpl implements BillProcessor {
 		EntityManager entityManager = entityManagerProvider.get();
 		Bill bill = entityManager.find(Bill.class, detail.getBill().getId());
 		Boolean isNew = detail.getId() == null;
-		BigDecimal units = detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null;
-		BigDecimal receivedValue = detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null;
+		BigDecimal units = detail.getUnits() != null
+				? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null;
+		BigDecimal receivedValue = detail.getValue() != null
+				? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null;
 		BigDecimal vatPercent = BigDecimal.ZERO;
 		BigDecimal baseValue = BigDecimal.ZERO;
 		BigDecimal netValue = BigDecimal.ZERO;
@@ -301,7 +331,8 @@ public class BillProcessorImpl implements BillProcessor {
 			switch (bill.getModel().getVatLiquidationType()) {
 			case LIQUIDATION_INCLUDED:
 				vatPercent = provinceTaxesService.getVatPercent(bill);
-				BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent).divide(MathUtils.HUNDRED);
+				BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent)
+						.divide(MathUtils.HUNDRED);
 				netValue = receivedValue.divide(divisor, 2, RoundingMode.HALF_EVEN);
 				vatValue = receivedValue.subtract(netValue);
 				value = netValue.add(vatValue);
@@ -309,7 +340,8 @@ public class BillProcessorImpl implements BillProcessor {
 			case LIQUIDATION_ADDED:
 				vatPercent = provinceTaxesService.getVatPercent(bill);
 				netValue = receivedValue;
-				vatValue = netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+				vatValue = netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2,
+						RoundingMode.HALF_EVEN);
 				value = netValue.add(vatValue);
 				break;
 			default:
@@ -326,8 +358,10 @@ public class BillProcessorImpl implements BillProcessor {
 			detail.setId(UUID.randomUUID().toString());
 			entityManager.persist(detail);
 			bill.getLiquidationDetails().add(detail);
-		} else {
-			BillLiquidationDetail current = entityManager.find(BillLiquidationDetail.class, detail.getId());
+		}
+		else {
+			BillLiquidationDetail current = entityManager
+					.find(BillLiquidationDetail.class, detail.getId());
 			current.merge(detail);
 			entityManager.merge(current);
 			bill = current.getBill();
@@ -386,7 +420,8 @@ public class BillProcessorImpl implements BillProcessor {
 		if (liquidation != null) {
 			LOG.debug("Actualizando los detalles de la liquidacion {}", liquidation);
 			entityManager.flush();
-			LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidation.getId(), injector);
+			LiquidationRecalculationTask task = new LiquidationRecalculationTask(
+					liquidation.getId(), injector);
 			task.run();
 		}
 	}

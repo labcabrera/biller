@@ -30,7 +30,8 @@ public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGro
 			auditService.processCreated(current);
 			entityManager.persist(current);
 			message = i18nService.getMessage("companyGroup.persist");
-		} else {
+		}
+		else {
 			current = entityManager.find(CompanyGroup.class, entity.getId());
 			current.merge(entity);
 			auditService.processModified(current);
@@ -47,11 +48,14 @@ public class CompanyGroupEntityService extends LegalEntityBaseService<CompanyGro
 	@RegisterActivity(type = UserActivityType.COMPANY_GROUP_REMOVE)
 	public Message<CompanyGroup> remove(Serializable primaryKey) {
 		EntityManager entityManager = entityManagerProvider.get();
-		Query query = entityManager.createQuery("update LegalEntity e set e.parent = :parent where e.parent.id = :value");
+		Query query = entityManager.createQuery(
+				"update LegalEntity e set e.parent = :parent where e.parent.id = :value");
 		CompanyGroup entity = entityManager.find(CompanyGroup.class, primaryKey);
-		query.setParameter("parent", null).setParameter("value", entity.getId()).executeUpdate();
+		query.setParameter("parent", null).setParameter("value", entity.getId())
+				.executeUpdate();
 		auditService.processDeleted(entity);
-		return new Message<CompanyGroup>(Message.CODE_SUCCESS, i18nService.getMessage("companyGroup.remove"), entity);
+		return new Message<CompanyGroup>(Message.CODE_SUCCESS,
+				i18nService.getMessage("companyGroup.remove"), entity);
 	}
 
 	@Override

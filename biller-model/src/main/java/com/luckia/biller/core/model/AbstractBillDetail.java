@@ -17,16 +17,21 @@ import javax.persistence.Table;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+
 /**
- * Entidad abstracta para guardar los ajustes tanto de la factura de un establecimiento como de su miniliquidacion.
+ * Entidad abstracta para guardar los ajustes tanto de la factura de un establecimiento
+ * como de su miniliquidacion.
  * 
  * @see BillDetail
  * @see BillLiquidationDetail
  */
 @Entity
 @Table(name = "B_BILL_DETAIL")
+@Data
 @SuppressWarnings("serial")
-public abstract class AbstractBillDetail implements Serializable, Mergeable<AbstractBillDetail> {
+public abstract class AbstractBillDetail
+		implements Mergeable<AbstractBillDetail>, Serializable {
 
 	@Id
 	@Column(name = "ID", length = 36)
@@ -66,107 +71,19 @@ public abstract class AbstractBillDetail implements Serializable, Mergeable<Abst
 	@Column(name = "VALUE", precision = 18, scale = 2)
 	private BigDecimal value;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public BillConcept getConcept() {
-		return concept;
-	}
-
-	public void setConcept(BillConcept concept) {
-		this.concept = concept;
-	}
-
-	public BigDecimal getValue() {
-		return value;
-	}
-
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
-
-	public Bill getBill() {
-		return bill;
-	}
-
-	public void setBill(Bill bill) {
-		this.bill = bill;
-	}
-
-	public BigDecimal getUnits() {
-		return units;
-	}
-
-	public void setUnits(BigDecimal units) {
-		this.units = units;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public BigDecimal getSourceValue() {
-		return sourceValue;
-	}
-
-	public void setSourceValue(BigDecimal baseValue) {
-		this.sourceValue = baseValue;
-	}
-
-	public BigDecimal getPercent() {
-		return percent;
-	}
-
-	public void setPercent(BigDecimal percent) {
-		if (percent.compareTo(new BigDecimal("100")) > 0) {
-			System.out.println();
-		}
-		this.percent = percent;
-	}
-
-	public BigDecimal getNetValue() {
-		return netValue;
-	}
-
-	public void setNetValue(BigDecimal netValue) {
-		this.netValue = netValue;
-	}
-
-	public BigDecimal getVatValue() {
-		return vatValue;
-	}
-
-	public void setVatValue(BigDecimal vatValue) {
-		this.vatValue = vatValue;
-	}
-
-	public BigDecimal getVatPercent() {
-		return vatPercent;
-	}
-
-	public void setVatPercent(BigDecimal vatPercent) {
-		this.vatPercent = vatPercent;
-	}
-
 	@Override
 	public String toString() {
-		return String.format("Detail (%s, %s) [Bill: %s] [Name: %s] [%s]", concept, value, bill, name, getClass().getSimpleName());
+		return String.format("Detail (%s, %s) [Bill: %s] [Name: %s] [%s]", concept, value,
+				bill, name, getClass().getSimpleName());
 	}
 
 	@Override
 	public void merge(AbstractBillDetail entity) {
 		this.name = entity.name;
-		this.units = entity.units != null ? entity.units.setScale(2, RoundingMode.HALF_EVEN) : null;
-		this.value = entity.value != null ? entity.value.setScale(2, RoundingMode.HALF_EVEN) : null;
+		this.units = entity.units != null
+				? entity.units.setScale(2, RoundingMode.HALF_EVEN) : null;
+		this.value = entity.value != null
+				? entity.value.setScale(2, RoundingMode.HALF_EVEN) : null;
 		this.concept = entity.concept;
 	}
 }

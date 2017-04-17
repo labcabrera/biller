@@ -1,7 +1,8 @@
 package com.luckia.biller.core.model;
 
 /**
- * Indica el tipo de actividad de usuario que guarda el sistema para auditar las acciones realizadas por los usuarios.
+ * Indica el tipo de actividad de usuario que guarda el sistema para auditar las acciones
+ * realizadas por los usuarios.
  */
 public enum UserActivityType {
 

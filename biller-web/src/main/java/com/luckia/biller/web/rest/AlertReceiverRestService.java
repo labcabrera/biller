@@ -25,7 +25,8 @@ import com.luckia.biller.core.services.entities.AlertReceiverEntityService;
 @Consumes(MediaType.APPLICATION_JSON)
 public class AlertReceiverRestService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AlertReceiverRestService.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(AlertReceiverRestService.class);
 
 	@Inject
 	private AlertReceiverEntityService alertReceiverService;
@@ -40,7 +41,8 @@ public class AlertReceiverRestService {
 
 	@GET
 	@Path("/find")
-	public SearchResults<AlertReceiver> find(@QueryParam("p") Integer page, @QueryParam("n") Integer itemsPerPage, @QueryParam("q") String queryString) {
+	public SearchResults<AlertReceiver> find(@QueryParam("p") Integer page,
+			@QueryParam("n") Integer itemsPerPage, @QueryParam("q") String queryString) {
 		SearchParams searchParams = new SearchParams();
 		searchParams.setItemsPerPage(itemsPerPage);
 		searchParams.setCurrentPage(page);
@@ -53,9 +55,11 @@ public class AlertReceiverRestService {
 	public Message<AlertReceiver> merge(AlertReceiver entity) {
 		try {
 			return alertReceiverService.merge(entity);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Merge error", ex);
-			return new Message<AlertReceiver>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("alertReceiver.error.merge"));
+			return new Message<AlertReceiver>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("alertReceiver.error.merge"));
 		}
 	}
 
@@ -64,9 +68,11 @@ public class AlertReceiverRestService {
 	public Message<AlertReceiver> remove(@PathParam("id") String id) {
 		try {
 			return alertReceiverService.remove(id);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al eliminar el centro de coste", ex);
-			return new Message<AlertReceiver>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("alertReceiver.error.remove"));
+			return new Message<AlertReceiver>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("alertReceiver.error.remove"));
 		}
 	}
 }

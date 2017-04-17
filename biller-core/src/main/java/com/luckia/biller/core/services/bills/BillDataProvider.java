@@ -12,17 +12,21 @@ import com.luckia.biller.core.model.BillConcept;
 
 /**
  * Interfaz que nos permite acceder a los datos de facturación de LIS.<br>
- * En principio los datos se obtendran a partir de consultas a la base de datos de LIS (MySQL) en las que previamente se habran consolidado
- * mensualmente los resultados de cada terminal. Deberiamos tener una tabla con la siguiente estructura:
+ * En principio los datos se obtendran a partir de consultas a la base de datos de LIS
+ * (MySQL) en las que previamente se habran consolidado mensualmente los resultados de
+ * cada terminal. Deberiamos tener una tabla con la siguiente estructura:
  * <ul>
  * <li>TERMINAL_ID: identificador del terminal</li>
  * <li>TERMINAL_LOCATION: nombre que identifica los datos del terminal</li>
- * <li>VENTAS_TOTALES: sumatorio de todas las ventas del terminal en el intervalo indicado</li>
+ * <li>VENTAS_TOTALES: sumatorio de todas las ventas del terminal en el intervalo
+ * indicado</li>
  * <li>CANCELACIONES_TOTALES: sumatorio de todas las cancelaciones de tickets</li>
  * <li>IMPORTE_PAGADO: total de premios pagados por el terminal</li>
- * <li>ATRIBUTABLE: total de pagos de premios atribuibles al terminal. Este valor nos permite diferenciar entre los pagos de premios de
- * diferentes empresas del mismo grupo. Recordar que por ejemplo diferentes casinos pueden pagar los premios de otros, con lo que la
- * diferencia entre ventas y premios no se ajusta a los resultados reales del establecimiento.</li>
+ * <li>ATRIBUTABLE: total de pagos de premios atribuibles al terminal. Este valor nos
+ * permite diferenciar entre los pagos de premios de diferentes empresas del mismo grupo.
+ * Recordar que por ejemplo diferentes casinos pueden pagar los premios de otros, con lo
+ * que la diferencia entre ventas y premios no se ajusta a los resultados reales del
+ * establecimiento.</li>
  * </ul>
  */
 public interface BillDataProvider {
@@ -30,13 +34,15 @@ public interface BillDataProvider {
 	Map<BillConcept, BigDecimal> retreive(Range<Date> range, List<String> terminals);
 
 	/**
-	 * Obtiene la tabla con los datos de facturacion para una lista determinada de terminales y un rango de fechas.
+	 * Obtiene la tabla con los datos de facturacion para una lista determinada de
+	 * terminales y un rango de fechas.
 	 * 
 	 * @param concept
 	 * @param range
 	 * @param terminals
 	 * @return
 	 */
-	Map<BillConcept, BigDecimal> retreive(Bill bill, Range<Date> range, List<String> terminals);
+	Map<BillConcept, BigDecimal> retreive(Bill bill, Range<Date> range,
+			List<String> terminals);
 
 }

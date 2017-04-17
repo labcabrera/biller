@@ -64,7 +64,8 @@ public class AuditService {
 		String dataStr = null;
 		if (data != null && String.class.isAssignableFrom(data.getClass())) {
 			dataStr = (String) data;
-		} else if (data != null) {
+		}
+		else if (data != null) {
 			dataStr = serializer.toJson(data);
 		}
 		UserActivity entity = new UserActivity();

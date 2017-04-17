@@ -13,15 +13,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.Data;
+
 /**
- * Entidad que representa un determinado estado para una entidad. El estado está asociado a uno de los {@link StateDefinition} registrados
- * para la entidad.
+ * Entidad que representa un determinado estado para una entidad. El estado está asociado
+ * a uno de los {@link StateDefinition} registrados para la entidad.
  * 
  * @see HasState
  * @see StateDefinition
  */
 @Entity
 @Table(name = "S_STATE")
+@Data
 @SuppressWarnings("serial")
 public class State implements Serializable {
 
@@ -36,33 +39,6 @@ public class State implements Serializable {
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "STATE_DEFINITION_ID")
 	private StateDefinition stateDefinition;
-
-	public State() {
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Date getEntered() {
-		return entered;
-	}
-
-	public void setEntered(Date entered) {
-		this.entered = entered;
-	}
-
-	public StateDefinition getStateDefinition() {
-		return stateDefinition;
-	}
-
-	public void setStateDefinition(StateDefinition stateDefinition) {
-		this.stateDefinition = stateDefinition;
-	}
 
 	@Override
 	public String toString() {

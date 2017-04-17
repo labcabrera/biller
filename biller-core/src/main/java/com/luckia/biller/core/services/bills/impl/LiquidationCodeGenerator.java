@@ -14,12 +14,14 @@ public class LiquidationCodeGenerator extends AbstractCodeGenerator<Liquidation>
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.CodeGenerator#generateCode(java.lang.Object)
+	 * @see
+	 * com.luckia.biller.core.services.bills.CodeGenerator#generateCode(java.lang.Object)
 	 */
 	@Override
 	public void generateCode(Liquidation entity) {
 		Company company = entity.getSender(Company.class);
-		String template = company.getLiquidationSequencePrefix() != null ? company.getLiquidationSequencePrefix() : "";
+		String template = company.getLiquidationSequencePrefix() != null
+				? company.getLiquidationSequencePrefix() : "";
 		String code = generateCode(template);
 		entity.setCode(code);
 	}

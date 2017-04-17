@@ -33,7 +33,8 @@ import com.luckia.biller.core.services.entities.CompanyGroupEntityService;
 @Path("/groups")
 public class CompanyGroupRestService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CompanyGroupRestService.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(CompanyGroupRestService.class);
 
 	@Inject
 	private CompanyGroupEntityService companyGroupService;
@@ -50,7 +51,8 @@ public class CompanyGroupRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<CompanyGroup> find(@QueryParam("q") String queryString, @QueryParam("province") String province) {
+	public SearchResults<CompanyGroup> find(@QueryParam("q") String queryString,
+			@QueryParam("province") String province) {
 		SearchParams searchParams = new SearchParams();
 		searchParams.setQueryString(queryString);
 		return companyGroupService.find(searchParams);
@@ -63,9 +65,11 @@ public class CompanyGroupRestService {
 	public Message<CompanyGroup> merge(CompanyGroup entity) {
 		try {
 			return companyGroupService.merge(entity);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al actualizar el grupo", ex);
-			return new Message<CompanyGroup>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("companyGroup.error.merge"), entity);
+			return new Message<CompanyGroup>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("companyGroup.error.merge"), entity);
 		}
 	}
 
@@ -76,9 +80,11 @@ public class CompanyGroupRestService {
 	public Message<CompanyGroup> remove(@PathParam("id") Long id) {
 		try {
 			return companyGroupService.remove(id);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al eliminar el grupo", ex);
-			return new Message<CompanyGroup>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("companyGroup.error.remove"));
+			return new Message<CompanyGroup>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("companyGroup.error.remove"));
 		}
 	}
 }

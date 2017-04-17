@@ -5,13 +5,18 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
  * Representa una persona
  */
 @Entity
 @Table(name = "B_PERSON")
-@SuppressWarnings("serial")
 @DiscriminatorValue("P")
+@Data
+@EqualsAndHashCode(callSuper = true)
+@SuppressWarnings("serial")
 public class Person extends LegalEntity {
 
 	@Column(name = "FIRST_SURNAME", length = 32)
@@ -19,22 +24,6 @@ public class Person extends LegalEntity {
 
 	@Column(name = "SECOND_SURNAME", length = 32)
 	private String secondSurname;
-
-	public String getFirstSurname() {
-		return firstSurname;
-	}
-
-	public void setFirstSurname(String firstSurname) {
-		this.firstSurname = firstSurname;
-	}
-
-	public String getSecondSurname() {
-		return secondSurname;
-	}
-
-	public void setSecondSurname(String secondSurname) {
-		this.secondSurname = secondSurname;
-	}
 
 	@Override
 	public void merge(LegalEntity entity) {

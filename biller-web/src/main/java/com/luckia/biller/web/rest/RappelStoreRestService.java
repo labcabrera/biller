@@ -18,7 +18,10 @@ import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.bills.RappelStoreProcessor;
 import com.luckia.biller.core.services.entities.RapelStoreBonusEntityService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Path("/rappel/stores")
+@Slf4j
 public class RappelStoreRestService {
 
 	@Inject
@@ -36,7 +39,8 @@ public class RappelStoreRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<RappelStoreBonus> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
+	public SearchResults<RappelStoreBonus> find(@QueryParam("n") Integer maxResults,
+			@QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
 		params.setCurrentPage(page);
@@ -52,21 +56,29 @@ public class RappelStoreRestService {
 			RappelStoreBonus bonus = entityService.findById(primaryKey);
 			rappelStoreProcessor.confirm(bonus);
 			return new Message<>(Message.CODE_SUCCESS, "Rappel confirmado", bonus);
-		} catch (Exception e) {
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al aceptar el rappel");
+		}
+		catch (Exception ex) {
+			log.error("Confirm error", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al aceptar el rappel");
 		}
 	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/prorata")
-	public Message<RappelStoreBonus> applyProrata(@PathParam("id") String primaryKey, BigDecimal prorata) {
+	public Message<RappelStoreBonus> applyProrata(@PathParam("id") String primaryKey,
+			BigDecimal prorata) {
 		try {
 			RappelStoreBonus bonus = entityService.findById(primaryKey);
 			rappelStoreProcessor.applyProrata(bonus, prorata);
-			return new Message<>(Message.CODE_SUCCESS, "Aplicado prorateo de rappel", bonus);
-		} catch (Exception e) {
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al aceptar el prorateo de rappel");
+			return new Message<>(Message.CODE_SUCCESS, "Aplicado prorateo de rappel",
+					bonus);
+		}
+		catch (Exception ex) {
+			log.error("Applu prorata error", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al aceptar el prorateo de rappel");
 		}
 	}
 }

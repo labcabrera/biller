@@ -24,12 +24,17 @@ public class AdminRestService {
 	@Path("info")
 	public Map<String, String> info() {
 		Map<String, String> map = new LinkedHashMap<>();
-		map.put("Biller BD connection", settingsManager.getProperties("jpa-biller").getProperty("javax.persistence.jdbc.url"));
-		map.put("Biller BD user", settingsManager.getProperties("jpa-biller").getProperty("javax.persistence.jdbc.user"));
-		map.put("LIS DB connection", settingsManager.getProperties("jpa-lis").getProperty("javax.persistence.jdbc.url"));
-		map.put("LIS DB user", settingsManager.getProperties("jpa-lis").getProperty("javax.persistence.jdbc.user"));
+		map.put("Biller BD connection", settingsManager.getProperties("jpa-biller")
+				.getProperty("javax.persistence.jdbc.url"));
+		map.put("Biller BD user", settingsManager.getProperties("jpa-biller")
+				.getProperty("javax.persistence.jdbc.user"));
+		map.put("LIS DB connection", settingsManager.getProperties("jpa-lis")
+				.getProperty("javax.persistence.jdbc.url"));
+		map.put("LIS DB user", settingsManager.getProperties("jpa-lis")
+				.getProperty("javax.persistence.jdbc.user"));
 		map.put("Mail", settingsManager.getProperties("mail").getProperty("host"));
-		map.put("Repository", settingsManager.getProperties("global").getProperty("repositoryPath"));
+		map.put("Repository",
+				settingsManager.getProperties("global").getProperty("repositoryPath"));
 		return map;
 	}
 }

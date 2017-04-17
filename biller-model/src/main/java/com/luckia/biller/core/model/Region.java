@@ -11,11 +11,14 @@ import javax.persistence.Table;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+
 /**
  * Representa un municipio dentro de una provincia.
  */
 @Entity
 @Table(name = "S_REGION")
+@Data
 @SuppressWarnings("serial")
 public class Region implements Serializable {
 
@@ -33,38 +36,6 @@ public class Region implements Serializable {
 	@JoinColumn(name = "PROVINCE_ID")
 	@NotSerializable
 	private Province province;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Province getProvince() {
-		return province;
-	}
-
-	public void setProvince(Province province) {
-		this.province = province;
-	}
 
 	@Override
 	public String toString() {

@@ -14,6 +14,7 @@ public class LisModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		LOG.debug("Configuring LIS module");
-		bind(EntityManager.class).annotatedWith(Lis.class).toProvider(LisEntityManagerProvider.class);
+		bind(EntityManager.class).annotatedWith(Lis.class)
+				.toProvider(LisEntityManagerProvider.class);
 	}
 }

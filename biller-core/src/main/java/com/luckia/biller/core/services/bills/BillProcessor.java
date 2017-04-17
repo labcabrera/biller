@@ -10,7 +10,8 @@ import com.luckia.biller.core.model.BillLiquidationDetail;
 import com.luckia.biller.core.model.Store;
 
 /**
- * Define la interface del servicio encargado de generar los detalles de una factura y calcular su importe.
+ * Define la interface del servicio encargado de generar los detalles de una factura y
+ * calcular su importe.
  */
 public interface BillProcessor {
 
@@ -24,7 +25,8 @@ public interface BillProcessor {
 	Bill generateBill(Store store, Range<Date> range);
 
 	/**
-	 * Crea la lista de detalles de facturacion a partir del modelo de facturacion utilizado.
+	 * Crea la lista de detalles de facturacion a partir del modelo de facturacion
+	 * utilizado.
 	 * 
 	 * @param bill
 	 */

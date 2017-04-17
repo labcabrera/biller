@@ -25,7 +25,8 @@ import com.luckia.biller.core.services.entities.TerminalRelationEntityService;
 @Path("/terminals")
 public class TerminalRelationRestService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TerminalRelationRestService.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(TerminalRelationRestService.class);
 
 	@Inject
 	private TerminalRelationEntityService entityService;
@@ -42,7 +43,8 @@ public class TerminalRelationRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<TerminalRelation> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
+	public SearchResults<TerminalRelation> find(@QueryParam("n") Integer maxResults,
+			@QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
 		params.setCurrentPage(page);
@@ -58,9 +60,11 @@ public class TerminalRelationRestService {
 	public Message<TerminalRelation> merge(TerminalRelation entity) {
 		try {
 			return entityService.merge(entity);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al actualizar el terminal", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("terminal.error.merge"));
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("terminal.error.merge"));
 		}
 	}
 
@@ -72,9 +76,11 @@ public class TerminalRelationRestService {
 	public Message<TerminalRelation> remove(@PathParam("id") Long id) {
 		try {
 			return entityService.remove(id);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al eliminar el terminal", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("terminal.error.remove"));
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("terminal.error.remove"));
 		}
 	}
 }

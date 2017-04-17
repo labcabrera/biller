@@ -19,7 +19,8 @@ public class BillingProvinceFeesFeeder implements Feeder<ProvinceTaxes> {
 	@Override
 	public void loadEntities(InputStream source) {
 		EntityManager entityManager = entityManagerProvider.get();
-		List<Province> provinces = entityManager.createQuery("select p from Province p", Province.class).getResultList();
+		List<Province> provinces = entityManager
+				.createQuery("select p from Province p", Province.class).getResultList();
 		for (Province province : provinces) {
 			ProvinceTaxes fees = new ProvinceTaxes();
 			fees.setFeesPercent(new BigDecimal("10.00"));

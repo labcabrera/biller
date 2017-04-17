@@ -23,13 +23,15 @@ import com.luckia.biller.core.model.Liquidation;
  */
 public class PatchUpdateLiquidationModel {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PatchUpdateLiquidationModel.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(PatchUpdateLiquidationModel.class);
 
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
-		Query query = entityManager.createQuery("select e from Liquidation e where e.model = null order by e.billDate");
+		Query query = entityManager.createQuery(
+				"select e from Liquidation e where e.model = null order by e.billDate");
 		query.setHint(QueryHints.SCROLLABLE_CURSOR, true);
 		ScrollableCursor cursor = (ScrollableCursor) query.getSingleResult();
 		Long totalCount = 0L;
@@ -43,12 +45,14 @@ public class PatchUpdateLiquidationModel {
 				LOG.info("Actualizando liquidacion {}", liquidation);
 				if (!liquidation.getBills().isEmpty()) {
 					updateCount++;
-					liquidation.setModel(liquidation.getBills().iterator().next().getModel());
+					liquidation.setModel(
+							liquidation.getBills().iterator().next().getModel());
 					entityManager.merge(liquidation);
 					if (totalCount % 25 == 0) {
 						entityManager.flush();
 					}
-				} else {
+				}
+				else {
 					LOG.warn("Liquidacion {} sin facturas", liquidation);
 				}
 			}
@@ -57,6 +61,7 @@ public class PatchUpdateLiquidationModel {
 		cursor.close();
 		LOG.debug("Liquidaciones totales: {}", totalCount);
 		LOG.debug("Liquidaciones afecatadas: {}", updateCount);
-		LOG.debug("Time: {} sg", new BigDecimal(System.currentTimeMillis() - t0).divide(MathUtils.THOUSAND, 2, RoundingMode.HALF_EVEN));
+		LOG.debug("Time: {} sg", new BigDecimal(System.currentTimeMillis() - t0)
+				.divide(MathUtils.THOUSAND, 2, RoundingMode.HALF_EVEN));
 	}
 }

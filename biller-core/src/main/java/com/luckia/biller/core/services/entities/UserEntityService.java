@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.model.User;
 import com.luckia.biller.core.model.UserActivityType;
@@ -30,7 +31,9 @@ public class UserEntityService extends EntityService<User> {
 
 	public User findByName(String name) {
 		EntityManager entityManager = entityManagerProvider.get();
-		List<User> values = entityManager.createQuery("select u from User u where u.name = :name", User.class).setParameter("name", name).getResultList();
+		List<User> values = entityManager
+				.createQuery("select u from User u where u.name = :name", User.class)
+				.setParameter("name", name).getResultList();
 		return values.isEmpty() ? null : values.iterator().next();
 	}
 
@@ -47,7 +50,8 @@ public class UserEntityService extends EntityService<User> {
 				current.merge(user);
 				entityManager.merge(current);
 				message.addInfo("user.merge.success").withPayload(current);
-			} else {
+			}
+			else {
 				String digest = calculatePasswordDigest(user.getPasswordDigest());
 				user.setPasswordDigest(digest);
 				user.setCreated(new DateTime().toDate());
@@ -55,8 +59,9 @@ public class UserEntityService extends EntityService<User> {
 				entityManager.flush();
 				message.addInfo("user.insert.success").withPayload(user);
 			}
-		} catch (Exception ex) {
-			LOG.error("User merge error");
+		}
+		catch (Exception ex) {
+			LOG.error("User merge error", ex);
 			message.withCode(Message.CODE_GENERIC_ERROR).addError("user.merge.error");
 		}
 		return message;
@@ -69,19 +74,21 @@ public class UserEntityService extends EntityService<User> {
 		User current = entityManager.find(User.class, primaryKey);
 		current.setDisabled(new DateTime().toDate());
 		entityManager.merge(current);
-		return new Message<User>().withPayload(current).withMessage("user.remove.success");
+		return new Message<User>().withPayload(current)
+				.withMessage("user.remove.success");
 	}
 
 	public String calculatePasswordDigest(String password) {
 		try {
-			Validate.notNull(passwordDigestAlgoritm, "Invalid configuration digest password algoritm");
+			Validate.notNull(passwordDigestAlgoritm,
+					"Invalid configuration digest password algoritm");
 			MessageDigest digest = MessageDigest.getInstance(passwordDigestAlgoritm);
 			digest.reset();
 			byte[] rawDigest = digest.digest(password.getBytes("UTF-8"));
 			return new String(Hex.encodeHex(rawDigest));
-		} catch (Exception ex) {
-			LOG.error("Digest calculation error", ex);
-			throw new RuntimeException(ex);
+		}
+		catch (Exception ex) {
+			throw new BillerException("Digest calculation error", ex);
 		}
 	}
 

@@ -10,14 +10,15 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
-import net.sf.flatpack.DataSet;
-import net.sf.flatpack.DefaultParserFactory;
-import net.sf.flatpack.Parser;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.model.User;
+
+import net.sf.flatpack.DataSet;
+import net.sf.flatpack.DefaultParserFactory;
+import net.sf.flatpack.Parser;
 
 public class UserFeeder implements Feeder<User> {
 
@@ -30,7 +31,8 @@ public class UserFeeder implements Feeder<User> {
 	public void loadEntities(InputStream source) {
 		try {
 			Reader reader = new InputStreamReader(source, "UTF8");
-			Parser parser = DefaultParserFactory.getInstance().newDelimitedParser(reader, ',', '"');
+			Parser parser = DefaultParserFactory.getInstance().newDelimitedParser(reader,
+					',', '"');
 			DataSet dataSet = parser.parse();
 			Date now = Calendar.getInstance().getTime();
 			EntityManager entityManager = entityManagerProvider.get();
@@ -45,9 +47,11 @@ public class UserFeeder implements Feeder<User> {
 				entityManager.persist(user);
 				count++;
 			}
-			LOG.info("Cargadas {} regiones en {} ms", count, (System.currentTimeMillis() - t0));
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+			LOG.info("Cargadas {} regiones en {} ms", count,
+					(System.currentTimeMillis() - t0));
+		}
+		catch (Exception ex) {
+			throw new BillerException(ex);
 
 		}
 	}

@@ -19,19 +19,21 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.name.Named;
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AbstractBill;
 import com.luckia.biller.core.model.AppFile;
 import com.luckia.biller.core.model.common.Message;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Servicio encargado de gestionar el repositorio de ficheros de la aplicación.
  */
+@Slf4j
 public class FileService {
 
 	public static final String CONTENT_TYPE_EXCEL = "application/vnd.ms-excel";
@@ -39,7 +41,6 @@ public class FileService {
 	private static final String INVALID_FILE_CHARACTERS = "[/\\\\:;]";
 	private static final String INVALID_FILE_CHARACTERS_REPLACEMENT = "_";
 	private static final String FOLDER_DATE_FORMAT = "yyyy/MM/dd";
-	private static final Logger LOG = LoggerFactory.getLogger(FileService.class);
 
 	@Inject
 	private I18nService i18nService;
@@ -52,13 +53,12 @@ public class FileService {
 	private String repositoryBasePath;
 
 	/**
-	 * Guarda en base de datos el descriptor del fichero y almacena su contenido en el repositorio de la aplicación.
+	 * Guarda en base de datos el descriptor del fichero y almacena su contenido en el
+	 * repositorio de la aplicación.
 	 * 
-	 * @param name
-	 *            Nombre identificativo del fichero (no tiene por que ser el nombre real del fichero, sólo indica el nombre que tiene dentro
-	 *            de la aplicación)
-	 * @param contentType
-	 *            Media type del fichero
+	 * @param name Nombre identificativo del fichero (no tiene por que ser el nombre real
+	 * del fichero, sólo indica el nombre que tiene dentro de la aplicación)
+	 * @param contentType Media type del fichero
 	 * @param inputStream
 	 * 
 	 * @return
@@ -72,9 +72,10 @@ public class FileService {
 		try {
 			FileOutputStream out = new FileOutputStream(target);
 			bytesCopied = IOUtils.copyLarge(inputStream, out);
-			LOG.debug("Generado fichero {}", target.getAbsolutePath());
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+			log.debug("Generado fichero {}", target.getAbsolutePath());
+		}
+		catch (Exception ex) {
+			throw new BillerException(ex);
 		}
 		// Guardamos solo la ruta relativa al basePath
 		String relativePath = target.getAbsolutePath();
@@ -96,14 +97,17 @@ public class FileService {
 	public InputStream getInputStream(AppFile appFile) {
 		File repository = new File(getBasePath());
 		if (!repository.exists()) {
-			alertService.handleAlert(new Message<String>("Missing file").addError("Missing repository folder " + repository.getAbsolutePath()));
+			alertService.handleAlert(new Message<String>("Missing file").addError(
+					"Missing repository folder " + repository.getAbsolutePath()));
 		}
 		File target = new File(repository, appFile.getInternalPath());
-		Validate.isTrue(target.exists(), "No se encuentra el fichero " + appFile.getInternalPath());
+		Validate.isTrue(target.exists(),
+				"No se encuentra el fichero " + appFile.getInternalPath());
 		try {
 			return new FileInputStream(target);
-		} catch (FileNotFoundException ex) {
-			throw new RuntimeException(ex);
+		}
+		catch (FileNotFoundException ex) {
+			throw new BillerException(ex);
 		}
 	}
 
@@ -117,15 +121,21 @@ public class FileService {
 	}
 
 	public String normalizeFileName(String name) {
-		return name != null ? name.replaceAll(INVALID_FILE_CHARACTERS, INVALID_FILE_CHARACTERS_REPLACEMENT) : null;
+		return name != null ? name.replaceAll(INVALID_FILE_CHARACTERS,
+				INVALID_FILE_CHARACTERS_REPLACEMENT) : null;
 	}
 
 	public String getAbstractBillFileName(AbstractBill bill, String extension) {
-		String sender = bill.getSender().getName().toLowerCase().replaceAll("\\s", "-").replaceAll("[^a-zA-Z0-9-_]", "");
+		String sender = bill.getSender().getName().toLowerCase().replaceAll("\\s", "-")
+				.replaceAll("[^a-zA-Z0-9-_]", "");
 		DateTime date = new DateTime(bill.getBillDate());
 		Integer monthIndex = date.getMonthOfYear();
-		String monthName = i18nService.getMessage("month." + StringUtils.leftPad(String.valueOf(monthIndex), 2, '0')).toLowerCase();
-		return new StringBuilder().append(sender).append("-").append(date.getYear()).append("-").append(monthName).append(".").append(extension).toString();
+		String monthName = i18nService
+				.getMessage("month."
+						+ StringUtils.leftPad(String.valueOf(monthIndex), 2, '0'))
+				.toLowerCase();
+		return new StringBuilder().append(sender).append("-").append(date.getYear())
+				.append("-").append(monthName).append(".").append(extension).toString();
 	}
 
 	/**
@@ -143,27 +153,31 @@ public class FileService {
 		name = normalizeFileName(name);
 		File folderBase = new File(basePath);
 		if (!folderBase.exists() && !folderBase.mkdirs()) {
-			throw new RuntimeException("Error al crear el directorio " + folderBase.getAbsolutePath());
+			throw new BillerException(
+					"Error al crear el directorio " + folderBase.getAbsolutePath());
 		}
-		File folder = new File(folderBase, new SimpleDateFormat(FOLDER_DATE_FORMAT).format(date));
+		File folder = new File(folderBase,
+				new SimpleDateFormat(FOLDER_DATE_FORMAT).format(date));
 		if (!folder.exists() && !folder.mkdirs()) {
-			throw new RuntimeException("Error al crear el directorio " + folder.getAbsolutePath());
+			throw new BillerException(
+					"Error al crear el directorio " + folder.getAbsolutePath());
 		}
 		File target = new File(folder, name);
 		int index = 0;
 		while (target.exists() && index++ < 1000) {
-			int lastDotIndex = name.lastIndexOf(".");
+			int lastDotIndex = name.lastIndexOf('.');
 			if (lastDotIndex >= 0) {
 				String prefix = name.substring(0, lastDotIndex);
 				String extension = name.substring(lastDotIndex);
 				String tmpName = prefix + "-copy-" + index + extension;
 				target = new File(folder, tmpName);
-			} else {
+			}
+			else {
 				target = new File(folder, name + "-copy-" + index);
 			}
 		}
 		if (target.exists()) {
-			throw new RuntimeException("Ya existe el fichero " + target.getAbsolutePath());
+			throw new BillerException("Ya existe el fichero " + target.getAbsolutePath());
 		}
 		return target;
 	}

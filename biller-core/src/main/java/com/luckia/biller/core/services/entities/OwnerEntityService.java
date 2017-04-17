@@ -32,7 +32,8 @@ public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 			auditService.processCreated(current);
 			entityManager.persist(current);
 			message = i18nService.getMessage("owner.persist");
-		} else {
+		}
+		else {
 			current = entityManager.find(Owner.class, entity.getId());
 			current.merge(entity);
 			auditService.processModified(current);
@@ -52,7 +53,8 @@ public class OwnerEntityService extends LegalEntityBaseService<Owner> {
 		Owner current = entityManager.find(Owner.class, primaryKey);
 		auditService.processDeleted(current);
 		entityManager.merge(current);
-		return new Message<Owner>(Message.CODE_SUCCESS, i18nService.getMessage("owner.remove"), current);
+		return new Message<Owner>(Message.CODE_SUCCESS,
+				i18nService.getMessage("owner.remove"), current);
 	}
 
 	@Override

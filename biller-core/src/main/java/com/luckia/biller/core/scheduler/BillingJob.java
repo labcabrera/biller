@@ -15,26 +15,26 @@ import org.apache.commons.lang3.Range;
 import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.model.Company;
 import com.luckia.biller.core.scheduler.tasks.BillTask;
 import com.luckia.biller.core.scheduler.tasks.LiquidationTask;
 import com.luckia.biller.core.services.bills.BillProcessor;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Job encargado de generar las facturas mensualmente. Recibe los siguientes parametros:
  * <ul>
  * <li><b>from</b>: fecha de inicio de facturacion</li>
  * <li><b>to</b>: fecha de final de la facturacion</li>
- * <li><b>thread.count</b>: numero de threads en los que se calcularan en paralelo las facturas. En caso de no establecerse este parametro el job se ejecutara utilizando 10
+ * <li><b>thread.count</b>: numero de threads en los que se calcularan en paralelo las
+ * facturas. En caso de no establecerse este parametro el job se ejecutara utilizando 10
  * threads.</li>
  * </ul>
  */
+@Slf4j
 public class BillingJob extends BaseJob {
-
-	private static final Logger LOG = LoggerFactory.getLogger(BillingJob.class);
 
 	public static final String KEY_FROM = "from";
 	public static final String KEY_TO = "to";
@@ -53,14 +53,16 @@ public class BillingJob extends BaseJob {
 		Range<Date> range;
 		if (from == null || to == null) {
 			range = getCurrentRange();
-		} else {
+		}
+		else {
 			range = Range.between(from, to);
 		}
 		execute(range, threadCount);
 	}
 
 	/**
-	 * En la primera quincena hacemos la facturacion del mes anterior. En la segunda quincena lanzamos la facturacion del mes en curso
+	 * En la primera quincena hacemos la facturacion del mes anterior. En la segunda
+	 * quincena lanzamos la facturacion del mes en curso
 	 * 
 	 * @return
 	 */
@@ -77,10 +79,13 @@ public class BillingJob extends BaseJob {
 		return Range.between(effectiveFrom.toDate(), effectiveTo.toDate());
 	}
 
-	public void execute(Range<Date> range, Integer threadCount) throws JobExecutionException {
-		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
+	public void execute(Range<Date> range, Integer threadCount)
+			throws JobExecutionException {
+		Provider<EntityManager> entityManagerProvider = injector
+				.getProvider(EntityManager.class);
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Long> query = entityManager.createQuery("select s.id from Store s order by s.id", Long.class);
+		TypedQuery<Long> query = entityManager
+				.createQuery("select s.id from Store s order by s.id", Long.class);
 		List<Long> storeIds = query.getResultList();
 
 		// Procesamos de forma asincrona las facturas
@@ -88,33 +93,44 @@ public class BillingJob extends BaseJob {
 		Long t0 = System.currentTimeMillis();
 		BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
 		for (Long storeId : storeIds) {
-			BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
+			BillTask task = new BillTask(storeId, range, entityManagerProvider,
+					billProcessor);
 			executorService.submit(task);
 		}
-		LOG.debug("Esperando a la finalizacion de {} tareas de facturacion (hilos: {})", storeIds.size(), threadCount);
+		log.debug("Esperando a la finalizacion de {} tareas de facturacion (hilos: {})",
+				storeIds.size(), threadCount);
 		executorService.shutdown();
 		try {
 			executorService.awaitTermination(5, TimeUnit.HOURS);
-			LOG.debug("Finalizadas {} tareas en {} ms", storeIds.size(), (System.currentTimeMillis() - t0));
-		} catch (InterruptedException ex) {
-			LOG.error("Error durante la ejecucion de las tareas", ex);
+			log.debug("Finalizadas {} tareas en {} ms", storeIds.size(),
+					(System.currentTimeMillis() - t0));
+		}
+		catch (InterruptedException ex) {
+			log.error("Error durante la ejecucion de las tareas", ex);
+			Thread.currentThread().interrupt();
 		}
 
 		// Procesamos de forma asincrona las liquidaciones
 		t0 = System.currentTimeMillis();
 		executorService = Executors.newFixedThreadPool(threadCount);
-		List<Company> companies = entityManager.createQuery("select c from Company c order by c.name", Company.class).getResultList();
+		List<Company> companies = entityManager
+				.createQuery("select c from Company c order by c.name", Company.class)
+				.getResultList();
 		for (Company company : companies) {
 			LiquidationTask task = new LiquidationTask(company.getId(), range, injector);
 			executorService.submit(task);
 		}
-		LOG.debug("Esperando a la finalizacion de {} tareas de liquidacion (hilos: {})", storeIds.size(), threadCount);
+		log.debug("Esperando a la finalizacion de {} tareas de liquidacion (hilos: {})",
+				storeIds.size(), threadCount);
 		executorService.shutdown();
 		try {
 			executorService.awaitTermination(4, TimeUnit.HOURS);
-			LOG.debug("Finalizadas {} tareas en {} ms", storeIds.size(), (System.currentTimeMillis() - t0));
-		} catch (InterruptedException ex) {
-			LOG.error("Error durante la ejecucion de las tareas", ex);
+			log.debug("Finalizadas {} tareas en {} ms", storeIds.size(),
+					(System.currentTimeMillis() - t0));
+		}
+		catch (InterruptedException ex) {
+			log.error("Error durante la ejecucion de las tareas", ex);
+			Thread.currentThread().interrupt();
 		}
 	}
 }

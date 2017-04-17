@@ -15,7 +15,8 @@ public class RapelStoreBonusEntityService extends EntityService<RappelStoreBonus
 	}
 
 	@Override
-	protected void buildOrderCriteria(CriteriaQuery<RappelStoreBonus> criteria, CriteriaBuilder builder, Root<RappelStoreBonus> root) {
-		criteria.orderBy(builder.asc(root.<Store> get("store").get("name")));
+	protected void buildOrderCriteria(CriteriaQuery<RappelStoreBonus> criteria,
+			CriteriaBuilder builder, Root<RappelStoreBonus> root) {
+		criteria.orderBy(builder.asc(root.<Store>get("store").get("name")));
 	}
 }

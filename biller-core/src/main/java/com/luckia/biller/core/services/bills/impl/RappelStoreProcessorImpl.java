@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import org.apache.commons.lang3.Range;
 
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.model.BillConcept;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.CommonState;
@@ -43,7 +44,9 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#processRappel(com.luckia.biller.core.model.Store, org.apache.commons.lang3.Range)
+	 * @see
+	 * com.luckia.biller.core.services.bills.RappelStoreProcessor#processRappel(com.luckia
+	 * .biller.core.model.Store, org.apache.commons.lang3.Range)
 	 */
 	@Override
 	@Transactional
@@ -53,7 +56,8 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 			for (TerminalRelation terminalRelation : store.getTerminalRelations()) {
 				terminals.add(terminalRelation.getCode());
 			}
-			Map<BillConcept, BigDecimal> billingData = billDataProvider.retreive(range, terminals);
+			Map<BillConcept, BigDecimal> billingData = billDataProvider.retreive(range,
+					terminals);
 			BigDecimal baseValue = billingData.get(BillConcept.STAKES);
 			Rappel rappel = getRappelBonusAmount(store, baseValue, BigDecimal.ZERO);
 			RappelStoreBonus bonus = new RappelStoreBonus();
@@ -67,25 +71,31 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 			auditService.processCreated(bonus);
 			stateMachineService.createTransition(bonus, CommonState.DRAFT.name());
 			entityManager.persist(bonus);
-		} catch (Exception ex) {
-			throw new RuntimeException("Error al calcular el rappel del establecimiento " + store.getName(), ex);
+		}
+		catch (Exception ex) {
+			throw new BillerException(
+					"Error al calcular el rappel del establecimiento " + store.getName(),
+					ex);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#applyProrata(com.luckia.biller.core.model.RappelStoreBonus, java.math.BigDecimal)
+	 * @see
+	 * com.luckia.biller.core.services.bills.RappelStoreProcessor#applyProrata(com.luckia.
+	 * biller.core.model.RappelStoreBonus, java.math.BigDecimal)
 	 */
 	@Override
 	public RappelStoreBonus applyProrata(RappelStoreBonus bonus, BigDecimal prorata) {
-		throw new RuntimeException("Not implemented");
+		throw new BillerException("Not implemented");
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#confirm(com.luckia.biller.core.model.RappelStoreBonus)
+	 * @see com.luckia.biller.core.services.bills.RappelStoreProcessor#confirm(com.luckia.
+	 * biller.core.model.RappelStoreBonus)
 	 */
 	@Override
 	@Transactional
@@ -102,14 +112,16 @@ public class RappelStoreProcessorImpl implements RappelStoreProcessor {
 	 * @param prorata
 	 * @return
 	 */
-	public Rappel getRappelBonusAmount(Store store, BigDecimal baseValue, BigDecimal prorata) {
+	public Rappel getRappelBonusAmount(Store store, BigDecimal baseValue,
+			BigDecimal prorata) {
 		// TODO aplicar prorateo
 		BillingModel billingModel = store.getBillingModel();
 		Rappel bestRappel = null;
 		if (billingModel.getRappel() != null) {
 			for (Rappel rappel : billingModel.getRappel()) {
 				boolean checkRappel = rappel.getAmount().compareTo(baseValue) <= 0;
-				boolean checkBest = bestRappel == null || rappel.getBonusAmount().compareTo(rappel.getBonusAmount()) <= 0;
+				boolean checkBest = bestRappel == null || rappel.getBonusAmount()
+						.compareTo(rappel.getBonusAmount()) <= 0;
 				if (checkRappel && checkBest) {
 					bestRappel = rappel;
 				}

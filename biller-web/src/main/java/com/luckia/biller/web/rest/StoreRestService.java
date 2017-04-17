@@ -49,7 +49,8 @@ public class StoreRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<Store> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
+	public SearchResults<Store> find(@QueryParam("n") Integer maxResults,
+			@QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
 		params.setCurrentPage(page);
@@ -65,13 +66,16 @@ public class StoreRestService {
 		try {
 			Owner owner = null;
 			if (entity.getOwner() != null && entity.getOwner().getId() != null) {
-				owner = entityManagerProvider.get().find(Owner.class, entity.getOwner().getId());
+				owner = entityManagerProvider.get().find(Owner.class,
+						entity.getOwner().getId());
 			}
 			entity.setOwner(owner);
 			return entityService.merge(entity);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Merge store error", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("store.error.merge"));
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("store.error.merge"));
 		}
 	}
 
@@ -82,9 +86,11 @@ public class StoreRestService {
 	public Message<Store> remove(@PathParam("id") Long id) {
 		try {
 			return entityService.remove(id);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al eliminar el establecimiento", ex);
-			return new Message<Store>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("store.error.remove"));
+			return new Message<Store>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("store.error.remove"));
 		}
 	}
 }

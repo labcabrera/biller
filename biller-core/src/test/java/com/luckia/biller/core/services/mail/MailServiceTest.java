@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.luckia.biller.core.BillerModule;
+import com.luckia.biller.core.common.BillerException;
 
 @Ignore
 public class MailServiceTest {
@@ -24,11 +25,13 @@ public class MailServiceTest {
 			String title = "Liquidación";
 			String body = "Ejemplo con carácteres UNICODE como por ejemplo la palabra año";
 			List<EmailAttachment> emailAttachments = null;
-			HtmlEmail email = mailService.createEmail(address, displayName, title, body, emailAttachments);
+			HtmlEmail email = mailService.createEmail(address, displayName, title, body,
+					emailAttachments);
 			email.send();
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
-			throw new RuntimeException(ex);
+			throw new BillerException(ex);
 		}
 	}
 }

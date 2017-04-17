@@ -13,6 +13,7 @@ buildscript {
 		junitVersion = "4.12"
 		liquibaseVersion = "3.4.2"
 		logbackVersion = "1.2.3"
+		lombokVersion = "1.16.16"
 		mysqlConnectorVersion = "5.1.37"
 		poiVersion = "3.14"
 		quartzVersion = "2.2.3"
@@ -22,25 +23,30 @@ buildscript {
 	}
 }
 
+plugins {
+	id "org.sonarqube" version "2.3"
+}
+
 subprojects {
 	apply plugin: "java"
 
 	version = version
 	group = "com.luckia.biller"
-	
+
 	compileJava {
 		sourceCompatibility = 1.8
 		targetCompatibility = 1.8
 		options.encoding = "UTF-8"
 	}
-	
+
 	repositories {
-		mavenLocal()	   
+		mavenLocal()
 		mavenCentral()
 	}
 
 	dependencies {
 		compile "ch.qos.logback:logback-classic:${logbackVersion}"
+		compile "org.projectlombok:lombok:${lombokVersion}"
 		testCompile "junit:junit:${junitVersion}"
 	}
 }
@@ -88,4 +94,3 @@ project(":biller-deploy") {
 		compile "net.sf.flatpack:flatpack:${flatpackVersion}"
 	}
 }
-

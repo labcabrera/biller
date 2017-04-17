@@ -8,7 +8,8 @@ import java.lang.annotation.Target;
 import com.google.inject.BindingAnnotation;
 
 /**
- * Anotacion para indicar que un un EntityManager accede a la base de datos de LIS en lugar de la base de datos de la aplicacion.
+ * Anotacion para indicar que un un EntityManager accede a la base de datos de LIS en
+ * lugar de la base de datos de la aplicacion.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })

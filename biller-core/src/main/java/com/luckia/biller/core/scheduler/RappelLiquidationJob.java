@@ -14,15 +14,15 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.scheduler.tasks.RappelLiquidationTask;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class RappelLiquidationJob extends BaseJob {
 
 	public static final String KEY_THREAD_COUNT = "thread.count";
-	private static final Logger LOG = LoggerFactory.getLogger(RappelLiquidationJob.class);
 
 	/*
 	 * (non-Javadoc)
@@ -41,13 +41,16 @@ public class RappelLiquidationJob extends BaseJob {
 		DateTime from = null;
 		if (dateTime.getMonthOfYear() == 12) {
 			from = new DateTime(dateTime).dayOfYear().withMinimumValue();
-		} else if (dateTime.getMonthOfYear() == 1) {
+		}
+		else if (dateTime.getMonthOfYear() == 1) {
 			from = new DateTime(dateTime).plusYears(-1).dayOfYear().withMinimumValue();
 		}
 		if (from == null) {
-			LOG.debug("No es necesario ejecutar el calculo de rappel a fecha {}", DateFormatUtils.ISO_DATE_FORMAT.format(date));
-		} else {
-			DateTime to = from != null ? new DateTime(from).dayOfYear().withMaximumValue() : null;
+			log.debug("No es necesario ejecutar el calculo de rappel a fecha {}",
+					DateFormatUtils.ISO_DATE_FORMAT.format(date));
+		}
+		else {
+			DateTime to = new DateTime(from).dayOfYear().withMaximumValue();
 			execute(Range.between(from.toDate(), to.toDate()), threadCount);
 		}
 	}
@@ -56,18 +59,25 @@ public class RappelLiquidationJob extends BaseJob {
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 		long t0 = System.currentTimeMillis();
 		ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-		List<Long> storeIds = entityManager.createQuery("select s.id from Store s order by s.name", Long.class).getResultList();
+		List<Long> storeIds = entityManager
+				.createQuery("select s.id from Store s order by s.name", Long.class)
+				.getResultList();
 		for (Long storeId : storeIds) {
-			RappelLiquidationTask task = new RappelLiquidationTask(storeId, range, injector);
+			RappelLiquidationTask task = new RappelLiquidationTask(storeId, range,
+					injector);
 			executorService.submit(task);
 		}
-		LOG.debug("Esperando a la finalizacion de {} tareas de rappel (hilos: {})", storeIds.size(), threadCount);
+		log.debug("Esperando a la finalizacion de {} tareas de rappel (hilos: {})",
+				storeIds.size(), threadCount);
 		executorService.shutdown();
 		try {
 			executorService.awaitTermination(4, TimeUnit.HOURS);
-			LOG.debug("Finalizadas {} tareas en {} ms", storeIds.size(), (System.currentTimeMillis() - t0));
-		} catch (InterruptedException ex) {
-			LOG.error("Error durante la ejecucion de las tareas", ex);
+			log.debug("Finalizadas {} tareas en {} ms", storeIds.size(),
+					(System.currentTimeMillis() - t0));
+		}
+		catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
+			log.error("Error durante la ejecucion de las tareas", ex);
 		}
 	}
 }

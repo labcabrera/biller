@@ -18,6 +18,9 @@ import com.luckia.biller.core.model.Rappel;
 import com.luckia.biller.core.model.UserActivityType;
 import com.luckia.biller.core.model.common.Message;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class BillingModelEntityService extends EntityService<BillingModel> {
 
 	@Override
@@ -33,7 +36,8 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 			current.merge(entity);
 			entityManager.persist(current);
 			message = i18nService.getMessage("billingModel.persist");
-		} else {
+		}
+		else {
 			current = entityManager.find(BillingModel.class, entity.getId());
 			current.merge(entity);
 			auditService.processModified(current);
@@ -51,21 +55,25 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 		BillingModel current = entityManager.find(BillingModel.class, primaryKey);
 		auditService.processDeleted(current);
 		entityManager.merge(current);
-		return new Message<BillingModel>(Message.CODE_SUCCESS, i18nService.getMessage("billingModel.remove"), current);
+		return new Message<BillingModel>(Message.CODE_SUCCESS,
+				i18nService.getMessage("billingModel.remove"), current);
 	}
 
 	@Transactional
 	@RegisterActivity(type = UserActivityType.BILLING_MODEL_RAPPEL_MERGE)
 	public Message<BillingModel> mergeRappelDetail(Rappel entity) {
 		try {
-			// TODO deberiamos tener un constructor de mensajes a partir de errores de validacion en lugar de tomar solo el primer mensaje
+			// TODO deberiamos tener un constructor de mensajes a partir de errores de
+			// validacion en lugar de tomar solo el primer mensaje
 			Set<ConstraintViolation<Rappel>> violations = validator.validate(entity);
 			if (!violations.isEmpty()) {
 				String messageKey = violations.iterator().next().getMessage();
-				return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage(messageKey));
+				return new Message<>(Message.CODE_GENERIC_ERROR,
+						i18nService.getMessage(messageKey));
 			}
 			EntityManager entityManager = entityManagerProvider.get();
-			BillingModel model = entityManager.find(BillingModel.class, entity.getModel().getId());
+			BillingModel model = entityManager.find(BillingModel.class,
+					entity.getModel().getId());
 			Rappel current;
 			String message;
 			if (entity.getId() == null) {
@@ -74,7 +82,8 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 				current.setModel(model);
 				entityManager.persist(current);
 				message = i18nService.getMessage("billingModel.rappel.persist");
-			} else {
+			}
+			else {
 				current = entityManager.find(Rappel.class, entity.getId());
 				current.merge(entity);
 				entityManager.merge(current);
@@ -82,8 +91,11 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 			}
 			auditService.processModified(model);
 			return new Message<>(Message.CODE_SUCCESS, message, model);
-		} catch (Exception ex) {
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("billingModel.rappel.merge"));
+		}
+		catch (Exception ex) {
+			log.error("Merge error", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("billingModel.rappel.merge"));
 		}
 	}
 
@@ -104,14 +116,18 @@ public class BillingModelEntityService extends EntityService<BillingModel> {
 			entityManager.flush();
 			String message = i18nService.getMessage("billingModel.rappel.remove");
 			return new Message<>(Message.CODE_SUCCESS, message, model);
-		} catch (Exception ex) {
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("billingModel.rappel.error.remove"));
+		}
+		catch (Exception ex) {
+			log.error("Merge error", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("billingModel.rappel.error.remove"));
 		}
 	}
 
 	@Override
-	protected void buildOrderCriteria(CriteriaQuery<BillingModel> criteria, CriteriaBuilder builder, Root<BillingModel> root) {
-		criteria.orderBy(builder.asc(root.<String> get("name")));
+	protected void buildOrderCriteria(CriteriaQuery<BillingModel> criteria,
+			CriteriaBuilder builder, Root<BillingModel> root) {
+		criteria.orderBy(builder.asc(root.<String>get("name")));
 	}
 
 	@Override

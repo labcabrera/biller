@@ -1,5 +1,7 @@
 package com.luckia.biller.core.reporting;
 
+import static com.luckia.biller.core.common.MathUtils.safeNull;
+
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Date;
@@ -15,9 +17,8 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.common.NoAvailableDataException;
 import com.luckia.biller.core.model.Bill;
@@ -30,23 +31,28 @@ import com.luckia.biller.core.model.Liquidation;
 import com.luckia.biller.core.model.LiquidationDetail;
 import com.luckia.biller.core.model.Store;
 
-public class AdjustmentReportGenerator extends BaseReport {
+import lombok.extern.slf4j.Slf4j;
 
-	private static final Logger LOG = LoggerFactory.getLogger(AdjustmentReportGenerator.class);
+@Slf4j
+public class AdjustmentReportGenerator extends BaseReport {
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
 
-	public void generate(Date from, Date to, Company company, CompanyGroup companyGroup, CostCenter costCenter, OutputStream out) {
+	public void generate(Date from, Date to, Company company, CompanyGroup companyGroup,
+			CostCenter costCenter, OutputStream out) {
 		try {
 			Validate.notNull(from);
 			Validate.notNull(to);
-			LOG.debug("Processing adjustment report between {} and {}", DateFormatUtils.ISO_DATE_FORMAT.format(from), DateFormatUtils.ISO_DATE_FORMAT.format(to));
-			List<Liquidation> liquidations = loadLiquidations(from, to, company, companyGroup, costCenter);
+			log.debug("Processing adjustment report between {} and {}",
+					DateFormatUtils.ISO_DATE_FORMAT.format(from),
+					DateFormatUtils.ISO_DATE_FORMAT.format(to));
+			List<Liquidation> liquidations = loadLiquidations(from, to, company,
+					companyGroup, costCenter);
 			if (liquidations.isEmpty()) {
 				throw new NoAvailableDataException();
 			}
-			LOG.debug("Readed {} liquidations", liquidations.size());
+			log.debug("Readed {} liquidations", liquidations.size());
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			init(workbook);
 			HSSFSheet sheet = workbook.createSheet("Ajustes");
@@ -60,15 +66,18 @@ public class AdjustmentReportGenerator extends BaseReport {
 			workbook.write(out);
 			out.flush();
 			out.close();
-		} catch (NoAvailableDataException ex) {
+		}
+		catch (NoAvailableDataException ex) {
 			throw ex;
-		} catch (Exception ex) {
-			throw new RuntimeException("Adjustment report generation error", ex);
+		}
+		catch (Exception ex) {
+			throw new BillerException("Adjustment report generation error", ex);
 		}
 	}
 
-	private List<Liquidation> loadLiquidations(Date from, Date to, Company company, CompanyGroup companyGroup, CostCenter costCenter) {
-		StringBuffer sb = new StringBuffer();
+	private List<Liquidation> loadLiquidations(Date from, Date to, Company company,
+			CompanyGroup companyGroup, CostCenter costCenter) {
+		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(l) from Liquidation l ");
 		if (costCenter != null) {
 			sb.append("join Bill b on b.liquidation =  l ");
@@ -87,8 +96,10 @@ public class AdjustmentReportGenerator extends BaseReport {
 		}
 		sb.append("order by l.billDate, l.id");
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Liquidation> query = entityManager.createQuery(sb.toString(), Liquidation.class);
-		query.setParameter("states", Arrays.asList(CommonState.CONFIRMED, CommonState.SENT));
+		TypedQuery<Liquidation> query = entityManager.createQuery(sb.toString(),
+				Liquidation.class);
+		query.setParameter("states",
+				Arrays.asList(CommonState.CONFIRMED, CommonState.SENT));
 		query.setParameter("from", from);
 		query.setParameter("to", to);
 		if (company != null) {
@@ -115,11 +126,12 @@ public class AdjustmentReportGenerator extends BaseReport {
 		createHeaderCell(sheet, currentRow, cell++, "CONCEPTO");
 		createHeaderCell(sheet, currentRow, cell++, "BASE IMPONIBLE");
 		createHeaderCell(sheet, currentRow, cell++, "IVA/EGIT");
-		createHeaderCell(sheet, currentRow, cell++, "TOTAL");
+		createHeaderCell(sheet, currentRow, cell, "TOTAL");
 		return ++currentRow;
 	}
 
-	private int createLiquidationDetails(HSSFSheet sheet, int currentRow, Liquidation liquidation) {
+	private int createLiquidationDetails(HSSFSheet sheet, int currentRow,
+			Liquidation liquidation) {
 		CostCenter costCenter = null;
 		if (!liquidation.getBills().isEmpty()) {
 			for (Bill bill : liquidation.getBills()) {
@@ -130,20 +142,23 @@ public class AdjustmentReportGenerator extends BaseReport {
 				}
 			}
 		}
-		int cell = 0;
+		int cell;
 		for (LiquidationDetail i : liquidation.getDetails()) {
 			cell = 0;
 			createCell(sheet, currentRow, cell++, liquidation.getSender().getName());
 			createCell(sheet, currentRow, cell++, liquidation.getReceiver().getName());
-			createCell(sheet, currentRow, cell++, costCenter != null ? costCenter.getName() : StringUtils.EMPTY);
-			createCell(sheet, currentRow, cell++, liquidation.getCurrentState().getStateDefinition().getId());
+			createCell(sheet, currentRow, cell++,
+					costCenter != null ? costCenter.getName() : StringUtils.EMPTY);
+			createCell(sheet, currentRow, cell++,
+					liquidation.getCurrentState().getStateDefinition().getId());
 			createCell(sheet, currentRow, cell++, liquidation.getBillDate());
 			createCell(sheet, currentRow, cell++, "OPERADOR");
-			createCell(sheet, currentRow, cell++, i.getLiquidationIncluded() ? "SI" : "NO");
+			createCell(sheet, currentRow, cell++,
+					i.getLiquidationIncluded() ? "SI" : "NO");
 			createCell(sheet, currentRow, cell++, i.getName());
 			createCell(sheet, currentRow, cell++, MathUtils.safeNull(i.getNetValue()));
 			createCell(sheet, currentRow, cell++, MathUtils.safeNull(i.getVatValue()));
-			createCell(sheet, currentRow, cell++, MathUtils.safeNull(i.getValue()));
+			createCell(sheet, currentRow, cell, MathUtils.safeNull(i.getValue()));
 			currentRow++;
 		}
 		for (Bill bill : liquidation.getBills()) {
@@ -151,17 +166,22 @@ public class AdjustmentReportGenerator extends BaseReport {
 				cell = 0;
 				switch (detail.getConcept()) {
 				case MANUAL:
-					createCell(sheet, currentRow, cell++, liquidation.getSender().getName());
-					createCell(sheet, currentRow, cell++, liquidation.getReceiver().getName());
-					createCell(sheet, currentRow, cell++, costCenter != null ? costCenter.getName() : StringUtils.EMPTY);
-					createCell(sheet, currentRow, cell++, bill.getCurrentState().getStateDefinition().getId());
+					createCell(sheet, currentRow, cell++,
+							liquidation.getSender().getName());
+					createCell(sheet, currentRow, cell++,
+							liquidation.getReceiver().getName());
+					createCell(sheet, currentRow, cell++, costCenter != null
+							? costCenter.getName() : StringUtils.EMPTY);
+					createCell(sheet, currentRow, cell++,
+							bill.getCurrentState().getStateDefinition().getId());
 					createCell(sheet, currentRow, cell++, liquidation.getBillDate());
 					createCell(sheet, currentRow, cell++, "ESTABLECIMIENTO");
-					createCell(sheet, currentRow, cell++, detail.getLiquidationIncluded() ? "SI" : "NO");
+					createCell(sheet, currentRow, cell++,
+							detail.getLiquidationIncluded() ? "SI" : "NO");
 					createCell(sheet, currentRow, cell++, detail.getName());
-					createCell(sheet, currentRow, cell++, MathUtils.safeNull(detail.getNetValue()));
-					createCell(sheet, currentRow, cell++, MathUtils.safeNull(detail.getVatValue()));
-					createCell(sheet, currentRow, cell++, MathUtils.safeNull(detail.getValue()));
+					createCell(sheet, currentRow, cell++, safeNull(detail.getNetValue()));
+					createCell(sheet, currentRow, cell++, safeNull(detail.getVatValue()));
+					createCell(sheet, currentRow, cell, safeNull(detail.getValue()));
 					currentRow++;
 					break;
 				default:

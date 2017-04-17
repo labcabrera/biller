@@ -6,6 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.luckia.biller.core.model.common.Message;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class MailMessageConverter {
 
 	private final Message<?> message;
@@ -15,7 +18,7 @@ public class MailMessageConverter {
 	}
 
 	public String getBody() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (StringUtils.isNotBlank(message.getMessage())) {
 			sb.append(message.getMessage()).append("<br>");
 		}
@@ -33,12 +36,18 @@ public class MailMessageConverter {
 		sb.append("Enviroment<br>");
 		sb.append("<ul>");
 		try {
-			sb.append("<li>host: ").append(InetAddress.getLocalHost().getHostName()).append("</li>");
-		} catch (Exception ignore) {
+			sb.append("<li>host: ").append(InetAddress.getLocalHost().getHostName())
+					.append("</li>");
 		}
-		sb.append("<li>user.name: ").append(System.getProperty("user.name")).append("</li>");
-		sb.append("<li>user.home: ").append(System.getProperty("user.home")).append("</li>");
-		sb.append("<li>java.version: ").append(System.getProperty("java.version")).append("</li>");
+		catch (Exception ignore) {
+			log.trace("Error resolving hostname", ignore);
+		}
+		sb.append("<li>user.name: ").append(System.getProperty("user.name"))
+				.append("</li>");
+		sb.append("<li>user.home: ").append(System.getProperty("user.home"))
+				.append("</li>");
+		sb.append("<li>java.version: ").append(System.getProperty("java.version"))
+				.append("</li>");
 		sb.append("</ul>");
 		return sb.toString();
 	}

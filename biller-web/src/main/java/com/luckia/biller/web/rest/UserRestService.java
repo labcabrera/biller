@@ -45,7 +45,8 @@ public class UserRestService {
 
 	@GET
 	@Path("/find")
-	public SearchResults<User> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
+	public SearchResults<User> find(@QueryParam("n") Integer maxResults,
+			@QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
 		params.setCurrentPage(page);
@@ -69,7 +70,9 @@ public class UserRestService {
 	@Path("/mail/{mail}")
 	public User findByMail(@PathParam("mail") String mail) {
 		EntityManager entityManager = entityManagerProvider.get();
-		List<User> values = entityManager.createQuery("select u from User u where u.email = :mail", User.class).setParameter("mail", mail).getResultList();
+		List<User> values = entityManager
+				.createQuery("select u from User u where u.email = :mail", User.class)
+				.setParameter("mail", mail).getResultList();
 		return values.isEmpty() ? null : values.iterator().next();
 	}
 
@@ -77,7 +80,9 @@ public class UserRestService {
 	@Path("/roles")
 	public List<UserRole> roles() {
 		EntityManager entityManager = entityManagerProvider.get();
-		return entityManager.createQuery("select e from UserRole e order by e.code", UserRole.class).getResultList();
+		return entityManager
+				.createQuery("select e from UserRole e order by e.code", UserRole.class)
+				.getResultList();
 
 	}
 }

@@ -29,10 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.model.ScheduledTask;
 
 /**
- * Al crear la instancia inserta en el contexto el {@link Injector} a partir del cual podremos utilizar los servicios.
+ * Al crear la instancia inserta en el contexto el {@link Injector} a partir del cual
+ * podremos utilizar los servicios.
  */
 @Singleton
 public class SchedulerService {
@@ -53,18 +55,22 @@ public class SchedulerService {
 		LOG.info("Starting scheduler service");
 		try {
 			Properties properties = new Properties();
-			properties.load(getClass().getResourceAsStream("/org/quartz/quartz.properties"));
+			properties.load(
+					getClass().getResourceAsStream("/org/quartz/quartz.properties"));
 			scheduler = new StdSchedulerFactory(properties).getScheduler();
 			scheduler.getContext().put(Injector.class.getName(), injector);
 			entityManagerProvider = injector.getProvider(EntityManager.class);
 			classLoader = Thread.currentThread().getContextClassLoader();
-		} catch (Exception ex) {
-			throw new RuntimeException("Error starting scheduler service", ex);
+		}
+		catch (Exception ex) {
+			throw new BillerException("Error starting scheduler service", ex);
 		}
 	}
 
 	/**
-	 * Podemos consultar la aplicación <a href="http://www.cronmaker.com/">cronmaker.com</a> para generar las expresiones cron.
+	 * Podemos consultar la aplicación
+	 * <a href="http://www.cronmaker.com/">cronmaker.com</a> para generar las expresiones
+	 * cron.
 	 * 
 	 * @throws SchedulerException
 	 */
@@ -73,22 +79,28 @@ public class SchedulerService {
 		LOG.debug("Registering scheduled jobs");
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
-			TypedQuery<ScheduledTask> query = entityManager.createNamedQuery("ScheduledTask.selectEnabled", ScheduledTask.class);
+			TypedQuery<ScheduledTask> query = entityManager
+					.createNamedQuery("ScheduledTask.selectEnabled", ScheduledTask.class);
 			List<ScheduledTask> tasks = query.getResultList();
 			LOG.debug("Readed {} scheduled tasks from database", tasks.size());
 			for (ScheduledTask task : tasks) {
 				if (StringUtils.isNotBlank(task.getCronExpression())) {
 					try {
-						Class<? extends Job> taskClass = (Class<? extends Job>) task.getExecutorClass();
-						registerJob(taskClass, task.getCronExpression(), task.getParams());
-						LOG.info("Scheduled task {} ({})", task.getName(), task.getExecutorClass().getName());
-					} catch (Exception ex) {
+						Class<? extends Job> taskClass = (Class<? extends Job>) task
+								.getExecutorClass();
+						registerJob(taskClass, task.getCronExpression(),
+								task.getParams());
+						LOG.info("Scheduled task {} ({})", task.getName(),
+								task.getExecutorClass().getName());
+					}
+					catch (Exception ex) {
 						LOG.error("Error registering task " + task, ex);
 					}
 				}
 			}
-		} catch (Exception ex) {
-			throw new RuntimeException("Error registering scheduled tasks", ex);
+		}
+		catch (Exception ex) {
+			throw new BillerException("Error registering scheduled tasks", ex);
 		}
 	}
 
@@ -100,9 +112,11 @@ public class SchedulerService {
 	 * @throws ClassNotFoundException
 	 */
 	@SuppressWarnings("unchecked")
-	public void registerTask(ScheduledTask task) throws SchedulerException, ClassNotFoundException {
+	public void registerTask(ScheduledTask task)
+			throws SchedulerException, ClassNotFoundException {
 		LOG.debug("Registering task {}", task);
-		Class<? extends Job> jobClass = (Class<? extends Job>) classLoader.loadClass(task.getExecutorClass().getName());
+		Class<? extends Job> jobClass = (Class<? extends Job>) classLoader
+				.loadClass(task.getExecutorClass().getName());
 		registerJob(jobClass, task.getCronExpression());
 	}
 
@@ -121,7 +135,8 @@ public class SchedulerService {
 	/**
 	 * Registra una tarea programada a partir de la expresión cron.
 	 */
-	private void registerJob(Class<? extends Job> jobClass, String cronExpression) throws SchedulerException {
+	private void registerJob(Class<? extends Job> jobClass, String cronExpression)
+			throws SchedulerException {
 		registerJob(jobClass, cronExpression, null);
 	}
 
@@ -133,8 +148,10 @@ public class SchedulerService {
 	 * @param params
 	 * @throws SchedulerException
 	 */
-	private void registerJob(Class<? extends Job> jobClass, String cronExpression, Map<String, String> params) throws SchedulerException {
-		LOG.debug("Registering task {} with cron expression {}", jobClass.getName(), cronExpression);
+	private void registerJob(Class<? extends Job> jobClass, String cronExpression,
+			Map<String, String> params) throws SchedulerException {
+		LOG.debug("Registering task {} with cron expression {}", jobClass.getName(),
+				cronExpression);
 		if (params != null) {
 			for (Entry<String, String> i : params.entrySet()) {
 				String key = i.getKey();
@@ -143,8 +160,10 @@ public class SchedulerService {
 			}
 		}
 		String name = jobClass.getName();
-		JobDetail jobDetail = JobBuilder.newJob(jobClass).withDescription(name).withIdentity(name).build();
-		CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
+		JobDetail jobDetail = JobBuilder.newJob(jobClass).withDescription(name)
+				.withIdentity(name).build();
+		CronScheduleBuilder scheduleBuilder = CronScheduleBuilder
+				.cronSchedule(cronExpression);
 		MutableTrigger trigger = scheduleBuilder.build();
 		trigger.setKey(new TriggerKey(name));
 		scheduler.scheduleJob(jobDetail, trigger);
@@ -158,13 +177,18 @@ public class SchedulerService {
 	 * @throws ClassNotFoundException
 	 */
 	@SuppressWarnings("unchecked")
-	public void execute(ScheduledTask task) throws SchedulerException, ClassNotFoundException {
+	public void execute(ScheduledTask task)
+			throws SchedulerException, ClassNotFoundException {
 		LOG.debug("Executing task {}", task);
 		Class<? extends Job> jobClass = (Class<? extends Job>) task.getExecutorClass();
-		String name = String.format("%s_%s", System.currentTimeMillis(), jobClass.getName());
-		JobDetail jobDetail = JobBuilder.newJob(jobClass).withDescription(name).withIdentity(name).build();
-		SimpleScheduleBuilder builder = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(1).withRepeatCount(0);
-		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("Trigger_" + name).withSchedule(builder).build();
+		String name = String.format("%s_%s", System.currentTimeMillis(),
+				jobClass.getName());
+		JobDetail jobDetail = JobBuilder.newJob(jobClass).withDescription(name)
+				.withIdentity(name).build();
+		SimpleScheduleBuilder builder = SimpleScheduleBuilder.simpleSchedule()
+				.withIntervalInSeconds(1).withRepeatCount(0);
+		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("Trigger_" + name)
+				.withSchedule(builder).build();
 		scheduler.scheduleJob(jobDetail, trigger);
 	}
 

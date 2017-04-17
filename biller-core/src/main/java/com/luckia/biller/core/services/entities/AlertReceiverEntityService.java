@@ -19,12 +19,14 @@ public class AlertReceiverEntityService extends EntityService<AlertReceiver> {
 			current = entityManager.find(AlertReceiver.class, entity.getId());
 			current.merge(entity);
 			entityManager.merge(current);
-		} else {
+		}
+		else {
 			current = new AlertReceiver();
 			current.merge(entity);
 			entityManager.persist(current);
 		}
-		return new Message<AlertReceiver>().withMessage("alertReceiver.merge.success").withPayload(current);
+		return new Message<AlertReceiver>().withMessage("alertReceiver.merge.success")
+				.withPayload(current);
 	}
 
 	@Override

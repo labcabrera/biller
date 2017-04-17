@@ -20,11 +20,10 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.common.RegisterActivity;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.model.AppFile;
@@ -48,15 +47,16 @@ import com.luckia.biller.core.services.pdf.PDFBillGenerator;
 import com.luckia.biller.core.services.pdf.PDFLiquidationDetailGenerator;
 import com.luckia.biller.core.services.security.RequiredRole;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Common bill REST operations.
  */
 @Path("/bills")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Slf4j
 public class BillRestService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(BillRestService.class);
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
@@ -91,7 +91,8 @@ public class BillRestService {
 
 	@GET
 	@Path("/find")
-	public SearchResults<Bill> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
+	public SearchResults<Bill> find(@QueryParam("n") Integer maxResults,
+			@QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
 		params.setCurrentPage(page);
@@ -116,10 +117,13 @@ public class BillRestService {
 			Bill current = entityManager.find(Bill.class, bill.getId());
 			current.merge(bill);
 			entityManager.merge(current);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.merge"), bill);
-		} catch (Exception ex) {
-			LOG.error("Error al actualizar la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.merge.error"));
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("bill.merge"), bill);
+		}
+		catch (Exception ex) {
+			log.error("Error al actualizar la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("bill.merge.error"));
 		}
 	}
 
@@ -132,9 +136,11 @@ public class BillRestService {
 			Bill bill = entityManager.find(Bill.class, billId);
 			billProcessor.remove(bill);
 			return new Message<>(Message.CODE_SUCCESS, "Factura eliminada");
-		} catch (Exception ex) {
-			LOG.error("Error al eliminar la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al eliminar la factura");
+		}
+		catch (Exception ex) {
+			log.error("Error al eliminar la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al eliminar la factura");
 		}
 	}
 
@@ -145,10 +151,13 @@ public class BillRestService {
 		try {
 			Bill bill = entityManagerProvider.get().find(Bill.class, id);
 			billProcessor.confirmBill(bill);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.confirm.success"), bill);
-		} catch (Exception ex) {
-			LOG.error("Error al confirmar la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.confirm.error"));
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("bill.confirm.success"), bill);
+		}
+		catch (Exception ex) {
+			log.error("Error al confirmar la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("bill.confirm.error"));
 		}
 	}
 
@@ -164,10 +173,13 @@ public class BillRestService {
 	public Message<Bill> mergeLiquidationDetail(BillLiquidationDetail detail) {
 		try {
 			Bill bill = billProcessor.mergeLiquidationDetail(detail);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.merge"), bill);
-		} catch (Exception ex) {
-			LOG.error("Error al actualizar el detalle", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.detail.merge.error"));
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("bill.detail.merge"), bill);
+		}
+		catch (Exception ex) {
+			log.error("Error al actualizar el detalle", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("bill.detail.merge.error"));
 		}
 	}
 
@@ -177,12 +189,16 @@ public class BillRestService {
 	public Message<Bill> removeLiquidationDetail(@PathParam("id") String id) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
-			BillLiquidationDetail detail = entityManager.find(BillLiquidationDetail.class, id);
+			BillLiquidationDetail detail = entityManager.find(BillLiquidationDetail.class,
+					id);
 			Bill bill = billProcessor.removeLiquidationDetail(detail);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.remove"), bill);
-		} catch (Exception ex) {
-			LOG.error("Error al actualizar el detalle", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.detail.remove.error"));
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("bill.detail.remove"), bill);
+		}
+		catch (Exception ex) {
+			log.error("Error al actualizar el detalle", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("bill.detail.remove.error"));
 		}
 	}
 
@@ -192,10 +208,13 @@ public class BillRestService {
 	public Message<Bill> mergeBillDetail(BillDetail detail) {
 		try {
 			Bill bill = billProcessor.mergeBillDetail(detail);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.merge"), bill);
-		} catch (Exception ex) {
-			LOG.error("Error al actualizar el detalle", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.detail.merge.error"));
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("bill.detail.merge"), bill);
+		}
+		catch (Exception ex) {
+			log.error("Error al actualizar el detalle", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("bill.detail.merge.error"));
 		}
 	}
 
@@ -208,9 +227,11 @@ public class BillRestService {
 			Bill bill = entityManager.find(Bill.class, id);
 			stateMachineService.createTransition(bill, CommonState.DRAFT.name());
 			return new Message<>(Message.CODE_SUCCESS, "Estado actualizado", bill);
-		} catch (Exception ex) {
-			LOG.error("Error al revertir el estado de la factura", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, "Error al revertir el estado de la factura");
+		}
+		catch (Exception ex) {
+			log.error("Error al revertir el estado de la factura", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					"Error al revertir el estado de la factura");
 		}
 	}
 
@@ -222,10 +243,13 @@ public class BillRestService {
 			EntityManager entityManager = entityManagerProvider.get();
 			BillDetail detail = entityManager.find(BillDetail.class, id);
 			Bill bill = billProcessor.removeBillDetail(detail);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.detail.remove"), bill);
-		} catch (Exception ex) {
-			LOG.error("Error al eliminar el detalle", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.detail.remove.error"), null);
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("bill.detail.remove"), bill);
+		}
+		catch (Exception ex) {
+			log.error("Error al eliminar el detalle", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("bill.detail.remove.error"), null);
 		}
 	}
 
@@ -233,17 +257,19 @@ public class BillRestService {
 	 * Envia el PDF de la liquidacion por correo a un destinatario.
 	 * 
 	 * @param id
-	 * @param emailAddress
-	 *            destinatarios de correo
+	 * @param emailAddress destinatarios de correo
 	 * @return
 	 */
 	@POST
 	@Path("/send/{option}/{id}")
-	public Message<Bill> sendEmail(@PathParam("option") String option, @PathParam("id") String id, String emailAddress) {
+	public Message<Bill> sendEmail(@PathParam("option") String option,
+			@PathParam("id") String id, String emailAddress) {
 		try {
 			if (StringUtils.isBlank(emailAddress)) {
-				return new Message<>(Message.CODE_GENERIC_ERROR, "No se ha establecido el destinatario");
-			} else {
+				return new Message<>(Message.CODE_GENERIC_ERROR,
+						"No se ha establecido el destinatario");
+			}
+			else {
 				EntityManager entityManager = entityManagerProvider.get();
 				entityManager.clear();
 				Bill bill = entityManager.find(Bill.class, id);
@@ -259,16 +285,21 @@ public class BillRestService {
 				String title = "Factura " + bill.getCode();
 				String body = "Adjunto PDF";
 				String[] recipients = emailAddress.split("\\s*;\\s*");
-				// TODO cuando se produce un error no se detecta y se devuelve el message success
+				// TODO cuando se produce un error no se detecta y se devuelve el message
+				// success
 				for (String recipient : recipients) {
-					SendAppFileMailTask task = new SendAppFileMailTask(recipient, appFile, title, body, fileService, mailService);
+					SendAppFileMailTask task = new SendAppFileMailTask(recipient, appFile,
+							title, body, fileService, mailService);
 					new Thread(task).start();
 				}
-				return new Message<>(Message.CODE_SUCCESS, String.format(i18nService.getMessage("bill.send.email"), emailAddress), bill);
+				return new Message<>(Message.CODE_SUCCESS, String.format(
+						i18nService.getMessage("bill.send.email"), emailAddress), bill);
 			}
-		} catch (Exception ex) {
-			LOG.error("Error al enviar la factura", ex);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.send.email.error"));
+		}
+		catch (Exception ex) {
+			log.error("Error al enviar la factura", ex);
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("bill.send.email.error"));
 		}
 	}
 
@@ -280,10 +311,13 @@ public class BillRestService {
 			entityManager.clear();
 			Bill bill = entityManager.find(Bill.class, id);
 			Bill rectified = billProcessor.rectifyBill(bill);
-			return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("bill.rectify"), rectified);
-		} catch (Exception ex) {
-			LOG.error("Error al generar la rectificación", ex);
-			return new Message<>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("bill.rectify.error"), null);
+			return new Message<>(Message.CODE_SUCCESS,
+					i18nService.getMessage("bill.rectify"), rectified);
+		}
+		catch (Exception ex) {
+			log.error("Error al generar la rectificación", ex);
+			return new Message<>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("bill.rectify.error"), null);
 		}
 	}
 
@@ -304,13 +338,16 @@ public class BillRestService {
 			Bill bill = entityManager.find(Bill.class, id);
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			pdfBillGenerator.generate(bill, out);
-			ResponseBuilder response = Response.ok(new ByteArrayInputStream(out.toByteArray()));
-			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "borrador.pdf"));
+			ResponseBuilder response = Response
+					.ok(new ByteArrayInputStream(out.toByteArray()));
+			response.header("Content-Disposition",
+					String.format("attachment; filename=\"%s\"", "borrador.pdf"));
 			response.header("Content-Type", "application/pdf");
 			return response.build();
-		} catch (Exception ex) {
-			LOG.error("Error al generar el borrador", ex);
-			throw new RuntimeException("Error la generar el borrador");
+		}
+		catch (Exception ex) {
+			log.error("Error al generar el borrador", ex);
+			throw new BillerException("Error la generar el borrador");
 		}
 	}
 
@@ -324,13 +361,16 @@ public class BillRestService {
 			Bill bill = entityManager.find(Bill.class, id);
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			pdfLiquidationDetailGenerator.generate(bill, out);
-			ResponseBuilder response = Response.ok(new ByteArrayInputStream(out.toByteArray()));
-			response.header("Content-Disposition", String.format("attachment; filename=\"%s\"", "borrador.pdf"));
+			ResponseBuilder response = Response
+					.ok(new ByteArrayInputStream(out.toByteArray()));
+			response.header("Content-Disposition",
+					String.format("attachment; filename=\"%s\"", "borrador.pdf"));
 			response.header("Content-Type", "application/pdf");
 			return response.build();
-		} catch (Exception ex) {
-			LOG.error("Error al generar el borrador", ex);
-			throw new RuntimeException("Error la generar el borrador");
+		}
+		catch (Exception ex) {
+			log.error("Error al generar el borrador", ex);
+			throw new BillerException("Error la generar el borrador");
 		}
 	}
 }

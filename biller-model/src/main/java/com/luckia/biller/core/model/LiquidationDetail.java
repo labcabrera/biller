@@ -13,11 +13,14 @@ import javax.persistence.Table;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+
 /**
  * Representa un ajuste realizado en la liquidacion.
  */
 @Entity
 @Table(name = "B_LIQUIDATION_DETAIL")
+@Data
 @SuppressWarnings("serial")
 public class LiquidationDetail implements Mergeable<LiquidationDetail>, Serializable {
 
@@ -49,82 +52,11 @@ public class LiquidationDetail implements Mergeable<LiquidationDetail>, Serializ
 	private BigDecimal vatValue;
 
 	/**
-	 * Indica si el ajuste se aplica dentro del importe de liquidacion o se aplica fuera del importe a liquidar.
+	 * Indica si el ajuste se aplica dentro del importe de liquidacion o se aplica fuera
+	 * del importe a liquidar.
 	 */
 	@Column(name = "LIQUIDATION_INCLUDED", nullable = false)
 	private Boolean liquidationIncluded;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Liquidation getLiquidation() {
-		return liquidation;
-	}
-
-	public void setLiquidation(Liquidation liquidation) {
-		this.liquidation = liquidation;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public BigDecimal getUnits() {
-		return units;
-	}
-
-	public void setUnits(BigDecimal units) {
-		this.units = units;
-	}
-
-	public BigDecimal getValue() {
-		return value;
-	}
-
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
-
-	public Boolean getLiquidationIncluded() {
-		return liquidationIncluded;
-	}
-
-	public void setLiquidationIncluded(Boolean liquidationIncluded) {
-		this.liquidationIncluded = liquidationIncluded;
-	}
-
-	public BigDecimal getSourceValue() {
-		return sourceValue;
-	}
-
-	public void setSourceValue(BigDecimal sourceValue) {
-		this.sourceValue = sourceValue;
-	}
-
-	public BigDecimal getNetValue() {
-		return netValue;
-	}
-
-	public void setNetValue(BigDecimal netValue) {
-		this.netValue = netValue;
-	}
-
-	public BigDecimal getVatValue() {
-		return vatValue;
-	}
-
-	public void setVatValue(BigDecimal vatValue) {
-		this.vatValue = vatValue;
-	}
 
 	@Override
 	public void merge(LiquidationDetail entity) {

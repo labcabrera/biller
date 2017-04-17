@@ -20,13 +20,19 @@ import javax.persistence.TemporalType;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * Entidad que representa un usuario de la aplicación.
  */
 @Entity
 @Table(name = "S_USER")
+@NamedQueries({
+		@NamedQuery(name = "User.selectByAlias", query = "select e from User e where e.alias = :alias") })
+@Data
+@NoArgsConstructor
 @SuppressWarnings("serial")
-@NamedQueries({ @NamedQuery(name = "User.selectByAlias", query = "select e from User e where e.alias = :alias") })
 public class User implements Serializable, Mergeable<User> {
 
 	@Id
@@ -56,81 +62,16 @@ public class User implements Serializable, Mergeable<User> {
 	private Date disabled;
 
 	@OneToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "S_USER_ROLE_RELATION", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") })
+	@JoinTable(name = "S_USER_ROLE_RELATION", joinColumns = {
+			@JoinColumn(name = "USER_ID") }, inverseJoinColumns = {
+					@JoinColumn(name = "ROLE_ID") })
 	private List<UserRole> roles;
-
-	public User() {
-	}
 
 	public User(String name, String email, String passwordDigest, Date created) {
 		this.name = name;
 		this.email = email;
 		this.passwordDigest = passwordDigest;
 		this.created = created;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPasswordDigest() {
-		return passwordDigest;
-	}
-
-	public void setPasswordDigest(String passwordDigest) {
-		this.passwordDigest = passwordDigest;
-	}
-
-	public Date getCreated() {
-		return created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getAlias() {
-		return alias;
-	}
-
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
-
-	public List<UserRole> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<UserRole> roles) {
-		this.roles = roles;
-	}
-
-	public Date getDisabled() {
-		return disabled;
-	}
-
-	public void setDisabled(Date disabled) {
-		this.disabled = disabled;
 	}
 
 	@Override

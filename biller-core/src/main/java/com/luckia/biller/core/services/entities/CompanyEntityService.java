@@ -29,7 +29,8 @@ public class CompanyEntityService extends LegalEntityBaseService<Company> {
 			auditService.processCreated(current);
 			entityManager.persist(current);
 			message = i18nService.getMessage("company.persist");
-		} else {
+		}
+		else {
 			current = entityManager.find(Company.class, entity.getId());
 			current.merge(entity);
 			auditService.processModified(current);
@@ -49,7 +50,8 @@ public class CompanyEntityService extends LegalEntityBaseService<Company> {
 		Company current = entityManager.find(Company.class, primaryKey);
 		auditService.processDeleted(current);
 		entityManager.merge(current);
-		return new Message<Company>(Message.CODE_SUCCESS, i18nService.getMessage("company.remove"), current);
+		return new Message<Company>(Message.CODE_SUCCESS,
+				i18nService.getMessage("company.remove"), current);
 	}
 
 	@Override

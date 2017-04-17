@@ -1,7 +1,6 @@
 package com.luckia.biller.deploy.fedders;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -13,10 +12,12 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.io.Charsets;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.model.Province;
 import com.luckia.biller.core.model.Region;
 
@@ -31,7 +32,9 @@ public class RegionFeeder implements Feeder<Region> {
 	public void loadEntities(InputStream source) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Map<String, Province> provinces = new HashMap<String, Province>();
-		for (Province province : entityManager.createQuery("select p from Province p", Province.class).getResultList()) {
+		for (Province province : entityManager
+				.createQuery("select p from Province p", Province.class)
+				.getResultList()) {
 			provinces.put(province.getId(), province);
 		}
 		Reader reader = null;
@@ -58,17 +61,14 @@ public class RegionFeeder implements Feeder<Region> {
 					entityManager.flush();
 				}
 			}
-			LOG.info("Cargadas {} regiones en {} ms", count, (System.currentTimeMillis() - t0));
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException ignore) {
-					LOG.error(ignore.getMessage());
-				}
-			}
+			LOG.info("Cargadas {} regiones en {} ms", count,
+					(System.currentTimeMillis() - t0));
+		}
+		catch (Exception ex) {
+			throw new BillerException(ex);
+		}
+		finally {
+			IOUtils.closeQuietly(reader);
 		}
 	}
 

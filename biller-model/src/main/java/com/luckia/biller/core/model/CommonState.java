@@ -1,7 +1,8 @@
 package com.luckia.biller.core.model;
 
 /**
- * Tipo enumerado que establece diferentes estados genéricos de las entidades factura y liquidacion.
+ * Tipo enumerado que establece diferentes estados genéricos de las entidades factura y
+ * liquidacion.
  * 
  * @see AbstractBill
  * @see Bill
@@ -11,12 +12,14 @@ package com.luckia.biller.core.model;
 public enum CommonState {
 
 	/**
-	 * El elemento La factura ha sido creada y persistida pero aun no se han calculado los detalles que la componen.
+	 * El elemento La factura ha sido creada y persistida pero aun no se han calculado los
+	 * detalles que la componen.
 	 */
 	INITIAL,
 
 	/**
-	 * Elemento generado de forma automatica que está pendiente de ser validado por un operador de la aplicación.
+	 * Elemento generado de forma automatica que está pendiente de ser validado por un
+	 * operador de la aplicación.
 	 */
 	DRAFT,
 

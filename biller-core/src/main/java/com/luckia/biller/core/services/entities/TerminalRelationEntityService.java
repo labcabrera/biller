@@ -36,7 +36,8 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 			auditService.processCreated(current);
 			entityManager.persist(current);
 			message = i18nService.getMessage("terminal.persist");
-		} else {
+		}
+		else {
 			current = entityManager.find(TerminalRelation.class, entity.getId());
 			current.merge(entity);
 			auditService.processModified(current);
@@ -49,7 +50,8 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.entities.EntityService#remove(java.io.Serializable)
+	 * @see
+	 * com.luckia.biller.core.services.entities.EntityService#remove(java.io.Serializable)
 	 */
 	@Override
 	@Transactional
@@ -59,7 +61,8 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 		TerminalRelation current = entityManager.find(TerminalRelation.class, primaryKey);
 		auditService.processDeleted(current);
 		entityManager.merge(current);
-		return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("terminal.remove"), current);
+		return new Message<>(Message.CODE_SUCCESS,
+				i18nService.getMessage("terminal.remove"), current);
 	}
 
 	/*
@@ -75,11 +78,14 @@ public class TerminalRelationEntityService extends EntityService<TerminalRelatio
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.entities.EntityService#buildOrderCriteria(javax.persistence.criteria.CriteriaQuery, javax.persistence.criteria.CriteriaBuilder,
+	 * @see
+	 * com.luckia.biller.core.services.entities.EntityService#buildOrderCriteria(javax.
+	 * persistence.criteria.CriteriaQuery, javax.persistence.criteria.CriteriaBuilder,
 	 * javax.persistence.criteria.Root)
 	 */
 	@Override
-	protected void buildOrderCriteria(CriteriaQuery<TerminalRelation> criteria, CriteriaBuilder builder, Root<TerminalRelation> root) {
-		criteria.orderBy(builder.asc(root.<String> get("code")));
+	protected void buildOrderCriteria(CriteriaQuery<TerminalRelation> criteria,
+			CriteriaBuilder builder, Root<TerminalRelation> root) {
+		criteria.orderBy(builder.asc(root.<String>get("code")));
 	}
 }

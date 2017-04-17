@@ -20,26 +20,36 @@ public class RappelValidator implements ConstraintValidator<ValidRappel, Rappel>
 		boolean hasErrors = false;
 
 		if (entity.getModel() == null || entity.getModel().getId() == null) {
-			context.buildConstraintViolationWithTemplate("rappel.missing.model").addConstraintViolation();
+			context.buildConstraintViolationWithTemplate("rappel.missing.model")
+					.addConstraintViolation();
 			hasErrors = true;
 		}
 		if (MathUtils.isZero(entity.getAmount())) {
-			context.buildConstraintViolationWithTemplate("rappel.missing.amount").addConstraintViolation();
+			context.buildConstraintViolationWithTemplate("rappel.missing.amount")
+					.addConstraintViolation();
 			hasErrors = true;
-		} else if (!MathUtils.isNotZeroPositive(entity.getAmount())) {
-			context.buildConstraintViolationWithTemplate("rappel.invalid.amount").addConstraintViolation();
+		}
+		else if (!MathUtils.isNotZeroPositive(entity.getAmount())) {
+			context.buildConstraintViolationWithTemplate("rappel.invalid.amount")
+					.addConstraintViolation();
 			hasErrors = true;
-		} else {
+		}
+		else {
 			entity.setAmount(entity.getAmount().setScale(2, RoundingMode.HALF_EVEN));
 		}
 		if (MathUtils.isZero(entity.getBonusAmount())) {
-			context.buildConstraintViolationWithTemplate("rappel.missing.bonusAmount").addConstraintViolation();
+			context.buildConstraintViolationWithTemplate("rappel.missing.bonusAmount")
+					.addConstraintViolation();
 			hasErrors = true;
-		} else if (!MathUtils.isNotZeroPositive(entity.getBonusAmount())) {
-			context.buildConstraintViolationWithTemplate("rappel.invalid.bonusAmount").addConstraintViolation();
+		}
+		else if (!MathUtils.isNotZeroPositive(entity.getBonusAmount())) {
+			context.buildConstraintViolationWithTemplate("rappel.invalid.bonusAmount")
+					.addConstraintViolation();
 			hasErrors = true;
-		} else {
-			entity.setBonusAmount(entity.getBonusAmount().setScale(2, RoundingMode.HALF_EVEN));
+		}
+		else {
+			entity.setBonusAmount(
+					entity.getBonusAmount().setScale(2, RoundingMode.HALF_EVEN));
 		}
 		return !hasErrors;
 	}

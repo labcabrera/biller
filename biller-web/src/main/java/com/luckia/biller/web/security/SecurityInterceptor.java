@@ -14,8 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.core.ServerResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.model.User;
 import com.luckia.biller.core.model.UserRole;
@@ -23,12 +21,16 @@ import com.luckia.biller.core.model.UserSession;
 import com.luckia.biller.core.services.SecurityService;
 import com.luckia.biller.core.services.security.RequiredRole;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Provider
+@Slf4j
 public class SecurityInterceptor implements ContainerRequestFilter {
 
-	public static final ServerResponse ACCESS_FORBIDDEN = new ServerResponse("{\"message\":\"Access forbidden\"}", 403, new Headers<Object>());;
-	private static final Logger LOG = LoggerFactory.getLogger(SecurityInterceptor.class);
 	private static final String AUTHORIZATION_PROPERTY = "sessionid";
+	public static final ServerResponse ACCESS_FORBIDDEN = new ServerResponse(
+			"{\"message\":\"Access forbidden\"}", 403, new Headers<Object>());
+
 
 	@Inject
 	private javax.inject.Provider<EntityManager> entityManagerProvider;
@@ -37,23 +39,25 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
-		ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
+		ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext
+				.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
 		Method method = methodInvoker.getMethod();
 		if (!method.isAnnotationPresent(PermitAll.class)) {
 			final MultivaluedMap<String, String> headers = requestContext.getHeaders();
 			EntityManager entityManager = entityManagerProvider.get();
 			String sessionId = null;
-			if (headers.containsKey(AUTHORIZATION_PROPERTY) && !headers.get(AUTHORIZATION_PROPERTY).isEmpty()) {
+			if (headers.containsKey(AUTHORIZATION_PROPERTY)
+					&& !headers.get(AUTHORIZATION_PROPERTY).isEmpty()) {
 				sessionId = headers.get(AUTHORIZATION_PROPERTY).iterator().next();
 			}
 			if (StringUtils.isBlank(sessionId)) {
-				LOG.debug("Missing sessionId");
+				log.debug("Missing sessionId");
 				requestContext.abortWith(ACCESS_FORBIDDEN);
 				return;
 			}
 			UserSession session = entityManager.find(UserSession.class, sessionId);
 			if (session == null) {
-				LOG.debug("Session not found");
+				log.debug("Session not found");
 				requestContext.abortWith(ACCESS_FORBIDDEN);
 				return;
 			}
@@ -70,7 +74,7 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 					}
 				}
 				if (!validRole) {
-					LOG.debug("Invalid role groups");
+					log.debug("Invalid role groups");
 					requestContext.abortWith(ACCESS_FORBIDDEN);
 					return;
 				}

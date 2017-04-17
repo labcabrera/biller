@@ -25,7 +25,9 @@ public class TestBillerSerializer {
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 		Serializer serializer = injector.getInstance(Serializer.class);
 
-		TypedQuery<Bill> query = entityManager.createQuery("select b from Bill b join fetch b.details order by b.code desc", Bill.class);
+		TypedQuery<Bill> query = entityManager.createQuery(
+				"select b from Bill b join fetch b.details order by b.code desc",
+				Bill.class);
 		Bill bill = query.setMaxResults(1).getSingleResult();
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

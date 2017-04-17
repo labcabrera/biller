@@ -34,18 +34,24 @@ public class TestCostCenterQuery {
 			sb.append("and s.costCenter.id = 11 ");
 			sb.append("order by l.billDate desc, l.id");
 
-			TypedQuery<Liquidation> query = entityManager.createQuery(sb.toString(), Liquidation.class);
-			query.setParameter("states", Arrays.asList(CommonState.CONFIRMED, CommonState.SENT));
+			TypedQuery<Liquidation> query = entityManager.createQuery(sb.toString(),
+					Liquidation.class);
+			query.setParameter("states",
+					Arrays.asList(CommonState.CONFIRMED, CommonState.SENT));
 			query.setMaxResults(5);
 			List<Liquidation> list = query.getResultList();
 			for (Liquidation i : list) {
-				System.out.println(String.format("%-40s %-20s %-20s", i.getSender().getName(), i.getBillDate(), i.getCurrentState().getStateDefinition().getId()));
+				System.out.println(String.format("%-40s %-20s %-20s",
+						i.getSender().getName(), i.getBillDate(),
+						i.getCurrentState().getStateDefinition().getId()));
 				for (Bill bill : i.getBills()) {
-					System.out.println(String.format("%-40s %-20s", "", bill.getSender().as(Store.class).getCostCenter().getName()));
+					System.out.println(String.format("%-40s %-20s", "",
+							bill.getSender().as(Store.class).getCostCenter().getName()));
 				}
 				// System.out.println(serializer.toJson(i));
 			}
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}

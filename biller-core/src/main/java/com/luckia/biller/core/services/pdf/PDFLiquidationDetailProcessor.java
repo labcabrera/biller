@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.Bill;
 import com.luckia.biller.core.model.BillLiquidationDetail;
@@ -34,11 +35,14 @@ public class PDFLiquidationDetailProcessor {
 
 	public Map<String, PDFLiquidationDetail> loadDetails(Liquidation liquidation) {
 		Map<String, PDFLiquidationDetail> result = new LinkedHashMap<>();
-		result.put(HONORARIOS_APUESTAS, new PDFLiquidationDetail().init("Honorarios por apuestas"));
+		result.put(HONORARIOS_APUESTAS,
+				new PDFLiquidationDetail().init("Honorarios por apuestas"));
 		result.put(VENTAS, new PDFLiquidationDetail().init("Ventas"));
 		result.put(SAT, new PDFLiquidationDetail().init("SAT"));
-		result.put(COSTE_UBICACION, new PDFLiquidationDetail().init("Coste por ubicación"));
-		result.put(ATENCION_COMERCIAL, new PDFLiquidationDetail().init("Atención comercial"));
+		result.put(COSTE_UBICACION,
+				new PDFLiquidationDetail().init("Coste por ubicación"));
+		result.put(ATENCION_COMERCIAL,
+				new PDFLiquidationDetail().init("Atención comercial"));
 		for (Bill bill : liquidation.getBills()) {
 			for (BillLiquidationDetail detail : bill.getLiquidationDetails()) {
 				if (detail.getLiquidationIncluded()) {
@@ -64,7 +68,8 @@ public class PDFLiquidationDetailProcessor {
 						addConcept(result, detail.getName(), detail);
 						break;
 					default:
-						throw new RuntimeException("Unexpected concept type: " + detail.getConcept());
+						throw new BillerException(
+								"Unexpected concept type: " + detail.getConcept());
 					}
 				}
 			}
@@ -107,7 +112,8 @@ public class PDFLiquidationDetailProcessor {
 		return result;
 	}
 
-	private void addConcept(Map<String, PDFLiquidationDetail> map, String concept, BillLiquidationDetail detail) {
+	private void addConcept(Map<String, PDFLiquidationDetail> map, String concept,
+			BillLiquidationDetail detail) {
 		if (!map.containsKey(concept)) {
 			map.put(concept, new PDFLiquidationDetail().init(concept));
 		}
@@ -117,8 +123,10 @@ public class PDFLiquidationDetailProcessor {
 		i.setAmount(i.getAmount().add(MathUtils.safeNull(detail.getValue())));
 	}
 
-	private Map<String, PDFLiquidationDetail> cleanEmptyResults(Map<String, PDFLiquidationDetail> map) {
-		for (Iterator<Entry<String, PDFLiquidationDetail>> iterator = map.entrySet().iterator(); iterator.hasNext();) {
+	private Map<String, PDFLiquidationDetail> cleanEmptyResults(
+			Map<String, PDFLiquidationDetail> map) {
+		for (Iterator<Entry<String, PDFLiquidationDetail>> iterator = map.entrySet()
+				.iterator(); iterator.hasNext();) {
 			Entry<String, PDFLiquidationDetail> entry = iterator.next();
 			if (MathUtils.isZero(entry.getValue().getAmount())) {
 				iterator.remove();

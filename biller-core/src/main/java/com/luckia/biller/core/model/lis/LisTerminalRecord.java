@@ -20,7 +20,8 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "terminales_por_mes")
 @IdClass(LisTerminalRecordPK.class)
-@NamedQueries({ @NamedQuery(name = "LisTerminalRecord.selectByCodesInRange", query = "select e from LisTerminalRecord e where e.terminalCode in :codes and e.date >= :from and e.date <= :to") })
+@NamedQueries({
+		@NamedQuery(name = "LisTerminalRecord.selectByCodesInRange", query = "select e from LisTerminalRecord e where e.terminalCode in :codes and e.date >= :from and e.date <= :to") })
 public class LisTerminalRecord {
 
 	@Id

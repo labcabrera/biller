@@ -10,6 +10,10 @@ import javax.persistence.Table;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * Entidad que representa uno de los estados posibles de una determinada entidad.
  * 
@@ -18,8 +22,10 @@ import com.luckia.biller.core.serialization.NotSerializable;
  */
 @Entity
 @Table(name = "S_STATE_DEFINITION")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @SuppressWarnings("serial")
-
 public class StateDefinition implements Serializable {
 
 	@Id
@@ -31,27 +37,4 @@ public class StateDefinition implements Serializable {
 	@NotSerializable
 	private Class<? extends HasState> hasStateClass;
 
-	public StateDefinition() {
-	}
-
-	public StateDefinition(String id, Class<? extends HasState> hasStateClass) {
-		this.id = id;
-		this.hasStateClass = hasStateClass;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Class<? extends HasState> getHasStateClass() {
-		return hasStateClass;
-	}
-
-	public void setHasStateClass(Class<? extends HasState> hasStateClass) {
-		this.hasStateClass = hasStateClass;
-	}
 }

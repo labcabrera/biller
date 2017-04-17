@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
 import com.luckia.biller.core.model.Sequence;
 
 /**
- * Clase encargada de generar numeros secuenciales. Se utiliza por ejemplo para generar las secuencias con los codigos de las facturas.
+ * Clase encargada de generar numeros secuenciales. Se utiliza por ejemplo para generar
+ * las secuencias con los codigos de las facturas.
  */
 @Singleton
 public class Sequencer {
@@ -29,7 +30,10 @@ public class Sequencer {
 
 	private final Provider<EntityManager> entityManagerProvider;
 
-	/** Para evitar que se generen dos secuencias iguales forzamos a que sea thread-safe a traves de este bloqueo */
+	/**
+	 * Para evitar que se generen dos secuencias iguales forzamos a que sea thread-safe a
+	 * traves de este bloqueo
+	 */
 
 	private final ReentrantLock lock;
 
@@ -40,7 +44,8 @@ public class Sequencer {
 	private final String fieldValue;
 
 	@Inject
-	public Sequencer(Provider<EntityManager> entityManagerProvider) throws NoSuchFieldException, SecurityException {
+	public Sequencer(Provider<EntityManager> entityManagerProvider)
+			throws NoSuchFieldException, SecurityException {
 		LOG.debug("Initializing sequencer");
 		this.entityManagerProvider = entityManagerProvider;
 		Session session = entityManagerProvider.get().unwrap(Session.class);
@@ -63,21 +68,25 @@ public class Sequencer {
 		}
 		List<?> queryParams = Arrays.asList(name);
 		ValueReadQuery queryRead = new ValueReadQuery();
-		String sqlRead = String.format("select %s from %s where %s = #%s", fieldValue, tableName, fieldName, fieldName);
+		String sqlRead = String.format("select %s from %s where %s = #%s", fieldValue,
+				tableName, fieldName, fieldName);
 		queryRead.addArgument(fieldName);
 		queryRead.setSQLString(sqlRead);
 		Number current = (Number) writeSession.executeQuery(queryRead, queryParams);
 		if (current == null) {
 			result = 1L;
-			String sqlInsert = String.format("insert into %s (%s, %s) values(#%s, %s)", tableName, fieldName, fieldValue, fieldName, result);
+			String sqlInsert = String.format("insert into %s (%s, %s) values(#%s, %s)",
+					tableName, fieldName, fieldValue, fieldName, result);
 			DataModifyQuery insertQuery = new DataModifyQuery();
 			insertQuery.setSQLString(sqlInsert);
 			insertQuery.addArgument(fieldName);
 			writeSession.executeQuery(insertQuery, queryParams);
-		} else {
+		}
+		else {
 			result = current.longValue() + 1L;
 			DataModifyQuery queryUpdate = new DataModifyQuery();
-			String sqlUpdate = String.format("update %s set %s = %s where %s = #%s", tableName, fieldValue, result, fieldName, fieldName);
+			String sqlUpdate = String.format("update %s set %s = %s where %s = #%s",
+					tableName, fieldValue, result, fieldName, fieldName);
 			queryUpdate.addArgument(fieldName);
 			queryUpdate.setSQLString(sqlUpdate);
 			writeSession.executeQuery(queryUpdate, queryParams);
@@ -85,7 +94,8 @@ public class Sequencer {
 		if (!currentTransaction) {
 			writeSession.commitTransaction();
 		}
-		LOG.trace("Updated sequence {} for {} ({})", result, name, Thread.currentThread().getName());
+		LOG.trace("Updated sequence {} for {} ({})", result, name,
+				Thread.currentThread().getName());
 		lock.unlock();
 		return result;
 	}

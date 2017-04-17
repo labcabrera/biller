@@ -26,12 +26,18 @@ public class ZipFileServiceTest {
 		injector.getInstance(PersistService.class).start();
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 
-		TypedQuery<Liquidation> query = entityManager.createQuery("select e from Liquidation e where e.pdfFile is not null", Liquidation.class).setMaxResults(1);
+		TypedQuery<Liquidation> query = entityManager
+				.createQuery("select e from Liquidation e where e.pdfFile is not null",
+						Liquidation.class)
+				.setMaxResults(1);
 		List<Liquidation> list = query.getResultList();
 		if (list.isEmpty()) {
-			System.out.println("No se encuentran liquidaciones validas para realizar el test");
-		} else {
-			FileOutputStream out = new FileOutputStream(new File("./build/test-liquidation.zip"));
+			System.out.println(
+					"No se encuentran liquidaciones validas para realizar el test");
+		}
+		else {
+			FileOutputStream out = new FileOutputStream(
+					new File("./build/test-liquidation.zip"));
 			ZipFileService zipFileService = injector.getInstance(ZipFileService.class);
 			zipFileService.generate(list.iterator().next(), out);
 		}

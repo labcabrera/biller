@@ -29,7 +29,8 @@ public class UserActivityRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<UserActivity> find(@QueryParam("p") Integer page, @QueryParam("n") Integer itemsPerPage, @QueryParam("q") String queryString) {
+	public SearchResults<UserActivity> find(@QueryParam("p") Integer page,
+			@QueryParam("n") Integer itemsPerPage, @QueryParam("q") String queryString) {
 		SearchParams searchParams = new SearchParams();
 		searchParams.setItemsPerPage(itemsPerPage);
 		searchParams.setCurrentPage(page);

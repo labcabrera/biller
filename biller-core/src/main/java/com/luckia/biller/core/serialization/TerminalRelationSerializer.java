@@ -11,7 +11,8 @@ import com.luckia.biller.core.model.TerminalRelation;
 public class TerminalRelationSerializer implements JsonSerializer<TerminalRelation> {
 
 	@Override
-	public JsonElement serialize(TerminalRelation terminal, Type type, JsonSerializationContext ctx) {
+	public JsonElement serialize(TerminalRelation terminal, Type type,
+			JsonSerializationContext ctx) {
 		JsonObject result = new JsonObject();
 		result.addProperty("id", terminal.getId());
 		result.addProperty("code", terminal.getCode());

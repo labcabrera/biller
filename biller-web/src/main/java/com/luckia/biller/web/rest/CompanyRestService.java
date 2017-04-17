@@ -40,7 +40,8 @@ public class CompanyRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<Company> find(@QueryParam("p") Integer page, @QueryParam("n") Integer itemsPerPage, @QueryParam("q") String queryString) {
+	public SearchResults<Company> find(@QueryParam("p") Integer page,
+			@QueryParam("n") Integer itemsPerPage, @QueryParam("q") String queryString) {
 		SearchParams searchParams = new SearchParams();
 		searchParams.setItemsPerPage(itemsPerPage);
 		searchParams.setCurrentPage(page);
@@ -55,9 +56,11 @@ public class CompanyRestService {
 	public Message<Company> merge(Company entity) {
 		try {
 			return companyService.merge(entity);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al actualizar la empresa", ex);
-			return new Message<Company>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("company.error.merge"));
+			return new Message<Company>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("company.error.merge"));
 		}
 	}
 
@@ -68,9 +71,11 @@ public class CompanyRestService {
 	public Message<Company> remove(@PathParam("id") Long id) {
 		try {
 			return companyService.remove(id);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al eliminar la empresa", ex);
-			return new Message<Company>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("company.error.remove"));
+			return new Message<Company>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("company.error.remove"));
 		}
 	}
 }

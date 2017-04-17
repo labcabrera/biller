@@ -27,13 +27,18 @@ import org.eclipse.persistence.annotations.JoinFetchType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.Data;
+
 /**
- * Entidad abstracta que representa una entidad legal. Hay diferentes tipos de entidades legales: personas, establecimientos, empresas, etc.
+ * Entidad abstracta que representa una entidad legal. Hay diferentes tipos de entidades
+ * legales: personas, establecimientos, empresas, etc.
  */
 @Entity
-@Table(name = "B_LEGAL_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "ID_CARD_NUMBER" }) )
+@Table(name = "B_LEGAL_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = {
+		"ID_CARD_NUMBER" }))
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.CHAR, length = 1)
+@Data
 @SuppressWarnings("serial")
 public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Auditable {
 
@@ -88,112 +93,6 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 	@Column(name = "VERSION")
 	protected Integer version;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public IdCard getIdCard() {
-		return idCard;
-	}
-
-	public void setIdCard(IdCard idCard) {
-		this.idCard = idCard;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public Address getAddress() {
-		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
-	}
-
-	public LegalEntity getParent() {
-		return parent;
-	}
-
-	public void setParent(LegalEntity parent) {
-		this.parent = parent;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	public String getComments() {
-		return comments;
-	}
-
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
-
-	@Override
-	public AuditData getAuditData() {
-		return auditData;
-	}
-
-	@Override
-	public void setAuditData(AuditData auditData) {
-		this.auditData = auditData;
-	}
-
-	public String getAccountNumber() {
-		return accountNumber;
-	}
-
-	public void setAccountNumber(String accountNumber) {
-		this.accountNumber = accountNumber;
-	}
-
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
-
 	public LegalEntity withName(String name) {
 		this.name = name;
 		return this;
@@ -201,16 +100,20 @@ public class LegalEntity implements Serializable, Mergeable<LegalEntity>, Audita
 
 	@Override
 	public String toString() {
-		return "LegalEntity [id=" + id + ", idCard=" + idCard + ", name=" + name + ", email=" + email + "]";
+		return "LegalEntity [id=" + id + ", idCard=" + idCard + ", name=" + name
+				+ ", email=" + email + "]";
 	}
 
 	@Override
 	public void merge(LegalEntity entity) {
 		if (entity == null) {
 			throw new NullPointerException("Null reference received in merge operation");
-		} else if (version != null && entity.version != null && !version.equals(entity.version)) {
+		}
+		else if (version != null && entity.version != null
+				&& !version.equals(entity.version)) {
 			// TODO throw exception instead log
-			LOG.warn("Invalid entity version. Current: {}. Received: {}", version, entity.version);
+			LOG.warn("Invalid entity version. Current: {}. Received: {}", version,
+					entity.version);
 
 		}
 		if (this.address == null && entity.address != null) {

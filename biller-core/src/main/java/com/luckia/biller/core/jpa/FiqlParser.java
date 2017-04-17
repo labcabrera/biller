@@ -18,11 +18,13 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import com.luckia.biller.core.common.ASTNode;
+import com.luckia.biller.core.common.BillerException;
 
 /**
  * Clase que genera a partir de una expresión FIQL un {@link Predicate} de JPA.<br>
  * 
- * @see <a href="https://tools.ietf.org/html/draft-nottingham-atompub-fiql-00">FIQL (The Feed Item Query Language)</a>
+ * @see <a href="https://tools.ietf.org/html/draft-nottingham-atompub-fiql-00">FIQL (The
+ * Feed Item Query Language)</a>
  */
 public class FiqlParser {
 
@@ -43,7 +45,8 @@ public class FiqlParser {
 	public static final String LK = "=lk=";
 
 	/**
-	 * Convierte una expressión FIQL a un {@link ASTNode} a partir del cual podemos recuperar el {@link Predicate} de JPA.
+	 * Convierte una expressión FIQL a un {@link ASTNode} a partir del cual podemos
+	 * recuperar el {@link Predicate} de JPA.
 	 * 
 	 * @param expr
 	 * @param builder
@@ -60,10 +63,12 @@ public class FiqlParser {
 			char c = expr.charAt(idx);
 			if (c == '(') {
 				level++;
-			} else if (c == ')') {
+			}
+			else if (c == ')') {
 				level--;
 				if (level < 0) {
-					throw new RuntimeException(String.format("Unexpected closing bracket at position %d", idx));
+					throw new BillerException(String
+							.format("Unexpected closing bracket at position %d", idx));
 				}
 			}
 			String cs = Character.toString(c);
@@ -84,12 +89,14 @@ public class FiqlParser {
 			}
 		}
 		if (level != 0) {
-			throw new RuntimeException(String.format("Unmatched opening and closing brackets in expression: %s", expr));
+			throw new BillerException(String.format(
+					"Unmatched opening and closing brackets in expression: %s", expr));
 		}
 		if (operators.get(operators.size() - 1) != null) {
 			String op = operators.get(operators.size() - 1);
 			String ex = subexpressions.get(subexpressions.size() - 1);
-			throw new RuntimeException("Dangling operator at the end of expression: ..." + ex + op);
+			throw new BillerException(
+					"Dangling operator at the end of expression: ..." + ex + op);
 		}
 		int from = 0;
 		int to = 0;
@@ -104,7 +111,8 @@ public class FiqlParser {
 				ASTNode<Predicate> node = null;
 				if (subex.charAt(0) == '(') {
 					node = parse(subex.substring(1, subex.length() - 1), builder, root);
-				} else {
+				}
+				else {
 					node = parseComparison(subex, builder, root);
 				}
 				ands.add(node);
@@ -112,19 +120,23 @@ public class FiqlParser {
 			to = from;
 			if (ands.getSubnodes().size() == 1) {
 				ors.add(ands.getSubnodes().get(0));
-			} else {
+			}
+			else {
 				ors.add(ands);
 			}
 		}
 		if (ors.getSubnodes().size() == 1) {
 			return ors.getSubnodes().get(0);
-		} else {
+		}
+		else {
 			return ors;
 		}
 	}
 
-	private Comparison parseComparison(String expr, CriteriaBuilder builder, Root<?> root) {
-		String comparators = GT + "|" + GE + "|" + LT + "|" + LE + "|" + EQ + "|" + NEQ + "|" + NOT_NULL + "|" + NULL + "|" + LK;
+	private Comparison parseComparison(String expr, CriteriaBuilder builder,
+			Root<?> root) {
+		String comparators = GT + "|" + GE + "|" + LT + "|" + LE + "|" + EQ + "|" + NEQ
+				+ "|" + NOT_NULL + "|" + NULL + "|" + LK;
 		String s1 = "[\\p{ASCII}]+(" + comparators + ")";
 		Pattern p = Pattern.compile(s1);
 		Matcher m = p.matcher(expr);
@@ -135,12 +147,13 @@ public class FiqlParser {
 			if (!NOT_NULL.equals(operator) && !NULL.equals(operator)) {
 				value = expr.substring(m.end(1));
 				if ("".equals(value)) {
-					throw new RuntimeException("Not a comparison expression: " + expr);
+					throw new BillerException("Not a comparison expression: " + expr);
 				}
 			}
 			return new Comparison(name, operator, value, builder, root);
-		} else {
-			throw new RuntimeException("Not a comparison expression: " + expr);
+		}
+		else {
+			throw new BillerException("Not a comparison expression: " + expr);
 		}
 	}
 
@@ -166,29 +179,32 @@ public class FiqlParser {
 
 		@Override
 		public String toString() {
-			String s = operator.equals(FiqlParser.AND) ? "AND" : "OR";
-			s += ":[";
+			StringBuilder sb = new StringBuilder(
+					operator.equals(FiqlParser.AND) ? "AND" : "OR");
+			sb.append(":[");
 			for (int i = 0; i < subnodes.size(); i++) {
-				s += subnodes.get(i);
+				sb.append(subnodes.get(i));
 				if (i < subnodes.size() - 1) {
-					s += ", ";
+					sb.append(", ");
 				}
 			}
-			s += "]";
-			return s;
+			sb.append("]");
+			return sb.toString();
 		}
 
 		@Override
 		public Predicate build() {
 			List<Predicate> predicates = new ArrayList<Predicate>();
-			for (Iterator<ASTNode<Predicate>> it = getSubnodes().iterator(); it.hasNext();) {
+			for (Iterator<ASTNode<Predicate>> it = getSubnodes().iterator(); it
+					.hasNext();) {
 				ASTNode<Predicate> comp = it.next();
 				predicates.add(comp.build());
 			}
 			Predicate predicate;
 			if (OR.equals(operator)) {
 				predicate = builder.or(predicates.toArray(new Predicate[0]));
-			} else {
+			}
+			else {
 				predicate = builder.and(predicates.toArray(new Predicate[0]));
 			}
 			return predicate;
@@ -203,7 +219,8 @@ public class FiqlParser {
 		private final CriteriaBuilder builder;
 		private final Root<?> root;
 
-		public Comparison(String name, String operator, Comparable<?> value, CriteriaBuilder builder, Root<?> root) {
+		public Comparison(String name, String operator, Comparable<?> value,
+				CriteriaBuilder builder, Root<?> root) {
 			this.name = name;
 			this.operator = operator;
 			this.value = value;
@@ -225,40 +242,54 @@ public class FiqlParser {
 			Comparable targetValue = null;
 			if (Number.class.isAssignableFrom(type)) {
 				targetValue = new BigDecimal(String.valueOf(value));
-			} else if (Date.class.isAssignableFrom(type)) {
+			}
+			else if (Date.class.isAssignableFrom(type)) {
 				targetValue = parseDate(value);
-			} else if (Enum.class.isAssignableFrom(type)) {
+			}
+			else if (Enum.class.isAssignableFrom(type)) {
 				targetValue = Enum.valueOf((Class) type, (String) value);
-			} else {
+			}
+			else {
 				targetValue = value;
 			}
 			if (EQ.equals(operator)) {
 				result = builder.equal(expressionValue, targetValue);
-			} else if (GE.equals(operator)) {
+			}
+			else if (GE.equals(operator)) {
 				result = builder.greaterThanOrEqualTo(expressionValue, targetValue);
-			} else if (GT.equals(operator)) {
+			}
+			else if (GT.equals(operator)) {
 				result = builder.greaterThan(expressionValue, targetValue);
-			} else if (LE.equals(operator)) {
+			}
+			else if (LE.equals(operator)) {
 				result = builder.lessThanOrEqualTo(expressionValue, targetValue);
-			} else if (LT.equals(operator)) {
+			}
+			else if (LT.equals(operator)) {
 				result = builder.lessThan(expressionValue, targetValue);
-			} else if (NOT_NULL.equals(operator)) {
+			}
+			else if (NOT_NULL.equals(operator)) {
 				result = builder.isNotNull(expressionValue);
-			} else if (NULL.equals(operator)) {
+			}
+			else if (NULL.equals(operator)) {
 				result = builder.isNull(expressionValue);
-			} else if (LK.equals(operator)) {
+			}
+			else if (LK.equals(operator)) {
 				result = builder.like(expressionValue, "%" + targetValue + "%");
-			} else {
-				throw new RuntimeException("Not implemented operator: " + operator);
+			}
+			else {
+				throw new BillerException("Not implemented operator: " + operator);
 			}
 			return result;
 		}
 
 		private Date parseDate(Object value) {
 			try {
-				return value != null ? new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(value)) : null;
-			} catch (Exception ex) {
-				throw new RuntimeException(ex);
+				return value != null
+						? new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(value))
+						: null;
+			}
+			catch (Exception ex) {
+				throw new BillerException("Parse date error", ex);
 			}
 		}
 
@@ -269,7 +300,8 @@ public class FiqlParser {
 				String partial = tokenizer.nextToken();
 				if (result == null) {
 					result = root.get(partial);
-				} else {
+				}
+				else {
 					result = result.get(partial);
 				}
 			}

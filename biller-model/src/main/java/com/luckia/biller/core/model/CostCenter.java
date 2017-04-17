@@ -5,6 +5,9 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
  * Representa un centro de coste que se utilizara para generar las liquidaciones.<br>
  * En un primer momento habra un unico centro de coste por comunidad autonoma.
@@ -12,7 +15,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "B_COST_CENTER")
 @DiscriminatorValue("O")
-// @ValidCostCenter
+@Data
+@EqualsAndHashCode(callSuper = true)
 @SuppressWarnings("serial")
 public class CostCenter extends LegalEntity {
 
@@ -21,14 +25,6 @@ public class CostCenter extends LegalEntity {
 	 */
 	@Column(name = "CODE", length = 8)
 	private String code;
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
 
 	@Override
 	public void merge(LegalEntity entity) {
@@ -39,35 +35,5 @@ public class CostCenter extends LegalEntity {
 				code = costCenter.code;
 			}
 		}
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		CostCenter other = (CostCenter) obj;
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		return true;
 	}
 }

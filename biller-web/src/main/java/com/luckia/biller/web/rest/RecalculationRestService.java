@@ -34,9 +34,13 @@ public class RecalculationRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/prepare/bill")
-	public Message<BillRecalculationInfo> prepare(@QueryParam("s") Long storeId, @QueryParam("c") Long companyId, @QueryParam("y") Integer year, @QueryParam("m") Integer month) {
+	public Message<BillRecalculationInfo> prepare(@QueryParam("s") Long storeId,
+			@QueryParam("c") Long companyId, @QueryParam("y") Integer year,
+			@QueryParam("m") Integer month) {
 		if (year == null || month == null) {
-			return new Message<BillRecalculationInfo>().withCode(Message.CODE_GENERIC_ERROR).addWarning("billRecalculation.missingYearMonth");
+			return new Message<BillRecalculationInfo>()
+					.withCode(Message.CODE_GENERIC_ERROR)
+					.addWarning("billRecalculation.missingYearMonth");
 		}
 		Range<Date> range = getEffectiveRange(year, month);
 		EntityManager entityManager = entityManagerProvider.get();
@@ -52,7 +56,8 @@ public class RecalculationRestService {
 	}
 
 	/**
-	 * Genera una nueva factura o la regenera si ya existe a partir del establecimiento y la fecha.
+	 * Genera una nueva factura o la regenera si ya existe a partir del establecimiento y
+	 * la fecha.
 	 * 
 	 * @param storeId
 	 * @param year

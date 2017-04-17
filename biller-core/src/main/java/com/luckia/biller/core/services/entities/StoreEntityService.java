@@ -28,7 +28,8 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 		Store current;
 		String message;
 		if (entity.getBillingModel() != null) {
-			BillingModel currentModel = entityManager.find(BillingModel.class, entity.getBillingModel().getId());
+			BillingModel currentModel = entityManager.find(BillingModel.class,
+					entity.getBillingModel().getId());
 			entity.setBillingModel(currentModel);
 		}
 		if (entity.getId() == null) {
@@ -38,7 +39,8 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 			auditService.processCreated(current);
 			entityManager.persist(current);
 			message = i18nService.getMessage("store.persist");
-		} else {
+		}
+		else {
 			LOG.info("Updating current store");
 			current = entityManager.find(Store.class, entity.getId());
 			current.merge(entity);
@@ -60,7 +62,8 @@ public class StoreEntityService extends LegalEntityBaseService<Store> {
 		Store current = entityManager.find(Store.class, primaryKey);
 		auditService.processDeleted(current);
 		entityManager.merge(current);
-		return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("store.remove"), current);
+		return new Message<>(Message.CODE_SUCCESS, i18nService.getMessage("store.remove"),
+				current);
 	}
 
 	@Override

@@ -40,7 +40,8 @@ public class OwnerRestService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/find")
-	public SearchResults<Owner> find(@QueryParam("n") Integer maxResults, @QueryParam("p") Integer page, @QueryParam("q") String queryString) {
+	public SearchResults<Owner> find(@QueryParam("n") Integer maxResults,
+			@QueryParam("p") Integer page, @QueryParam("q") String queryString) {
 		SearchParams params = new SearchParams();
 		params.setItemsPerPage(maxResults);
 		params.setCurrentPage(page);
@@ -55,9 +56,11 @@ public class OwnerRestService {
 	public Message<Owner> merge(Owner entity) {
 		try {
 			return ownerService.merge(entity);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al actualizar el titular", ex);
-			return new Message<Owner>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("owner.error.merge"));
+			return new Message<Owner>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("owner.error.merge"));
 		}
 	}
 
@@ -68,9 +71,11 @@ public class OwnerRestService {
 	public Message<Owner> remove(@PathParam("id") Long id) {
 		try {
 			return ownerService.remove(id);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al eliminar el titular", ex);
-			return new Message<Owner>(Message.CODE_GENERIC_ERROR, i18nService.getMessage("owner.error.remove"));
+			return new Message<Owner>(Message.CODE_GENERIC_ERROR,
+					i18nService.getMessage("owner.error.remove"));
 		}
 	}
 }

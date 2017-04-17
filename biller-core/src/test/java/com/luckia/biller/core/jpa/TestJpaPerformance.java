@@ -24,12 +24,13 @@ public class TestJpaPerformance {
 			Serializer serializer = injector.getInstance(Serializer.class);
 			EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 			Long t0 = System.currentTimeMillis();
-			TypedQuery<Liquidation> query = entityManager.createQuery("select e from Liquidation e where e.id = :id", Liquidation.class);
+			TypedQuery<Liquidation> query = entityManager.createQuery(
+					"select e from Liquidation e where e.id = :id", Liquidation.class);
 			query.setParameter("id", "00039de9-0d0d-45ea-a0df-20f383befcf4");
 			query.setMaxResults(10);
-			
-			//query.setHint(QueryHints.FE, arg1)
-			
+
+			// query.setHint(QueryHints.FE, arg1)
+
 			List<Liquidation> liquidations = query.getResultList();
 			Long timeQuery = System.currentTimeMillis() - t0;
 			t0 = System.currentTimeMillis();
@@ -38,8 +39,10 @@ public class TestJpaPerformance {
 				System.out.println("--------------------------------------------");
 			}
 			System.out.println("Time query: " + timeQuery + " ms");
-			System.out.println("Time serialization: " + (System.currentTimeMillis() - t0) + " ms");
-		} catch (Exception ex) {
+			System.out.println(
+					"Time serialization: " + (System.currentTimeMillis() - t0) + " ms");
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}

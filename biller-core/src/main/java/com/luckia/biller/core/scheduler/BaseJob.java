@@ -6,10 +6,13 @@ import org.quartz.JobExecutionContext;
 import org.quartz.SchedulerException;
 
 import com.google.inject.Injector;
+import com.luckia.biller.core.common.BillerException;
 
 /**
- * Nota: al utilizar Quartz no tenemos control sobre como se generan las intancias de los objetos, de modo que no podemos utilizar el IoC de Guice (recordar que estamos declarando
- * los jobs a traves de las clases). Para solucionar esto estamos incluyendo directamente el {@link Injector} de Guice en el contexto del scheduler.<br>
+ * Nota: al utilizar Quartz no tenemos control sobre como se generan las intancias de los
+ * objetos, de modo que no podemos utilizar el IoC de Guice (recordar que estamos
+ * declarando los jobs a traves de las clases). Para solucionar esto estamos incluyendo
+ * directamente el {@link Injector} de Guice en el contexto del scheduler.<br>
  * Para poder recuperar una instancia del IoC simplemente haremos:<br>
  * <b>MyClass myClass = injector.getInstance(MyClass.class)</b>
  */
@@ -30,7 +33,8 @@ public abstract class BaseJob implements Job {
 	}
 
 	/**
-	 * Obtiene el parametro pasado al {@link Job} a partir de su clave y tipo. En caso de no esté establecido en el contexto del job devuelve su valor por defecto.
+	 * Obtiene el parametro pasado al {@link Job} a partir de su clave y tipo. En caso de
+	 * no esté establecido en el contexto del job devuelve su valor por defecto.
 	 * 
 	 * @param context
 	 * @param key
@@ -39,11 +43,13 @@ public abstract class BaseJob implements Job {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T> T getParameter(JobExecutionContext context, String key, Class<T> type, T defaultValue) {
+	protected <T> T getParameter(JobExecutionContext context, String key, Class<T> type,
+			T defaultValue) {
 		Object result = context.get(key);
 		if (context.get(key) != null) {
 			return (T) result;
-		} else {
+		}
+		else {
 			return defaultValue;
 		}
 	}
@@ -55,10 +61,12 @@ public abstract class BaseJob implements Job {
 	 */
 	protected void init(JobExecutionContext context) {
 		try {
-			injector = (Injector) context.getScheduler().getContext().get(Injector.class.getName());
+			injector = (Injector) context.getScheduler().getContext()
+					.get(Injector.class.getName());
 			Validate.notNull(injector);
-		} catch (SchedulerException ex) {
-			throw new RuntimeException();
+		}
+		catch (SchedulerException ex) {
+			throw new BillerException(ex);
 		}
 	}
 

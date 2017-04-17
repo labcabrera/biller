@@ -13,16 +13,15 @@ import javax.persistence.TypedQuery;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.model.BillingModel;
 import com.luckia.biller.core.model.BillingModelAttributes;
 
-public class BillingModelResolver extends BaseWoorbookProcessor {
+import lombok.extern.slf4j.Slf4j;
 
-	private static final Logger LOG = LoggerFactory.getLogger(BillingModelResolver.class);
+@Slf4j
+public class BillingModelResolver extends BaseWoorbookProcessor {
 
 	private List<BillingModel> existingModels;
 	private List<BillingModel> newModels;
@@ -30,7 +29,8 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 	@Inject
 	public BillingModelResolver(Provider<EntityManager> entityManagerProvider) {
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<BillingModel> query = entityManager.createNamedQuery("BillingModel.selectAll", BillingModel.class);
+		TypedQuery<BillingModel> query = entityManager
+				.createNamedQuery("BillingModel.selectAll", BillingModel.class);
 		existingModels = query.getResultList();
 		newModels = new ArrayList<BillingModel>();
 	}
@@ -40,12 +40,18 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 		BillingModel current = new BillingModel();
 		current.setStoreModel(new BillingModelAttributes());
 		current.setCompanyModel(new BillingModelAttributes());
-		current.getStoreModel().setStakesPercent(parseBigDecimal(row.getCell(13), 4).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
-		current.getCompanyModel().setStakesPercent(parseBigDecimal(row.getCell(14), 4).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
-		current.getCompanyModel().setGgrPercent(parseBigDecimal(row.getCell(15), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
-		current.getCompanyModel().setNrPercent(parseBigDecimal(row.getCell(16), 2).multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
-		current.getCompanyModel().setCoOperatingMonthlyFees(parseBigDecimal(row.getCell(18), 2).negate());
-		current.getCompanyModel().setCommercialMonthlyFees(parseBigDecimal(row.getCell(17), 2));
+		current.getStoreModel().setStakesPercent(parseBigDecimal(row.getCell(13), 4)
+				.multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+		current.getCompanyModel().setStakesPercent(parseBigDecimal(row.getCell(14), 4)
+				.multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+		current.getCompanyModel().setGgrPercent(parseBigDecimal(row.getCell(15), 2)
+				.multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+		current.getCompanyModel().setNrPercent(parseBigDecimal(row.getCell(16), 2)
+				.multiply(MathUtils.HUNDRED).setScale(2, RoundingMode.HALF_EVEN));
+		current.getCompanyModel()
+				.setCoOperatingMonthlyFees(parseBigDecimal(row.getCell(18), 2).negate());
+		current.getCompanyModel()
+				.setCommercialMonthlyFees(parseBigDecimal(row.getCell(17), 2));
 		current.getCompanyModel().setSatMonthlyFees(parseBigDecimal(row.getCell(19), 2));
 		current.setName(readCellAsString(row.getCell(11)));
 		BillingModel result = null;
@@ -66,7 +72,7 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 		}
 		// En caso de no existir lo creamos
 		if (result == null) {
-			LOG.info("Registrando nuevo modelo {}", current);
+			log.info("Registrando nuevo modelo {}", current);
 			result = current;
 			newModels.add(current);
 		}
@@ -75,8 +81,11 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 
 	private BigDecimal parseBigDecimal(Cell cell, int scale) {
 		try {
-			return new BigDecimal(readCellAsString(cell)).setScale(scale, RoundingMode.HALF_EVEN);
-		} catch (Exception ex) {
+			return new BigDecimal(readCellAsString(cell)).setScale(scale,
+					RoundingMode.HALF_EVEN);
+		}
+		catch (Exception ex) {
+			log.error("Parse error", ex);
 			return null;
 		}
 	}
@@ -86,14 +95,22 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 		@Override
 		public int compare(BillingModel first, BillingModel second) {
 			boolean matches = true;
-			matches &= compare(first.getCompanyModel().getCommercialMonthlyFees(), second.getCompanyModel().getCommercialMonthlyFees());
-			matches &= compare(first.getCompanyModel().getCoOperatingMonthlyFees(), second.getCompanyModel().getCoOperatingMonthlyFees());
-			matches &= compare(first.getCompanyModel().getGgrPercent(), second.getCompanyModel().getGgrPercent());
-			matches &= compare(first.getCompanyModel().getNgrPercent(), second.getCompanyModel().getNgrPercent());
-			matches &= compare(first.getCompanyModel().getNrPercent(), second.getCompanyModel().getNrPercent());
-			matches &= compare(first.getCompanyModel().getSatMonthlyFees(), second.getCompanyModel().getSatMonthlyFees());
-			matches &= compare(first.getCompanyModel().getStakesPercent(), second.getCompanyModel().getStakesPercent());
-			matches &= compare(first.getStoreModel().getStakesPercent(), second.getStoreModel().getStakesPercent());
+			matches &= compare(first.getCompanyModel().getCommercialMonthlyFees(),
+					second.getCompanyModel().getCommercialMonthlyFees());
+			matches &= compare(first.getCompanyModel().getCoOperatingMonthlyFees(),
+					second.getCompanyModel().getCoOperatingMonthlyFees());
+			matches &= compare(first.getCompanyModel().getGgrPercent(),
+					second.getCompanyModel().getGgrPercent());
+			matches &= compare(first.getCompanyModel().getNgrPercent(),
+					second.getCompanyModel().getNgrPercent());
+			matches &= compare(first.getCompanyModel().getNrPercent(),
+					second.getCompanyModel().getNrPercent());
+			matches &= compare(first.getCompanyModel().getSatMonthlyFees(),
+					second.getCompanyModel().getSatMonthlyFees());
+			matches &= compare(first.getCompanyModel().getStakesPercent(),
+					second.getCompanyModel().getStakesPercent());
+			matches &= compare(first.getStoreModel().getStakesPercent(),
+					second.getStoreModel().getStakesPercent());
 			return matches ? 0 : 1;
 		}
 
@@ -102,9 +119,11 @@ public class BillingModelResolver extends BaseWoorbookProcessor {
 			boolean checkB = b != null && BigDecimal.ZERO.compareTo(b) != 0;
 			if (checkA && checkB) {
 				return a.compareTo(b) == 0;
-			} else if (!checkA && !checkB) {
+			}
+			else if (!checkA && !checkB) {
 				return true;
-			} else {
+			}
+			else {
 				return false;
 			}
 		}

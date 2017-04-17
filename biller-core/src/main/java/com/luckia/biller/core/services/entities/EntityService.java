@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.i18n.I18nService;
 import com.luckia.biller.core.jpa.FiqlParser;
 import com.luckia.biller.core.model.common.Message;
@@ -27,7 +28,8 @@ import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.services.AuditService;
 
 /**
- * Servicio que provee las funcionalidades basicas de JPA para diferentes entidades del modelo.
+ * Servicio que provee las funcionalidades basicas de JPA para diferentes entidades del
+ * modelo.
  * 
  * @param <I>
  */
@@ -55,7 +57,8 @@ public abstract class EntityService<I> {
 	}
 
 	/**
-	 * Genera los resultados a partir de la expression FIQL definida en el <code>SearchParams.queryString</code>.
+	 * Genera los resultados a partir de la expression FIQL definida en el
+	 * <code>SearchParams.queryString</code>.
 	 * 
 	 * @param params
 	 * @return
@@ -67,7 +70,9 @@ public abstract class EntityService<I> {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<I> criteria = builder.createQuery(entityClass);
 		Root<I> root = criteria.from(entityClass);
-		Predicate predicate = StringUtils.isBlank(params.getQueryString()) ? builder.conjunction() : fiqlParser.parse(params.getQueryString(), builder, root).build();
+		Predicate predicate = StringUtils.isBlank(params.getQueryString())
+				? builder.conjunction()
+				: fiqlParser.parse(params.getQueryString(), builder, root).build();
 		criteria.where(predicate);
 		buildOrderCriteria(criteria, builder, root);
 		TypedQuery<I> query = entityManager.createQuery(criteria);
@@ -79,13 +84,15 @@ public abstract class EntityService<I> {
 		criteriaCount.select(builder.count(root));
 		criteriaCount.where(predicate);
 		Long totalItems = entityManager.createQuery(criteriaCount).getSingleResult();
-		Long totalPages = (totalItems + (totalItems % params.getItemsPerPage())) / params.getItemsPerPage();
+		Long totalPages = (totalItems + (totalItems % params.getItemsPerPage()))
+				/ params.getItemsPerPage();
 		searchResults.setTotalItems(totalItems);
 		searchResults.setTotalPages(totalPages);
 		searchResults.setCurrentPage(params.getCurrentPage());
 		searchResults.setItemsPerPage(params.getItemsPerPage());
 		searchResults.setMs(System.currentTimeMillis() - t0);
-		LOG.debug("Readed {} ({}) {} items in {} ms", searchResults.getResults().size(), totalItems, getEntityClass().getSimpleName(), searchResults.getMs());
+		LOG.debug("Readed {} ({}) {} items in {} ms", searchResults.getResults().size(),
+				totalItems, getEntityClass().getSimpleName(), searchResults.getMs());
 		return searchResults;
 	}
 
@@ -96,7 +103,8 @@ public abstract class EntityService<I> {
 		if (violations.isEmpty()) {
 			message.setCode(Message.CODE_SUCCESS);
 			message.setMessage("Entidad válida");
-		} else {
+		}
+		else {
 			message.setCode(Message.CODE_GENERIC_ERROR);
 			message.setMessage("Entidad con errores de validación");
 			for (ConstraintViolation<I> violation : violations) {
@@ -107,29 +115,32 @@ public abstract class EntityService<I> {
 	}
 
 	public Message<I> merge(I entity) {
-		throw new RuntimeException("Not implemented");
+		throw new BillerException("Child clases should implement this method");
 	}
 
 	public Message<I> persist(I entity) {
-		throw new RuntimeException("Not implemented");
+		throw new BillerException("Child clases should implement this method");
 	}
 
 	public Message<I> remove(Serializable primaryKey) {
-		throw new RuntimeException("Not implemented");
+		throw new BillerException("Child clases should implement this method");
 	}
 
 	/**
-	 * Podemos sobreescribir este metodo para establecer la ordenacion de resultados en nuestras consultas.
+	 * Podemos sobreescribir este metodo para establecer la ordenacion de resultados en
+	 * nuestras consultas.
 	 * 
 	 * @param criteria
 	 * @param builder
 	 * @param root
 	 */
-	protected void buildOrderCriteria(CriteriaQuery<I> criteria, CriteriaBuilder builder, Root<I> root) {
+	protected void buildOrderCriteria(CriteriaQuery<I> criteria, CriteriaBuilder builder,
+			Root<I> root) {
 	}
 
 	/**
-	 * Podemos sobreescribir este metodo para establecer el numero de resultados por defecto.
+	 * Podemos sobreescribir este metodo para establecer el numero de resultados por
+	 * defecto.
 	 * 
 	 * @return
 	 */

@@ -1,5 +1,6 @@
 package com.luckia.biller.core.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,10 +20,15 @@ import javax.persistence.Table;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "S_SCHEDULED_TASK")
-@NamedQueries({ @NamedQuery(name = "ScheduledTask.selectEnabled", query = "select e from ScheduledTask e where e.enabled = true") })
-public class ScheduledTask implements Mergeable<ScheduledTask> {
+@NamedQueries({
+		@NamedQuery(name = "ScheduledTask.selectEnabled", query = "select e from ScheduledTask e where e.enabled = true") })
+@Data
+@SuppressWarnings("serial")
+public class ScheduledTask implements Mergeable<ScheduledTask>, Serializable {
 
 	@Id
 	@Column(name = "ID")
@@ -46,62 +52,15 @@ public class ScheduledTask implements Mergeable<ScheduledTask> {
 	@ElementCollection(fetch = FetchType.LAZY)
 	@MapKeyColumn(name = "PARAM_KEY", length = 516)
 	@Column(name = "PARAM_VALUE", length = 64)
-	@CollectionTable(name = "S_SCHEDULED_TASK_PARAM", joinColumns = @JoinColumn(name = "TASK_ID") )
+	@CollectionTable(name = "S_SCHEDULED_TASK_PARAM", joinColumns = @JoinColumn(name = "TASK_ID"))
 	private Map<String, String> params = new HashMap<String, String>();
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getCronExpression() {
-		return cronExpression;
-	}
-
-	public void setCronExpression(String cronExpression) {
-		this.cronExpression = cronExpression;
-	}
-
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public Map<String, String> getParams() {
-		return params;
-	}
-
-	public void setParams(Map<String, String> params) {
-		this.params = params;
-	}
-
-	public Class<?> getExecutorClass() {
-		return executorClass;
-	}
-
-	public void setExecutorClass(Class<?> executorClass) {
-		this.executorClass = executorClass;
-	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("ScheduledTask [id=").append(id).append(", name=").append(name);
-		builder.append(", className=").append(executorClass != null ? executorClass.getName() : "<null>");
+		builder.append(", className=")
+				.append(executorClass != null ? executorClass.getName() : "<null>");
 		builder.append(", cronExpression=").append(cronExpression).append("]");
 		return builder.toString();
 	}

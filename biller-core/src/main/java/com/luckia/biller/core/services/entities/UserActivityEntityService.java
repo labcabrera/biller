@@ -16,7 +16,8 @@ public class UserActivityEntityService extends EntityService<UserActivity> {
 	}
 
 	@Override
-	protected void buildOrderCriteria(CriteriaQuery<UserActivity> criteria, CriteriaBuilder builder, Root<UserActivity> root) {
-		criteria.orderBy(builder.desc(root.<Date> get("date")));
+	protected void buildOrderCriteria(CriteriaQuery<UserActivity> criteria,
+			CriteriaBuilder builder, Root<UserActivity> root) {
+		criteria.orderBy(builder.desc(root.<Date>get("date")));
 	}
 }

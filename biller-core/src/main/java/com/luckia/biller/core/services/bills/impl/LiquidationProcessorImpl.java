@@ -20,11 +20,10 @@ import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 import com.google.inject.persist.Transactional;
+import com.luckia.biller.core.common.BillerException;
 import com.luckia.biller.core.common.MathUtils;
 import com.luckia.biller.core.common.NoAvailableDataException;
 import com.luckia.biller.core.common.RegisterActivity;
@@ -47,12 +46,13 @@ import com.luckia.biller.core.services.bills.LiquidationProcessor;
 import com.luckia.biller.core.services.entities.ProvinceTaxesService;
 import com.luckia.biller.core.services.pdf.PDFLiquidationGenerator;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Implementación de {@link LiquidationProcessor}
  */
+@Slf4j
 public class LiquidationProcessorImpl implements LiquidationProcessor {
-
-	private static final Logger LOG = LoggerFactory.getLogger(LiquidationProcessorImpl.class);
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
@@ -78,14 +78,19 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.impl.LiquidationProcessor#process(com.luckia.biller.core.model.Company, org.apache.commons.lang3.Range)
+	 * @see
+	 * com.luckia.biller.core.services.bills.impl.LiquidationProcessor#process(com.luckia.
+	 * biller.core.model.Company, org.apache.commons.lang3.Range)
 	 */
 	@Override
 	@Transactional
 	public Liquidation processBills(Company company, Range<Date> range) {
-		LOG.debug("Procesando liquidacion de {} en {}", company.getName(), ISO_DATE_FORMAT.format(range.getMinimum()), ISO_DATE_FORMAT.format(range.getMaximum()));
+		log.debug("Procesando liquidacion de {} en {}", company.getName(),
+				ISO_DATE_FORMAT.format(range.getMinimum()),
+				ISO_DATE_FORMAT.format(range.getMaximum()));
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Bill> query = entityManager.createNamedQuery("Bill.selectPendingByReceiverInRange", Bill.class);
+		TypedQuery<Bill> query = entityManager
+				.createNamedQuery("Bill.selectPendingByReceiverInRange", Bill.class);
 		query.setParameter("receiver", company);
 		query.setParameter("from", range.getMinimum());
 		query.setParameter("to", range.getMaximum());
@@ -93,9 +98,11 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		if (bills.isEmpty()) {
 			throw new NoAvailableDataException();
 		}
-		LOG.debug("Encontradas {} facturas pendientes asociadas a la liquidacion", bills.size());
+		log.debug("Encontradas {} facturas pendientes asociadas a la liquidacion",
+				bills.size());
 		BillingModel model = bills.iterator().next().getModel();
-		LegalEntity LiquidationReceiver = model.getReceiver() != null ? model.getReceiver() : liquidationReceiverProvider.getReceiver();
+		LegalEntity LiquidationReceiver = model.getReceiver() != null
+				? model.getReceiver() : liquidationReceiverProvider.getReceiver();
 		Liquidation liquidation = new Liquidation();
 		liquidation.setId(UUID.randomUUID().toString());
 		liquidation.setModel(model);
@@ -113,7 +120,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			entityManager.merge(bill);
 		}
 		entityManager.merge(liquidation);
-		LOG.debug("Procesada la liquidacion de {}. Creando transicion a estado borrador", company.getName());
+		log.debug("Procesada la liquidacion de {}. Creando transicion a estado borrador",
+				company.getName());
 		stateMachineService.createTransition(liquidation, CommonState.DRAFT.name());
 		return liquidation;
 	}
@@ -129,11 +137,14 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		BigDecimal liquidationManualOuterAmount = BigDecimal.ZERO;
 		// Recorremos las facturas
 		for (Bill bill : liquidation.getBills()) {
-			netAmount = netAmount.add(MathUtils.safeNull(bill.getLiquidationTotalNetAmount()));
+			netAmount = netAmount
+					.add(MathUtils.safeNull(bill.getLiquidationTotalNetAmount()));
 			vatAmount = vatAmount.add(MathUtils.safeNull(bill.getLiquidationTotalVat()));
-			totalAmount = totalAmount.add(MathUtils.safeNull(bill.getLiquidationTotalAmount()));
+			totalAmount = totalAmount
+					.add(MathUtils.safeNull(bill.getLiquidationTotalAmount()));
 			storeCash = storeCash.add(MathUtils.safeNull(bill.getStoreCash()));
-			storeManualOuterAmount = storeManualOuterAmount.add(MathUtils.safeNull(bill.getLiquidationOuterAmount()));
+			storeManualOuterAmount = storeManualOuterAmount
+					.add(MathUtils.safeNull(bill.getLiquidationOuterAmount()));
 		}
 		// Procesamos los detalles de liquidacion
 		if (liquidation.getDetails() != null) {
@@ -142,9 +153,12 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 					netAmount = netAmount.add(MathUtils.safeNull(detail.getNetValue()));
 					vatAmount = vatAmount.add(MathUtils.safeNull(detail.getVatValue()));
 					totalAmount = totalAmount.add(MathUtils.safeNull(detail.getValue()));
-					liquidationManualInnerAmount = liquidationManualInnerAmount.add(MathUtils.safeNull(detail.getValue()));
-				} else {
-					liquidationManualOuterAmount = liquidationManualOuterAmount.add(detail.getValue());
+					liquidationManualInnerAmount = liquidationManualInnerAmount
+							.add(MathUtils.safeNull(detail.getValue()));
+				}
+				else {
+					liquidationManualOuterAmount = liquidationManualOuterAmount
+							.add(detail.getValue());
 				}
 			}
 		}
@@ -154,22 +168,25 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			liquidation.setLiquidationResults(results);
 		}
 		results.setStoreManualOuterAmount(storeManualOuterAmount);
-		results.setLiquidationManualOuterAmount(storeManualOuterAmount.add(liquidationManualOuterAmount));
+		results.setLiquidationManualOuterAmount(
+				storeManualOuterAmount.add(liquidationManualOuterAmount));
 		results.setLiquidationManualInnerAmount(liquidationManualInnerAmount);
 		results.setCashStoreAmount(storeCash);
-		results.setCashStoreEffectiveAmount(storeCash.add(storeManualOuterAmount).add(liquidationManualOuterAmount));
+		results.setCashStoreEffectiveAmount(
+				storeCash.add(storeManualOuterAmount).add(liquidationManualOuterAmount));
 		results.setNetAmount(netAmount);
 		results.setVatAmount(vatAmount);
 		results.setTotalAmount(totalAmount);
 		results.setReceiverAmount(storeCash.subtract(totalAmount));
-		results.setEffectiveLiquidationAmount(results.getReceiverAmount().add(results.getLiquidationManualOuterAmount()));
+		results.setEffectiveLiquidationAmount(results.getReceiverAmount()
+				.add(results.getLiquidationManualOuterAmount()));
 		liquidation.setAmount(totalAmount);
 	}
 
 	@Override
 	@Transactional
 	public Liquidation updateLiquidationResults(Liquidation liquidation) {
-		LOG.debug("Actualizando resultados de liquidacion");
+		log.debug("Actualizando resultados de liquidacion");
 		EntityManager entityManager = entityManagerProvider.get();
 		entityManager.clear();
 		Liquidation current = entityManager.find(Liquidation.class, liquidation.getId());
@@ -181,7 +198,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.LiquidationProcessor#confirm(com.luckia.biller.core.model.Liquidation)
+	 * @see com.luckia.biller.core.services.bills.LiquidationProcessor#confirm(com.luckia.
+	 * biller.core.model.Liquidation)
 	 */
 	@Override
 	@Transactional
@@ -189,8 +207,10 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 		preValidateConfirmLiquidation(liquidation);
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
-			stateMachineService.createTransition(liquidation, CommonState.CONFIRMED.name());
-			// NOTA: pudiera ser que la liquidacion se ha regenerado, en cuyo caso mantenemos el mismo numero de liquidacion
+			stateMachineService.createTransition(liquidation,
+					CommonState.CONFIRMED.name());
+			// NOTA: pudiera ser que la liquidacion se ha regenerado, en cuyo caso
+			// mantenemos el mismo numero de liquidacion
 			if (StringUtils.isBlank(liquidation.getCode())) {
 				liquidationCodeGenerator.generateCode(liquidation);
 			}
@@ -203,15 +223,18 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			AppFile pdfFile = fileService.save(name, "application/pdf", in);
 			liquidation.setPdfFile(pdfFile);
 			entityManager.merge(liquidation);
-		} catch (IOException ex) {
-			throw new RuntimeException("Error al confirmar la factura", ex);
+		}
+		catch (IOException ex) {
+			throw new BillerException("Error al confirmar la factura", ex);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.LiquidationProcessor#mergeDetail(com.luckia.biller.core.model.LiquidationDetail)
+	 * @see
+	 * com.luckia.biller.core.services.bills.LiquidationProcessor#mergeDetail(com.luckia.
+	 * biller.core.model.LiquidationDetail)
 	 */
 	@Override
 	@Transactional
@@ -219,11 +242,16 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	public Liquidation mergeDetail(LiquidationDetail detail) {
 		EntityManager entityManager = entityManagerProvider.get();
 		Boolean isNew = detail.getId() == null;
-		detail.setValue(detail.getValue() != null ? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
-		detail.setUnits(detail.getUnits() != null ? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
-		Liquidation liquidation = entityManager.find(Liquidation.class, detail.getLiquidation().getId());
-		// Obtenemos el modelo de facturacion. Como esta asociado a los establecimientos asumimos que la parte de tratamiento del IVA es
-		// comun a todos y leemos el primer registro. A partir de este valor hacemos el calculo del IVA
+		detail.setValue(detail.getValue() != null
+				? detail.getValue().setScale(2, RoundingMode.HALF_EVEN) : null);
+		detail.setUnits(detail.getUnits() != null
+				? detail.getUnits().setScale(2, RoundingMode.HALF_EVEN) : null);
+		Liquidation liquidation = entityManager.find(Liquidation.class,
+				detail.getLiquidation().getId());
+		// Obtenemos el modelo de facturacion. Como esta asociado a los establecimientos
+		// asumimos que la parte de tratamiento del IVA es
+		// comun a todos y leemos el primer registro. A partir de este valor hacemos el
+		// calculo del IVA
 		BillingModel model = liquidation.getModel();
 		if (model == null) {
 			model = liquidation.getBills().iterator().next().getModel();
@@ -231,15 +259,16 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			entityManager.merge(liquidation);
 		}
 		BigDecimal sourceValue = detail.getValue();
-		BigDecimal vatPercent = BigDecimal.ZERO;
-		BigDecimal netValue = BigDecimal.ZERO;
 		BigDecimal vatValue = BigDecimal.ZERO;
-		BigDecimal value = BigDecimal.ZERO;
+		BigDecimal vatPercent;
+		BigDecimal netValue;
+		BigDecimal value;
 		if (detail.getLiquidationIncluded()) {
 			switch (model.getVatLiquidationType()) {
 			case LIQUIDATION_INCLUDED:
 				vatPercent = provincesTaxesService.getVatPercent(liquidation);
-				BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent).divide(MathUtils.HUNDRED);
+				BigDecimal divisor = MathUtils.HUNDRED.add(vatPercent)
+						.divide(MathUtils.HUNDRED);
 				netValue = sourceValue.divide(divisor, 2, RoundingMode.HALF_EVEN);
 				vatValue = sourceValue.subtract(netValue);
 				value = netValue.add(vatValue);
@@ -247,7 +276,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			case LIQUIDATION_ADDED:
 				vatPercent = provincesTaxesService.getVatPercent(liquidation);
 				netValue = sourceValue;
-				vatValue = netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2, RoundingMode.HALF_EVEN);
+				vatValue = netValue.multiply(vatPercent).divide(MathUtils.HUNDRED, 2,
+						RoundingMode.HALF_EVEN);
 				value = netValue.add(vatValue);
 				break;
 			default:
@@ -255,7 +285,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 				value = sourceValue;
 				break;
 			}
-		} else {
+		}
+		else {
 			netValue = sourceValue;
 			value = sourceValue;
 		}
@@ -267,8 +298,10 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 			detail.setId(UUID.randomUUID().toString());
 			entityManager.persist(detail);
 			liquidation.getDetails().add(detail);
-		} else {
-			LiquidationDetail current = entityManager.find(LiquidationDetail.class, detail.getId());
+		}
+		else {
+			LiquidationDetail current = entityManager.find(LiquidationDetail.class,
+					detail.getId());
 			current.merge(detail);
 			entityManager.merge(current);
 			entityManager.flush();
@@ -280,15 +313,18 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.luckia.biller.core.services.bills.LiquidationProcessor#removeDetail(com.luckia.biller.core.model.LiquidationDetail)
+	 * @see
+	 * com.luckia.biller.core.services.bills.LiquidationProcessor#removeDetail(com.luckia.
+	 * biller.core.model.LiquidationDetail)
 	 */
 	@Override
 	@Transactional
 	@RegisterActivity(type = UserActivityType.LIQUIDATION_REMOVE_DETAIL)
 	public Liquidation removeDetail(LiquidationDetail detail) {
-		LOG.debug("Eliminando detalle de liquidacion");
+		log.debug("Eliminando detalle de liquidacion");
 		EntityManager entityManager = entityManagerProvider.get();
-		LiquidationDetail currentDetail = entityManager.find(LiquidationDetail.class, detail.getId());
+		LiquidationDetail currentDetail = entityManager.find(LiquidationDetail.class,
+				detail.getId());
 		Liquidation currentLiquidation = currentDetail.getLiquidation();
 		currentDetail.getLiquidation().getDetails().remove(currentDetail);
 		entityManager.remove(currentDetail);
@@ -302,20 +338,29 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	@RegisterActivity(type = UserActivityType.LIQUIDATION_REMOVE)
 	public void remove(Liquidation liquidation) {
 		EntityManager entityManager = entityManagerProvider.get();
-		entityManager.createQuery("update Bill e set e.liquidation = null where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
-		entityManager.createQuery("delete from LiquidationDetail e where e.liquidation = :liquidation").setParameter("liquidation", liquidation).executeUpdate();
+		entityManager
+				.createQuery(
+						"update Bill e set e.liquidation = null where e.liquidation = :liquidation")
+				.setParameter("liquidation", liquidation).executeUpdate();
+		entityManager
+				.createQuery(
+						"delete from LiquidationDetail e where e.liquidation = :liquidation")
+				.setParameter("liquidation", liquidation).executeUpdate();
 		entityManager.remove(liquidation);
 	}
 
 	/**
-	 * Comprobamos que todas las facturas de la liquidacion han sido aceptadas. En caso de que alguna factura no esté aceptada eleva un {@link ValidationException}
+	 * Comprobamos que todas las facturas de la liquidacion han sido aceptadas. En caso de
+	 * que alguna factura no esté aceptada eleva un {@link ValidationException}
 	 * 
 	 * @param liquidation
 	 */
 	private void preValidateConfirmLiquidation(Liquidation liquidation) {
 		for (Bill i : liquidation.getBills()) {
-			if (CommonState.DRAFT.name().equals(i.getCurrentState().getStateDefinition().getId())) {
-				throw new ValidationException(i18nService.getMessage("liquidation.confirm.error.unconfirmedBills"));
+			if (CommonState.DRAFT.name()
+					.equals(i.getCurrentState().getStateDefinition().getId())) {
+				throw new ValidationException(i18nService
+						.getMessage("liquidation.confirm.error.unconfirmedBills"));
 			}
 		}
 	}
@@ -323,7 +368,8 @@ public class LiquidationProcessorImpl implements LiquidationProcessor {
 	@Override
 	@Transactional
 	public Liquidation recalculate(String liquidationId) {
-		LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidationId, injector);
+		LiquidationRecalculationTask task = new LiquidationRecalculationTask(
+				liquidationId, injector);
 		task.run();
 		return task.getLiquidationResult();
 	}

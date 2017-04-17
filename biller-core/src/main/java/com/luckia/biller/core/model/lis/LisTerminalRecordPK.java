@@ -53,14 +53,16 @@ public class LisTerminalRecordPK implements Serializable {
 			if (other.date != null) {
 				return false;
 			}
-		} else if (!date.equals(other.date)) {
+		}
+		else if (!date.equals(other.date)) {
 			return false;
 		}
 		if (terminalCode == null) {
 			if (other.terminalCode != null) {
 				return false;
 			}
-		} else if (!terminalCode.equals(other.terminalCode)) {
+		}
+		else if (!terminalCode.equals(other.terminalCode)) {
 			return false;
 		}
 		return true;

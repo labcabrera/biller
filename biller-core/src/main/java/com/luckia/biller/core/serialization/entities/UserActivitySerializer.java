@@ -11,7 +11,8 @@ import com.luckia.biller.core.model.UserActivity;
 public class UserActivitySerializer implements JsonSerializer<UserActivity> {
 
 	@Override
-	public JsonElement serialize(UserActivity src, Type typeOfSrc, JsonSerializationContext context) {
+	public JsonElement serialize(UserActivity src, Type typeOfSrc,
+			JsonSerializationContext context) {
 		JsonObject json = new JsonObject();
 		json.addProperty("id", src.getId());
 		json.addProperty("type", src.getType().name());

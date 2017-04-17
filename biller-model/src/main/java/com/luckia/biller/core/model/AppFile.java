@@ -13,11 +13,14 @@ import javax.persistence.TemporalType;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+
 /**
  * Entidad que representa un fichero dentro del repositorio de la aplicacion.
  */
 @Entity
 @Table(name = "S_APP_FILE")
+@Data
 @SuppressWarnings("serial")
 public class AppFile implements Serializable {
 
@@ -42,51 +45,4 @@ public class AppFile implements Serializable {
 	@Column(name = "FILE_SIZE")
 	private Long size;
 
-	public Date getGenerated() {
-		return generated;
-	}
-
-	public void setGenerated(Date generated) {
-		this.generated = generated;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getContentType() {
-		return contentType;
-	}
-
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getInternalPath() {
-		return internalPath;
-	}
-
-	public void setInternalPath(String internalPath) {
-		this.internalPath = internalPath;
-	}
-
-	public Long getSize() {
-		return size;
-	}
-
-	public void setSize(Long size) {
-		this.size = size;
-	}
 }

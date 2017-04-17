@@ -16,7 +16,8 @@ public class TestTerminalReportGenerator {
 	public void test() {
 		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
-		TerminalReportGenerator service = injector.getInstance(TerminalReportGenerator.class);
+		TerminalReportGenerator service = injector
+				.getInstance(TerminalReportGenerator.class);
 		Company company = new Company();
 		company.setId(11084L);
 		service.generate(null, company, null);

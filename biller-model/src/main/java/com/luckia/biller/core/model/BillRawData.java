@@ -1,5 +1,6 @@
 package com.luckia.biller.core.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -14,9 +15,17 @@ import javax.persistence.Table;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "B_BILL_RAW_DATA")
-public class BillRawData {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuppressWarnings("serial")
+public class BillRawData implements Serializable {
 
 	@Id
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -31,38 +40,4 @@ public class BillRawData {
 
 	@Column(name = "CONCEPT_AMOUNT", nullable = false, precision = 18, scale = 2)
 	private BigDecimal amount;
-
-	public BillRawData() {
-	}
-
-	public BillRawData(Bill bill, BillConcept concept, BigDecimal amount) {
-		this.bill = bill;
-		this.concept = concept;
-		this.amount = amount;
-	}
-
-	public Bill getBill() {
-		return bill;
-	}
-
-	public void setBill(Bill bill) {
-		this.bill = bill;
-	}
-
-	public BillConcept getConcept() {
-		return concept;
-	}
-
-	public void setConcept(BillConcept concept) {
-		this.concept = concept;
-	}
-
-	public BigDecimal getAmount() {
-		return amount;
-	}
-
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-
 }

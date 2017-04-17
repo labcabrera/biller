@@ -14,13 +14,18 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import lombok.Data;
+
 /**
- * Entidad que representa las tasas de juego de una determinada provincia. En principio este valor será del 10% del GGR.
+ * Entidad que representa las tasas de juego de una determinada provincia. En principio
+ * este valor será del 10% del GGR.
  */
 @Entity
 @Table(name = "B_PROVINCE_TAXES")
-@NamedQueries({ @NamedQuery(name = "ProvinceTaxes.selectAll", query = "select e from ProvinceTaxes e order by e.province.name"),
+@NamedQueries({
+		@NamedQuery(name = "ProvinceTaxes.selectAll", query = "select e from ProvinceTaxes e order by e.province.name"),
 		@NamedQuery(name = "ProvinceTaxes.selectByProvince", query = "select e from ProvinceTaxes e where e.province = :province") })
+@Data
 @SuppressWarnings("serial")
 public class ProvinceTaxes implements Serializable, Mergeable<ProvinceTaxes> {
 
@@ -46,38 +51,6 @@ public class ProvinceTaxes implements Serializable, Mergeable<ProvinceTaxes> {
 	 */
 	@Column(name = "VAT_PERCENT", precision = 18, scale = 2, nullable = false)
 	private BigDecimal vatPercent;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Province getProvince() {
-		return province;
-	}
-
-	public void setProvince(Province province) {
-		this.province = province;
-	}
-
-	public BigDecimal getFeesPercent() {
-		return feesPercent;
-	}
-
-	public void setFeesPercent(BigDecimal feesPercent) {
-		this.feesPercent = feesPercent;
-	}
-
-	public BigDecimal getVatPercent() {
-		return vatPercent;
-	}
-
-	public void setVatPercent(BigDecimal vatPercent) {
-		this.vatPercent = vatPercent;
-	}
 
 	@Override
 	public void merge(ProvinceTaxes entity) {

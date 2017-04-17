@@ -52,7 +52,8 @@ public class MailService {
 	 * @return
 	 * @throws EmailException
 	 */
-	public HtmlEmail createEmail(String address, String displayName, String title, String body) throws EmailException {
+	public HtmlEmail createEmail(String address, String displayName, String title,
+			String body) throws EmailException {
 		return createEmail(address, displayName, title, body, null);
 	}
 
@@ -67,12 +68,13 @@ public class MailService {
 	 * @return
 	 * @throws EmailException
 	 */
-	public HtmlEmail createEmail(String address, String displayName, String title, String body, List<EmailAttachment> attachments) throws EmailException {
+	public HtmlEmail createEmail(String address, String displayName, String title,
+			String body, List<EmailAttachment> attachments) throws EmailException {
 		init();
 		LOG.debug("Creando email con titulo {}", displayName);
 		HtmlEmail email = new HtmlEmail();
 		email.setCharset("utf-8");
-		if (emailUser != null && !emailUser.equals("") && emailPassword != null && !emailPassword.equals("")) {
+		if (StringUtils.isNotBlank(emailUser) && StringUtils.isNotBlank(emailPassword)) {
 			email.setAuthentication(emailUser, emailPassword);
 		}
 		if (port != null) {
@@ -80,7 +82,9 @@ public class MailService {
 		}
 		if (StringUtils.isNotBlank(tlsConnection) && Boolean.valueOf(tlsConnection)) {
 			email.setStartTLSRequired(true);
-		} else if (StringUtils.isNotBlank(sslConnection) && Boolean.valueOf(sslConnection)) {
+		}
+		else if (StringUtils.isNotBlank(sslConnection)
+				&& Boolean.valueOf(sslConnection)) {
 			email.setSSLOnConnect(Boolean.valueOf(sslConnection));
 		}
 		email.setHostName(hostName);
@@ -96,7 +100,8 @@ public class MailService {
 		return email;
 	}
 
-	public EmailAttachment createAttachment(String description, String name, String path) {
+	public EmailAttachment createAttachment(String description, String name,
+			String path) {
 		EmailAttachment emailAttachment = new EmailAttachment();
 		emailAttachment.setDescription(description);
 		emailAttachment.setName(name);

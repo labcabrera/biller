@@ -3,6 +3,7 @@ package com.luckia.biller.deploy;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -48,7 +49,8 @@ public class Bootstrap implements Runnable {
 		entityManager.getTransaction().begin();
 		if (isDatabaseInitialized()) {
 			LOG.info("Database already initialized");
-		} else {
+		}
+		else {
 			Map<Class<? extends Feeder<?>>, String> feederMapping = new LinkedHashMap<Class<? extends Feeder<?>>, String>();
 			feederMapping.put(UserFeeder.class, "bootstrap/users.csv");
 			feederMapping.put(ProvinceFeeder.class, "bootstrap/provinces.json");
@@ -60,13 +62,16 @@ public class Bootstrap implements Runnable {
 			feederMapping.put(BillingProvinceFeesFeeder.class, "");
 			Long t0 = System.currentTimeMillis();
 			ClassLoader classLoader = getClass().getClassLoader();
-			for (Class<? extends Feeder<?>> feederClass : feederMapping.keySet()) {
+			for (Entry<Class<? extends Feeder<?>>, String> entry : feederMapping
+					.entrySet()) {
 				InputStream inputStream = null;
-				String resource = feederMapping.get(feederClass);
+				Class<? extends Feeder<?>> clazz = entry.getKey();
+				String resource = entry.getValue();
 				if (StringUtils.isNotBlank(resource)) {
-					inputStream = classLoader.getResourceAsStream(feederMapping.get(feederClass));
+					inputStream = classLoader
+							.getResourceAsStream(feederMapping.get(clazz));
 				}
-				injector.getInstance(feederClass).loadEntities(inputStream);
+				injector.getInstance(clazz).loadEntities(inputStream);
 			}
 			entityManager.getTransaction().commit();
 			LOG.info("Bootstrap completed in {} ms", System.currentTimeMillis() - t0);
@@ -74,7 +79,8 @@ public class Bootstrap implements Runnable {
 	}
 
 	private Boolean isDatabaseInitialized() {
-		return getEntityManager().createQuery("select count(u) from User u", Long.class).getSingleResult() > 0;
+		return getEntityManager().createQuery("select count(u) from User u", Long.class)
+				.getSingleResult() > 0;
 	}
 
 	private EntityManager getEntityManager() {

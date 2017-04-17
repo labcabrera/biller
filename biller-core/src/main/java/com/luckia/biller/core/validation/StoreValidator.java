@@ -10,7 +10,7 @@ import com.luckia.biller.core.model.Store;
 import com.luckia.biller.core.model.validation.ValidStore;
 
 public class StoreValidator implements ConstraintValidator<ValidStore, Store> {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(StoreValidator.class);
 
 	@Override
@@ -22,12 +22,14 @@ public class StoreValidator implements ConstraintValidator<ValidStore, Store> {
 		boolean hasErrors = false;
 		if (entity.getBillingModel() == null) {
 			LOG.warn("Invalid store: model is null");
-			context.buildConstraintViolationWithTemplate("store.missing.model").addConstraintViolation();
+			context.buildConstraintViolationWithTemplate("store.missing.model")
+					.addConstraintViolation();
 			hasErrors = true;
 		}
 		if (entity.getOwner() == null) {
 			LOG.warn("Invalid store: owner is null");
-			context.buildConstraintViolationWithTemplate("store.missing.owner").addConstraintViolation();
+			context.buildConstraintViolationWithTemplate("store.missing.owner")
+					.addConstraintViolation();
 			hasErrors = true;
 		}
 		return !hasErrors;

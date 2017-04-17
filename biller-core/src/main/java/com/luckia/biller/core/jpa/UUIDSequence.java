@@ -8,7 +8,8 @@ import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.sequencing.Sequence;
 
 /**
- * Implementacion de {@link Sequence} a traves de un UUID generado por la maquina virtual de java.
+ * Implementacion de {@link Sequence} a traves de un UUID generado por la maquina virtual
+ * de java.
  */
 @SuppressWarnings("serial")
 public class UUIDSequence extends Sequence {
@@ -22,22 +23,26 @@ public class UUIDSequence extends Sequence {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.persistence.sequencing.Sequence#getGeneratedValue(org.eclipse.persistence.internal.databaseaccess.Accessor,
+	 * @see org.eclipse.persistence.sequencing.Sequence#getGeneratedValue(org.eclipse.
+	 * persistence.internal.databaseaccess.Accessor,
 	 * org.eclipse.persistence.internal.sessions.AbstractSession, java.lang.String)
 	 */
 	@Override
-	public Object getGeneratedValue(Accessor accessor, AbstractSession writeSession, String seqName) {
+	public Object getGeneratedValue(Accessor accessor, AbstractSession writeSession,
+			String seqName) {
 		return UUID.randomUUID().toString().toUpperCase();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.persistence.sequencing.Sequence#getGeneratedVector(org.eclipse.persistence.internal.databaseaccess.Accessor,
+	 * @see org.eclipse.persistence.sequencing.Sequence#getGeneratedVector(org.eclipse.
+	 * persistence.internal.databaseaccess.Accessor,
 	 * org.eclipse.persistence.internal.sessions.AbstractSession, java.lang.String, int)
 	 */
 	@Override
-	public Vector<?> getGeneratedVector(Accessor accessor, AbstractSession writeSession, String seqName, int size) {
+	public Vector<?> getGeneratedVector(Accessor accessor, AbstractSession writeSession,
+			String seqName, int size) {
 		return null;
 	}
 

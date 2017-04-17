@@ -44,6 +44,7 @@ public class ProvinceFeeder implements Feeder<Province> {
 			count++;
 		}
 		entityManager.flush();
-		LOG.info("Cargadas {} provincias en {} ms", count, (System.currentTimeMillis() - t0));
+		LOG.info("Cargadas {} provincias en {} ms", count,
+				(System.currentTimeMillis() - t0));
 	}
 }

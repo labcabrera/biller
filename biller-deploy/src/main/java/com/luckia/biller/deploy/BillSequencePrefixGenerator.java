@@ -16,14 +16,17 @@ import com.luckia.biller.core.BillerModule;
 import com.luckia.biller.core.model.Store;
 
 /**
- * Clase que actualiza los prefijos de las secuencias de códigos de facturas de los establecimientos.
+ * Clase que actualiza los prefijos de las secuencias de códigos de facturas de los
+ * establecimientos.
  */
 public class BillSequencePrefixGenerator implements Runnable {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BillSequencePrefixGenerator.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(BillSequencePrefixGenerator.class);
 
 	public static void main(String[] args) {
-		Guice.createInjector(new BillerModule()).getInstance(BillSequencePrefixGenerator.class).run();
+		Guice.createInjector(new BillerModule())
+				.getInstance(BillSequencePrefixGenerator.class).run();
 	}
 
 	@Inject
@@ -32,7 +35,9 @@ public class BillSequencePrefixGenerator implements Runnable {
 	@Override
 	public void run() {
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Store> query = entityManager.createQuery("select s from Store s where s.billSequencePrefix is null order by s.name", Store.class);
+		TypedQuery<Store> query = entityManager.createQuery(
+				"select s from Store s where s.billSequencePrefix is null order by s.name",
+				Store.class);
 		List<Store> stores = query.getResultList();
 		LOG.debug("Updating {} store prefix", stores.size());
 		entityManager.getTransaction().begin();

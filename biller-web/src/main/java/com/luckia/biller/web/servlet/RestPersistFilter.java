@@ -17,7 +17,8 @@ import com.google.inject.persist.UnitOfWork;
 
 @Singleton
 @Provider
-public final class RestPersistFilter implements ContainerRequestFilter, ContainerResponseFilter {
+public final class RestPersistFilter
+		implements ContainerRequestFilter, ContainerResponseFilter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RestPersistFilter.class);
 
@@ -32,21 +33,26 @@ public final class RestPersistFilter implements ContainerRequestFilter, Containe
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		try {
 			unitOfWork.begin();
-		} catch (Exception ex) {
-			LOG.trace("La unidad de persistencia ya esta inicializada ({})", ex.getMessage());
+		}
+		catch (Exception ex) {
+			LOG.trace("La unidad de persistencia ya esta inicializada ({})",
+					ex.getMessage());
 			try {
 				unitOfWork.end();
 				unitOfWork.begin();
-			} catch (Exception ignore) {
+			}
+			catch (Exception ignore) {
 			}
 		}
 	}
 
 	@Override
-	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+	public void filter(ContainerRequestContext requestContext,
+			ContainerResponseContext responseContext) throws IOException {
 		try {
 			unitOfWork.end();
-		} catch (Exception ignore) {
+		}
+		catch (Exception ignore) {
 		}
 	}
 }

@@ -54,11 +54,14 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 
 			printLineSeparator(document, writer, halfTop);
 
-			printCanvas(document, writer, smallFont, 370f, halfTop + 10f, 1000f, Arrays.asList("Ejemplar para el establecimiento"));
-			printCanvas(document, writer, smallFont, 370f, 10f, 1000f, Arrays.asList("Ejemplar para el operador"));
+			printCanvas(document, writer, smallFont, 370f, halfTop + 10f, 1000f,
+					Arrays.asList("Ejemplar para el establecimiento"));
+			printCanvas(document, writer, smallFont, 370f, 10f, 1000f,
+					Arrays.asList("Ejemplar para el operador"));
 
 			document.close();
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error("Error al generar la factura", ex);
 		}
 	}
@@ -79,10 +82,12 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 		cells.add(createCell("Importe", Element.ALIGN_RIGHT, boldFont));
 		for (BillDetail detail : bill.getBillDetails()) {
 			cells.add(createCell(detail.getName(), Element.ALIGN_LEFT, documentFont));
-			cells.add(createCell(String.valueOf(detail.getUnits()), Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(String.valueOf(detail.getUnits()), Element.ALIGN_RIGHT,
+					documentFont));
 			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
 			cells.add(createCell("-", Element.ALIGN_RIGHT, documentFont));
-			cells.add(createCell(detail.getValue() + " €", Element.ALIGN_RIGHT, documentFont));
+			cells.add(createCell(detail.getValue() + " €", Element.ALIGN_RIGHT,
+					documentFont));
 		}
 
 		cells.addAll(createEmptyCells(4));
@@ -90,16 +95,20 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 		cells.addAll(createEmptyCells(3));
 		cells.add(createCell("Base", Element.ALIGN_RIGHT, documentFont));
 		cells.addAll(createEmptyCells(1));
-		cells.add(createCell(bill.getNetAmount().toString() + " €", Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(bill.getNetAmount().toString() + " €", Element.ALIGN_RIGHT,
+				documentFont));
 
 		cells.addAll(createEmptyCells(2));
-		cells.add(createCell(String.format("IVA (%s%%)", bill.getVatPercent()), Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(String.format("IVA (%s%%)", bill.getVatPercent()),
+				Element.ALIGN_RIGHT, documentFont));
 		cells.addAll(createEmptyCells(1));
-		cells.add(createCell(bill.getVatAmount().toString() + " €", Element.ALIGN_RIGHT, documentFont));
+		cells.add(createCell(bill.getVatAmount().toString() + " €", Element.ALIGN_RIGHT,
+				documentFont));
 
 		cells.add(createCell("TOTAL", Element.ALIGN_LEFT, boldFont));
 		cells.addAll(createEmptyCells(3));
-		cells.add(createCell(bill.getAmount().toString() + " €", Element.ALIGN_RIGHT, boldFont));
+		cells.add(createCell(bill.getAmount().toString() + " €", Element.ALIGN_RIGHT,
+				boldFont));
 
 		int cols = 5;
 		for (int i = 0; i < cells.size(); i++) {
@@ -112,19 +121,24 @@ public class PDFBillGenerator extends PDFGenerator<Bill> {
 			cell.setPaddingTop(3f);
 			if (col == 0) {
 				cell.setBorderWidthLeft(2f);
-			} else if (col == 4) {
+			}
+			else if (col == 4) {
 				cell.setBorderWidthRight(2f);
 			}
 			if (row == 0) {
 				cell.setBorderWidthTop(2f);
-			} else if (row == 1) {
+			}
+			else if (row == 1) {
 				cell.setBorderWidthBottom(0.5f);
 				cell.setPaddingBottom(8f);
-			} else if ((row == (cells.size() / cols) - 4)) {
+			}
+			else if ((row == (cells.size() / cols) - 4)) {
 				cell.setBorderWidthBottom(0.5f);
-			} else if (row == (cells.size() / cols) - 2) {
+			}
+			else if (row == (cells.size() / cols) - 2) {
 				cell.setBorderWidthBottom(0.5f);
-			} else if (row == (cells.size() / cols) - 1) {
+			}
+			else if (row == (cells.size() / cols) - 1) {
 				cell.setBorderWidthBottom(2f);
 				cell.setPaddingBottom(8f);
 			}

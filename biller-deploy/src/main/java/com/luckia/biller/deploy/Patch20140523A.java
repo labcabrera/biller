@@ -27,7 +27,8 @@ public class Patch20140523A {
 		LOG.info("Ejecutando patch");
 		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
-		Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
+		Provider<EntityManager> entityManagerProvider = injector
+				.getProvider(EntityManager.class);
 		EntityManager entityManager = entityManagerProvider.get();
 
 		Date from = new DateTime(2014, 2, 1, 0, 0, 0, 0).toDate();
@@ -37,8 +38,10 @@ public class Patch20140523A {
 		String qlStringCompany = "select e from Company e where e.name = :name";
 		String qlStringLiquidation = "select e from Liquidation e where e.sender = :company and e.billDate >= :from and e.billDate <= :to";
 
-		Company company = entityManager.createQuery(qlStringCompany, Company.class).setParameter("name", companyName).getSingleResult();
-		TypedQuery<Liquidation> query = entityManager.createQuery(qlStringLiquidation, Liquidation.class);
+		Company company = entityManager.createQuery(qlStringCompany, Company.class)
+				.setParameter("name", companyName).getSingleResult();
+		TypedQuery<Liquidation> query = entityManager.createQuery(qlStringLiquidation,
+				Liquidation.class);
 		query.setParameter("from", from);
 		query.setParameter("to", to);
 		query.setParameter("company", company);
@@ -47,7 +50,8 @@ public class Patch20140523A {
 		LOG.debug("Encontradas {} liquidaciones", liquidations.size());
 		for (Liquidation liquidation : liquidations) {
 			String liquidationId = liquidation.getId();
-			LiquidationRecalculationTask task = new LiquidationRecalculationTask(liquidationId, injector);
+			LiquidationRecalculationTask task = new LiquidationRecalculationTask(
+					liquidationId, injector);
 			task.run();
 		}
 	}

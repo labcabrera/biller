@@ -22,7 +22,9 @@ public class PDFBillGeneratorTest {
 		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
-		Bill bill = entityManager.createQuery("select b from Bill b order by b.code desc", Bill.class).setMaxResults(1).getSingleResult();
+		Bill bill = entityManager
+				.createQuery("select b from Bill b order by b.code desc", Bill.class)
+				.setMaxResults(1).getSingleResult();
 		FileOutputStream out = new FileOutputStream("./target/test-bill.pdf");
 		PDFBillGenerator generator = injector.getInstance(PDFBillGenerator.class);
 		generator.generate(bill, out);

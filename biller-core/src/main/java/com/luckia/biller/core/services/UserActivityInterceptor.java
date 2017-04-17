@@ -13,7 +13,8 @@ import com.luckia.biller.core.model.UserActivityType;
 
 public class UserActivityInterceptor implements MethodInterceptor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(UserActivityInterceptor.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(UserActivityInterceptor.class);
 
 	@Inject
 	private AuditService auditService;

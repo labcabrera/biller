@@ -18,7 +18,8 @@ import com.luckia.biller.core.model.StoreType;
 
 public class WorkbookEntityResolver {
 
-	private static final Logger LOG = LoggerFactory.getLogger(WorkbookEntityResolver.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(WorkbookEntityResolver.class);
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
@@ -31,13 +32,16 @@ public class WorkbookEntityResolver {
 
 	public Province resolveProvince(final String name) {
 		String aliasKey = getKey("p", name);
-		String alias = aliases.containsKey(aliasKey) ? aliases.getProperty(aliasKey) : name;
+		String alias = aliases.containsKey(aliasKey) ? aliases.getProperty(aliasKey)
+				: name;
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Province> query = entityManager.createQuery("select p from Province p where p.name = :name", Province.class);
+		TypedQuery<Province> query = entityManager.createQuery(
+				"select p from Province p where p.name = :name", Province.class);
 		List<Province> results = query.setParameter("name", alias).getResultList();
 		if (!results.isEmpty()) {
 			return results.iterator().next();
-		} else {
+		}
+		else {
 			LOG.debug("No se encuentra la provincia con nombre '{}'", name);
 			return null;
 		}
@@ -45,13 +49,16 @@ public class WorkbookEntityResolver {
 
 	public Region resolveRegion(String name) {
 		String aliasKey = getKey("r", name);
-		String alias = aliases.containsKey(aliasKey) ? aliases.getProperty(aliasKey) : name;
+		String alias = aliases.containsKey(aliasKey) ? aliases.getProperty(aliasKey)
+				: name;
 		EntityManager entityManager = entityManagerProvider.get();
-		TypedQuery<Region> query = entityManager.createQuery("select r from Region r where r.name = :name", Region.class);
+		TypedQuery<Region> query = entityManager
+				.createQuery("select r from Region r where r.name = :name", Region.class);
 		List<Region> results = query.setParameter("name", alias).getResultList();
 		if (!results.isEmpty()) {
 			return results.iterator().next();
-		} else {
+		}
+		else {
 			LOG.debug("No se encuentra la localidad con nombre '{}'", name);
 			return null;
 		}
@@ -60,11 +67,14 @@ public class WorkbookEntityResolver {
 	public StoreType resolveStoreType(String type) {
 		if ("Bar".equals(type)) {
 			return StoreType.Bar;
-		} else if ("Salón".equals(type)) {
+		}
+		else if ("Salón".equals(type)) {
 			return StoreType.SalonCorner;
-		} else if ("Bingo".equals(type)) {
+		}
+		else if ("Bingo".equals(type)) {
 			return StoreType.BingoCorner;
-		} else {
+		}
+		else {
 			return null;
 		}
 	}

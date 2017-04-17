@@ -17,7 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Clase base con metodos para facilitar la generacion de reports usando POI (estilos, creacion de celdas, etc).
+ * Clase base con metodos para facilitar la generacion de reports usando POI (estilos,
+ * creacion de celdas, etc).
  */
 public abstract class BaseReport {
 
@@ -36,23 +37,34 @@ public abstract class BaseReport {
 		styles.put(ReportStyle.DEFAULT, buildStyle(workbook, font));
 		styles.put(ReportStyle.DEFAULT_DATE, buildDateStyle(workbook, null, font));
 		styles.put(ReportStyle.DEFAULT_NUMBERIC, buildNumericStyle(workbook, null, font));
-		styles.put(ReportStyle.HEADER, buildStyle(workbook, HSSFColor.LIGHT_ORANGE.index, font));
-		styles.put(ReportStyle.HEADER, buildNumericStyle(workbook, HSSFColor.LIGHT_ORANGE.index, font));
-		styles.put(ReportStyle.HEADER_NUMBERIC, buildStyle(workbook, HSSFColor.LIGHT_ORANGE.index, font));
-		styles.put(ReportStyle.DISABLED, buildStyle(workbook, HSSFColor.GREY_25_PERCENT.index, font));
-		styles.put(ReportStyle.DISABLED_DATE, buildDateStyle(workbook, HSSFColor.GREY_25_PERCENT.index, font));
-		styles.put(ReportStyle.DISABLED_NUMERIC, buildNumericStyle(workbook, HSSFColor.GREY_25_PERCENT.index, font));
+		styles.put(ReportStyle.HEADER,
+				buildStyle(workbook, HSSFColor.LIGHT_ORANGE.index, font));
+		styles.put(ReportStyle.HEADER,
+				buildNumericStyle(workbook, HSSFColor.LIGHT_ORANGE.index, font));
+		styles.put(ReportStyle.HEADER_NUMBERIC,
+				buildStyle(workbook, HSSFColor.LIGHT_ORANGE.index, font));
+		styles.put(ReportStyle.DISABLED,
+				buildStyle(workbook, HSSFColor.GREY_25_PERCENT.index, font));
+		styles.put(ReportStyle.DISABLED_DATE,
+				buildDateStyle(workbook, HSSFColor.GREY_25_PERCENT.index, font));
+		styles.put(ReportStyle.DISABLED_NUMERIC,
+				buildNumericStyle(workbook, HSSFColor.GREY_25_PERCENT.index, font));
 	}
 
-	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex, String value) {
-		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.DEFAULT);
+	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex,
+			String value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value),
+				ReportStyle.DEFAULT);
 	}
 
-	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex, BigDecimal value) {
-		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.DEFAULT_NUMBERIC);
+	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex,
+			BigDecimal value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value),
+				ReportStyle.DEFAULT_NUMBERIC);
 	}
 
-	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex, Date value) {
+	protected HSSFCell createCell(HSSFSheet sheet, int rowIndex, int cellIndex,
+			Date value) {
 		HSSFCell cell = createCellInternal(sheet, rowIndex, cellIndex, value);
 		if (value != null) {
 			return applyStyle(cell, ReportStyle.DEFAULT_DATE);
@@ -60,27 +72,38 @@ public abstract class BaseReport {
 		return cell;
 	}
 
-	protected HSSFCell createHeaderCell(HSSFSheet sheet, int rowIndex, int cellIndex, String value) {
-		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.HEADER);
+	protected HSSFCell createHeaderCell(HSSFSheet sheet, int rowIndex, int cellIndex,
+			String value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value),
+				ReportStyle.HEADER);
 	}
 
-	protected HSSFCell createHeaderCell(HSSFSheet sheet, int rowIndex, int cellIndex, BigDecimal value) {
-		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.HEADER);
+	protected HSSFCell createHeaderCell(HSSFSheet sheet, int rowIndex, int cellIndex,
+			BigDecimal value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value),
+				ReportStyle.HEADER);
 	}
 
-	protected HSSFCell createDisabledCell(HSSFSheet sheet, int rowIndex, int cellIndex, String value) {
-		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.DISABLED);
+	protected HSSFCell createDisabledCell(HSSFSheet sheet, int rowIndex, int cellIndex,
+			String value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value),
+				ReportStyle.DISABLED);
 	}
 
-	protected HSSFCell createDisabledCell(HSSFSheet sheet, int rowIndex, int cellIndex, Date value) {
-		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.DISABLED_DATE);
+	protected HSSFCell createDisabledCell(HSSFSheet sheet, int rowIndex, int cellIndex,
+			Date value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value),
+				ReportStyle.DISABLED_DATE);
 	}
 
-	protected HSSFCell createDisabledCell(HSSFSheet sheet, int rowIndex, int cellIndex, BigDecimal value) {
-		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value), ReportStyle.DISABLED_NUMERIC);
+	protected HSSFCell createDisabledCell(HSSFSheet sheet, int rowIndex, int cellIndex,
+			BigDecimal value) {
+		return applyStyle(createCellInternal(sheet, rowIndex, cellIndex, value),
+				ReportStyle.DISABLED_NUMERIC);
 	}
 
-	protected HSSFCell createCellInternal(HSSFSheet sheet, int rowIndex, int cellIndex, Object value) {
+	protected HSSFCell createCellInternal(HSSFSheet sheet, int rowIndex, int cellIndex,
+			Object value) {
 		HSSFRow row = sheet.getRow(rowIndex);
 		if (row == null) {
 			row = sheet.createRow(rowIndex);
@@ -92,14 +115,18 @@ public abstract class BaseReport {
 		if (value != null) {
 			if (value instanceof String) {
 				cell.setCellValue((String) value);
-			} else if (value instanceof Date) {
+			}
+			else if (value instanceof Date) {
 				cell.setCellValue((Date) value);
-			} else if (value instanceof BigDecimal) {
+			}
+			else if (value instanceof BigDecimal) {
 				cell.setCellValue(((BigDecimal) value).doubleValue());
-			} else {
+			}
+			else {
 				LOG.warn("Invalid type {}", value);
 			}
-		} else {
+		}
+		else {
 			cell.setCellValue(0d);
 		}
 		return applyStyle(cell, ReportStyle.DEFAULT);
@@ -108,7 +135,8 @@ public abstract class BaseReport {
 	private HSSFCell applyStyle(HSSFCell cell, ReportStyle reportStyle) {
 		if (cell != null && styles.containsKey(reportStyle)) {
 			cell.setCellStyle(styles.get(reportStyle));
-		} else {
+		}
+		else {
 			LOG.warn("Invalid style {}", reportStyle);
 		}
 		return cell;
@@ -128,7 +156,8 @@ public abstract class BaseReport {
 		return style;
 	}
 
-	private HSSFCellStyle buildNumericStyle(HSSFWorkbook workbook, Short color, HSSFFont font) {
+	private HSSFCellStyle buildNumericStyle(HSSFWorkbook workbook, Short color,
+			HSSFFont font) {
 		HSSFDataFormat hssfDataFormat = workbook.createDataFormat();
 		HSSFCellStyle style = workbook.createCellStyle();
 		style.setDataFormat(hssfDataFormat.getFormat("#,##0.00"));
@@ -140,7 +169,8 @@ public abstract class BaseReport {
 		return style;
 	}
 
-	private HSSFCellStyle buildDateStyle(HSSFWorkbook workbook, Short color, HSSFFont font) {
+	private HSSFCellStyle buildDateStyle(HSSFWorkbook workbook, Short color,
+			HSSFFont font) {
 		HSSFCellStyle style = workbook.createCellStyle();
 		short format = workbook.createDataFormat().getFormat("dd/MM/yyyy");
 		style = workbook.createCellStyle();

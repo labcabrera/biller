@@ -21,7 +21,9 @@ public class TestStateDefinitionConverter {
 		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
-		List<StateDefinition> list = entityManager.createQuery("select a from StateDefinition a", StateDefinition.class).getResultList();
+		List<StateDefinition> list = entityManager
+				.createQuery("select a from StateDefinition a", StateDefinition.class)
+				.getResultList();
 		System.out.println(list);
 	}
 }

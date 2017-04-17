@@ -14,7 +14,8 @@ import com.luckia.biller.core.validation.RappelValidator;
 /**
  * Definición de la validacin de un centro de coste
  */
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.TYPE })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE,
+		ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = RappelValidator.class)
 @Documented

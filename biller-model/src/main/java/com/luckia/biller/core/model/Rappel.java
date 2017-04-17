@@ -1,5 +1,6 @@
 package com.luckia.biller.core.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.CascadeType;
@@ -13,10 +14,15 @@ import javax.persistence.Table;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "B_RAPPEL")
-// @ValidRappel
-public class Rappel implements Mergeable<Rappel> {
+@Data
+@NoArgsConstructor
+@SuppressWarnings("serial")
+public class Rappel implements Mergeable<Rappel>, Serializable {
 
 	@Id
 	@GeneratedValue
@@ -36,52 +42,9 @@ public class Rappel implements Mergeable<Rappel> {
 	@Column(name = "BONUS_AMOUNT", precision = 18, scale = 2)
 	private BigDecimal bonusAmount;
 
-	public Rappel() {
-	}
-
 	public Rappel(BigDecimal amount, BigDecimal bonusPercent, BigDecimal bonusAmount) {
 		this.amount = amount;
 		this.bonusPercent = bonusPercent;
-		this.bonusAmount = bonusAmount;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public BillingModel getModel() {
-		return model;
-	}
-
-	public void setModel(BillingModel model) {
-		this.model = model;
-	}
-
-	public BigDecimal getAmount() {
-		return amount;
-	}
-
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-
-	public BigDecimal getBonusPercent() {
-		return bonusPercent;
-	}
-
-	public void setBonusPercent(BigDecimal bonusPercent) {
-		this.bonusPercent = bonusPercent;
-	}
-
-	public BigDecimal getBonusAmount() {
-		return bonusAmount;
-	}
-
-	public void setBonusAmount(BigDecimal bonusAmount) {
 		this.bonusAmount = bonusAmount;
 	}
 

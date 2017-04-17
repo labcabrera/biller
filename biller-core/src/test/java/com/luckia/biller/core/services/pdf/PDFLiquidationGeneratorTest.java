@@ -23,10 +23,12 @@ public class PDFLiquidationGeneratorTest {
 		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
-		TypedQuery<Liquidation> query = entityManager.createQuery("select e from Liquidation e order by e.code desc", Liquidation.class);
+		TypedQuery<Liquidation> query = entityManager.createQuery(
+				"select e from Liquidation e order by e.code desc", Liquidation.class);
 		Liquidation liquidation = query.setMaxResults(1).getSingleResult();
 		FileOutputStream out = new FileOutputStream("./target/test-liquidation.pdf");
-		PDFLiquidationGenerator generator = injector.getInstance(PDFLiquidationGenerator.class);
+		PDFLiquidationGenerator generator = injector
+				.getInstance(PDFLiquidationGenerator.class);
 		generator.generate(liquidation, out);
 	}
 }

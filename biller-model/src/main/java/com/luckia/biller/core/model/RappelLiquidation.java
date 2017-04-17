@@ -11,12 +11,18 @@ import javax.persistence.Table;
 
 import com.luckia.biller.core.serialization.NotSerializable;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
- * Entidad que representa el conjunto de bonus por rappel a todos los establecimeintos de un operador.
+ * Entidad que representa el conjunto de bonus por rappel a todos los establecimeintos de
+ * un operador.
  */
 @Entity
 @Table(name = "B_RAPPEL_LIQUIDATION")
 @DiscriminatorValue("R")
+@Data
+@EqualsAndHashCode(callSuper = true)
 @SuppressWarnings("serial")
 public class RappelLiquidation extends AbstractBill {
 
@@ -27,11 +33,4 @@ public class RappelLiquidation extends AbstractBill {
 	@NotSerializable
 	private List<RappelStoreBonus> storeBonus;
 
-	public List<RappelStoreBonus> getStoreBonus() {
-		return storeBonus;
-	}
-
-	public void setStoreBonus(List<RappelStoreBonus> storeBonus) {
-		this.storeBonus = storeBonus;
-	}
 }

@@ -34,17 +34,20 @@ public class Patch20140528A extends PatchSupport implements Runnable {
 			LOG.info("Ejecutando patch");
 			Injector injector = Guice.createInjector(new BillerModule());
 			injector.getInstance(PersistService.class).start();
-			Provider<EntityManager> entityManagerProvider = injector.getProvider(EntityManager.class);
+			Provider<EntityManager> entityManagerProvider = injector
+					.getProvider(EntityManager.class);
 			BillProcessor billProcessor = injector.getInstance(BillProcessor.class);
 			Date from = new DateTime(2014, 4, 1, 0, 0, 0, 0).toDate();
 			Date to = new DateTime(2014, 4, 30, 0, 0, 0, 0).toDate();
 			Range<Date> range = Range.between(from, to);
 			long[] storeIds = { 2183, 2179, 2181, 2409 };
 			for (long storeId : storeIds) {
-				BillTask task = new BillTask(storeId, range, entityManagerProvider, billProcessor);
+				BillTask task = new BillTask(storeId, range, entityManagerProvider,
+						billProcessor);
 				task.run();
 			}
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			LOG.error(ex.getMessage(), ex);
 		}
 	}

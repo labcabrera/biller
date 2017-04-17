@@ -1,5 +1,6 @@
 package com.luckia.biller.core.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -24,19 +25,23 @@ import org.eclipse.persistence.annotations.ChangeTrackingType;
 import org.eclipse.persistence.annotations.JoinFetch;
 import org.eclipse.persistence.annotations.JoinFetchType;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
- * Entidad que representa una factura. La aplicacion genera las facturas que emiten los establecimientos a sus operadores de máquinas de
- * juego.
+ * Entidad que representa una factura. La aplicacion genera las facturas que emiten los
+ * establecimientos a sus operadores de máquinas de juego.
  * <ul>
  * <li>En emisor de la factura será el titular del establecimiento.</li>
- * <li>El receptor de la factura será la empresa a la que está asociada el establecimiento</li>
- * <li>El código de la factura se generará secuencialmente a partir de la secuencia de cada uno de los clientes. El código solo se generará
- * una vez se aprueba la factura</li>
+ * <li>El receptor de la factura será la empresa a la que está asociada el
+ * establecimiento</li>
+ * <li>El código de la factura se generará secuencialmente a partir de la secuencia de
+ * cada uno de los clientes. El código solo se generará una vez se aprueba la factura</li>
  * </ul>
  * Los detalles de las facturas tienen tres posibilidades:
  * <ul>
- * <li><b>Ajustes operativos</b> (incluidos en la liquidacion): los ajustes operativos representan robos o descuadres que practicamente
- * siempre serán negativos.</li>
+ * <li><b>Ajustes operativos</b> (incluidos en la liquidacion): los ajustes operativos
+ * representan robos o descuadres que practicamente siempre serán negativos.</li>
  * <li><b>Ajustes manuales incluídos en la liquidación</b></li>
  * <li><b>Ajustes manuales NO incluídos en la liquidación</b></li>
  * </ul>
@@ -49,11 +54,13 @@ import org.eclipse.persistence.annotations.JoinFetchType;
 @NamedQueries({
 		@NamedQuery(name = "Bill.selectPendingByReceiverInRange", query = "select b from Bill b where b.receiver = :receiver and b.dateFrom >= :from and b.dateTo <= :to and b.liquidation is null"),
 		@NamedQuery(name = "Bill.selectByStoreInRange", query = "select b from Bill b where b.sender = :sender and b.dateFrom >= :from and b.dateTo <= :to") })
-public class Bill extends AbstractBill implements Mergeable<Bill> {
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class Bill extends AbstractBill implements Mergeable<Bill>, Serializable {
 
 	/**
-	 * Determinadas facturas pueden tener una relación padre-hijo con otras (por ejemplo las rectificaciones). Este atributo nos permite
-	 * definir esta relación.
+	 * Determinadas facturas pueden tener una relación padre-hijo con otras (por ejemplo
+	 * las rectificaciones). Este atributo nos permite definir esta relación.
 	 */
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "PARENT_ID")
@@ -115,173 +122,21 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "LIQUIDATION_ID")
-	protected Liquidation liquidation;
+	private Liquidation liquidation;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "bill", cascade = CascadeType.PERSIST)
-	protected List<BillRawData> billRawData;
+	private List<BillRawData> billRawData;
 
 	/**
 	 * Representa el saldo de caja del establecimiento (pagos - cancelaciones - premios)
 	 */
 	@Column(name = "STORE_CASH", precision = 18, scale = 2)
-	protected BigDecimal storeCash;
+	private BigDecimal storeCash;
 
 	@ManyToOne(cascade = CascadeType.DETACH, optional = true)
-	@JoinTable(name = "B_BILL_LIQUIDATION_FILE", joinColumns = @JoinColumn(name = "BILL_ID") , inverseJoinColumns = @JoinColumn(name = "FILE_ID") )
+	@JoinTable(name = "B_BILL_LIQUIDATION_FILE", joinColumns = @JoinColumn(name = "BILL_ID"), inverseJoinColumns = @JoinColumn(name = "FILE_ID"))
 	@JoinFetch(JoinFetchType.OUTER)
-	protected AppFile liquidationDetailFile;
-
-	public Bill getParent() {
-		return parent;
-	}
-
-	public void setParent(Bill parent) {
-		this.parent = parent;
-	}
-
-	public BillType getBillType() {
-		return billType;
-	}
-
-	public void setBillType(BillType billType) {
-		this.billType = billType;
-	}
-
-	public List<BillDetail> getBillDetails() {
-		return billDetails;
-	}
-
-	public void setBillDetails(List<BillDetail> billDetails) {
-		this.billDetails = billDetails;
-	}
-
-	public BigDecimal getNetAmount() {
-		return netAmount;
-	}
-
-	public void setNetAmount(BigDecimal netAmount) {
-		this.netAmount = netAmount;
-	}
-
-	public BigDecimal getVatAmount() {
-		return vatAmount;
-	}
-
-	public void setVatAmount(BigDecimal vatAmount) {
-		this.vatAmount = vatAmount;
-	}
-
-	public BigDecimal getVatPercent() {
-		return vatPercent;
-	}
-
-	public void setVatPercent(BigDecimal vatPercent) {
-		this.vatPercent = vatPercent;
-	}
-
-	public Liquidation getLiquidation() {
-		return liquidation;
-	}
-
-	public void setLiquidation(Liquidation liquidation) {
-		this.liquidation = liquidation;
-	}
-
-	public List<BillLiquidationDetail> getLiquidationDetails() {
-		return liquidationDetails;
-	}
-
-	public void setLiquidationDetails(List<BillLiquidationDetail> liquidationDetails) {
-		this.liquidationDetails = liquidationDetails;
-	}
-
-	public BigDecimal getLiquidationTotalAmount() {
-		return liquidationTotalAmount;
-	}
-
-	public void setLiquidationTotalAmount(BigDecimal liquidationAmount) {
-		this.liquidationTotalAmount = liquidationAmount;
-	}
-
-	public BigDecimal getStoreCash() {
-		return storeCash;
-	}
-
-	public void setStoreCash(BigDecimal storeCash) {
-		this.storeCash = storeCash;
-	}
-
-	public BigDecimal getLiquidationBetAmount() {
-		return liquidationBetAmount;
-	}
-
-	public void setLiquidationBetAmount(BigDecimal liquidationBetAmount) {
-		this.liquidationBetAmount = liquidationBetAmount;
-	}
-
-	public BigDecimal getLiquidationSatAmount() {
-		return liquidationSatAmount;
-	}
-
-	public void setLiquidationSatAmount(BigDecimal liquidationSatAmount) {
-		this.liquidationSatAmount = liquidationSatAmount;
-	}
-
-	public BigDecimal getLiquidationPricePerLocation() {
-		return liquidationPricePerLocation;
-	}
-
-	public void setLiquidationPricePerLocation(BigDecimal liquidationPricePerLocation) {
-		this.liquidationPricePerLocation = liquidationPricePerLocation;
-	}
-
-	public List<BillRawData> getBillRawData() {
-		return billRawData;
-	}
-
-	public void setBillRawData(List<BillRawData> billRawData) {
-		this.billRawData = billRawData;
-	}
-
-	public BigDecimal getLiquidationManualAmount() {
-		return liquidationManualAmount;
-	}
-
-	public void setLiquidationManualAmount(BigDecimal liquidationManualAmount) {
-		this.liquidationManualAmount = liquidationManualAmount;
-	}
-
-	public BigDecimal getLiquidationOuterAmount() {
-		return liquidationOuterAmount;
-	}
-
-	public void setLiquidationOuterAmount(BigDecimal liquidationOuterAmount) {
-		this.liquidationOuterAmount = liquidationOuterAmount;
-	}
-
-	public BigDecimal getLiquidationTotalVat() {
-		return liquidationTotalVat;
-	}
-
-	public void setLiquidationTotalVat(BigDecimal liquidationTotalVat) {
-		this.liquidationTotalVat = liquidationTotalVat;
-	}
-
-	public BigDecimal getLiquidationTotalNetAmount() {
-		return liquidationTotalNetAmount;
-	}
-
-	public void setLiquidationTotalNetAmount(BigDecimal liquidationTotalNetAmount) {
-		this.liquidationTotalNetAmount = liquidationTotalNetAmount;
-	}
-
-	public AppFile getLiquidationDetailFile() {
-		return liquidationDetailFile;
-	}
-
-	public void setLiquidationDetailFile(AppFile liquidationDetailFile) {
-		this.liquidationDetailFile = liquidationDetailFile;
-	}
+	private AppFile liquidationDetailFile;
 
 	/*
 	 * (non-Javadoc)
@@ -290,7 +145,8 @@ public class Bill extends AbstractBill implements Mergeable<Bill> {
 	 */
 	@Override
 	public String toString() {
-		return String.format("Bill(code: %s, state: %s, amount: %s)", code, currentState, amount);
+		return String.format("Bill(code: %s, state: %s, amount: %s)", code, currentState,
+				amount);
 	}
 
 	/*

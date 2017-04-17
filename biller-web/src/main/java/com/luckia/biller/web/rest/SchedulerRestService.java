@@ -17,8 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.spi.MutableTrigger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -28,12 +26,13 @@ import com.luckia.biller.core.model.common.Message;
 import com.luckia.biller.core.model.common.SearchResults;
 import com.luckia.biller.core.scheduler.SchedulerService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Path("/scheduler")
 @Consumes({ "application/json; charset=UTF-8" })
 @Produces({ "application/json; charset=UTF-8" })
+@Slf4j
 public class SchedulerRestService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(SchedulerRestService.class);
 
 	@Inject
 	private Provider<EntityManager> entityManagerProvider;
@@ -43,7 +42,9 @@ public class SchedulerRestService {
 	@GET
 	@Path("/find")
 	public SearchResults<ScheduledTask> search() {
-		List<ScheduledTask> tasks = entityManagerProvider.get().createNamedQuery("SchedulerTask.selectAll", ScheduledTask.class).getResultList();
+		List<ScheduledTask> tasks = entityManagerProvider.get()
+				.createNamedQuery("SchedulerTask.selectAll", ScheduledTask.class)
+				.getResultList();
 		SearchResults<ScheduledTask> results = new SearchResults<>();
 		results.setResults(tasks);
 		return results;
@@ -62,10 +63,13 @@ public class SchedulerRestService {
 				schedulerService.registerTask(current);
 			}
 			entityManager.merge(current);
-			return new Message<ScheduledTask>(Message.CODE_SUCCESS, "scheduler.task.merge.ok").withPayload(current);
-		} catch (Exception ex) {
-			LOG.error("Merge error", ex);
-			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR).addError("scheduler.task.merge.error");
+			return new Message<ScheduledTask>(Message.CODE_SUCCESS,
+					"scheduler.task.merge.ok").withPayload(current);
+		}
+		catch (Exception ex) {
+			log.error("Scheduler error", ex);
+			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR)
+					.addError("scheduler.task.merge.error");
 		}
 	}
 
@@ -79,10 +83,13 @@ public class SchedulerRestService {
 			current.setEnabled(false);
 			entityManager.merge(current);
 			schedulerService.unregisterTask(current);
-			return new Message<ScheduledTask>(Message.CODE_SUCCESS).withPayload(current).addInfo("scheduler.task.pause.ok");
-		} catch (Exception ex) {
-			LOG.error("Pause error", ex);
-			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR).addError("scheduler.task.pause.error");
+			return new Message<ScheduledTask>(Message.CODE_SUCCESS).withPayload(current)
+					.addInfo("scheduler.task.pause.ok");
+		}
+		catch (Exception ex) {
+			log.error("Scheduler error", ex);
+			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR)
+					.addError("scheduler.task.pause.error");
 		}
 	}
 
@@ -96,10 +103,13 @@ public class SchedulerRestService {
 			current.setEnabled(true);
 			entityManager.merge(current);
 			schedulerService.registerTask(current);
-			return new Message<ScheduledTask>(Message.CODE_SUCCESS).withPayload(current).addInfo("scheduler.task.resume.ok");
-		} catch (Exception ex) {
-			LOG.error("Resume error", ex);
-			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR).addError("scheduler.task.resume.error");
+			return new Message<ScheduledTask>(Message.CODE_SUCCESS).withPayload(current)
+					.addInfo("scheduler.task.resume.ok");
+		}
+		catch (Exception ex) {
+			log.error("Scheduler error", ex);
+			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR)
+					.addError("scheduler.task.resume.error");
 		}
 	}
 
@@ -109,9 +119,13 @@ public class SchedulerRestService {
 	public Message<ScheduledTask> pauseAll() {
 		try {
 			schedulerService.getScheduler().pauseAll();
-			return new Message<ScheduledTask>(Message.CODE_SUCCESS).addInfo("scheduler.task.pauseAll.ok");
-		} catch (Exception ex) {
-			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR).addError("scheduler.task.pauseAll.error");
+			return new Message<ScheduledTask>(Message.CODE_SUCCESS)
+					.addInfo("scheduler.task.pauseAll.ok");
+		}
+		catch (Exception ex) {
+			log.error("Scheduler error", ex);
+			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR)
+					.addError("scheduler.task.pauseAll.error");
 		}
 	}
 
@@ -121,9 +135,13 @@ public class SchedulerRestService {
 	public Message<ScheduledTask> resumeAll() {
 		try {
 			schedulerService.getScheduler().resumeAll();
-			return new Message<ScheduledTask>(Message.CODE_SUCCESS).addInfo("scheduler.task.resumeAll.ok");
-		} catch (Exception ex) {
-			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR).addError("scheduler.task.resumeAll.error");
+			return new Message<ScheduledTask>(Message.CODE_SUCCESS)
+					.addInfo("scheduler.task.resumeAll.ok");
+		}
+		catch (Exception ex) {
+			log.error("Scheduler error", ex);
+			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR)
+					.addError("scheduler.task.resumeAll.error");
 		}
 	}
 
@@ -136,41 +154,52 @@ public class SchedulerRestService {
 			ScheduledTask task = entityManager.find(ScheduledTask.class, taskId);
 			schedulerService.execute(task);
 			return new Message<ScheduledTask>().addInfo("scheduler.task.execute.success");
-		} catch (Exception ex) {
-			LOG.error("Execute task error", ex);
-			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR).addError("scheduler.task.execute.error").addError(ex.getMessage());
+		}
+		catch (Exception ex) {
+			log.error("Execute task error", ex);
+			return new Message<ScheduledTask>(Message.CODE_GENERIC_ERROR)
+					.addError("scheduler.task.execute.error").addError(ex.getMessage());
 		}
 	}
 
 	/**
-	 * Metodo que devuelve un mensaje con las siguientes fechas de ejecucion de una tarea planificada
+	 * Metodo que devuelve un mensaje con las siguientes fechas de ejecucion de una tarea
+	 * planificada
 	 * 
 	 * @param taskId
 	 * @return
 	 */
 	@GET
 	@Path("/nextExecutions/{id}")
-	public Message<String> getNextExecutions(@PathParam("id") Long taskId, @QueryParam("c") Integer count) {
+	public Message<String> getNextExecutions(@PathParam("id") Long taskId,
+			@QueryParam("c") Integer count) {
 		try {
 			EntityManager entityManager = entityManagerProvider.get();
 			ScheduledTask task = entityManager.find(ScheduledTask.class, taskId);
 			if (StringUtils.isNotBlank(task.getCronExpression())) {
 				Message<String> message = new Message<String>();
-				CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(task.getCronExpression());
+				CronScheduleBuilder scheduleBuilder = CronScheduleBuilder
+						.cronSchedule(task.getCronExpression());
 				MutableTrigger trigger = scheduleBuilder.build();
 				Date checkDate = Calendar.getInstance().getTime();
 				count = (count != null && count > 0) ? count : 5;
 				for (int i = 0; i < count; i++) {
 					Date targetDate = trigger.getFireTimeAfter(checkDate);
-					message.addInfo(DateFormatUtils.ISO_DATETIME_FORMAT.format(targetDate));
+					message.addInfo(
+							DateFormatUtils.ISO_DATETIME_FORMAT.format(targetDate));
 					checkDate = targetDate;
 				}
 				return message;
-			} else {
-				return new Message<String>().addInfo("scheduler.nextExecutions.undefinedCronExpression");
 			}
-		} catch (Exception ex) {
-			return new Message<String>(Message.CODE_GENERIC_ERROR).addError("scheduler.nextExecutions.error");
+			else {
+				return new Message<String>()
+						.addInfo("scheduler.nextExecutions.undefinedCronExpression");
+			}
+		}
+		catch (Exception ex) {
+			log.error("Scheduler error", ex);
+			return new Message<String>(Message.CODE_GENERIC_ERROR)
+					.addError("scheduler.nextExecutions.error");
 		}
 
 	}

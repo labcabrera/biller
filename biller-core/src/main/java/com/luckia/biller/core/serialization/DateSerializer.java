@@ -13,6 +13,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.luckia.biller.core.common.BillerException;
 
 public class DateSerializer implements JsonSerializer<Date>, JsonDeserializer<Date> {
 
@@ -28,20 +29,23 @@ public class DateSerializer implements JsonSerializer<Date>, JsonDeserializer<Da
 	 * @throws JsonParseException
 	 */
 	@Override
-	public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+	public Date deserialize(JsonElement json, Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
 		try {
 			String str = json.getAsString();
 			SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT_PATTERN);
 			df.setTimeZone(TimeZone.getTimeZone("UTC"));
 			Date date = df.parse(str);
 			return date;
-		} catch (ParseException e) {
-			throw new RuntimeException("Unparseable date: \"" + json + "\"");
+		}
+		catch (ParseException e) {
+			throw new BillerException("Unparseable date: \"" + json + "\"");
 		}
 	}
 
 	@Override
-	public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+	public JsonElement serialize(Date src, Type typeOfSrc,
+			JsonSerializationContext context) {
 		SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT_PATTERN);
 		String str = df.format(src);
 		return new JsonPrimitive(str);

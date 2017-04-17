@@ -14,7 +14,8 @@ import com.luckia.biller.core.validation.StoreValidator;
 /**
  * Definición de la validación de una entidad legal
  */
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.TYPE })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE,
+		ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = StoreValidator.class)
 @Documented

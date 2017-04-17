@@ -12,12 +12,15 @@ import com.google.gson.JsonSerializer;
 import com.luckia.biller.core.model.BillType;
 
 /**
- * En la serializacion del tipo enumerado incluimos la descripción de este. Al deserializar el enumerado ignoramos esta descripción.
+ * En la serializacion del tipo enumerado incluimos la descripción de este. Al
+ * deserializar el enumerado ignoramos esta descripción.
  */
-public class BillTypeSerializer implements JsonSerializer<BillType>, JsonDeserializer<BillType> {
+public class BillTypeSerializer
+		implements JsonSerializer<BillType>, JsonDeserializer<BillType> {
 
 	@Override
-	public JsonElement serialize(BillType value, Type typeOfSrc, JsonSerializationContext context) {
+	public JsonElement serialize(BillType value, Type typeOfSrc,
+			JsonSerializationContext context) {
 		JsonElement result = null;
 		if (value != null) {
 			JsonObject obj = new JsonObject();
@@ -29,11 +32,13 @@ public class BillTypeSerializer implements JsonSerializer<BillType>, JsonDeseria
 	}
 
 	@Override
-	public BillType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+	public BillType deserialize(JsonElement json, Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
 		BillType result = null;
 		if (json != null) {
 			if (json.isJsonObject() && json.getAsJsonObject().get("value") != null) {
-				result = BillType.valueOf(json.getAsJsonObject().get("value").getAsString());
+				result = BillType
+						.valueOf(json.getAsJsonObject().get("value").getAsString());
 			}
 		}
 		return result;

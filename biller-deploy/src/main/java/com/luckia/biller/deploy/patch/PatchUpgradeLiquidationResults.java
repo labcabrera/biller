@@ -26,14 +26,16 @@ import com.luckia.biller.core.model.LiquidationResults;
  */
 public class PatchUpgradeLiquidationResults {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PatchUpdateLiquidationModel.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(PatchUpdateLiquidationModel.class);
 
 	public static void main(String[] args) {
 		Injector injector = Guice.createInjector(new BillerModule());
 		injector.getInstance(PersistService.class).start();
 		EntityManager entityManager = injector.getProvider(EntityManager.class).get();
 
-		Query query = entityManager.createQuery("select e from Liquidation e where e.liquidationResults.effectiveLiquidationAmount is null");
+		Query query = entityManager.createQuery(
+				"select e from Liquidation e where e.liquidationResults.effectiveLiquidationAmount is null");
 
 		query.setHint(QueryHints.SCROLLABLE_CURSOR, true);
 		ScrollableCursor cursor = (ScrollableCursor) query.getSingleResult();
@@ -47,11 +49,14 @@ public class PatchUpgradeLiquidationResults {
 			LOG.info("Actualizando liquidacion {}", liquidation);
 			liquidation.setModelVersion("1.3.0");
 			LiquidationResults liquidationResults = liquidation.getLiquidationResults();
-			liquidationResults.setEffectiveLiquidationAmount(liquidationResults.getReceiverAmount());
+			liquidationResults.setEffectiveLiquidationAmount(
+					liquidationResults.getReceiverAmount());
 			liquidationResults.setStoreManualOuterAmount(BigDecimal.ZERO);
 			liquidationResults.setLiquidationManualOuterAmount(BigDecimal.ZERO);
-			liquidationResults.setCashStoreEffectiveAmount(liquidationResults.getCashStoreAmount());
-			liquidationResults.setTotalAmount(liquidationResults.getCashStoreAmount().subtract(liquidationResults.getEffectiveLiquidationAmount()));
+			liquidationResults
+					.setCashStoreEffectiveAmount(liquidationResults.getCashStoreAmount());
+			liquidationResults.setTotalAmount(liquidationResults.getCashStoreAmount()
+					.subtract(liquidationResults.getEffectiveLiquidationAmount()));
 			for (LiquidationDetail detail : liquidation.getDetails()) {
 				detail.setNetValue(detail.getValue());
 				detail.setVatValue(BigDecimal.ZERO);
@@ -69,6 +74,7 @@ public class PatchUpgradeLiquidationResults {
 		entityManager.getTransaction().commit();
 		cursor.close();
 		LOG.debug("Liquidaciones totales: {}", totalCount);
-		LOG.debug("Time: {} sg", new BigDecimal(System.currentTimeMillis() - t0).divide(MathUtils.THOUSAND, 2, RoundingMode.HALF_EVEN));
+		LOG.debug("Time: {} sg", new BigDecimal(System.currentTimeMillis() - t0)
+				.divide(MathUtils.THOUSAND, 2, RoundingMode.HALF_EVEN));
 	}
 }
